@@ -4,6 +4,7 @@
 #include <dxgidebug.h>
 
 #include <algorithm>
+#include <array>
 #include <cstdint>
 #include <format>
 #include <iostream>
@@ -116,4 +117,19 @@ ShaderTestFixture::ShaderTestFixture()
 bool ShaderTestFixture::IsValid() const
 {
     return m_Device.Get() != nullptr;
+}
+
+bool ShaderTestFixture::IsUsingAgilitySDK() const
+{
+	D3D12_FEATURE_DATA_FEATURE_LEVELS featureLevels;
+	featureLevels.NumFeatureLevels = 1;
+	std::array featureLevel = { D3D_FEATURE_LEVEL_12_2 };
+	featureLevels.pFeatureLevelsRequested = featureLevel.data();
+	if (!IsValid())
+	{
+		return false;
+	}
+	m_Device->CheckFeatureSupport(D3D12_FEATURE_FEATURE_LEVELS, &featureLevels, sizeof(featureLevels));
+
+	return featureLevels.MaxSupportedFeatureLevel == D3D_FEATURE_LEVEL_12_2;
 }
