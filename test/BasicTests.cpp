@@ -1,6 +1,7 @@
 #include <CppUnitTest.h>
 
 #include "ShaderTestFixture.h"
+#include "D3D12AgilityDefinitions.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

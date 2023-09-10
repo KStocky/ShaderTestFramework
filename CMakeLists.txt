@@ -15,6 +15,9 @@ set(GLOBAL_COMPILE_FLAGS
     $<$<CXX_COMPILER_ID:MSVC>:/W4> 
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic> )
 
+find_package(InternetConnection REQUIRED)
+find_package(D3D12AgilitySdk REQUIRED)
+
 add_subdirectory(src)
 
 enable_testing()

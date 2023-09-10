@@ -14,5 +14,5 @@ public:
     bool IsValid() const;
 private:
 
-    ComPtr<ID3D12Device> m_Device = nullptr;
+    ComPtr<ID3D12Device8> m_Device = nullptr;
 };
