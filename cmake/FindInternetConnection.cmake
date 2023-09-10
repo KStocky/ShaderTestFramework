@@ -8,6 +8,6 @@ execute_process(
 
 if (CONNECTION_STATUS GREATER 0)
 
-    set(INTERNET_CONNECTION_AVAILABLE false)
+    #set(INTERNET_CONNECTION_AVAILABLE false)
 
 endif()
