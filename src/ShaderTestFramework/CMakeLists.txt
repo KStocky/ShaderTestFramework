@@ -1,4 +1,5 @@
 add_library(ShaderTestFramework)
 target_sources(ShaderTestFramework PRIVATE include/ShaderTestFixture.h ShaderTestFixture.cpp)
 target_include_directories(ShaderTestFramework PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include/)
+target_link_libraries(ShaderTestFramework PRIVATE d3d12.lib dxgi.lib)
 target_compile_options(ShaderTestFramework PRIVATE ${GLOBAL_COMPILE_FLAGS})
