@@ -12,7 +12,7 @@ if (NOT EXISTS ${WARP_PKG_PATH})
     message(INFO "Downloading DirectX 12 WARP nuget package...")
 
     file(DOWNLOAD
-        https://www.nuget.org/api/v2/package/Microsoft.Direct3D.WARP/1.0.7.1
+        https://www.nuget.org/api/v2/package/Microsoft.Direct3D.WARP
         ${WARP_PKG_PATH}
         STATUS DOWNLOAD_STATUS
     )

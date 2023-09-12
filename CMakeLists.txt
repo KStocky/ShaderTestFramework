@@ -17,6 +17,7 @@ set(GLOBAL_COMPILE_FLAGS
 
 find_package(D3D12AgilitySdk REQUIRED)
 find_package(WARPPackage REQUIRED)
+find_package(DXC REQUIRED)
 
 add_subdirectory(src)
 
