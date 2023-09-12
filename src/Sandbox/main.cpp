@@ -1,5 +1,4 @@
 #include "ShaderTestFixture.h"
-#include "D3D12AgilityDefinitions.h"
 
 int main()
 {

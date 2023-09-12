@@ -1,27 +1,26 @@
-#include <CppUnitTest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include "ShaderTestFixture.h"
-#include "D3D12AgilityDefinitions.h"
 
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
-namespace ShaderTestFrameworkTests
+TEST_CASE("BasicTests")
 {
-    TEST_CLASS(BasicTests) {
-    public:
-        TEST_METHOD(This_Should_Succeed) 
-        { 
-            Assert::AreEqual(0, 0); 
-        }
-        TEST_METHOD(This_Should_Also_Succeed) { Assert::AreNotEqual(0, 42); }
-    };
+    SECTION("This_Should_Succeed") 
+    { 
+        REQUIRE(0 == 0); 
+    }
 
-    TEST_CLASS(ShaderTestFixtureTests)
+    SECTION("This_Should_Also_Succeed") 
+    { 
+        REQUIRE(0 != 42); 
+    }
+}
+
+TEST_CASE("ShaderTestFixtureTests")
+{
+    SECTION("This_Should_Succeed")
     {
-        TEST_METHOD(This_Should_Succeed)
-        {
-            ShaderTestFixture Test;
-            Assert::IsTrue(Test.IsValid());
-        }
-    };
+        ShaderTestFixture Test;
+        REQUIRE(Test.IsValid());
+        REQUIRE(Test.IsUsingAgilitySDK());
+    }
 }
