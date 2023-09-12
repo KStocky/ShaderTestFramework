@@ -1,7 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "ShaderTestFixture.h"
-#include "D3D12AgilityDefinitions.h"
 
 TEST_CASE("BasicTests")
 {

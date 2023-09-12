@@ -16,6 +16,7 @@ set(GLOBAL_COMPILE_FLAGS
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic> )
 
 find_package(D3D12AgilitySdk REQUIRED)
+find_package(WARPPackage REQUIRED)
 
 add_subdirectory(src)
 
