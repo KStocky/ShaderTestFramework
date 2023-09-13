@@ -32,6 +32,8 @@ bld/
 [Ll]og/
 [Ll]ogs/
 [Bb]uild/
+[Aa]gilitySDK
+[Ee]xtern/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/

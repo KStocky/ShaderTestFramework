@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+
+    <RunConfiguration>
+        <MaxCpuCount>4</MaxCpuCount>
+        <ResultsDirectory>.\TestResults</ResultsDirectory><!-- Path relative to solution directory -->
+        <TestSessionTimeout>60000</TestSessionTimeout><!-- Milliseconds -->
+    </RunConfiguration>
+    <!-- Adapter Specific sections -->
+    <Catch2Adapter>
+        <FilenameFilter>.*</FilenameFilter><!-- Regex filter -->
+    </Catch2Adapter>
+
+</RunSettings>
