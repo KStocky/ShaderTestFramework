@@ -5,7 +5,7 @@ project(
     DESCRIPTION "A testing framework for shader code"
     LANGUAGES CXX )
 
-list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/modules")
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 20)
@@ -15,6 +15,10 @@ set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
 set(GLOBAL_COMPILE_FLAGS 
     $<$<CXX_COMPILER_ID:MSVC>:/W4> 
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic> )
+
+include("${CMAKE_HOME_DIRECTORY}/cmake/DllDependencyManagement.cmake")
+
+dll_dependency_init()
 
 find_package(D3D12AgilitySdk REQUIRED)
 find_package(WARPPackage REQUIRED)
