@@ -6,9 +6,6 @@ target_sources(Sandbox PRIVATE
 target_link_libraries(Sandbox PRIVATE ShaderTestFramework)
 target_compile_options(Sandbox PRIVATE ${GLOBAL_COMPILE_FLAGS})
 
-set(AGILITY_SDK_PATH_REL "./D3D12/")
-set(AGILITY_SDK_PATH_DEFINE "${AGILITY_SDK_PATH_REL}")
-
-target_compile_definitions(Sandbox PRIVATE "D3D12_AGILITY_SDK_PATH=\"${AGILITY_SDK_PATH_DEFINE}\"")
+target_compile_definitions(Sandbox PRIVATE "D3D12_AGILITY_SDK_PATH=\"./D3D12/\"")
 
 copy_all_dependent_dlls(Sandbox)
