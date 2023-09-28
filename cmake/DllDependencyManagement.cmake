@@ -49,8 +49,7 @@ function(copy_all_dependent_dlls IN_TARGET)
     foreach(TARGET IN LISTS ALL_LIBS)
         if (DEFINED CACHE{TARGET_DIRECTORY_SRC_${TARGET}})
             foreach(DLL_DIR IN ZIP_LISTS TARGET_DIRECTORY_SRC_${TARGET} TARGET_DIRECTORY_DST_${TARGET})
-                message("Copy Src: ${DLL_DIR_0}")
-                message("Copy Dst: ${DLL_DIR_1}")
+
                 add_custom_command(TARGET ${IN_TARGET} POST_BUILD
                     COMMAND ${CMAKE_COMMAND} -E copy_directory
                     ${DLL_DIR_0}

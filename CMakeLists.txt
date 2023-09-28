@@ -17,15 +17,18 @@ set(GLOBAL_COMPILE_FLAGS
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic> )
 
 include("${CMAKE_HOME_DIRECTORY}/cmake/DllDependencyManagement.cmake")
+include("${CMAKE_HOME_DIRECTORY}/cmake/Nuget.cmake")
+include("${CMAKE_HOME_DIRECTORY}/cmake/NugetPackages.cmake")
 
 dll_dependency_init()
+nuget_initialize("${CMAKE_HOME_DIRECTORY}/extern")
 
-find_package(D3D12AgilitySdk REQUIRED)
-find_package(WARPPackage REQUIRED)
-find_package(DXC REQUIRED)
-
+#find_package(D3D12AgilitySdk REQUIRED)
+#find_package(WARPPackage REQUIRED)
+#find_package(DXC REQUIRED)
+#
 add_subdirectory(src)
-
+#
 enable_testing()
 add_subdirectory(test)
 
