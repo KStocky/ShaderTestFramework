@@ -2,7 +2,10 @@ include("${CMAKE_HOME_DIRECTORY}/cmake/DllDependencyManagement.cmake")
 find_package(Catch2 REQUIRED)
 
 add_executable(ShaderTestFrameworkTests)
-target_sources(ShaderTestFrameworkTests PRIVATE BasicTests.cpp)
+target_sources(ShaderTestFrameworkTests PRIVATE 
+    BasicTests.cpp
+    ShaderCompilerTests.cpp
+    ShaderTestFixtureTests.cpp)
 target_link_libraries(ShaderTestFrameworkTests PRIVATE ShaderTestFramework Catch2::Catch2WithMain)
 target_compile_options(ShaderTestFrameworkTests PRIVATE ${GLOBAL_COMPILE_FLAGS})
 

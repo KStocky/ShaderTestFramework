@@ -58,16 +58,18 @@ std::string MakeShaderTarget(const D3D_SHADER_MODEL InShaderModel, const EShader
 	const auto modelName = Enum::UnscopedName(InShaderModel);
 
 	std::string ret;
-	ret += static_cast<char>(std::tolower(typeName[0]));
-	ret += "s_";
+	if (InType != EShaderType::Lib)
+	{
+		ret += static_cast<char>(std::tolower(typeName[0]));
+		ret += "s_";
+	}
+	else
+	{
+		ret += "lib_";
+	}
 	ret += modelName.substr(modelName.rfind("L_") + 2);
 
 	return ret;
-}
-
-std::wstring ToWString(const std::string& InString)
-{
-	return std::wstring(InString.cbegin(), InString.cend());
 }
 
 std::vector<std::string> CompileShaderDXC(const ShaderCompilationJobDesc& InJob)
@@ -182,6 +184,11 @@ std::vector<std::string> CompileShaderDXC(const ShaderCompilationJobDesc& InJob)
 	{
 		args.push_back(L"-D");
 		args.push_back(std::format(L"{}={}", ToWString(define.Name), ToWString(define.Definition)));
+	}
+
+	for (const auto& extra : InJob.AdditionalFlags)
+	{
+		args.push_back(extra);
 	}
 
 	std::vector<LPCWSTR> rawArgs;
