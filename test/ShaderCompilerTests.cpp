@@ -202,5 +202,47 @@ SCENARIO("ShaderModelTests")
             }
         }
     }
+
+    GIVEN("A pixel shader with sampler feedback")
+    {
+        job.Source = std::string{
+            R"(         
+
+            Texture2D<float4> g_texture : register(t0);
+
+            SamplerState g_sampler : register(s0);
+            FeedbackTexture2D<SAMPLER_FEEDBACK_MIP_REGION_USED> g_feedback : register(u3);
+
+            float4 Main() : SV_TARGET
+            {
+                //float2 uv = in.uv;
+                g_feedback.WriteSamplerFeedback(g_texture, g_sampler, float2(0.0, 0.5));
+
+                return g_texture.Sample(g_sampler, float2(0.5,0.5));
+            }
+            )" };
+
+        job.ShaderType = EShaderType::Pixel;
+
+        WHEN("Compiled with " << Enum::UnscopedName(job.ShaderModel))
+        {
+            const auto errors = CompileShader(job);
+
+            if (job.ShaderModel >= D3D_SHADER_MODEL_6_5)
+            {
+                THEN("Compilation succeeds")
+                {
+                    REQUIRE(0ull == errors.size());
+                }
+            }
+            else
+            {
+                THEN("Compilation fails")
+                {
+                    REQUIRE(1ull == errors.size());
+                }
+            }
+        }
+    }
 }
 
