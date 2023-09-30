@@ -244,5 +244,43 @@ SCENARIO("ShaderModelTests")
             }
         }
     }
+
+    GIVEN("Compute Shader with dynamic resources")
+    {
+        job.Source = std::string{
+            R"(
+            
+            int BuffIndex;
+            int64_t InVal;
+            [numthreads(1,1,1)]
+            void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+            {
+                RWBuffer<int64_t> Buff = ResourceDescriptorHeap[BuffIndex];
+                Buff[DispatchThreadId.x] = (DispatchThreadId.x + 34) * InVal;
+            }
+            )" };
+
+        job.ShaderType = EShaderType::Compute;
+
+        WHEN("Compiled with " << Enum::UnscopedName(job.ShaderModel))
+        {
+            const auto errors = CompileShader(job);
+
+            if (job.ShaderModel >= D3D_SHADER_MODEL_6_6)
+            {
+                THEN("Compilation succeeds")
+                {
+                    REQUIRE(0ull == errors.size());
+                }
+            }
+            else
+            {
+                THEN("Compilation fails")
+                {
+                    REQUIRE(1ull == errors.size());
+                }
+            }
+        }
+    }
 }
 
