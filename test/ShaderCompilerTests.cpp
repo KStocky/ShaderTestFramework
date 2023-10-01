@@ -282,5 +282,82 @@ SCENARIO("ShaderModelTests")
             }
         }
     }
+
+    GIVEN("A pixel shader with QuadAny")
+    {
+        job.Source = std::string{
+            R"(         
+
+            SamplerState s0 : register(s0);
+            Texture2D t0 : register(t0);
+
+            float4 Main(float4 pos : SV_POSITION, float2 uv : TEXCOORD0) : SV_Target
+            {
+                float4 ret = 0;
+                bool cond = pos.x > 500;
+
+                if (QuadAny(cond))
+                {
+                    float2 temp_uv = float2(0.0, 0.5);
+                    float4 sampled_result = t0.Sample(s0, temp_uv);
+                    if (cond)
+                    {
+                        ret = sampled_result;
+                    }
+                }
+                return ret;
+            }
+            )" };
+
+        job.ShaderType = EShaderType::Pixel;
+
+        WHEN("Compiled with " << Enum::UnscopedName(job.ShaderModel))
+        {
+            const auto errors = CompileShader(job);
+
+            THEN("Compilation succeeds")
+            {
+                REQUIRE(0ull == errors.size());
+            }
+        }
+    }
+
+    GIVEN("A compute shader with Writable MSAA Textures")
+    {
+        job.Source = std::string{
+            R"(         
+
+            RWTexture2DMS<float4, 4> Buff;
+
+            float4 InVal;
+            [numthreads(1,1,1)]
+            void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+            {
+                Buff[DispatchThreadId.xy] = InVal;
+            }
+            )" };
+
+        job.ShaderType = EShaderType::Compute;
+
+        WHEN("Compiled with " << Enum::UnscopedName(job.ShaderModel))
+        {
+            const auto errors = CompileShader(job);
+
+            if (job.ShaderModel >= D3D_SHADER_MODEL_6_7)
+            {
+                THEN("Compilation succeeds")
+                {
+                    REQUIRE(0ull == errors.size());
+                }
+            }
+            else
+            {
+                THEN("Compilation fails")
+                {
+                    REQUIRE(1ull == errors.size());
+                }
+            }
+        }
+    }
 }
 
