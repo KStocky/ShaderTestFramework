@@ -186,9 +186,9 @@ std::vector<std::string> CompileShaderDXC(const ShaderCompilationJobDesc& InJob)
 		args.push_back(std::format(L"{}={}", ToWString(define.Name), ToWString(define.Definition)));
 	}
 
-	for (const auto& extra : InJob.AdditionalFlags)
+	for (auto&& extra : InJob.AdditionalFlags)
 	{
-		args.push_back(extra);
+		args.push_back(std::move(extra));
 	}
 
 	std::vector<LPCWSTR> rawArgs;
