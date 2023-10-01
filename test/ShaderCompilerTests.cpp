@@ -1,6 +1,6 @@
 #include "EnumReflection.h"
 #include "ShaderCompiler.h"
-#include "Utility.h"
+#include <tuple>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
@@ -26,7 +26,7 @@ SCENARIO("ShaderModelTests")
             R"(
             
             RWBuffer<int64_t> Buff;
-
+    
             int64_t InVal;
             [numthreads(1,1,1)]
             void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
@@ -34,13 +34,13 @@ SCENARIO("ShaderModelTests")
                 Buff[DispatchThreadId.x] = (DispatchThreadId.x + 34) * InVal;
             }
             )" };
-
+    
         job.ShaderType = EShaderType::Compute;
-
+    
         WHEN("Compiled with " << Enum::UnscopedName(job.ShaderModel))
         {
             const auto errors = CompileShader(job);
-
+    
             THEN("Compilation succeeds")
             {
                 REQUIRE(0ull == errors.size());
@@ -58,13 +58,13 @@ SCENARIO("ShaderModelTests")
                 return float4(baryWeights, 0.0);
             }
             )" };
-
+    
         job.ShaderType = EShaderType::Pixel;
-
+    
         WHEN("Compiled with " << Enum::UnscopedName(job.ShaderModel))
         {
             const auto errors = CompileShader(job);
-
+    
             if (job.ShaderModel >= D3D_SHADER_MODEL_6_1)
             {
                 THEN("Compilation succeeds")
@@ -353,6 +353,89 @@ SCENARIO("ShaderModelTests")
             else
             {
                 THEN("Compilation fails")
+                {
+                    REQUIRE(1ull == errors.size());
+                }
+            }
+        }
+    }
+}
+
+SCENARIO("ShaderModelTestsParameterized")
+{
+    auto [name, code, shaderType, flags, successCondition] =
+        GENERATE
+        (
+            table<std::string, std::string, EShaderType, std::vector<std::wstring>, bool(*)(const D3D_SHADER_MODEL)>
+            (
+                {
+                    std::tuple
+                    {
+                        "Compute shader with 64 bit integers",
+                        R"(
+                        RWBuffer<int64_t> Buff;
+
+                        int64_t InVal;
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            Buff[DispatchThreadId.x] = (DispatchThreadId.x + 34) * InVal;
+                        }
+                        )",
+                        EShaderType::Compute,
+                        std::vector<std::wstring>{},
+                        [](const D3D_SHADER_MODEL) { return true; }
+                    },
+                    std::tuple
+                    {
+                        "Pixel Shader with SV_Barycentrics",
+                        R"(
+                        float4 Main(float3 baryWeights : SV_Barycentrics) : SV_Target 
+                        {
+                            return float4(baryWeights, 0.0);
+                        }
+                        )",
+                        EShaderType::Pixel,
+                        std::vector<std::wstring>{},
+                        [](const D3D_SHADER_MODEL In) { return In >= D3D_SHADER_MODEL_6_1; }
+                    },
+                }
+            )
+        );
+
+    auto shaderModel = GENERATE(
+        D3D_SHADER_MODEL_6_0,
+        D3D_SHADER_MODEL_6_1,
+        D3D_SHADER_MODEL_6_2,
+        D3D_SHADER_MODEL_6_3,
+        D3D_SHADER_MODEL_6_4,
+        D3D_SHADER_MODEL_6_5,
+        D3D_SHADER_MODEL_6_6,
+        D3D_SHADER_MODEL_6_7);
+
+    ShaderCompilationJobDesc job;
+    job.Name = "Test";
+    job.EntryPoint = "Main";
+    job.ShaderModel = shaderModel;
+    job.ShaderType = shaderType;
+    job.AdditionalFlags = flags;
+    job.Source = code;
+
+    GIVEN(name)
+    {
+        WHEN("Compiled with " << Enum::UnscopedName(shaderModel))
+        {
+            const auto errors = CompileShader(job);
+            if (successCondition(shaderModel))
+            {
+                THEN("Compilation Succeeds")
+                {
+                    REQUIRE(0ull == errors.size());
+                }
+            }
+            else
+            {
+                THEN("Compilation Fails")
                 {
                     REQUIRE(1ull == errors.size());
                 }
