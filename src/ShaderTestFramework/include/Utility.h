@@ -7,6 +7,7 @@
 #include <iterator>
 #include <ranges>
 #include <span>
+#include <sstream>
 #include <string_view>
 #include <type_traits>
 #include <variant>
@@ -51,4 +52,9 @@ template<typename... T>
 void CheckTemplateArgs() 
 {
     static_assert(AlwaysFalse<T...>);
+}
+
+inline std::wstring ToWString(const std::string& InString)
+{
+    return std::wstring(InString.cbegin(), InString.cend());
 }

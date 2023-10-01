@@ -42,6 +42,7 @@ struct ShaderCompilationJobDesc
     ShaderCodeSource Source;
     std::string Name;
     std::vector<ShaderMacro> Defines;
+    std::vector<std::wstring> AdditionalFlags;
     std::string EntryPoint;
     D3D_SHADER_MODEL ShaderModel;
     EShaderType ShaderType;

@@ -30,5 +30,6 @@ enum class EShaderType : uint8_t
 	Domain,
 	Geometry,
 	Pixel,
-	Compute
+	Compute,
+	Lib
 };
