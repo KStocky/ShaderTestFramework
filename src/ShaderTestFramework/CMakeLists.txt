@@ -11,19 +11,26 @@ set_target_properties(DXC PROPERTIES
 )
 
 add_library(ShaderTestFramework)
-target_sources(ShaderTestFramework PRIVATE 
-    include/D3D12AgilityDefinitions.h
-    include/EnumReflection.h
-    include/ShaderCompiler.h
-    include/ShaderEnums.h
-    include/ShaderTestFixture.h
-    include/Utility.h
-    ShaderCompiler.cpp
-    ShaderTestFixture.cpp)
 
-target_include_directories(ShaderTestFramework PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include/ )
+set(SOURCES
+    Public/D3D12AgilityDefinitions.h
+    Public/EnumReflection.h
+    Public/Platform.h
+    Public/ShaderCompiler.h
+    Public/ShaderEnums.h
+    Public/ShaderTestFixture.h
+    Public/Utility.h
+    Private/D3D12/ShaderCompiler.cpp
+    Private/ShaderTestFixture.cpp)
+
+target_sources(ShaderTestFramework PRIVATE 
+    ${SOURCES})
+
+target_include_directories(ShaderTestFramework PUBLIC ${CMAKE_CURRENT_LIST_DIR}/Public/ )
 
 target_include_directories(ShaderTestFramework PRIVATE ${AGILITY_INCLUDE} ${DXC_INCLUDE} )
+
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})
 
 target_add_dll_directory(ShaderTestFramework ${AGILITY_DLL} "/D3D12" SRC_DIRS DEST_DIRS)
 target_add_dll_directory(ShaderTestFramework ${WARP_DLL} "/" SRC_DIRS DEST_DIRS)
