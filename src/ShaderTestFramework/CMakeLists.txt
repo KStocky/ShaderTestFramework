@@ -14,7 +14,7 @@ add_library(ShaderTestFramework)
 
 set(SOURCES
     Public/D3D12/GPUDevice.h
-    Public/D3D12AgilityDefinitions.h
+    Public/D3D12/AgilityDefinitions.h
     Public/Exception.h
     Public/EnumReflection.h
     Public/Platform.h
