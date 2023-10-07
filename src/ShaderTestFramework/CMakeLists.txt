@@ -1,7 +1,7 @@
 include("${CMAKE_HOME_DIRECTORY}/cmake/DllDependencyManagement.cmake")
 include("${CMAKE_HOME_DIRECTORY}/cmake/NugetPackages.cmake")
 
-nuget_get_agility_sdk(AGILITY_FOUND AGILITY_INCLUDE AGILITY_DLL)
+nuget_get_agility_sdk(AGILITY_FOUND AGILITY_INCLUDE AGILITY_DLL SDK_VER)
 nuget_get_dxc(DXC_FOUND DXC_INCLUDE DXC_DLL DXC_LIB)
 nuget_get_warp(WARP_FOUND WARP_DLL)
 
@@ -33,6 +33,8 @@ target_sources(ShaderTestFramework PRIVATE
 target_include_directories(ShaderTestFramework PUBLIC ${CMAKE_CURRENT_LIST_DIR}/Public/ )
 
 target_include_directories(ShaderTestFramework PRIVATE ${AGILITY_INCLUDE} ${DXC_INCLUDE} )
+
+target_compile_definitions(ShaderTestFramework PRIVATE D3D12_SDK_VERSION_ID=${SDK_VER})
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})
 
