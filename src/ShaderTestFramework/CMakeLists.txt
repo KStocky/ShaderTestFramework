@@ -32,7 +32,7 @@ target_sources(ShaderTestFramework PRIVATE
 
 target_include_directories(ShaderTestFramework PUBLIC ${CMAKE_CURRENT_LIST_DIR}/Public/ )
 
-target_include_directories(ShaderTestFramework PUBLIC ${AGILITY_INCLUDE} ${DXC_INCLUDE} )
+target_include_directories(ShaderTestFramework PRIVATE ${AGILITY_INCLUDE} ${DXC_INCLUDE} )
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})
 

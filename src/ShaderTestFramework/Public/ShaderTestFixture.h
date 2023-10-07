@@ -1,12 +1,15 @@
 #pragma once
 
-#include "D3D12/GPUDevice.h"
+#include "Pointer.h"
+
+class GPUDevice;
 
 class ShaderTestFixture
 {
 public:
 
     ShaderTestFixture();
+    ~ShaderTestFixture();
 
     bool IsValid() const;
 

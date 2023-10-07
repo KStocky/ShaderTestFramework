@@ -1,8 +1,8 @@
 #pragma once
 
-#include <cstdint>
+#include "Platform.h"
 
-enum class EShaderCompileFlags : uint32_t
+enum class EShaderCompileFlags : u32
 {
 	Debug = (1 << 0),
 	SkipValidation = (1 << 1),
@@ -22,7 +22,7 @@ enum class EShaderCompileFlags : uint32_t
 	AllResourcesBound = (1 << 21)
 };
 
-enum class EShaderType : uint8_t
+enum class EShaderType : u8
 {
 	None,
 	Vertex,

@@ -1,19 +1,6 @@
 #include "ShaderTestFixture.h"
 
-#include "D3D12AgilityDefinitions.h"
-
-#include <dxgi1_6.h>
-#include <dxgidebug.h>
-
-#include <algorithm>
-#include <array>
-#include <cstdint>
-#include <format>
-#include <iostream>
-#include <span>
-#include <stdexcept>
-#include <string>
-#include <vector>
+#include "D3D12/GPUDevice.h"
 
 ShaderTestFixture::ShaderTestFixture()
 	: m_Device(MakeUnique<GPUDevice>(GPUDevice::CreationParams
@@ -22,6 +9,11 @@ ShaderTestFixture::ShaderTestFixture()
 			.DeviceType = GPUDevice::EDeviceType::Software
 		}))
 {
+}
+
+ShaderTestFixture::~ShaderTestFixture()
+{
+	// Explicitly defined to allow forward declaring of UniquePtr types
 }
 
 bool ShaderTestFixture::IsValid() const

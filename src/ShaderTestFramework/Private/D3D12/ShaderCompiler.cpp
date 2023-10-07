@@ -1,16 +1,13 @@
 #include "ShaderCompiler.h"
 
 #include "EnumReflection.h"
+#include "Pointer.h"
 #include "Utility.h"
 
-#include <wrl/client.h>
+#include <fstream>
 
-#include <d3d12shader.h>
 #include <dxcapi.h>
-#include <dxcerrors.h>
-#include <dxcisense.h>
 
-using namespace Microsoft::WRL;
 ShaderCodeSource::ShaderCodeSource(std::string InSourceCode)
 	: m_Source(std::move(InSourceCode))
 {}
