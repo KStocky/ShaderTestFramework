@@ -13,13 +13,17 @@ set_target_properties(DXC PROPERTIES
 add_library(ShaderTestFramework)
 
 set(SOURCES
+    Public/D3D12/GPUDevice.h
     Public/D3D12AgilityDefinitions.h
+    Public/Exception.h
     Public/EnumReflection.h
     Public/Platform.h
+    Public/Pointer.h
     Public/ShaderCompiler.h
     Public/ShaderEnums.h
     Public/ShaderTestFixture.h
     Public/Utility.h
+    Private/D3D12/GPUDevice.cpp
     Private/D3D12/ShaderCompiler.cpp
     Private/ShaderTestFixture.cpp)
 
@@ -28,7 +32,7 @@ target_sources(ShaderTestFramework PRIVATE
 
 target_include_directories(ShaderTestFramework PUBLIC ${CMAKE_CURRENT_LIST_DIR}/Public/ )
 
-target_include_directories(ShaderTestFramework PRIVATE ${AGILITY_INCLUDE} ${DXC_INCLUDE} )
+target_include_directories(ShaderTestFramework PUBLIC ${AGILITY_INCLUDE} ${DXC_INCLUDE} )
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})
 

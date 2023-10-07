@@ -1,9 +1,6 @@
 #pragma once
 
-#include <d3d12.h>
-#include <wrl/client.h>
-
-using Microsoft::WRL::ComPtr;
+#include "D3D12/GPUDevice.h"
 
 class ShaderTestFixture
 {
@@ -17,5 +14,5 @@ public:
 
 private:
 
-    ComPtr<ID3D12Device> m_Device = nullptr;
+    UniquePtr<GPUDevice> m_Device;
 };
