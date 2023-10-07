@@ -13,16 +13,19 @@ set_target_properties(DXC PROPERTIES
 add_library(ShaderTestFramework)
 
 set(SOURCES
-    Public/D3D12/GPUDevice.h
     Public/D3D12/AgilityDefinitions.h
+    Public/D3D12/Fence.h
+    Public/D3D12/GPUDevice.h
     Public/Exception.h
     Public/EnumReflection.h
+    Public/MoveOnly.h
     Public/Platform.h
     Public/Pointer.h
     Public/ShaderCompiler.h
     Public/ShaderEnums.h
     Public/ShaderTestFixture.h
     Public/Utility.h
+    Private/D3D12/Fence.cpp
     Private/D3D12/GPUDevice.cpp
     Private/D3D12/ShaderCompiler.cpp
     Private/ShaderTestFixture.cpp)
