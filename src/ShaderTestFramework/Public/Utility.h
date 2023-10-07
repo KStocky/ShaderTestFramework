@@ -1,16 +1,10 @@
 #pragma once
 
-#include <algorithm>
-#include <array>
-#include <cstdint>
-#include <concepts>
 #include <iterator>
 #include <ranges>
 #include <span>
-#include <sstream>
 #include <string_view>
 #include <type_traits>
-#include <variant>
 #include <vector>
 
 

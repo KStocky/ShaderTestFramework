@@ -1,15 +1,15 @@
 #pragma once
 
-#include <d3d12.h>
-#include <wrl/client.h>
+#include "Pointer.h"
 
-using Microsoft::WRL::ComPtr;
+class GPUDevice;
 
 class ShaderTestFixture
 {
 public:
 
     ShaderTestFixture();
+    ~ShaderTestFixture();
 
     bool IsValid() const;
 
@@ -17,5 +17,5 @@ public:
 
 private:
 
-    ComPtr<ID3D12Device> m_Device = nullptr;
+    UniquePtr<GPUDevice> m_Device;
 };

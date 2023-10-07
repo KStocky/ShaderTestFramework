@@ -51,7 +51,7 @@ namespace Private
 			return {};
 		}
 
-		constexpr std::size_t begin = [funcSig, end]() constexpr
+		constexpr std::size_t begin = [funcSig, end]()
 		{
 			for (size_t i = end - 1; i >= 0; --i)
 			{
