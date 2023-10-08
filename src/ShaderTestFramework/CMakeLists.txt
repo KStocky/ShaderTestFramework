@@ -13,6 +13,7 @@ set_target_properties(DXC PROPERTIES
 add_library(ShaderTestFramework)
 
 set(SOURCES
+    Public/Container/RingBuffer.h
     Public/D3D12/AgilityDefinitions.h
     Public/D3D12/Descriptor.h
     Public/D3D12/Fence.h

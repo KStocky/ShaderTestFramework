@@ -5,6 +5,7 @@ add_executable(ShaderTestFrameworkTests)
 target_sources(ShaderTestFrameworkTests PRIVATE 
     BasicTests.cpp
     DescriptorTests.cpp
+    RingBufferTests.cpp
     ShaderCompilerTests.cpp
     ShaderTestFixtureTests.cpp)
 
