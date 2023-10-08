@@ -1,6 +1,8 @@
 #pragma once
 
+#define WIN32_LEAN_AND_MEAN
 #include <cstdint>
+#include <Windows.h>
 
 using u8 = std::uint8_t;
 using u16 = std::uint16_t;

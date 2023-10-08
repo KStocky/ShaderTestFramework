@@ -6,7 +6,8 @@
 #include <stdexcept>
 #include <string>
 
-std::string HrToString(HRESULT hr)
+
+inline std::string HrToString(HRESULT hr)
 {
     return std::format("HRESULT of {:#08x}", static_cast<u32>(hr));
 }
@@ -20,7 +21,7 @@ private:
     const HRESULT m_hr;
 };
 
-void ThrowIfFailed(HRESULT hr)
+inline void ThrowIfFailed(HRESULT hr)
 {
     if (FAILED(hr))
     {
@@ -28,7 +29,7 @@ void ThrowIfFailed(HRESULT hr)
     }
 }
 
-void ThrowIfFalse(const bool InCondition, std::string InMessage = "Condition was not true")
+inline void ThrowIfFalse(const bool InCondition, std::string InMessage = "Condition was not true")
 {
     if (!InCondition)
     {
