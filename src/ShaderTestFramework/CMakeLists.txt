@@ -16,6 +16,7 @@ set(SOURCES
     Public/Container/RingBuffer.h
     Public/D3D12/AgilityDefinitions.h
     Public/D3D12/Descriptor.h
+    Public/D3D12/DescriptorFreeListAllocator.h
     Public/D3D12/Fence.h
     Public/D3D12/GPUDevice.h
     Public/Exception.h
@@ -28,6 +29,7 @@ set(SOURCES
     Public/ShaderTestFixture.h
     Public/Utility.h
     Private/D3D12/Descriptor.cpp
+    Private/D3D12/DescriptorFreeListAllocator.cpp
     Private/D3D12/Fence.cpp
     Private/D3D12/GPUDevice.cpp
     Private/D3D12/ShaderCompiler.cpp

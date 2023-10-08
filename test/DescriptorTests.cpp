@@ -3,8 +3,6 @@
 #include <D3D12/Descriptor.h>
 
 #include <functional>
-#include <ranges>
-#include <tuple>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>

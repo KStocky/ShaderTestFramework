@@ -4,6 +4,7 @@ find_package(Catch2 REQUIRED)
 add_executable(ShaderTestFrameworkTests)
 target_sources(ShaderTestFrameworkTests PRIVATE 
     BasicTests.cpp
+    DescriptorFreeListAllocatorTests.cpp
     DescriptorTests.cpp
     RingBufferTests.cpp
     ShaderCompilerTests.cpp
