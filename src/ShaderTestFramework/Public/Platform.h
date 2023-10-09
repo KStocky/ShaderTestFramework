@@ -2,6 +2,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <cstdint>
+#include <expected>
 #include <Windows.h>
 
 using u8 = std::uint8_t;
@@ -17,3 +18,5 @@ using i64 = std::int64_t;
 using f32 = float;
 using f64 = double;
 
+template<typename T>
+using ExpectedHRes = std::expected<T, HRESULT>;

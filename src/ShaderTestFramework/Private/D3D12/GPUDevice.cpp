@@ -10,6 +10,12 @@
 
 namespace
 {
+
+	void SetName(ID3D12Object* InObject, const std::string_view InString)
+	{
+		InObject->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<uint32_t>(InString.size()), InString.data());
+	}
+
 	struct AdapterAndFeatureLevel
 	{
 		ComPtr<IDXGIAdapter4> Adapter = nullptr;
@@ -141,6 +147,20 @@ GPUDevice::~GPUDevice()
 bool GPUDevice::IsValid() const
 {
 	return m_Device.Get() != nullptr;
+}
+
+ExpectedHRes<DescriptorHeap> GPUDevice::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName)
+{
+	ComPtr<ID3D12DescriptorHeap> heap = nullptr;
+	const auto hresult = m_Device->CreateDescriptorHeap(&InDesc, IID_PPV_ARGS(heap.GetAddressOf()));
+	
+	if (FAILED(hresult))
+	{
+		return std::unexpected(hresult);
+	}
+
+	SetName(heap.Get(), InName);
+	return DescriptorHeap(DescriptorHeap::Desc{ std::move(heap), GetDescriptorSize(InDesc.Type) });
 }
 
 void GPUDevice::SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes)

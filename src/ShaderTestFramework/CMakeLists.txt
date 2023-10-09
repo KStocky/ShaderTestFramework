@@ -17,6 +17,7 @@ set(SOURCES
     Public/D3D12/AgilityDefinitions.h
     Public/D3D12/Descriptor.h
     Public/D3D12/DescriptorFreeListAllocator.h
+    Public/D3D12/DescriptorHeap.h
     Public/D3D12/DescriptorRingAllocator.h
     Public/D3D12/Fence.h
     Public/D3D12/GPUDevice.h
@@ -31,6 +32,7 @@ set(SOURCES
     Public/Utility.h
     Private/D3D12/Descriptor.cpp
     Private/D3D12/DescriptorFreeListAllocator.cpp
+    Private/D3D12/DescriptorHeap.cpp
     Private/D3D12/DescriptorRingAllocator.cpp
     Private/D3D12/Fence.cpp
     Private/D3D12/GPUDevice.cpp
@@ -52,6 +54,6 @@ target_add_dll_directory(ShaderTestFramework ${AGILITY_DLL} "/D3D12" SRC_DIRS DE
 target_add_dll_directory(ShaderTestFramework ${WARP_DLL} "/" SRC_DIRS DEST_DIRS)
 target_add_dll_directory(ShaderTestFramework ${DXC_DLL} "/" SRC_DIRS DEST_DIRS)
 
-target_link_libraries(ShaderTestFramework PRIVATE d3d12.lib dxgi.lib DXC)
+target_link_libraries(ShaderTestFramework PRIVATE d3d12.lib dxgi.lib DXC dxguid.lib)
 
 target_compile_options(ShaderTestFramework PRIVATE ${GLOBAL_COMPILE_FLAGS})

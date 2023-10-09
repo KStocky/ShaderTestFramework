@@ -1,5 +1,6 @@
 #pragma once
 
+#include "D3D12/DescriptorHeap.h"
 #include "Platform.h"
 #include "Pointer.h"
 
@@ -107,10 +108,13 @@ public:
 		EDeviceType DeviceType = EDeviceType::Software;
 	};
 
+	GPUDevice() = default;
 	GPUDevice(const CreationParams InDesc);
 	~GPUDevice();
 
 	bool IsValid() const;
+
+	ExpectedHRes<DescriptorHeap> CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName = "DefaultDescriptorHeap");
 
 	void SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes);
 	void SetSystemVideoMemoryReservation(const u64 InNewReservationBytes);
