@@ -24,7 +24,7 @@ DescriptorHeap::Expected<DescriptorRange> DescriptorHeap::CreateDescriptorRange(
 
 DescriptorHeap::Expected<DescriptorHandle> DescriptorHeap::CreateDescriptorHandle(const u32 InIndex)
 {
-	return CreateDescriptorRange(InIndex, 1).and_then([](const DescriptorRange& InRange) { return Expected<DescriptorHandle>{ *InRange[0] }; });
+	return CreateDescriptorRange(InIndex, 1).transform([](const auto& InRange) { return *InRange[0]; });
 }
 
 u32 DescriptorHeap::GetNumDescriptors() const noexcept
