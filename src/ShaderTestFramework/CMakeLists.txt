@@ -57,3 +57,6 @@ target_add_dll_directory(ShaderTestFramework ${DXC_DLL} "/" SRC_DIRS DEST_DIRS)
 target_link_libraries(ShaderTestFramework PRIVATE d3d12.lib dxgi.lib DXC dxguid.lib)
 
 target_compile_options(ShaderTestFramework PRIVATE ${GLOBAL_COMPILE_FLAGS})
+
+add_custom_command(TARGET ShaderTestFramework PRE_BUILD
+                    COMMAND ${CMAKE_CXX_COMPILER} "/?")
