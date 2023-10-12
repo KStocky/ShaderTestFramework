@@ -15,7 +15,7 @@ DescriptorFreeListAllocator::Expected<DescriptorHandle> DescriptorFreeListAlloca
 {
 	if (m_FreeList.size() == 0)
 	{
-		return std::unexpected(EErrorType::EmptyError);
+		return Unexpected(EErrorType::EmptyError);
 	}
 
 	const auto index = m_FreeList.pop_front();
@@ -29,7 +29,7 @@ DescriptorFreeListAllocator::Expected<void> DescriptorFreeListAllocator::Release
 
 	if (!index.has_value() || m_FreeSet[*index] != 0)
 	{
-		return std::unexpected(EErrorType::InvalidDescriptor);
+		return Unexpected(EErrorType::InvalidDescriptor);
 	}
 
 	m_FreeList.push_back(*index);

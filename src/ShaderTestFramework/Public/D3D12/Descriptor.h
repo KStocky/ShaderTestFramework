@@ -1,9 +1,7 @@
 #pragma once
 
+#include "Expected.h"
 #include "Platform.h"
-
-#include <expected>
-#include <optional>
 
 #include <d3d12.h>
 
@@ -51,7 +49,7 @@ public:
 	};
 
 	template<typename T>
-	using Expected = std::expected<T, EErrorType>;
+	using Expected = Expected<T, EErrorType>;
 
 	DescriptorRange() = default;
 	DescriptorRange(DescriptorHandle InStart, const u32 InSize, const u32 InIncrement)
@@ -64,7 +62,7 @@ public:
 	{
 		if (!IsValidRange())
 		{
-			return std::unexpected(EErrorType::InvalidRange);
+			return Unexpected(EErrorType::InvalidRange);
 		}
 		return m_Start;
 	}
@@ -73,11 +71,11 @@ public:
 	{
 		if (!IsValidRange())
 		{
-			return std::unexpected(EErrorType::InvalidRange);
+			return Unexpected(EErrorType::InvalidRange);
 		}
 		if (InIndex >= m_Size)
 		{
-			return std::unexpected(EErrorType::InvalidIndex);
+			return Unexpected(EErrorType::InvalidIndex);
 		}
 
 		D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle{ m_Start.GetCPUHandle().ptr + m_Increment * InIndex };
@@ -94,11 +92,11 @@ public:
 	{
 		if (!IsValidRange())
 		{
-			return std::unexpected(EErrorType::InvalidRange);
+			return Unexpected(EErrorType::InvalidRange);
 		}
 		if (InStartIndex + InSize > m_Size)
 		{
-			return std::unexpected(EErrorType::InvalidSubrange);
+			return Unexpected(EErrorType::InvalidSubrange);
 		}
 
 		return DescriptorRange{ *(*this)[InStartIndex], InSize, m_Increment };
@@ -108,7 +106,7 @@ public:
 	{
 		if (!IsValidRange())
 		{
-			return std::unexpected(EErrorType::InvalidRange);
+			return Unexpected(EErrorType::InvalidRange);
 		}
 
 		const auto startRangeAddress = m_Start.GetCPUHandle();
@@ -116,7 +114,7 @@ public:
 
 		if (startRangeAddress.ptr > handleAddress.ptr)
 		{
-			return std::unexpected(EErrorType::InvalidHandle);
+			return Unexpected(EErrorType::InvalidHandle);
 		}
 		const auto diff = handleAddress.ptr - startRangeAddress.ptr;
 		const u32 ret = static_cast<u32>(diff / m_Increment);
@@ -124,7 +122,7 @@ public:
 
 		if (ret >= m_Size || remainder != 0)
 		{
-			return std::unexpected(EErrorType::InvalidHandle);
+			return Unexpected(EErrorType::InvalidHandle);
 		}
 
 		return ret;

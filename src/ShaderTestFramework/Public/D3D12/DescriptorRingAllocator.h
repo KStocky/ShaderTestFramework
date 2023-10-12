@@ -1,9 +1,8 @@
 #pragma once
 
 #include "D3D12/Descriptor.h"
+#include "Expected.h"
 #include "Platform.h"
-
-#include <expected>
 #include <utility>
 
 class DescriptorRingAllocator
@@ -18,7 +17,7 @@ public:
 	};
 
 	template<typename T>
-	using Expected = std::expected<T, EErrorType>;
+	using Expected = Expected<T, EErrorType>;
 
 	DescriptorRingAllocator() = default;
 	DescriptorRingAllocator(const DescriptorRange& InRange);

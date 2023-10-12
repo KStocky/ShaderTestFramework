@@ -10,7 +10,7 @@ DescriptorHeap::Expected<DescriptorRange> DescriptorHeap::CreateDescriptorRange(
 {
 	if ((InBeginIndex + InNum) > GetNumDescriptors())
 	{
-		return std::unexpected(EErrorType::AllocationError);
+		return Unexpected(EErrorType::AllocationError);
 	}
 
 	const u64 offset = InBeginIndex * m_DescriptorSize;

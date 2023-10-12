@@ -1,4 +1,5 @@
 include("${CMAKE_HOME_DIRECTORY}/cmake/DllDependencyManagement.cmake")
+include("${CMAKE_HOME_DIRECTORY}/cmake/ExternalProjects.cmake")
 include("${CMAKE_HOME_DIRECTORY}/cmake/NugetPackages.cmake")
 
 nuget_get_agility_sdk(AGILITY_FOUND AGILITY_INCLUDE AGILITY_DLL SDK_VER)
@@ -22,6 +23,7 @@ set(SOURCES
     Public/D3D12/Fence.h
     Public/D3D12/GPUDevice.h
     Public/Exception.h
+    Public/Expected.h
     Public/EnumReflection.h
     Public/MoveOnly.h
     Public/Platform.h
@@ -58,5 +60,4 @@ target_link_libraries(ShaderTestFramework PRIVATE d3d12.lib dxgi.lib DXC dxguid.
 
 target_compile_options(ShaderTestFramework PRIVATE ${GLOBAL_COMPILE_FLAGS})
 
-add_custom_command(TARGET ShaderTestFramework PRE_BUILD
-                    COMMAND ${CMAKE_CXX_COMPILER} "/?")
+add_tl_expected(ShaderTestFramework)

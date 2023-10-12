@@ -26,7 +26,7 @@ DescriptorRingAllocator::Expected<DescriptorRange> DescriptorRingAllocator::Allo
 
 	if (!CanAllocateInternal(numAllocated))
 	{
-		return std::unexpected(EErrorType::AllocationError);
+		return Unexpected(EErrorType::AllocationError);
 	}
 
 	m_Size += numAllocated;
@@ -39,7 +39,7 @@ DescriptorRingAllocator::Expected<void> DescriptorRingAllocator::Release(const u
 {
 	if (InNum > m_Size)
 	{
-		return std::unexpected(EErrorType::ReleaseError);
+		return Unexpected(EErrorType::ReleaseError);
 	}
 	m_ReleaseIndex = (m_ReleaseIndex + InNum) % GetCapacity();
 	m_Size -= InNum;

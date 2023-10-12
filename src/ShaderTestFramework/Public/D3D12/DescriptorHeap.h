@@ -1,11 +1,10 @@
 #pragma once
 
 #include "D3D12/Descriptor.h"
+#include "Expected.h"
 #include "MoveOnly.h"
 #include "Platform.h"
 #include "Pointer.h"
-
-#include <expected>
 
 #include <d3d12.h>
 
@@ -25,7 +24,7 @@ public:
 	};
 
 	template<typename T>
-	using Expected = std::expected<T, EErrorType>;
+	using Expected = Expected<T, EErrorType>;
 
 	DescriptorHeap() = default;
 	DescriptorHeap(Desc InParams) noexcept;

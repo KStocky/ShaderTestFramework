@@ -1,7 +1,7 @@
 #pragma once
-#include "Platform.h"
 
-#include <expected>
+#include "Expected.h"
+#include "Platform.h"
 #include <optional>
 #include <type_traits>
 #include <vector>
@@ -30,7 +30,7 @@ public:
 	};
 
 	template<typename T>
-	using Expected = std::expected<T, EErrorType>;
+	using Expected = Expected<T, EErrorType>;
 
 	template<Qualifier Qual, Direction Dir>
 	class Iterator
@@ -178,7 +178,7 @@ public:
 	{
 		if (empty())
 		{
-			return std::unexpected(EErrorType::EmptyBuffer);
+			return Unexpected(EErrorType::EmptyBuffer);
 		}
 
 		const auto prevHeadIndex = m_HeadIndex;

@@ -3,7 +3,7 @@
 #include "Container/RingBuffer.h"
 #include "D3D12/Descriptor.h"
 
-#include <expected>
+#include "Expected.h"
 
 class DescriptorFreeListAllocator
 {
@@ -16,7 +16,7 @@ public:
 	};
 
 	template<typename T>
-	using Expected = std::expected<T, EErrorType>;
+	using Expected = Expected<T, EErrorType>;
 
 	DescriptorFreeListAllocator() = default;
 	DescriptorFreeListAllocator(const DescriptorRange& InRange);

@@ -156,7 +156,7 @@ ExpectedHRes<DescriptorHeap> GPUDevice::CreateDescriptorHeap(const D3D12_DESCRIP
 	
 	if (FAILED(hresult))
 	{
-		return std::unexpected(hresult);
+		return Unexpected(hresult);
 	}
 
 	SetName(heap.Get(), InName);
