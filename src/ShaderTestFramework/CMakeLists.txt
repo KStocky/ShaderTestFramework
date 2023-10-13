@@ -22,6 +22,7 @@ set(SOURCES
     Public/D3D12/DescriptorRingAllocator.h
     Public/D3D12/Fence.h
     Public/D3D12/GPUDevice.h
+    Public/D3D12/GPUResource.h
     Public/Exception.h
     Public/Expected.h
     Public/EnumReflection.h
@@ -38,6 +39,7 @@ set(SOURCES
     Private/D3D12/DescriptorRingAllocator.cpp
     Private/D3D12/Fence.cpp
     Private/D3D12/GPUDevice.cpp
+    Private/D3D12/GPUResource.cpp
     Private/D3D12/ShaderCompiler.cpp
     Private/ShaderTestFixture.cpp)
 

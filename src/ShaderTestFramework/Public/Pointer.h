@@ -9,7 +9,8 @@ using UniquePtr = std::unique_ptr<T>;
 template<typename T>
 using SharedPtr = std::shared_ptr<T>;
 
-using Microsoft::WRL::ComPtr;
+template<typename T>
+using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 template<typename T, typename... Ts>
 auto MakeUnique(Ts&&... InArgs)
