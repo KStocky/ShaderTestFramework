@@ -4,6 +4,7 @@ include("${CMAKE_HOME_DIRECTORY}/cmake/ExternalProjects.cmake")
 add_executable(ShaderTestFrameworkTests)
 target_sources(ShaderTestFrameworkTests PRIVATE 
     BasicTests.cpp
+    ConceptsTests.cpp
     DescriptorFreeListAllocatorTests.cpp
     DescriptorRingAllocatorTests.cpp
     DescriptorTests.cpp
