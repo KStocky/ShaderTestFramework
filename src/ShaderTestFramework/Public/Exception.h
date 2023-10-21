@@ -5,6 +5,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 
 
 inline std::string HrToString(HRESULT hr)
@@ -35,4 +36,24 @@ inline void ThrowIfFalse(const bool InCondition, std::string InMessage = "Condit
     {
         throw std::runtime_error(std::move(InMessage));
     }
+}
+
+template<typename T, typename ErrorType>
+decltype(auto) ThrowIfUnexpected(Expected<T, ErrorType>&& InExpected, std::string_view InMessage = "Had unexpected value")
+{
+    if (!InExpected.has_value())
+    {
+        throw std::runtime_error(std::string(InMessage));
+    }
+    return InExpected.value();
+}
+
+template<typename T>
+decltype(auto) ThrowIfUnexpected(Expected<T, HRESULT>&& InExpected)
+{
+    if (!InExpected.has_value())
+    {
+        throw HrException(InExpected.error());
+    }
+    return InExpected.value();
 }

@@ -2,6 +2,7 @@
 
 #include "D3D12/CommandAllocator.h"
 #include "D3D12/CommandList.h"
+#include "D3D12/CommandQueue.h"
 #include "D3D12/Fence.h"
 #include "D3D12/DescriptorHeap.h"
 #include "D3D12/GPUResource.h"
@@ -121,6 +122,7 @@ public:
 
 	ExpectedHRes<CommandAllocator> CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandAllocator") const;
 	ExpectedHRes<CommandList> CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandList") const;
+	CommandQueue CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName = "DefaultCommandQueue");
 
 	ExpectedHRes<GPUResource> CreateCommittedResource(
 		const D3D12_HEAP_PROPERTIES& InHeapProps,
