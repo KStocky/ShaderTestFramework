@@ -187,6 +187,32 @@ bool GPUDevice::IsValid() const
 	return m_Device.Get() != nullptr;
 }
 
+ExpectedHRes<CommandAllocator> GPUDevice::CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const
+{
+	ComPtr<ID3D12CommandAllocator> allocator = nullptr;
+
+	if (const auto hres = m_Device->CreateCommandAllocator(InType, IID_PPV_ARGS(allocator.GetAddressOf()));
+		FAILED(hres))
+	{
+		return Unexpected{ hres };
+	}
+	SetName(allocator.Get(), InName);
+	return CommandAllocator(CommandAllocator::CreationParams{ std::move(allocator), InType });
+}
+
+ExpectedHRes<CommandList> GPUDevice::CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const
+{
+	ComPtr<ID3D12GraphicsCommandList9> list = nullptr;
+
+	if (const auto hres = m_Device->CreateCommandList1(0, InType, D3D12_COMMAND_LIST_FLAG_NONE, IID_PPV_ARGS(list.GetAddressOf()));
+		FAILED(hres))
+	{
+		return Unexpected{ hres };
+	}
+	SetName(list.Get(), InName);
+	return CommandList(CommandList::CreationParams{ std::move(list) });
+}
+
 ExpectedHRes<GPUResource> GPUDevice::CreateCommittedResource(const D3D12_HEAP_PROPERTIES& InHeapProps, const D3D12_HEAP_FLAGS InFlags, const D3D12_RESOURCE_DESC1& InResourceDesc, const D3D12_BARRIER_LAYOUT InInitialLayout, const D3D12_CLEAR_VALUE* InClearValue, const std::span<DXGI_FORMAT> InCastableFormats, const std::string_view InName) const
 {
 	ComPtr<ID3D12Resource2> raw{ nullptr };
@@ -199,7 +225,7 @@ ExpectedHRes<GPUResource> GPUDevice::CreateCommittedResource(const D3D12_HEAP_PR
 	return GPUResource(GPUResource::CreationParams{ std::move(raw), InClearValue ? std::optional{*InClearValue} : std::nullopt, {D3D12_BARRIER_SYNC_NONE, D3D12_BARRIER_ACCESS_NO_ACCESS, InInitialLayout} });
 }
 
-ExpectedHRes<DescriptorHeap> GPUDevice::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName)
+ExpectedHRes<DescriptorHeap> GPUDevice::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName) const
 {
 	ComPtr<ID3D12DescriptorHeap> heap = nullptr;
 	const auto hresult = m_Device->CreateDescriptorHeap(&InDesc, IID_PPV_ARGS(heap.GetAddressOf()));
@@ -214,7 +240,7 @@ ExpectedHRes<DescriptorHeap> GPUDevice::CreateDescriptorHeap(const D3D12_DESCRIP
 	return GetDescriptorSize(InDesc.Type).transform([this, heap](const u32 InDescriptorSize) { return DescriptorHeap(DescriptorHeap::Desc{ std::move(heap), InDescriptorSize }); });
 }
 
-ExpectedHRes<Fence> GPUDevice::CreateFence(const u64 InInitialValue, const std::string_view InName)
+ExpectedHRes<Fence> GPUDevice::CreateFence(const u64 InInitialValue, const std::string_view InName) const
 {
 	ComPtr<ID3D12Fence1> fence = nullptr;
 

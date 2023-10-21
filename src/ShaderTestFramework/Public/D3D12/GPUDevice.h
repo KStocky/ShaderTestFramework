@@ -1,5 +1,7 @@
 #pragma once
 
+#include "D3D12/CommandAllocator.h"
+#include "D3D12/CommandList.h"
 #include "D3D12/Fence.h"
 #include "D3D12/DescriptorHeap.h"
 #include "D3D12/GPUResource.h"
@@ -117,6 +119,9 @@ public:
 
 	bool IsValid() const;
 
+	ExpectedHRes<CommandAllocator> CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandAllocator") const;
+	ExpectedHRes<CommandList> CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandList") const;
+
 	ExpectedHRes<GPUResource> CreateCommittedResource(
 		const D3D12_HEAP_PROPERTIES& InHeapProps,
 		const D3D12_HEAP_FLAGS InFlags,
@@ -126,9 +131,9 @@ public:
 		const std::span<DXGI_FORMAT> InCastableFormats = {},
 		const std::string_view InName = "DefaultResource"
 	) const;
-	ExpectedHRes<DescriptorHeap> CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName = "DefaultDescriptorHeap");
+	ExpectedHRes<DescriptorHeap> CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName = "DefaultDescriptorHeap") const;
 
-	ExpectedHRes<Fence> CreateFence(const u64 InInitialValue, const std::string_view InName = "DefaultFence");
+	ExpectedHRes<Fence> CreateFence(const u64 InInitialValue, const std::string_view InName = "DefaultFence") const;
 
 	ExpectedHRes<void> SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes);
 	ExpectedHRes<void> SetSystemVideoMemoryReservation(const u64 InNewReservationBytes);

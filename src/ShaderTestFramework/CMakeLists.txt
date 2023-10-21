@@ -16,6 +16,8 @@ add_library(ShaderTestFramework)
 set(SOURCES
     Public/Container/RingBuffer.h
     Public/D3D12/AgilityDefinitions.h
+    Public/D3D12/CommandAllocator.h
+    Public/D3D12/CommandList.h
     Public/D3D12/Descriptor.h
     Public/D3D12/DescriptorFreeListAllocator.h
     Public/D3D12/DescriptorHeap.h
@@ -33,6 +35,8 @@ set(SOURCES
     Public/ShaderEnums.h
     Public/ShaderTestFixture.h
     Public/Utility.h
+    Private/D3D12/CommandAllocator.cpp
+    Private/D3D12/CommandList.cpp
     Private/D3D12/Descriptor.cpp
     Private/D3D12/DescriptorFreeListAllocator.cpp
     Private/D3D12/DescriptorHeap.cpp
