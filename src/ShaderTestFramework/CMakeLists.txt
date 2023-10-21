@@ -35,6 +35,7 @@ set(SOURCES
     Public/Utility/EnumReflection.h
     Public/Utility/Exception.h
     Public/Utility/Expected.h
+    Public/Utility/FixedString.h
     Public/Utility/Lambda.h
     Public/Utility/MoveOnly.h
     Public/Utility/OverloadSet.h

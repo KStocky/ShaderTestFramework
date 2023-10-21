@@ -10,7 +10,9 @@ target_sources(ShaderTestFrameworkTests PRIVATE
     DescriptorTests.cpp
     RingBufferTests.cpp
     ShaderCompilerTests.cpp
-    ShaderTestFixtureTests.cpp)
+    ShaderTestFixtureTests.cpp
+    TypeTraitsTests.cpp
+    )
 
 target_link_libraries(ShaderTestFrameworkTests PRIVATE ShaderTestFramework)
 target_compile_options(ShaderTestFrameworkTests PRIVATE ${GLOBAL_COMPILE_FLAGS})
