@@ -171,6 +171,19 @@ ExpectedHRes<DescriptorHeap> GPUDevice::CreateDescriptorHeap(const D3D12_DESCRIP
 	return DescriptorHeap(DescriptorHeap::Desc{ std::move(heap), GetDescriptorSize(InDesc.Type) });
 }
 
+ExpectedHRes<Fence> GPUDevice::CreateFence(const u64 InInitialValue, const std::string_view InName)
+{
+	ComPtr<ID3D12Fence1> fence = nullptr;
+
+	if (const auto hres = m_Device->CreateFence(InInitialValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(fence.GetAddressOf()));
+		FAILED(hres))
+	{
+		return Unexpected(hres);
+	}
+	SetName(fence.Get(), InName);
+	return Fence(Fence::CreationParams{ std::move(fence), InInitialValue });
+}
+
 void GPUDevice::SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes)
 {
 	ThrowIfFailed(m_Adapter->SetVideoMemoryReservation(0, DXGI_MEMORY_SEGMENT_GROUP_LOCAL, InNewReservationBytes));

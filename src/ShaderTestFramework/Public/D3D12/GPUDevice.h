@@ -128,6 +128,8 @@ public:
 	) const;
 	ExpectedHRes<DescriptorHeap> CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName = "DefaultDescriptorHeap");
 
+	ExpectedHRes<Fence> CreateFence(const u64 InInitialValue, const std::string_view InName = "DefaultFence");
+
 	void SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes);
 	void SetSystemVideoMemoryReservation(const u64 InNewReservationBytes);
 
