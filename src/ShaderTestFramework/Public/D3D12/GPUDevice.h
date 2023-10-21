@@ -130,16 +130,16 @@ public:
 
 	ExpectedHRes<Fence> CreateFence(const u64 InInitialValue, const std::string_view InName = "DefaultFence");
 
-	void SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes);
-	void SetSystemVideoMemoryReservation(const u64 InNewReservationBytes);
+	ExpectedHRes<void> SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes);
+	ExpectedHRes<void> SetSystemVideoMemoryReservation(const u64 InNewReservationBytes);
 
 	const GPUHardwareInfo& GetHardwareInfo() const;
 
 private:
 
-	void SetupDebugLayer(const EDebugLevel InDebugLevel);
-	void CacheHardwareInfo();
-	u32 GetDescriptorSize(const D3D12_DESCRIPTOR_HEAP_TYPE InType) const;
+	ExpectedHRes<void> SetupDebugLayer(const EDebugLevel InDebugLevel);
+	ExpectedHRes<void> CacheHardwareInfo(ID3D12Device12* InDevice);
+	Expected<u32, bool> GetDescriptorSize(const D3D12_DESCRIPTOR_HEAP_TYPE InType) const;
 
 	ComPtr<ID3D12Device12> m_Device = nullptr;
 	ComPtr<ID3D12Debug6> m_Debug = nullptr;

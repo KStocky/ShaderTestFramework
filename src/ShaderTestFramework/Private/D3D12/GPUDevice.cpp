@@ -1,7 +1,6 @@
 #include "D3D12/GPUDevice.h"
 #include "D3D12/AgilityDefinitions.h"
 #include "EnumReflection.h"
-#include "Exception.h"
 
 #include <algorithm>
 #include <array>
@@ -10,7 +9,6 @@
 
 namespace
 {
-
 	void SetName(ID3D12Object* InObject, const std::string_view InString)
 	{
 		InObject->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<uint32_t>(InString.size()), InString.data());
@@ -53,12 +51,17 @@ namespace
 		return foundAdapters;
 	}
 
-	AdapterAndFeatureLevel GetAdapter(const GPUDevice::EDeviceType InType, IDXGIFactory7& InFactory)
+	ExpectedHRes<AdapterAndFeatureLevel> GetAdapter(const GPUDevice::EDeviceType InType, IDXGIFactory7& InFactory)
 	{
 		if (InType == GPUDevice::EDeviceType::Software)
 		{
 			std::array adapters = { ComPtr<IDXGIAdapter4>{} };
-			ThrowIfFailed(InFactory.EnumWarpAdapter(IID_PPV_ARGS(&adapters[0])));
+
+			if (const auto hres = InFactory.EnumWarpAdapter(IID_PPV_ARGS(&adapters[0]));
+				FAILED(hres))
+			{
+				return Unexpected(hres);
+			}
 
 			auto foundAdapter = GetCandidateAdapters(adapters);
 
@@ -112,23 +115,58 @@ GPUDevice::GPUDevice(const CreationParams InDesc)
 	, m_DSVDescriptorSize(0)
 	, m_SamplerDescriptorSize(0)
 {
-	SetupDebugLayer(InDesc.DebugLevel);
-	const u32 factoryCreateFlags = InDesc.DebugLevel != EDebugLevel::Off ? DXGI_CREATE_FACTORY_DEBUG : 0;
-	ThrowIfFailed(CreateDXGIFactory2(factoryCreateFlags, IID_PPV_ARGS(m_Factory.GetAddressOf())));
-
-	auto adapterInfo = GetAdapter(InDesc.DeviceType, *m_Factory.Get());
-	m_Adapter = std::move(adapterInfo.Adapter);
-	ThrowIfFailed(D3D12CreateDevice(m_Adapter.Get(), adapterInfo.FeatureLevel, IID_PPV_ARGS(m_Device.GetAddressOf())));
-	if (InDesc.DebugLevel != EDebugLevel::Off)
+	if (!SetupDebugLayer(InDesc.DebugLevel).has_value())
 	{
-		ThrowIfFailed(m_Device->QueryInterface(m_DebugDevice.GetAddressOf()));
+		return;
+	}
+	const u32 factoryCreateFlags = InDesc.DebugLevel != EDebugLevel::Off ? DXGI_CREATE_FACTORY_DEBUG : 0;
+	if (const auto hres = CreateDXGIFactory2(factoryCreateFlags, IID_PPV_ARGS(m_Factory.GetAddressOf()));
+		FAILED(hres))
+	{
+		return;
 	}
 
-	m_CBVDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	m_RTVDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	m_DSVDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-	m_SamplerDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
-	CacheHardwareInfo();
+	auto adapterInfo = GetAdapter(InDesc.DeviceType, *m_Factory.Get());
+	if (!adapterInfo.has_value())
+	{
+		return;
+	}
+
+	m_Adapter = std::move(adapterInfo->Adapter);
+
+	auto tempDevice = m_Device;
+
+	if (const auto hres = D3D12CreateDevice(m_Adapter.Get(), adapterInfo->FeatureLevel, IID_PPV_ARGS(tempDevice.GetAddressOf()));
+		FAILED(hres))
+	{
+		return;
+	}
+
+	if (InDesc.DebugLevel != EDebugLevel::Off)
+	{
+		if (const auto hres = tempDevice->QueryInterface(m_DebugDevice.GetAddressOf());
+			FAILED(hres))
+		{
+			return;
+		}
+	}
+
+	m_CBVDescriptorSize = tempDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	m_RTVDescriptorSize = tempDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	m_DSVDescriptorSize = tempDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+	m_SamplerDescriptorSize = tempDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
+	
+	if (!CacheHardwareInfo(tempDevice.Get()).has_value())
+	{
+		return;
+	}
+
+	if (const auto hres = tempDevice->QueryInterface(m_DebugDevice.GetAddressOf());
+		FAILED(hres))
+	{
+		return;
+	}
+	m_Device = tempDevice;
 }
 
 GPUDevice::~GPUDevice()
@@ -172,7 +210,8 @@ ExpectedHRes<DescriptorHeap> GPUDevice::CreateDescriptorHeap(const D3D12_DESCRIP
 	}
 
 	SetName(heap.Get(), InName);
-	return DescriptorHeap(DescriptorHeap::Desc{ std::move(heap), GetDescriptorSize(InDesc.Type) });
+
+	return GetDescriptorSize(InDesc.Type).transform([this, heap](const u32 InDescriptorSize) { return DescriptorHeap(DescriptorHeap::Desc{ std::move(heap), InDescriptorSize }); });
 }
 
 ExpectedHRes<Fence> GPUDevice::CreateFence(const u64 InInitialValue, const std::string_view InName)
@@ -188,14 +227,26 @@ ExpectedHRes<Fence> GPUDevice::CreateFence(const u64 InInitialValue, const std::
 	return Fence(Fence::CreationParams{ std::move(fence), InInitialValue });
 }
 
-void GPUDevice::SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes)
+ExpectedHRes<void> GPUDevice::SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes)
 {
-	ThrowIfFailed(m_Adapter->SetVideoMemoryReservation(0, DXGI_MEMORY_SEGMENT_GROUP_LOCAL, InNewReservationBytes));
+	if (const auto hres = m_Adapter->SetVideoMemoryReservation(0, DXGI_MEMORY_SEGMENT_GROUP_LOCAL, InNewReservationBytes);
+		FAILED(hres))
+	{
+		return Unexpected(hres);
+	}
+	
+	return {};
 }
 
-void GPUDevice::SetSystemVideoMemoryReservation(const u64 InNewReservationBytes)
+ExpectedHRes<void> GPUDevice::SetSystemVideoMemoryReservation(const u64 InNewReservationBytes)
 {
-	ThrowIfFailed(m_Adapter->SetVideoMemoryReservation(0, DXGI_MEMORY_SEGMENT_GROUP_NON_LOCAL, InNewReservationBytes));
+	if (const auto hres = m_Adapter->SetVideoMemoryReservation(0, DXGI_MEMORY_SEGMENT_GROUP_NON_LOCAL, InNewReservationBytes);
+		FAILED(hres))
+	{
+		return Unexpected(hres);
+	}
+
+	return {};
 }
 
 const GPUHardwareInfo& GPUDevice::GetHardwareInfo() const
@@ -203,14 +254,18 @@ const GPUHardwareInfo& GPUDevice::GetHardwareInfo() const
 	return m_Info;
 }
 
-void GPUDevice::SetupDebugLayer(const EDebugLevel InDebugLevel)
+ExpectedHRes<void> GPUDevice::SetupDebugLayer(const EDebugLevel InDebugLevel)
 {
 	if (InDebugLevel == EDebugLevel::Off)
 	{
-		return;
+		return {};
 	}
 
-	ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&m_Debug)));
+	if (const auto hres = D3D12GetDebugInterface(IID_PPV_ARGS(&m_Debug));
+		FAILED(hres))
+	{
+		return Unexpected(hres);
+	}
 
 	m_Debug->EnableDebugLayer();
 	m_Debug->SetEnableSynchronizedCommandQueueValidation(true);
@@ -221,55 +276,113 @@ void GPUDevice::SetupDebugLayer(const EDebugLevel InDebugLevel)
 	{
 		m_Debug->SetEnableGPUBasedValidation(true);
 	}
+
+	return {};
 }
 
-void GPUDevice::CacheHardwareInfo()
+ExpectedHRes<void> GPUDevice::CacheHardwareInfo(ID3D12Device12* InDevice)
 {
 	DXGI_ADAPTER_DESC3 adapterDesc;
-	ThrowIfFailed(m_Adapter->GetDesc3(&adapterDesc));
+
+	if (const auto hres = m_Adapter->GetDesc3(&adapterDesc);
+		FAILED(hres))
+	{
+		return Unexpected(hres);
+	}
 
 	D3D12_FEATURE_DATA_D3D12_OPTIONS options1{};
-	ThrowIfFailed(m_Device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS, &options1, static_cast<uint32_t>(sizeof(options1))));
+	if (const auto hres = InDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS, &options1, static_cast<uint32_t>(sizeof(options1)));
+		FAILED(hres))
+	{
+		return Unexpected(hres);
+	}
 
 	D3D12_FEATURE_DATA_FEATURE_LEVELS featureLevels{};
 	std::array levels{ D3D_FEATURE_LEVEL_12_0, D3D_FEATURE_LEVEL_12_1, D3D_FEATURE_LEVEL_12_2 };
 	featureLevels.NumFeatureLevels = static_cast<uint32_t>(levels.size());
 	featureLevels.pFeatureLevelsRequested = levels.data();
-	ThrowIfFailed(m_Device->CheckFeatureSupport(D3D12_FEATURE_FEATURE_LEVELS, &featureLevels, static_cast<uint32_t>(sizeof(featureLevels))));
+	if (const auto hres = InDevice->CheckFeatureSupport(D3D12_FEATURE_FEATURE_LEVELS, &featureLevels, static_cast<uint32_t>(sizeof(featureLevels)));
+		FAILED(hres))
+	{
+		return Unexpected(hres);
+	}
 
 	GPUVirtualAddressInfo virtualAddressInfo{};
-	ThrowIfFailed(m_Device->CheckFeatureSupport(D3D12_FEATURE_GPU_VIRTUAL_ADDRESS_SUPPORT, &virtualAddressInfo, static_cast<uint32_t>(sizeof(virtualAddressInfo))));
+	if (const auto hres = InDevice->CheckFeatureSupport(D3D12_FEATURE_GPU_VIRTUAL_ADDRESS_SUPPORT, &virtualAddressInfo, static_cast<uint32_t>(sizeof(virtualAddressInfo)));
+		FAILED(hres))
+	{
+		return Unexpected(hres);
+	}
 
-	D3D12_FEATURE_DATA_SHADER_MODEL maxShaderModel{ .HighestShaderModel = D3D_SHADER_MODEL_6_6 };
-	ThrowIfFailed(m_Device->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &maxShaderModel, static_cast<uint32_t>(sizeof(maxShaderModel))));
+	D3D12_FEATURE_DATA_SHADER_MODEL maxShaderModel{ .HighestShaderModel = D3D_HIGHEST_SHADER_MODEL };
+	if (const auto hres = InDevice->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &maxShaderModel, static_cast<uint32_t>(sizeof(maxShaderModel)));
+		FAILED(hres))
+	{
+		return Unexpected(hres);
+	}
 
 	D3D12_FEATURE_DATA_D3D12_OPTIONS1 waveOpInfo{};
-	ThrowIfFailed(m_Device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS1, &waveOpInfo, static_cast<uint32_t>(sizeof(waveOpInfo))));
+	if (const auto hres = InDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS1, &waveOpInfo, static_cast<uint32_t>(sizeof(waveOpInfo)));
+		FAILED(hres))
+	{
+		return Unexpected(hres);
+	}
 
 	D3D12_FEATURE_DATA_D3D12_OPTIONS2 options2{};
-	ThrowIfFailed(m_Device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS2, &options2, static_cast<uint32_t>(sizeof(options2))));
+	if (const auto hres = InDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS2, &options2, static_cast<uint32_t>(sizeof(options2)));
+		FAILED(hres))
+	{
+		return Unexpected(hres);
+	}
 
 	D3D12_FEATURE_DATA_ROOT_SIGNATURE rootSigInfo{ .HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_1 };
-	ThrowIfFailed(m_Device->CheckFeatureSupport(D3D12_FEATURE_ROOT_SIGNATURE, &rootSigInfo, static_cast<uint32_t>(sizeof(rootSigInfo))));
+	if (const auto hres = InDevice->CheckFeatureSupport(D3D12_FEATURE_ROOT_SIGNATURE, &rootSigInfo, static_cast<uint32_t>(sizeof(rootSigInfo)));
+		FAILED(hres))
+	{
+		return Unexpected(hres);
+	}
 
 	D3D12_FEATURE_DATA_ARCHITECTURE1 architectureInfo{};
-	ThrowIfFailed(m_Device->CheckFeatureSupport(D3D12_FEATURE_ARCHITECTURE1, &architectureInfo, static_cast<uint32_t>(sizeof(architectureInfo))));
+	if (const auto hres = InDevice->CheckFeatureSupport(D3D12_FEATURE_ARCHITECTURE1, &architectureInfo, static_cast<uint32_t>(sizeof(architectureInfo)));
+		FAILED(hres))
+	{
+		return Unexpected(hres);
+	}
 
 	D3D12_FEATURE_DATA_SHADER_CACHE shaderCacheInfo{};
-	ThrowIfFailed(m_Device->CheckFeatureSupport(D3D12_FEATURE_SHADER_CACHE, &shaderCacheInfo, static_cast<uint32_t>(sizeof(shaderCacheInfo))));
+	if (const auto hres = InDevice->CheckFeatureSupport(D3D12_FEATURE_SHADER_CACHE, &shaderCacheInfo, static_cast<uint32_t>(sizeof(shaderCacheInfo)));
+		FAILED(hres))
+	{
+		return Unexpected(hres);
+	}
 
 	D3D12_FEATURE_DATA_D3D12_OPTIONS5 options5{};
-	ThrowIfFailed(m_Device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &options5, static_cast<uint32_t>(sizeof(options5))));
+	if (const auto hres = InDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &options5, static_cast<uint32_t>(sizeof(options5)));
+		FAILED(hres))
+	{
+		return Unexpected(hres);
+	}
 
 	D3D12_FEATURE_DATA_D3D12_OPTIONS6 options6{};
-	ThrowIfFailed(m_Device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS6, &options6, static_cast<uint32_t>(sizeof(options6))));
+	if (const auto hres = InDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS6, &options6, static_cast<uint32_t>(sizeof(options6)));
+		FAILED(hres))
+	{
+		return Unexpected(hres);
+	}
 
 	D3D12_FEATURE_DATA_D3D12_OPTIONS7 options7{};
-	ThrowIfFailed(m_Device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS7, &options7, static_cast<uint32_t>(sizeof(options7))));
+	if (const auto hres = InDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS7, &options7, static_cast<uint32_t>(sizeof(options7)));
+		FAILED(hres))
+	{
+		return Unexpected(hres);
+	}
 
 	D3D12_FEATURE_DATA_D3D12_OPTIONS12 options12{};
-	ThrowIfFailed(m_Device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS12, &options12, static_cast<uint32_t>(sizeof(options12))));
-
+	if (const auto hres = InDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS12, &options12, static_cast<uint32_t>(sizeof(options12)));
+		FAILED(hres))
+	{
+		return Unexpected(hres);
+	}
 
 	m_Info = GPUHardwareInfo
 	{
@@ -329,9 +442,11 @@ void GPUDevice::CacheHardwareInfo()
 			.Tier = options6.VariableShadingRateTier
 		}
 	};
+
+	return {};
 }
 
-u32 GPUDevice::GetDescriptorSize(const D3D12_DESCRIPTOR_HEAP_TYPE InType) const
+Expected<u32, bool> GPUDevice::GetDescriptorSize(const D3D12_DESCRIPTOR_HEAP_TYPE InType) const
 {
 	switch (InType)
 	{
@@ -354,8 +469,7 @@ u32 GPUDevice::GetDescriptorSize(const D3D12_DESCRIPTOR_HEAP_TYPE InType) const
 		case D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES:
 		default:
 		{
-			ThrowIfFalse(false, "Unsupported descriptor allocator type requested");
-			return 0u;
+			return false;
 		}
 	}
 }
