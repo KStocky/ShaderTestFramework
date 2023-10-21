@@ -117,7 +117,7 @@ public:
 
 	bool IsValid() const;
 
-	GPUResource CreateCommittedResource(
+	ExpectedHRes<GPUResource> CreateCommittedResource(
 		const D3D12_HEAP_PROPERTIES& InHeapProps,
 		const D3D12_HEAP_FLAGS InFlags,
 		const D3D12_RESOURCE_DESC1& InResourceDesc,
