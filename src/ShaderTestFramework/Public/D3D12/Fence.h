@@ -38,9 +38,9 @@ public:
 	Fence& operator=(Fence&& In) noexcept;
 
 	[[nodiscard]] FencePoint Signal(ID3D12CommandQueue* InQueue);
-	void WaitCPU(const FencePoint& InFencePoint) const;
+	Expected<void, bool> WaitCPU(const FencePoint& InFencePoint) const;
 	void WaitOnQueue(ID3D12CommandQueue* InQueue) const;
-	bool HasCompleted(const FencePoint& InFencePoint) const;
+	Expected<bool, bool> HasCompleted(const FencePoint& InFencePoint) const;
 
 	ID3D12Fence* GetRaw() const;
 	operator ID3D12Fence* () const;

@@ -1,7 +1,5 @@
 #include "D3D12/Fence.h"
 
-#include "Exception.h"
-
 Fence::Fence(CreationParams InParams)
 	: m_Fence(std::move(InParams.Fence))
 	, m_NextValue(InParams.InitialValue + 1)
@@ -31,9 +29,12 @@ Fence::FencePoint Fence::Signal(ID3D12CommandQueue* InQueue)
 	return { m_Fence.Get(), m_NextValue++ };
 }
 
-void Fence::WaitCPU(const FencePoint& InFencePoint) const
+Expected<void, bool> Fence::WaitCPU(const FencePoint& InFencePoint) const
 {
-	ThrowIfFalse(Validate(InFencePoint), "Fence point was not created by this fence");
+	if (!Validate(InFencePoint))
+	{
+		return Unexpected{ false };
+	}
 	const u64 currentValue = m_Fence->GetCompletedValue();
 
 	if (currentValue < InFencePoint.SignalledValue)
@@ -43,6 +44,8 @@ void Fence::WaitCPU(const FencePoint& InFencePoint) const
 		m_Fence->SetEventOnCompletion(InFencePoint.SignalledValue, event);
 		WaitForSingleObject(event, INFINITE);
 	}
+
+	return{};
 }
 
 void Fence::WaitOnQueue(ID3D12CommandQueue* InQueue) const
@@ -50,9 +53,12 @@ void Fence::WaitOnQueue(ID3D12CommandQueue* InQueue) const
 	InQueue->Wait(m_Fence.Get(), m_NextValue - 1ull);
 }
 
-bool Fence::HasCompleted(const FencePoint& InFencePoint) const
+Expected<bool, bool> Fence::HasCompleted(const FencePoint& InFencePoint) const
 {
-	ThrowIfFalse(Validate(InFencePoint), "Fence point was not created by this fence");
+	if (!Validate(InFencePoint))
+	{
+		return Unexpected{ false };
+	}
 	return m_Fence->GetCompletedValue() >= InFencePoint.SignalledValue;
 }
 
