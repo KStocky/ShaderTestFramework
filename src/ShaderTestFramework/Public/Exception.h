@@ -45,7 +45,15 @@ decltype(auto) ThrowIfUnexpected(Expected<T, ErrorType>&& InExpected, std::strin
     {
         throw std::runtime_error(std::string(InMessage));
     }
-    return InExpected.value();
+
+    if constexpr (std::is_same_v<T, void>)
+    {
+        return;
+    }
+    else
+    {
+        return InExpected.value();
+    }
 }
 
 template<typename T>
@@ -55,5 +63,12 @@ decltype(auto) ThrowIfUnexpected(Expected<T, HRESULT>&& InExpected)
     {
         throw HrException(InExpected.error());
     }
-    return InExpected.value();
+    if constexpr (std::is_same_v<T, void>)
+    {
+        return;
+    }
+    else
+    {
+        return InExpected.value();
+    }
 }
