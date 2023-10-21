@@ -1,9 +1,12 @@
 #pragma once
 
+#include "D3D12/Fence.h"
 #include "D3D12/DescriptorHeap.h"
+#include "D3D12/GPUResource.h"
 #include "Platform.h"
 #include "Pointer.h"
 
+#include <span>
 #include <string_view>
 
 #include <d3d12.h>
@@ -114,6 +117,15 @@ public:
 
 	bool IsValid() const;
 
+	GPUResource CreateCommittedResource(
+		const D3D12_HEAP_PROPERTIES& InHeapProps,
+		const D3D12_HEAP_FLAGS InFlags,
+		const D3D12_RESOURCE_DESC1& InResourceDesc,
+		const D3D12_BARRIER_LAYOUT InInitialLayout,
+		const D3D12_CLEAR_VALUE* InClearValue = nullptr,
+		const std::span<DXGI_FORMAT> InCastableFormats = {},
+		const std::string_view InName = "DefaultResource"
+	) const;
 	ExpectedHRes<DescriptorHeap> CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName = "DefaultDescriptorHeap");
 
 	void SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes);
