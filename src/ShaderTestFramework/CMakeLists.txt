@@ -26,16 +26,20 @@ set(SOURCES
     Public/D3D12/Fence.h
     Public/D3D12/GPUDevice.h
     Public/D3D12/GPUResource.h
-    Public/Exception.h
-    Public/Expected.h
-    Public/EnumReflection.h
-    Public/MoveOnly.h
     Public/Platform.h
-    Public/Pointer.h
     Public/ShaderCompiler.h
     Public/ShaderEnums.h
     Public/ShaderTestFixture.h
-    Public/Utility.h
+    Public/Utility/Algorithm.h
+    Public/Utility/Concepts.h
+    Public/Utility/EnumReflection.h
+    Public/Utility/Exception.h
+    Public/Utility/Expected.h
+    Public/Utility/Lambda.h
+    Public/Utility/MoveOnly.h
+    Public/Utility/OverloadSet.h
+    Public/Utility/Pointer.h
+    Public/Utility/Type.h
     Private/D3D12/CommandAllocator.cpp
     Private/D3D12/CommandList.cpp
     Private/D3D12/CommandQueue.cpp

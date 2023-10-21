@@ -2,7 +2,7 @@
 
 #include "D3D12/CommandList.h"
 
-#include "Exception.h"
+#include "Utility/Exception.h"
 
 CommandQueue::CommandQueue(CreationParams InParams)
 	: m_Queue(std::move(InParams.Queue))

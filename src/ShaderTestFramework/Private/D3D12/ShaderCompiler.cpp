@@ -1,12 +1,21 @@
 #include "ShaderCompiler.h"
 
-#include "EnumReflection.h"
-#include "Pointer.h"
-#include "Utility.h"
+#include "Utility/EnumReflection.h"
+#include "Utility/OverloadSet.h"
+#include "Utility/Pointer.h"
 
 #include <fstream>
+#include <variant>
 
 #include <dxcapi.h>
+
+namespace
+{
+	std::wstring ToWString(const std::string& InString)
+	{
+		return std::wstring(InString.cbegin(), InString.cend());
+	}
+}
 
 ShaderCodeSource::ShaderCodeSource(std::string InSourceCode)
 	: m_Source(std::move(InSourceCode))

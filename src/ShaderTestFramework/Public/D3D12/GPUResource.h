@@ -1,8 +1,8 @@
 #pragma once
 
-#include "MoveOnly.h"
+#include "Utility/MoveOnly.h"
 #include "Platform.h"
-#include "Pointer.h"
+#include "Utility/Pointer.h"
 
 #include <optional>
 

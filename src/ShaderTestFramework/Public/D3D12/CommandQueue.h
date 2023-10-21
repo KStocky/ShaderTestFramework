@@ -1,8 +1,8 @@
 #pragma once
 
 #include "D3D12/Fence.h"
-#include "MoveOnly.h"
-#include "Pointer.h"
+#include "Utility/MoveOnly.h"
+#include "Utility/Pointer.h"
 
 #include <d3d12.h>
 

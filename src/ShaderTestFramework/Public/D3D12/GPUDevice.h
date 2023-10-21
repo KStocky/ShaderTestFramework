@@ -7,7 +7,7 @@
 #include "D3D12/DescriptorHeap.h"
 #include "D3D12/GPUResource.h"
 #include "Platform.h"
-#include "Pointer.h"
+#include "Utility/Pointer.h"
 
 #include <span>
 #include <string_view>

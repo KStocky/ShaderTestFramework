@@ -1,10 +1,10 @@
 #pragma once
 
 #include "D3D12/Descriptor.h"
-#include "Expected.h"
-#include "MoveOnly.h"
+#include "Utility/Expected.h"
+#include "Utility/MoveOnly.h"
 #include "Platform.h"
-#include "Pointer.h"
+#include "Utility/Pointer.h"
 
 #include <d3d12.h>
 
