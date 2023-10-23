@@ -17,6 +17,7 @@ public:
 		ComPtr<ID3D12GraphicsCommandList9> List = nullptr;
 	};
 
+	CommandList() = default;
 	CommandList(CreationParams InParams);
 
 	ExpectedHRes<void> Close();
@@ -29,5 +30,5 @@ public:
 
 private:
 
-	ComPtr<ID3D12GraphicsCommandList9> m_List;
+	ComPtr<ID3D12GraphicsCommandList9> m_List = nullptr;
 };

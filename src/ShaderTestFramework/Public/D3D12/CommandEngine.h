@@ -31,7 +31,7 @@ private:
 };
 
 template<typename T>
-concept CommandEngineFuncType = EngineLambdaType<T> && requires()
+concept CommandEngineFuncType = LambdaType<T> && requires()
 {
 	requires T::ParamTypes::Size == 1;
 	requires std::same_as<typename T::ParamTypes::template Type<0>, ScopedCommandContext&>;
@@ -48,6 +48,7 @@ public:
 		GPUDevice Device;
 	};
 
+	CommandEngine() = default;
 	CommandEngine(CreationParams InParams);
 
 	template<CommandEngineFuncType InLambdaType>
@@ -59,31 +60,25 @@ public:
 				{
 					return m_Device->CreateCommandAllocator
 					(
-						{
-							D3D12_COMMAND_LIST_TYPE_DIRECT
-						},
+						D3D12_COMMAND_LIST_TYPE_DIRECT,
 						"Command Allocator"
-					);
+					).value();
 				}
 
 				return m_Allocators.pop_front().Allocator;
 			}();
 
 			m_List.Reset(allocator);
-			ScopedCommandContext context(UnexportedType{}, &m_List);
+			ScopedCommandContext context(CommandEngineToken{}, &m_List);
 			InFunc(context);
 
 			m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue.Signal() });
 	}
 
-	const CommandQueue& GetQueue() const
+	template<typename ThisType>
+	auto&& GetQueue(this ThisType&& InSelf)
 	{
-		return m_Queue;
-	}
-
-	CommandQueue& GetQueue()
-	{
-		return m_Queue;
+		return std::forward<ThisType>(InSelf).m_Queue;
 	}
 
 private:
@@ -94,7 +89,7 @@ private:
 		Fence::FencePoint FencePoint;
 	};
 
-	SharedPtr<GPUDevice> m_Device;
+	GPUDevice m_Device;
 	CommandQueue m_Queue;
 	CommandList m_List;
 	RingBuffer<FencedAllocator> m_Allocators;

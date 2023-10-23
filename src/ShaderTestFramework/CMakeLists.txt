@@ -17,6 +17,7 @@ set(SOURCES
     Public/Container/RingBuffer.h
     Public/D3D12/AgilityDefinitions.h
     Public/D3D12/CommandAllocator.h
+    Public/D3D12/CommandEngine.h
     Public/D3D12/CommandList.h
     Public/D3D12/CommandQueue.h
     Public/D3D12/Descriptor.h
@@ -45,6 +46,7 @@ set(SOURCES
     Public/Utility/Type.h
     Public/Utility/TypeList.h
     Private/D3D12/CommandAllocator.cpp
+    Private/D3D12/CommandEngine.cpp
     Private/D3D12/CommandList.cpp
     Private/D3D12/CommandQueue.cpp
     Private/D3D12/Descriptor.cpp

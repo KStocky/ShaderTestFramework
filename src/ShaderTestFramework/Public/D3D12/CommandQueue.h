@@ -18,6 +18,7 @@ public:
 		Fence Fence{};
 	};
 
+	CommandQueue() = default;
 	CommandQueue(CreationParams InParams);
 
 	bool HasFencePointBeenReached(const Fence::FencePoint& InFencePoint) const;
@@ -36,6 +37,6 @@ public:
 
 private:
 
-	ComPtr<ID3D12CommandQueue> m_Queue;
+	ComPtr<ID3D12CommandQueue> m_Queue = nullptr;
 	Fence m_Fence;
 };
