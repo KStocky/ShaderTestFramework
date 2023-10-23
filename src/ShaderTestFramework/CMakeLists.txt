@@ -41,6 +41,7 @@ set(SOURCES
     Public/Utility/OverloadSet.h
     Public/Utility/Pointer.h
     Public/Utility/Type.h
+    Public/Utility/TypeList.h
     Private/D3D12/CommandAllocator.cpp
     Private/D3D12/CommandList.cpp
     Private/D3D12/CommandQueue.cpp

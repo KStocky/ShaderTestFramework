@@ -11,6 +11,7 @@ target_sources(ShaderTestFrameworkTests PRIVATE
     RingBufferTests.cpp
     ShaderCompilerTests.cpp
     ShaderTestFixtureTests.cpp
+    TypeListTests.cpp
     TypeTraitsTests.cpp
     )
 
