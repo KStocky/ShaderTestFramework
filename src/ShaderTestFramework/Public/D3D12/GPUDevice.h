@@ -1,8 +1,15 @@
 #pragma once
 
+#include "D3D12/CommandAllocator.h"
+#include "D3D12/CommandList.h"
+#include "D3D12/CommandQueue.h"
+#include "D3D12/Fence.h"
+#include "D3D12/DescriptorHeap.h"
+#include "D3D12/GPUResource.h"
 #include "Platform.h"
-#include "Pointer.h"
+#include "Utility/Pointer.h"
 
+#include <span>
 #include <string_view>
 
 #include <d3d12.h>
@@ -107,21 +114,39 @@ public:
 		EDeviceType DeviceType = EDeviceType::Software;
 	};
 
+	GPUDevice() = default;
 	GPUDevice(const CreationParams InDesc);
 	~GPUDevice();
 
 	bool IsValid() const;
 
-	void SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes);
-	void SetSystemVideoMemoryReservation(const u64 InNewReservationBytes);
+	ExpectedHRes<CommandAllocator> CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandAllocator") const;
+	ExpectedHRes<CommandList> CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandList") const;
+	CommandQueue CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName = "DefaultCommandQueue");
+
+	ExpectedHRes<GPUResource> CreateCommittedResource(
+		const D3D12_HEAP_PROPERTIES& InHeapProps,
+		const D3D12_HEAP_FLAGS InFlags,
+		const D3D12_RESOURCE_DESC1& InResourceDesc,
+		const D3D12_BARRIER_LAYOUT InInitialLayout,
+		const D3D12_CLEAR_VALUE* InClearValue = nullptr,
+		const std::span<DXGI_FORMAT> InCastableFormats = {},
+		const std::string_view InName = "DefaultResource"
+	) const;
+	ExpectedHRes<DescriptorHeap> CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName = "DefaultDescriptorHeap") const;
+
+	ExpectedHRes<Fence> CreateFence(const u64 InInitialValue, const std::string_view InName = "DefaultFence") const;
+
+	ExpectedHRes<void> SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes);
+	ExpectedHRes<void> SetSystemVideoMemoryReservation(const u64 InNewReservationBytes);
 
 	const GPUHardwareInfo& GetHardwareInfo() const;
 
 private:
 
-	void SetupDebugLayer(const EDebugLevel InDebugLevel);
-	void CacheHardwareInfo();
-	u32 GetDescriptorSize(const D3D12_DESCRIPTOR_HEAP_TYPE InType) const;
+	ExpectedHRes<void> SetupDebugLayer(const EDebugLevel InDebugLevel);
+	ExpectedHRes<void> CacheHardwareInfo(ID3D12Device12* InDevice);
+	Expected<u32, bool> GetDescriptorSize(const D3D12_DESCRIPTOR_HEAP_TYPE InType) const;
 
 	ComPtr<ID3D12Device12> m_Device = nullptr;
 	ComPtr<ID3D12Debug6> m_Debug = nullptr;
