@@ -1,5 +1,6 @@
-#include "Utility/EnumReflection.h"
-#include "ShaderCompiler.h"
+#include <D3D12/Shader/ShaderCompiler.h>
+#include <Utility/EnumReflection.h>
+
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>

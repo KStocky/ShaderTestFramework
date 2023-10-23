@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ShaderEnums.h"
+#include "D3D12/Shader/ShaderEnums.h"
 
 #include <filesystem>
 #include <string>

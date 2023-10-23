@@ -27,9 +27,9 @@ set(SOURCES
     Public/D3D12/Fence.h
     Public/D3D12/GPUDevice.h
     Public/D3D12/GPUResource.h
+    Public/D3D12/Shader/ShaderCompiler.h
+    Public/D3D12/Shader/ShaderEnums.h
     Public/Platform.h
-    Public/ShaderCompiler.h
-    Public/ShaderEnums.h
     Public/ShaderTestFixture.h
     Public/Utility/Algorithm.h
     Public/Utility/Concepts.h
@@ -56,7 +56,7 @@ set(SOURCES
     Private/D3D12/Fence.cpp
     Private/D3D12/GPUDevice.cpp
     Private/D3D12/GPUResource.cpp
-    Private/D3D12/ShaderCompiler.cpp
+    Private/D3D12/Shader/ShaderCompiler.cpp
     Private/ShaderTestFixture.cpp)
 
 target_sources(ShaderTestFramework PRIVATE 
