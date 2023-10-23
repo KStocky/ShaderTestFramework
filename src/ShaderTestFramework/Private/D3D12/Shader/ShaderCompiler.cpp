@@ -8,6 +8,7 @@
 #include <variant>
 
 #include <dxcapi.h>
+#include <d3d12shader.h>
 
 namespace
 {
@@ -15,6 +16,27 @@ namespace
 	{
 		return std::wstring(InString.cbegin(), InString.cend());
 	}
+
+	std::string MakeShaderTarget(const D3D_SHADER_MODEL InShaderModel, const EShaderType InType)
+	{
+		const auto typeName = Enum::UnscopedName(InType);
+		const auto modelName = Enum::UnscopedName(InShaderModel);
+
+		std::string ret;
+		if (InType != EShaderType::Lib)
+		{
+			ret += static_cast<char>(std::tolower(typeName[0]));
+			ret += "s_";
+		}
+		else
+		{
+			ret += "lib_";
+		}
+		ret += modelName.substr(modelName.rfind("L_") + 2);
+
+		return ret;
+	}
+
 }
 
 ShaderCodeSource::ShaderCodeSource(std::string InSourceCode)
@@ -58,30 +80,8 @@ std::string ShaderCodeSource::ToString() const
 		} }, m_Source);
 }
 
-std::string MakeShaderTarget(const D3D_SHADER_MODEL InShaderModel, const EShaderType InType)
+CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& InJob)
 {
-	const auto typeName = Enum::UnscopedName(InType);
-	const auto modelName = Enum::UnscopedName(InShaderModel);
-
-	std::string ret;
-	if (InType != EShaderType::Lib)
-	{
-		ret += static_cast<char>(std::tolower(typeName[0]));
-		ret += "s_";
-	}
-	else
-	{
-		ret += "lib_";
-	}
-	ret += modelName.substr(modelName.rfind("L_") + 2);
-
-	return ret;
-}
-
-std::vector<std::string> CompileShaderDXC(const ShaderCompilationJobDesc& InJob)
-{
-	std::vector<std::string> errors;
-
 	const auto source = InJob.Source.ToString();
 
 	ComPtr<IDxcUtils> utils;
@@ -141,8 +141,8 @@ std::vector<std::string> CompileShaderDXC(const ShaderCompilationJobDesc& InJob)
 
 	static constexpr auto matrixFlags = Enum::MakeFlags(EShaderCompileFlags::MatrixColumnMajor, EShaderCompileFlags::MatrixRowMajor);
 	const auto NoMatrixPackingPreference = Enum::EnumHasMaskNotSet(InJob.Flags, matrixFlags);
-	
-	if (Enum::EnumHasMask(InJob.Flags, EShaderCompileFlags::MatrixRowMajor) || 
+
+	if (Enum::EnumHasMask(InJob.Flags, EShaderCompileFlags::MatrixRowMajor) ||
 		NoMatrixPackingPreference)
 	{
 		args.push_back(L"-Zpr");
@@ -212,13 +212,13 @@ std::vector<std::string> CompileShaderDXC(const ShaderCompilationJobDesc& InJob)
 
 	if (errorBuffer && errorBuffer->GetStringLength() > 0)
 	{
-		errors.push_back(errorBuffer->GetStringPointer());
+		return Unexpected{ std::string{errorBuffer->GetStringPointer()} };
 	}
-	
-	return errors;
-}
 
-std::vector<std::string> CompileShader(const ShaderCompilationJobDesc& InJob)
-{
-	return CompileShaderDXC(InJob);
+	ComPtr<IDxcBlob> hashBlob;
+	ComPtr<IDxcBlob> objBlob;
+	results->GetOutput(DXC_OUT_SHADER_HASH, IID_PPV_ARGS(hashBlob.GetAddressOf()), nullptr);
+	results->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(objBlob.GetAddressOf()), nullptr);
+
+	return CompiledShaderData{ ShaderCompilerToken{}, CompiledShaderData::CreationParams{objBlob, std::string{static_cast<char*>(hashBlob->GetBufferPointer()), hashBlob->GetBufferSize()}} };
 }

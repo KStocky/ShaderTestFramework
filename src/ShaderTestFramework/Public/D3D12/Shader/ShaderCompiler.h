@@ -1,6 +1,8 @@
 #pragma once
 
+#include "D3D12/Shader/CompiledShaderData.h"
 #include "D3D12/Shader/ShaderEnums.h"
+#include "Utility/Expected.h"
 
 #include <filesystem>
 #include <string>
@@ -11,6 +13,8 @@
 #include <d3d12.h>
 
 namespace fs = std::filesystem;
+
+using CompilationResult = Expected<CompiledShaderData, std::string>;
 
 class ShaderCodeSource
 {
@@ -45,4 +49,12 @@ struct ShaderCompilationJobDesc
     EShaderCompileFlags Flags;
 };
 
-std::vector<std::string> CompileShader(const ShaderCompilationJobDesc& InJob);
+class ShaderCompiler
+{
+public:
+
+    CompilationResult CompileShader(const ShaderCompilationJobDesc& InJob);
+
+private:
+
+};

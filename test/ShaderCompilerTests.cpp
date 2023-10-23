@@ -227,20 +227,22 @@ SCENARIO("ShaderModelTestsParameterized")
     {
         WHEN("Compiled with " << Enum::UnscopedName(shaderModel))
         {
-            const auto errors = CompileShader(job);
+            ShaderCompiler compiler;
+            const auto errors = compiler.CompileShader(job);
             if (successCondition(shaderModel))
             {
                 THEN("Compilation Succeeds")
                 {
                     CAPTURE(errors);
-                    REQUIRE(0ull == errors.size());
+                    REQUIRE(errors.has_value());
                 }
             }
             else
             {
                 THEN("Compilation Fails")
                 {
-                    REQUIRE(1ull == errors.size());
+                    CAPTURE(errors);
+                    REQUIRE(!errors.has_value());
                 }
             }
         }
