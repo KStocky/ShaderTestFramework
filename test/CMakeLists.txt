@@ -9,6 +9,7 @@ target_sources(ShaderTestFrameworkTests PRIVATE
     DescriptorRingAllocatorTests.cpp
     DescriptorTests.cpp
     FunctionTraitsTests.cpp
+    LambdaTests.cpp
     RingBufferTests.cpp
     ShaderCompilerTests.cpp
     ShaderTestFixtureTests.cpp

@@ -41,6 +41,7 @@ set(SOURCES
     Public/Utility/MoveOnly.h
     Public/Utility/OverloadSet.h
     Public/Utility/Pointer.h
+    Public/Utility/Tuple.h
     Public/Utility/Type.h
     Public/Utility/TypeList.h
     Private/D3D12/CommandAllocator.cpp
@@ -76,3 +77,4 @@ target_link_libraries(ShaderTestFramework PRIVATE d3d12.lib dxgi.lib DXC dxguid.
 target_compile_options(ShaderTestFramework PRIVATE ${GLOBAL_COMPILE_FLAGS})
 
 add_tl_expected(ShaderTestFramework)
+add_tuplet(ShaderTestFramework)

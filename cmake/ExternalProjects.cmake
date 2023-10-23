@@ -30,3 +30,16 @@ function(add_tl_expected IN_TARGET)
     target_include_directories(${IN_TARGET} PUBLIC ${EXPECTED_DIR}/include)
     return()
 endfunction()
+
+function(add_tuplet IN_TARGET)
+    FetchContent_Declare(
+        Tuplet
+        GIT_REPOSITORY https://github.com/codeinred/tuplet.git
+        GIT_TAG v2.1.1
+    )
+
+    FetchContent_MakeAvailable(Tuplet)
+    
+    target_link_libraries(${IN_TARGET} PUBLIC tuplet)
+    return()
+endfunction()
