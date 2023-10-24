@@ -1,6 +1,7 @@
 #pragma once
 #include "Utility/Pointer.h"
 
+#include <optional>
 #include <string>
 
 #include <dxcapi.h>
@@ -17,27 +18,27 @@ public:
 	struct CreationParams
 	{
 		ComPtr<IDxcBlob> CompiledShader = nullptr;
-		std::string Hash = "";
+		std::optional<DxcShaderHash> Hash = {};
 	};
 
 	CompiledShaderData() = default;
 	CompiledShaderData(ShaderCompilerToken, CreationParams InParams);
 
 	template<typename ThisType>
-	auto&& GetCompiledShader(this ThisType&& InThis)
+	decltype(auto) GetCompiledShader(this ThisType&& InThis)
 	{
 		return std::forward<ThisType>(InThis).m_CompiledShader.Get();
 	}
 
 	template<typename ThisType>
-	auto&& GetHash(this ThisType&& InThis)
+	decltype(auto) GetHash(this ThisType&& InThis)
 	{
-		return std::string_view{ std::forward<ThisType>(InThis).m_Hash };
+		return std::forward<ThisType>(InThis).m_Hash;
 	}
 
 private:
 
 	ComPtr<IDxcBlob> m_CompiledShader = nullptr;
-	std::string m_Hash;
+	std::optional<DxcShaderHash> m_Hash;
 
 };

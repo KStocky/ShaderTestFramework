@@ -1,10 +1,12 @@
 #include "D3D12/Shader/ShaderCompiler.h"
 
 #include "Utility/EnumReflection.h"
+#include "Utility/Exception.h"
 #include "Utility/OverloadSet.h"
 #include "Utility/Pointer.h"
 
 #include <fstream>
+#include <ranges>
 #include <variant>
 
 #include <dxcapi.h>
@@ -109,6 +111,9 @@ CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& 
 	args.push_back(L"-T");
 	args.push_back(ToWString(MakeShaderTarget(InJob.ShaderModel, InJob.ShaderType)));
 
+	args.push_back(L"-Zs");
+	args.push_back(L"-Zss");
+
 	if (Enum::EnumHasMask(InJob.Flags, EShaderCompileFlags::AllResourcesBound))
 	{
 		args.push_back(L"-all-resources-bound");
@@ -205,20 +210,46 @@ CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& 
 	}
 
 	ComPtr<IDxcResult> results;
-	compiler->Compile(&sourceBuffer, rawArgs.data(), static_cast<uint32_t>(rawArgs.size()), includeHandler.Get(), IID_PPV_ARGS(results.GetAddressOf()));
+	ThrowIfFailed(compiler->Compile(&sourceBuffer, rawArgs.data(), static_cast<u32>(rawArgs.size()), includeHandler.Get(), IID_PPV_ARGS(results.GetAddressOf())));
 
-	ComPtr<IDxcBlobUtf8> errorBuffer;
-	results->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(errorBuffer.GetAddressOf()), nullptr);
-
-	if (errorBuffer && errorBuffer->GetStringLength() > 0)
+	// GetOutputByIndex can not be trusted to return DXC_OUT_ERRORS in all cases
+	// So we have to handle errors separately
+	if (results->HasOutput(DXC_OUT_ERRORS))
 	{
-		return Unexpected{ std::string{errorBuffer->GetStringPointer()} };
+		ComPtr<IDxcBlobUtf8> errorBuffer;
+		ThrowIfFailed(results->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(errorBuffer.GetAddressOf()), nullptr));
+
+		if (errorBuffer && errorBuffer->GetStringLength() > 0)
+		{
+			return Unexpected{ std::string{errorBuffer->GetStringPointer()} };
+		}
 	}
 
-	ComPtr<IDxcBlob> hashBlob;
-	ComPtr<IDxcBlob> objBlob;
-	results->GetOutput(DXC_OUT_SHADER_HASH, IID_PPV_ARGS(hashBlob.GetAddressOf()), nullptr);
-	results->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(objBlob.GetAddressOf()), nullptr);
-
-	return CompiledShaderData{ ShaderCompilerToken{}, CompiledShaderData::CreationParams{objBlob, std::string{static_cast<char*>(hashBlob->GetBufferPointer()), hashBlob->GetBufferSize()}} };
+	const auto numOutputs = results->GetNumOutputs();
+	CompiledShaderData::CreationParams params;
+	for (const auto outputIndex : std::views::iota(0u, numOutputs))
+	{
+		const auto outputKind = results->GetOutputByIndex(outputIndex);
+		switch (outputKind)
+		{
+			case DXC_OUT_OBJECT:
+			{
+				ComPtr<IDxcBlob> objBlob;
+				ThrowIfFailed(results->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(objBlob.GetAddressOf()), nullptr));
+				params.CompiledShader = std::move(objBlob);
+				break;
+			}
+			case DXC_OUT_SHADER_HASH:
+			{
+				ComPtr<IDxcBlob> hashBlob;
+				ThrowIfFailed(results->GetOutput(DXC_OUT_SHADER_HASH, IID_PPV_ARGS(hashBlob.GetAddressOf()), nullptr));
+				DxcShaderHash hash;
+				std::memcpy(&hash, hashBlob->GetBufferPointer(), hashBlob->GetBufferSize());
+				params.Hash = hash;
+				break;
+			}
+		}
+	}
+	
+	return CompiledShaderData{ ShaderCompilerToken{}, std::move(params)};
 }
