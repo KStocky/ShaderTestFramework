@@ -101,11 +101,6 @@ CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& 
 
 	std::vector<std::wstring> args;
 
-	if (InJob.Name.size() > 0ull)
-	{
-		args.push_back(ToWString(InJob.Name));
-	}
-
 	args.push_back(L"-E");
 	args.push_back(ToWString(InJob.EntryPoint));
 	args.push_back(L"-T");
@@ -127,11 +122,6 @@ CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& 
 	if (Enum::EnumHasMask(InJob.Flags, EShaderCompileFlags::Debug))
 	{
 		args.push_back(L"-Zi");
-	}
-
-	if (Enum::EnumHasMask(InJob.Flags, EShaderCompileFlags::EnableBackwardsCompatibility))
-	{
-		args.push_back(L"-Gec");
 	}
 
 	if (Enum::EnumHasMask(InJob.Flags, EShaderCompileFlags::EnableStrictness))
@@ -197,9 +187,9 @@ CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& 
 		args.push_back(std::format(L"{}={}", ToWString(define.Name), ToWString(define.Definition)));
 	}
 
-	for (auto&& extra : InJob.AdditionalFlags)
+	for (const auto& extra : InJob.AdditionalFlags)
 	{
-		args.push_back(std::move(extra));
+		args.push_back(extra);
 	}
 
 	std::vector<LPCWSTR> rawArgs;
@@ -214,11 +204,12 @@ CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& 
 
 	// GetOutputByIndex can not be trusted to return DXC_OUT_ERRORS in all cases
 	// So we have to handle errors separately
+	// made a bug here https://github.com/microsoft/DirectXShaderCompiler/issues/5923
 	if (results->HasOutput(DXC_OUT_ERRORS))
 	{
 		ComPtr<IDxcBlobUtf8> errorBuffer;
 		ThrowIfFailed(results->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(errorBuffer.GetAddressOf()), nullptr));
-
+	
 		if (errorBuffer && errorBuffer->GetStringLength() > 0)
 		{
 			return Unexpected{ std::string{errorBuffer->GetStringPointer()} };

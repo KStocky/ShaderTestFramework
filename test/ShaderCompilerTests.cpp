@@ -170,8 +170,7 @@ SCENARIO("ShaderModelTests")
 
                             if (QuadAny(cond))
                             {
-                                float2 temp_uv = float2(0.0, 0.5);
-                                float4 sampled_result = t0.Sample(s0, temp_uv);
+                                float4 sampled_result = float4(1.0, 2.0, 3.0, 4.0);
                                 if (cond)
                                 {
                                     ret = sampled_result;
@@ -233,7 +232,7 @@ SCENARIO("ShaderModelTests")
             {
                 THEN("Compilation Succeeds")
                 {
-                    CAPTURE(errors);
+                    CAPTURE(errors.error_or(""));
                     REQUIRE(errors.has_value());
                 }
             }
@@ -241,7 +240,6 @@ SCENARIO("ShaderModelTests")
             {
                 THEN("Compilation Fails")
                 {
-                    CAPTURE(errors);
                     REQUIRE(!errors.has_value());
                 }
             }

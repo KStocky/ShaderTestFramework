@@ -4,6 +4,7 @@
 
 enum class EShaderCompileFlags : u32
 {
+	None = 0,
 	Debug = (1 << 0),
 	SkipValidation = (1 << 1),
 	SkipOptimization = (1 << 2),
@@ -12,7 +13,6 @@ enum class EShaderCompileFlags : u32
 	AvoidFlowControl = (1 << 9),
 	PreferFlowControl = (1 << 10),
 	EnableStrictness = (1 << 11),
-	EnableBackwardsCompatibility = (1 << 12),
 	IEEEStrictness = (1 << 13),
 	O0 = (1 << 14),
 	O3 = (1 << 15),

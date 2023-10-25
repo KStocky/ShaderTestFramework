@@ -44,9 +44,9 @@ struct ShaderCompilationJobDesc
     std::vector<ShaderMacro> Defines;
     std::vector<std::wstring> AdditionalFlags;
     std::string EntryPoint;
-    D3D_SHADER_MODEL ShaderModel;
-    EShaderType ShaderType;
-    EShaderCompileFlags Flags;
+    D3D_SHADER_MODEL ShaderModel = D3D_SHADER_MODEL_6_0;
+    EShaderType ShaderType = EShaderType::None;
+    EShaderCompileFlags Flags = EShaderCompileFlags::None;
 };
 
 class ShaderCompiler
