@@ -232,7 +232,8 @@ SCENARIO("ShaderModelTests")
             {
                 THEN("Compilation Succeeds")
                 {
-                    CAPTURE(errors.error_or(""));
+                    const auto error = errors.has_value() ? "" : errors.error();
+                    CAPTURE(error);
                     REQUIRE(errors.has_value());
                 }
             }
@@ -277,8 +278,25 @@ SCENARIO("ShaderHashTests")
             
             THEN("Hash is valid")
             {
-                const auto hash = result->GetHash();
+                const auto hash = result->GetShaderHash();
                 REQUIRE(hash.has_value());
+
+                AND_WHEN("is compiled again with no changes")
+                {
+                    const auto otherResult = compiler.CompileShader(job);
+                    REQUIRE(otherResult.has_value());
+
+                    THEN("Hash is valid")
+                    {
+                        const auto otherHash = otherResult->GetShaderHash();
+                        REQUIRE(otherHash.has_value());
+
+                        AND_THEN("two hashes are equal")
+                        {
+                            REQUIRE(*hash == *otherHash);
+                        }
+                    }
+                }
             }
         }
     }

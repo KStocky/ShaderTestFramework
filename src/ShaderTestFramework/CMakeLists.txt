@@ -30,6 +30,7 @@ set(SOURCES
     Public/D3D12/Shader/CompiledShaderData.h
     Public/D3D12/Shader/ShaderCompiler.h
     Public/D3D12/Shader/ShaderEnums.h
+    Public/D3D12/Shader/ShaderHash.h
     Public/Platform.h
     Public/ShaderTestFixture.h
     Public/Utility/Algorithm.h

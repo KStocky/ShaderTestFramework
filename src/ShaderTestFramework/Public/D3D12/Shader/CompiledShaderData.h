@@ -1,4 +1,5 @@
 #pragma once
+#include "D3D12/Shader/ShaderHash.h"
 #include "Utility/Pointer.h"
 
 #include <optional>
@@ -18,7 +19,7 @@ public:
 	struct CreationParams
 	{
 		ComPtr<IDxcBlob> CompiledShader = nullptr;
-		std::optional<DxcShaderHash> Hash = {};
+		std::optional<ShaderHash> Hash = {};
 	};
 
 	CompiledShaderData() = default;
@@ -31,7 +32,7 @@ public:
 	}
 
 	template<typename ThisType>
-	decltype(auto) GetHash(this ThisType&& InThis)
+	decltype(auto) GetShaderHash(this ThisType&& InThis)
 	{
 		return std::forward<ThisType>(InThis).m_Hash;
 	}
@@ -39,6 +40,5 @@ public:
 private:
 
 	ComPtr<IDxcBlob> m_CompiledShader = nullptr;
-	std::optional<DxcShaderHash> m_Hash;
-
+	std::optional<ShaderHash> m_Hash;
 };
