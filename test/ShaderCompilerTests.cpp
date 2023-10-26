@@ -297,6 +297,34 @@ SCENARIO("ShaderHashTests")
                         }
                     }
                 }
+
+                AND_WHEN("is compiled again with a slight change")
+                {
+                    job.Source = std::string{ R"(
+                        RWBuffer<int64_t> Buff;
+
+                        int64_t InVal;
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            Buff[DispatchThreadId.x] = (DispatchThreadId.x + 35) * InVal;
+                        }
+                        )" };
+
+                    const auto otherResult = compiler.CompileShader(job);
+                    REQUIRE(otherResult.has_value());
+
+                    THEN("Hash is valid")
+                    {
+                        const auto otherHash = otherResult->GetShaderHash();
+                        REQUIRE(otherHash.has_value());
+
+                        AND_THEN("two hashes are not equal")
+                        {
+                            REQUIRE(*hash != *otherHash);
+                        }
+                    }
+                }
             }
         }
     }
