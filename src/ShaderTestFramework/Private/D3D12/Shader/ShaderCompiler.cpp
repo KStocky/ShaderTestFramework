@@ -216,8 +216,23 @@ CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& 
 		}
 	}
 
-	const auto numOutputs = results->GetNumOutputs();
 	CompiledShaderData::CreationParams params;
+
+	if (results->HasOutput(DXC_OUT_OBJECT))
+	{
+		ComPtr<IDxcBlob> objBlob;
+		ThrowIfFailed(results->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(objBlob.GetAddressOf()), nullptr));
+		params.CompiledShader = std::move(objBlob);
+	}
+
+	if (results->HasOutput(DXC_OUT_SHADER_HASH))
+	{
+		ComPtr<IDxcBlob> hashBlob;
+		ThrowIfFailed(results->GetOutput(DXC_OUT_SHADER_HASH, IID_PPV_ARGS(hashBlob.GetAddressOf()), nullptr));
+		DxcShaderHash hash;
+		std::memcpy(&hash, hashBlob->GetBufferPointer(), hashBlob->GetBufferSize());
+		params.Hash = hash;
+	}
 
 	if (InJob.ShaderType != EShaderType::Lib && results->HasOutput(DXC_OUT_REFLECTION))
 	{
@@ -233,46 +248,6 @@ CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& 
 		ThrowIfFailed(utils->CreateReflection(&reflectionBuffer, IID_PPV_ARGS(shaderReflection.GetAddressOf())));
 
 		params.Reflection = std::move(shaderReflection);
-	}
-
-	for (const auto outputIndex : std::views::iota(0u, numOutputs))
-	{
-		const auto outputKind = results->GetOutputByIndex(outputIndex);
-		switch (outputKind)
-		{
-			case DXC_OUT_OBJECT:
-			{
-				ComPtr<IDxcBlob> objBlob;
-				ThrowIfFailed(results->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(objBlob.GetAddressOf()), nullptr));
-				params.CompiledShader = std::move(objBlob);
-				break;
-			}
-			case DXC_OUT_SHADER_HASH:
-			{
-				ComPtr<IDxcBlob> hashBlob;
-				ThrowIfFailed(results->GetOutput(DXC_OUT_SHADER_HASH, IID_PPV_ARGS(hashBlob.GetAddressOf()), nullptr));
-				DxcShaderHash hash;
-				std::memcpy(&hash, hashBlob->GetBufferPointer(), hashBlob->GetBufferSize());
-				params.Hash = hash;
-				break;
-			}
-			case DXC_OUT_REFLECTION:
-			{
-				ComPtr<IDxcBlob> blob;
-				ThrowIfFailed(results->GetOutput(DXC_OUT_REFLECTION, IID_PPV_ARGS(blob.GetAddressOf()), nullptr));
-				const DxcBuffer reflectionBuffer
-				{
-					.Ptr = blob->GetBufferPointer(),
-					.Size = blob->GetBufferSize(),
-					.Encoding = 0
-				};
-				ComPtr<ID3D12ShaderReflection> shaderReflection;
-				ThrowIfFailed(utils->CreateReflection(&reflectionBuffer, IID_PPV_ARGS(shaderReflection.GetAddressOf())));
-				
-				params.Reflection = std::move(shaderReflection);
-				break;
-			}
-		}
 	}
 	
 	return CompiledShaderData{ ShaderCompilerToken{}, std::move(params)};
