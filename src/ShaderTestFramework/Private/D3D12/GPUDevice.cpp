@@ -262,6 +262,24 @@ ExpectedHRes<Fence> GPUDevice::CreateFence(const u64 InInitialValue, const std::
 	return Fence(Fence::CreationParams{ std::move(fence), InInitialValue });
 }
 
+RootSignature GPUDevice::CreateRootSignature(const D3D12_ROOT_SIGNATURE_DESC1& InDesc) const
+{
+	D3D12_VERSIONED_ROOT_SIGNATURE_DESC desc;
+	desc.Version = D3D_ROOT_SIGNATURE_VERSION_1_1;
+	desc.Desc_1_1 = InDesc;
+
+	ComPtr<ID3DBlob> signature;
+	ComPtr<ID3DBlob> error;
+	ThrowIfFailed(D3D12SerializeVersionedRootSignature(&desc, signature.GetAddressOf(), error.GetAddressOf()));
+
+	ComPtr<ID3D12RootSignature> rootSignatureObject;
+	ThrowIfFailed(m_Device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(rootSignatureObject.GetAddressOf())));
+
+	ComPtr<ID3D12VersionedRootSignatureDeserializer> deserializer;
+	ThrowIfFailed(D3D12CreateVersionedRootSignatureDeserializer(signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(deserializer.GetAddressOf())));
+	return RootSignature(RootSignature::CreationParams{std::move(rootSignatureObject), std::move(deserializer), std::move(signature)});
+}
+
 ExpectedHRes<void> GPUDevice::SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes)
 {
 	if (const auto hres = m_Adapter->SetVideoMemoryReservation(0, DXGI_MEMORY_SEGMENT_GROUP_LOCAL, InNewReservationBytes);

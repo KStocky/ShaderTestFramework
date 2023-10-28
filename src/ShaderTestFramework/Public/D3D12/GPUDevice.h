@@ -6,6 +6,7 @@
 #include "D3D12/Fence.h"
 #include "D3D12/DescriptorHeap.h"
 #include "D3D12/GPUResource.h"
+#include "D3D12/Shader/RootSignature.h"
 #include "Platform.h"
 #include "Utility/Pointer.h"
 
@@ -136,6 +137,8 @@ public:
 	ExpectedHRes<DescriptorHeap> CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName = "DefaultDescriptorHeap") const;
 
 	ExpectedHRes<Fence> CreateFence(const u64 InInitialValue, const std::string_view InName = "DefaultFence") const;
+
+	RootSignature CreateRootSignature(const D3D12_ROOT_SIGNATURE_DESC1& InDesc) const;
 
 	ExpectedHRes<void> SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes);
 	ExpectedHRes<void> SetSystemVideoMemoryReservation(const u64 InNewReservationBytes);
