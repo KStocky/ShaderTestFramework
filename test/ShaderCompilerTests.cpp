@@ -1,6 +1,7 @@
 #include <D3D12/Shader/ShaderCompiler.h>
 #include <Utility/EnumReflection.h>
 
+#include <format>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
@@ -326,6 +327,112 @@ SCENARIO("ShaderHashTests")
                     }
                 }
             }
+        }
+    }
+}
+
+SCENARIO("ShaderReflectionTests - Resource binding")
+{
+
+    auto [name, code, expectedNumBufferInResources] =
+        GENERATE
+        (
+            table<std::string, std::string, u32>
+            (
+                {
+                    std::tuple
+                    {
+                        "A shader with a single input Buffer",
+                        R"(
+                        RWBuffer<int> Buff;
+
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            Buff[DispatchThreadId.x] = 0;
+                        }
+                        )",
+                        1
+                    },
+                    std::tuple
+                    {
+                        "A shader with an array of Buffers",
+                        R"(
+                        RWBuffer<int> Buff[2];
+
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            Buff[0][DispatchThreadId.x] = 0;
+                            Buff[1][DispatchThreadId.x] = 0;
+                        }
+                        )",
+                        2
+                    },
+                    std::tuple
+                    {
+                        "A shader with an unbounded array of Buffers",
+                        R"(
+                        RWBuffer<int> Buff[];
+
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            Buff[0][DispatchThreadId.x] = 0;
+                            Buff[1][DispatchThreadId.x] = 0;
+                        }
+                        )",
+                        0
+                    }
+                }
+            )
+        );
+
+
+    GIVEN(name)
+    {
+        ShaderCompilationJobDesc job;
+        job.Name = "Test";
+        job.EntryPoint = "Main";
+        job.ShaderModel = D3D_SHADER_MODEL_6_0;
+        job.ShaderType = EShaderType::Compute;
+        job.Source = code;
+
+        WHEN("when compiled")
+        {
+            ShaderCompiler compiler;
+            const auto result = compiler.CompileShader(job);
+
+            REQUIRE(result.has_value());
+
+            AND_WHEN("Reflection is inspected")
+            {
+                const auto reflection = result->GetReflection();
+
+                REQUIRE(reflection);
+
+                D3D12_SHADER_DESC desc;
+                REQUIRE(SUCCEEDED(reflection->GetDesc(&desc)));
+
+                THEN("Has single bound resource")
+                {
+                    REQUIRE(desc.BoundResources == 1);
+
+                    AND_THEN(std::format("bound resource has {} buffers", expectedNumBufferInResources))
+                    {
+                        D3D12_SHADER_INPUT_BIND_DESC binding;
+                        REQUIRE(SUCCEEDED(reflection->GetResourceBindingDesc(0, &binding)));
+
+                        REQUIRE(binding.BindCount == expectedNumBufferInResources);
+                    }
+                }
+
+                THEN("Has zero constant buffers")
+                {
+                    REQUIRE(desc.ConstantBuffers == 0);
+                }
+            }
+
         }
     }
 }

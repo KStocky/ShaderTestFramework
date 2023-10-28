@@ -2,6 +2,7 @@
 
 CompiledShaderData::CompiledShaderData(ShaderCompilerToken, CreationParams InParams)
 	: m_CompiledShader(std::move(InParams.CompiledShader))
+	, m_Reflection(std::move(InParams.Reflection))
 	, m_Hash(std::move(InParams.Hash))
 {
 }

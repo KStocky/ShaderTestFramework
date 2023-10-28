@@ -218,6 +218,23 @@ CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& 
 
 	const auto numOutputs = results->GetNumOutputs();
 	CompiledShaderData::CreationParams params;
+
+	if (InJob.ShaderType != EShaderType::Lib && results->HasOutput(DXC_OUT_REFLECTION))
+	{
+		ComPtr<IDxcBlob> blob;
+		ThrowIfFailed(results->GetOutput(DXC_OUT_REFLECTION, IID_PPV_ARGS(blob.GetAddressOf()), nullptr));
+		const DxcBuffer reflectionBuffer
+		{
+			.Ptr = blob->GetBufferPointer(),
+			.Size = blob->GetBufferSize(),
+			.Encoding = 0
+		};
+		ComPtr<ID3D12ShaderReflection> shaderReflection;
+		ThrowIfFailed(utils->CreateReflection(&reflectionBuffer, IID_PPV_ARGS(shaderReflection.GetAddressOf())));
+
+		params.Reflection = std::move(shaderReflection);
+	}
+
 	for (const auto outputIndex : std::views::iota(0u, numOutputs))
 	{
 		const auto outputKind = results->GetOutputByIndex(outputIndex);
@@ -237,6 +254,22 @@ CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& 
 				DxcShaderHash hash;
 				std::memcpy(&hash, hashBlob->GetBufferPointer(), hashBlob->GetBufferSize());
 				params.Hash = hash;
+				break;
+			}
+			case DXC_OUT_REFLECTION:
+			{
+				ComPtr<IDxcBlob> blob;
+				ThrowIfFailed(results->GetOutput(DXC_OUT_REFLECTION, IID_PPV_ARGS(blob.GetAddressOf()), nullptr));
+				const DxcBuffer reflectionBuffer
+				{
+					.Ptr = blob->GetBufferPointer(),
+					.Size = blob->GetBufferSize(),
+					.Encoding = 0
+				};
+				ComPtr<ID3D12ShaderReflection> shaderReflection;
+				ThrowIfFailed(utils->CreateReflection(&reflectionBuffer, IID_PPV_ARGS(shaderReflection.GetAddressOf())));
+				
+				params.Reflection = std::move(shaderReflection);
 				break;
 			}
 		}
