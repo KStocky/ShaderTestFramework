@@ -76,9 +76,9 @@ target_sources(ShaderTestFramework PRIVATE
 target_sources(ShaderTestFramework PRIVATE 
     ${DXC_HEADERS})
 
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})
-source_group(TREE ${AGILITY_INCLUDE} PREFIX "AgilitySDK" FILES ${AGILITY_HEADERS})
-source_group(TREE ${DXC_INCLUDE} PREFIX "DXC" FILES ${DXC_HEADERS})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source" FILES ${SOURCES})
+source_group(TREE ${AGILITY_INCLUDE} PREFIX "ThirdParty/AgilitySDK" FILES ${AGILITY_HEADERS})
+source_group(TREE ${DXC_INCLUDE} PREFIX "ThirdParty/DXC" FILES ${DXC_HEADERS})
 
 target_include_directories(ShaderTestFramework PUBLIC ${CMAKE_CURRENT_LIST_DIR}/Public/ )
 
