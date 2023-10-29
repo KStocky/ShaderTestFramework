@@ -28,6 +28,7 @@ set(SOURCES
     Public/D3D12/GPUDevice.h
     Public/D3D12/GPUResource.h
     Public/D3D12/Shader/CompiledShaderData.h
+    Public/D3D12/Shader/PipelineState.h
     Public/D3D12/Shader/RootSignature.h
     Public/D3D12/Shader/ShaderCompiler.h
     Public/D3D12/Shader/ShaderEnums.h
@@ -60,6 +61,7 @@ set(SOURCES
     Private/D3D12/GPUDevice.cpp
     Private/D3D12/GPUResource.cpp
     Private/D3D12/Shader/CompiledShaderData.cpp
+    Private/D3D12/Shader/PipelineState.cpp
     Private/D3D12/Shader/RootSignature.cpp
     Private/D3D12/Shader/ShaderCompiler.cpp
     Private/ShaderTestFixture.cpp)
