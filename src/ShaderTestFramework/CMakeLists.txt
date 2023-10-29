@@ -82,6 +82,14 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source" FILES ${SOURCES})
 source_group(TREE ${AGILITY_INCLUDE} PREFIX "ThirdParty/AgilitySDK" FILES ${AGILITY_HEADERS})
 source_group(TREE ${DXC_INCLUDE} PREFIX "ThirdParty/DXC" FILES ${DXC_HEADERS})
 
+set(SHADER_SOURCES
+    Shader/Public/ShaderTestFramework.hlsli
+)
+
+set_source_files_properties(${SHADER_SOURCES} PROPERTIES VS_SETTINGS "ExcludedFromBuild=true")
+target_sources(ShaderTestFramework PRIVATE ${SHADER_SOURCES})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/Shader PREFIX "ShaderSources" FILES ${SHADER_SOURCES})
+
 target_include_directories(ShaderTestFramework PUBLIC ${CMAKE_CURRENT_LIST_DIR}/Public/ )
 
 target_include_directories(ShaderTestFramework PUBLIC ${AGILITY_INCLUDE} ${DXC_INCLUDE} )
