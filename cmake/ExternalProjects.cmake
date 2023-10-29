@@ -28,6 +28,11 @@ function(add_tl_expected IN_TARGET)
     )
 
     target_include_directories(${IN_TARGET} PUBLIC ${EXPECTED_DIR}/include)
+
+    file(GLOB_RECURSE EXPECTED_HEADERS "${EXPECTED_DIR}/include/*.h*" )
+    target_sources(ShaderTestFramework PRIVATE 
+        ${EXPECTED_HEADERS})
+    source_group(TREE ${EXPECTED_DIR}/include PREFIX "ThirdParty/tl-expected" FILES ${EXPECTED_HEADERS})
     return()
 endfunction()
 
@@ -40,6 +45,6 @@ function(add_tuplet IN_TARGET)
 
     FetchContent_MakeAvailable(Tuplet)
     
-    target_link_libraries(${IN_TARGET} PUBLIC tuplet)
+    target_link_libraries(${IN_TARGET} PUBLIC tuplet::tuplet)
     return()
 endfunction()
