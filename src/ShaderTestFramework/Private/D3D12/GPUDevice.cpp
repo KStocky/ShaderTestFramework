@@ -8,6 +8,8 @@
 #include <span>
 #include <vector>
 
+#include <dxgidebug.h>
+
 namespace
 {
 	void SetName(ID3D12Object* InObject, const std::string_view InString)
@@ -127,59 +129,45 @@ GPUDevice::GPUDevice(const CreationParams InDesc)
 		return;
 	}
 
-	auto adapterInfo = GetAdapter(InDesc.DeviceType, *m_Factory.Get());
-	if (!adapterInfo.has_value())
-	{
-		return;
-	}
+	auto adapterInfo = ThrowIfUnexpected(GetAdapter(InDesc.DeviceType, *m_Factory.Get()));
 
-	m_Adapter = std::move(adapterInfo->Adapter);
+	m_Adapter = std::move(adapterInfo.Adapter);
 
-	auto tempDevice = m_Device;
-
-	if (const auto hres = D3D12CreateDevice(m_Adapter.Get(), adapterInfo->FeatureLevel, IID_PPV_ARGS(tempDevice.GetAddressOf()));
-		FAILED(hres))
-	{
-		return;
-	}
+	ThrowIfFailed(D3D12CreateDevice(m_Adapter.Get(), adapterInfo.FeatureLevel, IID_PPV_ARGS(m_Device.GetAddressOf())));
 
 	if (InDesc.DebugLevel != EDebugLevel::Off)
 	{
-		if (const auto hres = tempDevice->QueryInterface(m_DebugDevice.GetAddressOf());
-			FAILED(hres))
-		{
-			return;
-		}
+		ThrowIfFailed(m_Device->QueryInterface(m_DebugDevice.GetAddressOf()));
 	}
 
-	m_CBVDescriptorSize = tempDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	m_RTVDescriptorSize = tempDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	m_DSVDescriptorSize = tempDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-	m_SamplerDescriptorSize = tempDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
+	m_CBVDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	m_RTVDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	m_DSVDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+	m_SamplerDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
 	
-	if (!CacheHardwareInfo(tempDevice.Get()).has_value())
+	if (!CacheHardwareInfo(m_Device.Get()).has_value())
 	{
 		return;
 	}
-
-	if (const auto hres = tempDevice->QueryInterface(m_DebugDevice.GetAddressOf());
-		FAILED(hres))
-	{
-		return;
-	}
-	m_Device = tempDevice;
 }
 
 GPUDevice::~GPUDevice()
 {
-	m_Device = nullptr;
+	const bool wasValid = IsValid();
+	m_Factory = nullptr;
+	m_Adapter = nullptr;
 	m_Debug = nullptr;
-	if (m_DebugDevice)
+	m_DebugDevice = nullptr;
+	const bool hasZeroRefs = m_Device.Reset() == 0;
+
+	if (wasValid && hasZeroRefs)
 	{
-		// https://stackoverflow.com/questions/46802508/d3d12-unavoidable-leak-report
-		// May go back to using the DXGI method of reporting live events later when I have leaks to compare the messages
-		// The SO post explains things quite well
-		m_DebugDevice->ReportLiveDeviceObjects(D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL);
+		// Described in https://stackoverflow.com/questions/46802508/d3d12-unavoidable-leak-report
+		ComPtr<IDXGIDebug1> dxgiDebug;
+		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
+		{
+			dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_FLAGS(DXGI_DEBUG_RLO_SUMMARY | DXGI_DEBUG_RLO_IGNORE_INTERNAL));
+		}
 	}
 }
 
@@ -260,6 +248,24 @@ ExpectedHRes<Fence> GPUDevice::CreateFence(const u64 InInitialValue, const std::
 	}
 	SetName(fence.Get(), InName);
 	return Fence(Fence::CreationParams{ std::move(fence), InInitialValue });
+}
+
+RootSignature GPUDevice::CreateRootSignature(const D3D12_ROOT_SIGNATURE_DESC1& InDesc) const
+{
+	D3D12_VERSIONED_ROOT_SIGNATURE_DESC desc;
+	desc.Version = D3D_ROOT_SIGNATURE_VERSION_1_1;
+	desc.Desc_1_1 = InDesc;
+
+	ComPtr<ID3DBlob> signature;
+	ComPtr<ID3DBlob> error;
+	ThrowIfFailed(D3D12SerializeVersionedRootSignature(&desc, signature.GetAddressOf(), error.GetAddressOf()));
+
+	ComPtr<ID3D12RootSignature> rootSignatureObject;
+	ThrowIfFailed(m_Device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(rootSignatureObject.GetAddressOf())));
+
+	ComPtr<ID3D12VersionedRootSignatureDeserializer> deserializer;
+	ThrowIfFailed(D3D12CreateVersionedRootSignatureDeserializer(signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(deserializer.GetAddressOf())));
+	return RootSignature(RootSignature::CreationParams{std::move(rootSignatureObject), std::move(deserializer), std::move(signature)});
 }
 
 ExpectedHRes<void> GPUDevice::SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes)

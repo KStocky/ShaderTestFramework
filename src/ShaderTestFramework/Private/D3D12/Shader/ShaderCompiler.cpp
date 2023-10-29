@@ -1,13 +1,16 @@
-#include "ShaderCompiler.h"
+#include "D3D12/Shader/ShaderCompiler.h"
 
 #include "Utility/EnumReflection.h"
+#include "Utility/Exception.h"
 #include "Utility/OverloadSet.h"
 #include "Utility/Pointer.h"
 
 #include <fstream>
+#include <ranges>
 #include <variant>
 
 #include <dxcapi.h>
+#include <d3d12shader.h>
 
 namespace
 {
@@ -15,6 +18,27 @@ namespace
 	{
 		return std::wstring(InString.cbegin(), InString.cend());
 	}
+
+	std::string MakeShaderTarget(const D3D_SHADER_MODEL InShaderModel, const EShaderType InType)
+	{
+		const auto typeName = Enum::UnscopedName(InType);
+		const auto modelName = Enum::UnscopedName(InShaderModel);
+
+		std::string ret;
+		if (InType != EShaderType::Lib)
+		{
+			ret += static_cast<char>(std::tolower(typeName[0]));
+			ret += "s_";
+		}
+		else
+		{
+			ret += "lib_";
+		}
+		ret += modelName.substr(modelName.rfind("L_") + 2);
+
+		return ret;
+	}
+
 }
 
 ShaderCodeSource::ShaderCodeSource(std::string InSourceCode)
@@ -58,30 +82,8 @@ std::string ShaderCodeSource::ToString() const
 		} }, m_Source);
 }
 
-std::string MakeShaderTarget(const D3D_SHADER_MODEL InShaderModel, const EShaderType InType)
+CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& InJob)
 {
-	const auto typeName = Enum::UnscopedName(InType);
-	const auto modelName = Enum::UnscopedName(InShaderModel);
-
-	std::string ret;
-	if (InType != EShaderType::Lib)
-	{
-		ret += static_cast<char>(std::tolower(typeName[0]));
-		ret += "s_";
-	}
-	else
-	{
-		ret += "lib_";
-	}
-	ret += modelName.substr(modelName.rfind("L_") + 2);
-
-	return ret;
-}
-
-std::vector<std::string> CompileShaderDXC(const ShaderCompilationJobDesc& InJob)
-{
-	std::vector<std::string> errors;
-
 	const auto source = InJob.Source.ToString();
 
 	ComPtr<IDxcUtils> utils;
@@ -99,15 +101,13 @@ std::vector<std::string> CompileShaderDXC(const ShaderCompilationJobDesc& InJob)
 
 	std::vector<std::wstring> args;
 
-	if (InJob.Name.size() > 0ull)
-	{
-		args.push_back(ToWString(InJob.Name));
-	}
-
 	args.push_back(L"-E");
 	args.push_back(ToWString(InJob.EntryPoint));
 	args.push_back(L"-T");
 	args.push_back(ToWString(MakeShaderTarget(InJob.ShaderModel, InJob.ShaderType)));
+
+	args.push_back(L"-Zs");
+	args.push_back(L"-Zss");
 
 	if (Enum::EnumHasMask(InJob.Flags, EShaderCompileFlags::AllResourcesBound))
 	{
@@ -124,11 +124,6 @@ std::vector<std::string> CompileShaderDXC(const ShaderCompilationJobDesc& InJob)
 		args.push_back(L"-Zi");
 	}
 
-	if (Enum::EnumHasMask(InJob.Flags, EShaderCompileFlags::EnableBackwardsCompatibility))
-	{
-		args.push_back(L"-Gec");
-	}
-
 	if (Enum::EnumHasMask(InJob.Flags, EShaderCompileFlags::EnableStrictness))
 	{
 		args.push_back(L"-Ges");
@@ -141,8 +136,8 @@ std::vector<std::string> CompileShaderDXC(const ShaderCompilationJobDesc& InJob)
 
 	static constexpr auto matrixFlags = Enum::MakeFlags(EShaderCompileFlags::MatrixColumnMajor, EShaderCompileFlags::MatrixRowMajor);
 	const auto NoMatrixPackingPreference = Enum::EnumHasMaskNotSet(InJob.Flags, matrixFlags);
-	
-	if (Enum::EnumHasMask(InJob.Flags, EShaderCompileFlags::MatrixRowMajor) || 
+
+	if (Enum::EnumHasMask(InJob.Flags, EShaderCompileFlags::MatrixRowMajor) ||
 		NoMatrixPackingPreference)
 	{
 		args.push_back(L"-Zpr");
@@ -192,9 +187,9 @@ std::vector<std::string> CompileShaderDXC(const ShaderCompilationJobDesc& InJob)
 		args.push_back(std::format(L"{}={}", ToWString(define.Name), ToWString(define.Definition)));
 	}
 
-	for (auto&& extra : InJob.AdditionalFlags)
+	for (const auto& extra : InJob.AdditionalFlags)
 	{
-		args.push_back(std::move(extra));
+		args.push_back(extra);
 	}
 
 	std::vector<LPCWSTR> rawArgs;
@@ -205,20 +200,55 @@ std::vector<std::string> CompileShaderDXC(const ShaderCompilationJobDesc& InJob)
 	}
 
 	ComPtr<IDxcResult> results;
-	compiler->Compile(&sourceBuffer, rawArgs.data(), static_cast<uint32_t>(rawArgs.size()), includeHandler.Get(), IID_PPV_ARGS(results.GetAddressOf()));
+	ThrowIfFailed(compiler->Compile(&sourceBuffer, rawArgs.data(), static_cast<u32>(rawArgs.size()), includeHandler.Get(), IID_PPV_ARGS(results.GetAddressOf())));
 
-	ComPtr<IDxcBlobUtf8> errorBuffer;
-	results->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(errorBuffer.GetAddressOf()), nullptr);
-
-	if (errorBuffer && errorBuffer->GetStringLength() > 0)
+	// GetOutputByIndex can not be trusted to return DXC_OUT_ERRORS in all cases
+	// So we have to handle errors separately
+	// made a bug here https://github.com/microsoft/DirectXShaderCompiler/issues/5923
+	if (results->HasOutput(DXC_OUT_ERRORS))
 	{
-		errors.push_back(errorBuffer->GetStringPointer());
+		ComPtr<IDxcBlobUtf8> errorBuffer;
+		ThrowIfFailed(results->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(errorBuffer.GetAddressOf()), nullptr));
+	
+		if (errorBuffer && errorBuffer->GetStringLength() > 0)
+		{
+			return Unexpected{ std::string{errorBuffer->GetStringPointer()} };
+		}
+	}
+
+	CompiledShaderData::CreationParams params;
+
+	if (results->HasOutput(DXC_OUT_OBJECT))
+	{
+		ComPtr<IDxcBlob> objBlob;
+		ThrowIfFailed(results->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(objBlob.GetAddressOf()), nullptr));
+		params.CompiledShader = std::move(objBlob);
+	}
+
+	if (results->HasOutput(DXC_OUT_SHADER_HASH))
+	{
+		ComPtr<IDxcBlob> hashBlob;
+		ThrowIfFailed(results->GetOutput(DXC_OUT_SHADER_HASH, IID_PPV_ARGS(hashBlob.GetAddressOf()), nullptr));
+		DxcShaderHash hash;
+		std::memcpy(&hash, hashBlob->GetBufferPointer(), hashBlob->GetBufferSize());
+		params.Hash = hash;
+	}
+
+	if (InJob.ShaderType != EShaderType::Lib && results->HasOutput(DXC_OUT_REFLECTION))
+	{
+		ComPtr<IDxcBlob> blob;
+		ThrowIfFailed(results->GetOutput(DXC_OUT_REFLECTION, IID_PPV_ARGS(blob.GetAddressOf()), nullptr));
+		const DxcBuffer reflectionBuffer
+		{
+			.Ptr = blob->GetBufferPointer(),
+			.Size = blob->GetBufferSize(),
+			.Encoding = 0
+		};
+		ComPtr<ID3D12ShaderReflection> shaderReflection;
+		ThrowIfFailed(utils->CreateReflection(&reflectionBuffer, IID_PPV_ARGS(shaderReflection.GetAddressOf())));
+
+		params.Reflection = std::move(shaderReflection);
 	}
 	
-	return errors;
-}
-
-std::vector<std::string> CompileShader(const ShaderCompilationJobDesc& InJob)
-{
-	return CompileShaderDXC(InJob);
+	return CompiledShaderData{ ShaderCompilerToken{}, std::move(params)};
 }

@@ -6,7 +6,10 @@
 #include "D3D12/Fence.h"
 #include "D3D12/DescriptorHeap.h"
 #include "D3D12/GPUResource.h"
+#include "D3D12/Shader/PipelineState.h"
+#include "D3D12/Shader/RootSignature.h"
 #include "Platform.h"
+#include "Utility/Exception.h"
 #include "Utility/Pointer.h"
 
 #include <span>
@@ -15,6 +18,7 @@
 #include <d3d12.h>
 #include <d3d12sdklayers.h>
 #include <dxgi1_6.h>
+#include <d3dx12/d3dx12.h>
 
 struct GPUAdapterInfo
 {
@@ -91,6 +95,12 @@ struct GPUHardwareInfo
 	VariableRateShadingInfo VRSInfo;
 };
 
+template<typename T>
+concept PipelineStateDescType = 
+	std::is_same_v<T, D3D12_GRAPHICS_PIPELINE_STATE_DESC> || 
+	std::is_same_v<T, D3D12_COMPUTE_PIPELINE_STATE_DESC> || 
+	std::is_same_v<T, D3DX12_MESH_SHADER_PIPELINE_STATE_DESC>;
+
 class GPUDevice
 {
 public:
@@ -136,6 +146,22 @@ public:
 	ExpectedHRes<DescriptorHeap> CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName = "DefaultDescriptorHeap") const;
 
 	ExpectedHRes<Fence> CreateFence(const u64 InInitialValue, const std::string_view InName = "DefaultFence") const;
+
+	template<PipelineStateDescType T>
+	PipelineState CreatePipelineState(const T& InDesc) const
+	{
+		const CD3DX12_PIPELINE_STATE_STREAM5 rawStream(InDesc);
+		const D3D12_PIPELINE_STATE_STREAM_DESC desc
+		{
+			.SizeInBytes = sizeof(rawStream),
+			.pPipelineStateSubobjectStream = &rawStream
+		};
+		ComPtr<ID3D12PipelineState> raw = nullptr;
+		ThrowIfFailed(m_Device->CreatePipelineState(&desc, IID_PPV_ARGS(raw.GetAddressOf())));
+		return PipelineState(PipelineState::CreationParams{ std::move(raw) });
+	}
+
+	RootSignature CreateRootSignature(const D3D12_ROOT_SIGNATURE_DESC1& InDesc) const;
 
 	ExpectedHRes<void> SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes);
 	ExpectedHRes<void> SetSystemVideoMemoryReservation(const u64 InNewReservationBytes);
