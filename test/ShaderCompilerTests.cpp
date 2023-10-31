@@ -467,13 +467,15 @@ SCENARIO("ShaderIncludeHandlerTests")
                 CAPTURE(error);
 
                 std::vector<std::string> entries;
-                for (const auto& entry : std::filesystem::recursive_directory_iterator(std::filesystem::current_path()))
+                const auto currentPath = std::filesystem::current_path();
+                for (const auto& entry : std::filesystem::recursive_directory_iterator(currentPath))
                 {
                     if (entry.is_regular_file())
                     {
                         entries.push_back(entry.path().generic_string());
                     }
                 }
+                CAPTURE(currentPath);
                 CAPTURE(entries);
                 REQUIRE(result.has_value());
             }
