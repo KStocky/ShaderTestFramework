@@ -15,7 +15,7 @@ function(add_catch2 IN_TARGET)
     list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 
     include(Catch)
-    catch_discover_tests(${IN_TARGET})
+    catch_discover_tests(${IN_TARGET} WORKING_DIRECTORY "$<TARGET_FILE_DIR:${IN_TARGET}>")
     return()
 endfunction()
 
