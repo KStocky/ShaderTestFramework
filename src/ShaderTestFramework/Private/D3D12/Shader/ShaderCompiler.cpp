@@ -1,5 +1,7 @@
 #include "D3D12/Shader/ShaderCompiler.h"
 
+#include "D3D12/Shader/IncludeHandler.h"
+
 #include "Utility/EnumReflection.h"
 #include "Utility/Exception.h"
 #include "Utility/OverloadSet.h"
@@ -91,8 +93,18 @@ CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& 
 	DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&utils));
 	DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&compiler));
 
-	ComPtr<IDxcIncludeHandler> includeHandler;
-	utils->CreateDefaultIncludeHandler(&includeHandler);
+	const auto shaderLibraryPath = fs::current_path() / fs::path(SHADER_SRC);
+
+	std::vector mappings =
+	{
+		IncludeHandler::Mapping
+		{
+			"/Test",
+			shaderLibraryPath.generic_string()
+		}
+	};
+
+	ComPtr<IDxcIncludeHandler> includeHandler = new IncludeHandler(std::move(mappings), utils);
 
 	DxcBuffer sourceBuffer;
 	sourceBuffer.Encoding = DXC_CP_ACP;

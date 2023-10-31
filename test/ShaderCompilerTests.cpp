@@ -437,3 +437,37 @@ SCENARIO("ShaderReflectionTests - Resource binding")
     }
 }
 
+SCENARIO("ShaderIncludeHandlerTests")
+{
+    GIVEN("Shader that includes test framework")
+    {
+        ShaderCompilationJobDesc job;
+        job.Name = "Test";
+        job.EntryPoint = "Main";
+        job.ShaderModel = D3D_SHADER_MODEL_6_0;
+        job.ShaderType = EShaderType::Compute;
+        job.Source = std::string{ R"(
+                        #include "/Test/Public/ShaderTestFramework.hlsli"
+
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            ShaderTestPrivate::Success();
+                        }
+                        )" };
+
+        WHEN("compiled")
+        {
+            ShaderCompiler compiler;
+            const auto result = compiler.CompileShader(job);
+
+            THEN("Success")
+            {
+                const auto error = result.has_value() ? "" : result.error();
+                CAPTURE(error);
+                REQUIRE(result.has_value());
+            }
+        }
+    }
+}
+
