@@ -34,8 +34,10 @@ set(SOURCES
     Public/D3D12/Shader/ShaderCompiler.h
     Public/D3D12/Shader/ShaderEnums.h
     Public/D3D12/Shader/ShaderHash.h
+    Public/D3D12/Shader/VirtualShaderDirectoryMapping.h
+    Public/D3D12/Shader/VirtualShaderDirectoryMappingManager.h
+    Public/Framework/ShaderTestFixture.h
     Public/Platform.h
-    Public/ShaderTestFixture.h
     Public/Utility/Algorithm.h
     Public/Utility/Concepts.h
     Public/Utility/EnumReflection.h
@@ -66,7 +68,8 @@ set(SOURCES
     Private/D3D12/Shader/PipelineState.cpp
     Private/D3D12/Shader/RootSignature.cpp
     Private/D3D12/Shader/ShaderCompiler.cpp
-    Private/ShaderTestFixture.cpp)
+    Private/D3D12/Shader/VirtualShaderDirectoryMappingManager.cpp
+    Private/Framework/ShaderTestFixture.cpp)
 
 file(GLOB_RECURSE AGILITY_HEADERS "${AGILITY_INCLUDE}/*.h*" )
 file(GLOB_RECURSE DXC_HEADERS "${DXC_INCLUDE}/*.h*" )

@@ -1,4 +1,4 @@
-#include "ShaderTestFixture.h"
+#include "Framework/ShaderTestFixture.h"
 
 int main()
 {

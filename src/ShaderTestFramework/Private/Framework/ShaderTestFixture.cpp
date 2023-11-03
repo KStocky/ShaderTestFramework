@@ -1,4 +1,4 @@
-#include "ShaderTestFixture.h"
+#include "Framework/ShaderTestFixture.h"
 
 #include "D3D12/GPUDevice.h"
 
