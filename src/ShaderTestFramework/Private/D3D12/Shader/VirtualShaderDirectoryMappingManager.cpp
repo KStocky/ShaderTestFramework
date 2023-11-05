@@ -18,6 +18,22 @@ namespace Private
 
 		return VirtualShaderDirectoryMappingManager::EErrorType::Success;
 	}
+
+	auto FindMapping(const std::vector<VirtualShaderDirectoryMapping>& InMappings, const std::filesystem::path& InVirtualPath)
+	{
+		return std::ranges::find_if(InMappings,
+			[&InVirtualPath](const VirtualShaderDirectoryMapping& In)
+			{
+				if (InVirtualPath.native().size() <= In.VirtualPath.native().size())
+				{
+					return false;
+				}
+				const auto startsWithMapping = InVirtualPath.native().starts_with(In.VirtualPath.native());
+				const auto charAfterVirtualMap = *(InVirtualPath.native().cbegin() + In.VirtualPath.native().size());
+				const auto virtualMappingEndsWithSlash = charAfterVirtualMap == L'/' || charAfterVirtualMap == L'\\';
+				return startsWithMapping && virtualMappingEndsWithSlash;
+			});
+	}
 }
 
 VirtualShaderDirectoryMappingManager::EErrorType VirtualShaderDirectoryMappingManager::AddMapping(VirtualShaderDirectoryMapping InMapping)
@@ -32,11 +48,7 @@ VirtualShaderDirectoryMappingManager::EErrorType VirtualShaderDirectoryMappingMa
 		return EErrorType::RealPathMustBeAbsolute;
 	}
 
-	if (auto foundMapping = std::ranges::find_if(m_Mappings,
-		[&InMapping](const VirtualShaderDirectoryMapping& In)
-		{
-			return In.VirtualPath.root_path() == InMapping.VirtualPath.root_path();
-		}); foundMapping != m_Mappings.cend())
+	if (auto foundMapping = Private::FindMapping(m_Mappings, InMapping.VirtualPath); foundMapping != m_Mappings.cend())
 	{
 		return EErrorType::VirtualPathAlreadyExists;
 	}
@@ -53,20 +65,12 @@ VirtualShaderDirectoryMappingManager::Expected<std::filesystem::path> VirtualSha
 		return Unexpected{ validateResult };
 	}
 
-	if (auto foundMapping = std::ranges::find_if(m_Mappings,
-		[&InVirtualPath](const VirtualShaderDirectoryMapping& In)
-		{
-			if (InVirtualPath.native().size() <= In.VirtualPath.native().size())
-			{
-				return false;
-			}
-			const auto startsWithMapping = InVirtualPath.native().starts_with(In.VirtualPath.native());
-			const auto virtualMappingEndsWithSlash = *(InVirtualPath.native().cbegin() + In.VirtualPath.native().size()) == L'/';
-			return startsWithMapping && virtualMappingEndsWithSlash;
-		}); foundMapping != m_Mappings.cend())
+	if (auto foundMapping = Private::FindMapping(m_Mappings, InVirtualPath); foundMapping != m_Mappings.cend())
 	{
 		std::wstring pathString = InVirtualPath;
-		pathString.replace_with_range(pathString.cbegin(), pathString.cbegin() + foundMapping->VirtualPath.native().size(), foundMapping->RealPath.native());
+		const auto& realPathString = foundMapping->RealPath.native();
+		const auto realPathView = std::wstring_view{ realPathString.c_str(), realPathString.ends_with(L'/') ? realPathString.size() - 1 : realPathString.size()};
+		pathString.replace_with_range(pathString.cbegin(), pathString.cbegin() + foundMapping->VirtualPath.native().size(), realPathView);
 
 		return std::filesystem::path{ std::move(pathString) };
 	}
