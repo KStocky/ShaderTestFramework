@@ -5,8 +5,8 @@
 #include <fstream>
 #include <sstream>
 
-IncludeHandler::IncludeHandler(std::vector<Mapping> InDirectoryMappings, ComPtr<IDxcUtils> InUtils)
-    : m_DirectoryMappings(std::move(InDirectoryMappings))
+IncludeHandler::IncludeHandler(VirtualShaderDirectoryMappingManager InManager, ComPtr<IDxcUtils> InUtils)
+    : m_DirectoryMappings(std::move(InManager))
     , m_Utils(std::move(InUtils))
     , m_RefCount(0)
 {}
@@ -59,16 +59,10 @@ HRESULT IncludeHandler::LoadSource(LPCWSTR pFilename, IDxcBlob** ppIncludeSource
     const auto realPath = [this, pFilename]()
     {
         std::wstring fileName = pFilename;
-        if (fileName.starts_with(L"/"))
+
+        if (auto result = m_DirectoryMappings.Map(std::filesystem::path{ fileName }); result.has_value())
         {
-            if (const auto maybeMapping = std::ranges::find_if(m_DirectoryMappings,
-                [&fileName](const Mapping& InMapping)
-                {
-                    return fileName.contains(std::wstring{ InMapping.VirtualPath.cbegin(), InMapping.VirtualPath.cend() });
-                }); maybeMapping != m_DirectoryMappings.cend())
-            {
-                fileName.replace_with_range(fileName.cbegin(), fileName.cbegin() + maybeMapping->VirtualPath.size(), maybeMapping->RealPath);
-            }
+            return result.value();
         }
 
         return fs::path{ fileName };

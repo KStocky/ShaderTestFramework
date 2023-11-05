@@ -1,5 +1,6 @@
 #pragma once
 
+#include "D3D12/Shader/VirtualShaderDirectoryMappingManager.h"
 #include "Platform.h"
 #include "Utility/Pointer.h"
 
@@ -20,7 +21,7 @@ public:
 		std::string RealPath;
 	};
 
-	explicit IncludeHandler(std::vector<Mapping> InDirectoryMappings, ComPtr<IDxcUtils> InUtils);
+	explicit IncludeHandler(VirtualShaderDirectoryMappingManager InManager, ComPtr<IDxcUtils> InUtils);
 
 	virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject) override;
 
@@ -32,7 +33,7 @@ public:
 
 private:
 
-	std::vector<Mapping> m_DirectoryMappings;
+	VirtualShaderDirectoryMappingManager m_DirectoryMappings;
 	ComPtr<IDxcUtils> m_Utils;
 	std::atomic<u32> m_RefCount;
 };

@@ -93,18 +93,19 @@ CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& 
 	DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&utils));
 	DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&compiler));
 
-	const auto shaderLibraryPath = fs::current_path() / fs::path(SHADER_SRC);
-
-	std::vector mappings =
+	const auto shaderLibraryPath = []()
 	{
-		IncludeHandler::Mapping
-		{
-			"/Test",
-			shaderLibraryPath.generic_string()
-		}
-	};
+		auto path = fs::current_path();
+		path += "/";
+		path += fs::path(SHADER_SRC);
 
-	ComPtr<IDxcIncludeHandler> includeHandler = new IncludeHandler(std::move(mappings), utils);
+		return path;
+	}();
+
+	VirtualShaderDirectoryMappingManager manager;
+	manager.AddMapping({ "/Test", shaderLibraryPath });
+
+	ComPtr<IDxcIncludeHandler> includeHandler = new IncludeHandler(std::move(manager), utils);
 
 	DxcBuffer sourceBuffer;
 	sourceBuffer.Encoding = DXC_CP_ACP;
