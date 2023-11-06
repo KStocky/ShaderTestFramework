@@ -180,7 +180,7 @@ private:
 	ComPtr<IDXGIFactory7> m_Factory = nullptr;
 	ComPtr<IDXGIAdapter4> m_Adapter = nullptr;
 
-	GPUHardwareInfo m_Info;
+	SharedPtr<GPUHardwareInfo> m_Info = nullptr;
 
 	u32 m_CBVDescriptorSize = 0;
 	u32 m_RTVDescriptorSize = 0;

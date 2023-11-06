@@ -292,7 +292,7 @@ ExpectedHRes<void> GPUDevice::SetSystemVideoMemoryReservation(const u64 InNewRes
 
 const GPUHardwareInfo& GPUDevice::GetHardwareInfo() const
 {
-	return m_Info;
+	return m_Info.get();
 }
 
 ExpectedHRes<void> GPUDevice::SetupDebugLayer(const EDebugLevel InDebugLevel)
@@ -425,8 +425,8 @@ ExpectedHRes<void> GPUDevice::CacheHardwareInfo(ID3D12Device12* InDevice)
 		return Unexpected(hres);
 	}
 
-	m_Info = GPUHardwareInfo
-	{
+	m_Info = MakeShared<GPUHardwareInfo>
+	(
 		GPUAdapterInfo
 		{
 			.Name = adapterDesc.Description,
@@ -482,7 +482,7 @@ ExpectedHRes<void> GPUDevice::CacheHardwareInfo(ID3D12Device12* InDevice)
 			.BackgroundProcessingSupported = !!options6.BackgroundProcessingSupported,
 			.Tier = options6.VariableShadingRateTier
 		}
-	};
+	);
 
 	return {};
 }
