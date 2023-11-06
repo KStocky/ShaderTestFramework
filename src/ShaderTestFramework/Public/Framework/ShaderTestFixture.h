@@ -17,7 +17,7 @@ public:
             .DebugLevel = GPUDevice::EDebugLevel::DebugLayerWithValidation,
             .DeviceType = GPUDevice::EDeviceType::Software
         };
-        std::string TestFile;
+        ShaderCodeSource TestFile;
         std::vector<std::string> CompilationFlags;
     };
 
@@ -31,4 +31,6 @@ private:
 
     GPUDevice m_Device;
     ShaderCompiler m_Compiler;
+    ShaderCodeSource m_TestFile;
+    std::vector<std::string> m_CompilationFlags;
 };
