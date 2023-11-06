@@ -41,6 +41,7 @@ namespace
 		return ret;
 	}
 
+
 }
 
 ShaderCodeSource::ShaderCodeSource(std::string InSourceCode)
@@ -51,12 +52,7 @@ ShaderCodeSource::ShaderCodeSource(fs::path InSourcePath)
 	: m_Source(std::move(InSourcePath))
 {}
 
-ShaderCodeSource::operator std::string() const
-{
-	return ToString();
-}
-
-std::string ShaderCodeSource::ToString() const
+std::string ShaderCodeSource::ToString(const VirtualShaderDirectoryMappingManager& InManager) const
 {
 	return std::visit(OverloadSet{
 		[](std::monostate)
@@ -67,8 +63,19 @@ std::string ShaderCodeSource::ToString() const
 		{
 			return InSource;
 		},
-		[](const fs::path& InPath)
+		[&InManager](const fs::path& InPath)
 		{
+
+			const auto realPath = [&InPath, &InManager]()
+			{
+				if (auto result = InManager.Map(InPath); result.has_value())
+				{
+					return result.value();
+				}
+
+				return InPath;
+			}();
+
 			std::ifstream file(InPath);
 
 			if (file.is_open())
@@ -84,28 +91,28 @@ std::string ShaderCodeSource::ToString() const
 		} }, m_Source);
 }
 
+ShaderCompiler::ShaderCompiler()
+{
+	Init();
+}
+
+ShaderCompiler::ShaderCompiler(std::vector<VirtualShaderDirectoryMapping> InMappings)
+	: m_DirectoryManager()
+{
+	for (auto&& mapping : InMappings)
+	{
+		if (m_DirectoryManager.AddMapping(std::move(mapping)) != VirtualShaderDirectoryMappingManager::EErrorType::Success)
+		{
+			return;
+		}
+	}
+
+	Init();
+}
+
 CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& InJob)
 {
-	const auto source = InJob.Source.ToString();
-
-	ComPtr<IDxcUtils> utils;
-	ComPtr<IDxcCompiler3> compiler;
-	DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&utils));
-	DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&compiler));
-
-	const auto shaderLibraryPath = []()
-	{
-		auto path = fs::current_path();
-		path += "/";
-		path += fs::path(SHADER_SRC);
-
-		return path;
-	}();
-
-	VirtualShaderDirectoryMappingManager manager;
-	manager.AddMapping({ "/Test", shaderLibraryPath });
-
-	ComPtr<IDxcIncludeHandler> includeHandler = new IncludeHandler(std::move(manager), utils);
+	const auto source = InJob.Source.ToString(m_DirectoryManager);
 
 	DxcBuffer sourceBuffer;
 	sourceBuffer.Encoding = DXC_CP_ACP;
@@ -213,7 +220,7 @@ CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& 
 	}
 
 	ComPtr<IDxcResult> results;
-	ThrowIfFailed(compiler->Compile(&sourceBuffer, rawArgs.data(), static_cast<u32>(rawArgs.size()), includeHandler.Get(), IID_PPV_ARGS(results.GetAddressOf())));
+	ThrowIfFailed(m_Compiler->Compile(&sourceBuffer, rawArgs.data(), static_cast<u32>(rawArgs.size()), m_IncludeHandler.Get(), IID_PPV_ARGS(results.GetAddressOf())));
 
 	// GetOutputByIndex can not be trusted to return DXC_OUT_ERRORS in all cases
 	// So we have to handle errors separately
@@ -258,10 +265,21 @@ CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& 
 			.Encoding = 0
 		};
 		ComPtr<ID3D12ShaderReflection> shaderReflection;
-		ThrowIfFailed(utils->CreateReflection(&reflectionBuffer, IID_PPV_ARGS(shaderReflection.GetAddressOf())));
+		ThrowIfFailed(m_Utils->CreateReflection(&reflectionBuffer, IID_PPV_ARGS(shaderReflection.GetAddressOf())));
 
 		params.Reflection = std::move(shaderReflection);
 	}
 	
 	return CompiledShaderData{ ShaderCompilerToken{}, std::move(params)};
+}
+
+void ShaderCompiler::Init()
+{
+	fs::path shaderDir = std::filesystem::current_path();
+	shaderDir += "/";
+	shaderDir += SHADER_SRC;
+	m_DirectoryManager.AddMapping({ "/Test", std::move(shaderDir)});
+	DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&m_Utils));
+	DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&m_Compiler));
+	m_IncludeHandler = new IncludeHandler(m_DirectoryManager, m_Utils);
 }

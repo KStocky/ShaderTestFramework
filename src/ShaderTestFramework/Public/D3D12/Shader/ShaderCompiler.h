@@ -2,6 +2,7 @@
 
 #include "D3D12/Shader/CompiledShaderData.h"
 #include "D3D12/Shader/ShaderEnums.h"
+#include "D3D12/Shader/VirtualShaderDirectoryMappingManager.h"
 #include "Utility/Expected.h"
 
 #include <filesystem>
@@ -24,8 +25,7 @@ public:
     ShaderCodeSource(std::string InSourceCode);
     ShaderCodeSource(fs::path InSourcePath);
 
-    operator std::string() const;
-    std::string ToString() const;
+    std::string ToString(const VirtualShaderDirectoryMappingManager& InManager) const;
 
 private:
     std::variant<std::monostate, std::string, fs::path> m_Source;
@@ -53,8 +53,16 @@ class ShaderCompiler
 {
 public:
 
+    ShaderCompiler();
+    ShaderCompiler(std::vector<VirtualShaderDirectoryMapping> InMappings);
     CompilationResult CompileShader(const ShaderCompilationJobDesc& InJob);
 
 private:
 
+    void Init();
+
+    VirtualShaderDirectoryMappingManager m_DirectoryManager;
+    ComPtr<IDxcUtils> m_Utils = nullptr;
+    ComPtr<IDxcCompiler3> m_Compiler = nullptr;
+    ComPtr<IDxcIncludeHandler> m_IncludeHandler = nullptr;
 };

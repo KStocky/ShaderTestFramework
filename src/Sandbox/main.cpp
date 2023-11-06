@@ -2,7 +2,7 @@
 
 int main()
 {
-    ShaderTestFixture test;
+    ShaderTestFixture test{ {} };
 
     return test.IsValid() ? 1 : 0;
 }

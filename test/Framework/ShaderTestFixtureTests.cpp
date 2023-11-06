@@ -13,7 +13,7 @@ SCENARIO("ShaderTestFixtureTests")
 {
     GIVEN("Default Constructed Fixture")
     {
-        ShaderTestFixture Test;
+        ShaderTestFixture Test{ {} };
         WHEN("Queried for Validity")
         {
             THEN("Is Valid")

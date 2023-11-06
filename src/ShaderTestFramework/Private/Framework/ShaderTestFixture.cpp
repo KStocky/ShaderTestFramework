@@ -2,13 +2,11 @@
 
 #include "D3D12/GPUDevice.h"
 
-ShaderTestFixture::ShaderTestFixture()
-	: m_Device(GPUDevice::CreationParams
-		{
-			.DebugLevel = GPUDevice::EDebugLevel::DebugLayerWithValidation,
-			.DeviceType = GPUDevice::EDeviceType::Software
-		})
+ShaderTestFixture::ShaderTestFixture(Desc InParams)
+	: m_Device(InParams.GPUDeviceParams)
+	, m_Compiler(std::move(InParams.Mappings))
 {
+	
 }
 
 bool ShaderTestFixture::IsValid() const
