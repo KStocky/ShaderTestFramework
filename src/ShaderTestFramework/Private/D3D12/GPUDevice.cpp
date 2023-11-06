@@ -292,7 +292,7 @@ ExpectedHRes<void> GPUDevice::SetSystemVideoMemoryReservation(const u64 InNewRes
 
 const GPUHardwareInfo& GPUDevice::GetHardwareInfo() const
 {
-	return m_Info.get();
+	return *m_Info.get();
 }
 
 ExpectedHRes<void> GPUDevice::SetupDebugLayer(const EDebugLevel InDebugLevel)
