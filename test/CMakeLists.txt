@@ -12,6 +12,7 @@ set(SOURCES
     D3D12/Shader/VirtualShaderDirectoryMappingManagerTests.cpp
     Framework/ShaderTestFixtureTests.cpp
     Utility/ConceptsTests.cpp
+    Utility/EnumReflectionTests.cpp
     Utility/FunctionTraitsTests.cpp
     Utility/LambdaTests.cpp
     Utility/TypeListTests.cpp
