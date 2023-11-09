@@ -17,11 +17,33 @@ public:
             .DebugLevel = GPUDevice::EDebugLevel::DebugLayerWithValidation,
             .DeviceType = GPUDevice::EDeviceType::Software
         };
-        ShaderCodeSource TestFile;
+        ShaderCodeSource Source;
         std::vector<std::string> CompilationFlags;
+        D3D_SHADER_MODEL ShaderModel = D3D_SHADER_MODEL_6_6;
+    };
+
+    class Results
+    {
+    public:
+
+        Results(std::vector<std::string> InErrors);
+
+        template<typename ThisType>
+        operator bool(this ThisType&& InThis)
+        {
+            return InThis.m_Errors.empty();
+        }
+
+        friend std::ostream& operator<<(std::ostream& InOs, const Results& In);
+
+    private:
+
+        std::vector<std::string> m_Errors;
     };
 
     ShaderTestFixture(Desc InParams);
+
+    Results RunTest(std::string InName, u32 InX, u32 InY, u32 InZ);
 
     bool IsValid() const;
 
@@ -31,6 +53,6 @@ private:
 
     GPUDevice m_Device;
     ShaderCompiler m_Compiler;
-    ShaderCodeSource m_TestFile;
+    ShaderCodeSource m_Source;
     std::vector<std::string> m_CompilationFlags;
 };

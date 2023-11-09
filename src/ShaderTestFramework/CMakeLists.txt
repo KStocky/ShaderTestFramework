@@ -69,7 +69,8 @@ set(SOURCES
     Private/D3D12/Shader/RootSignature.cpp
     Private/D3D12/Shader/ShaderCompiler.cpp
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManager.cpp
-    Private/Framework/ShaderTestFixture.cpp)
+    Private/Framework/ShaderTestFixture.cpp
+    )
 
 file(GLOB_RECURSE AGILITY_HEADERS "${AGILITY_INCLUDE}/*.h*" )
 file(GLOB_RECURSE DXC_HEADERS "${DXC_INCLUDE}/*.h*" )

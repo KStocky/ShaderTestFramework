@@ -40,11 +40,21 @@ struct TestParams
 
 SCENARIO("BasicShaderTests")
 {
-    //ShaderTestFixture Fixture("BasicTests.hlsl", TestParams{ {}, D3D_SHADER_MODEL_6_8 });
-    //
-    //auto testName = GENERATE("ThisTestShouldFail", "ThisTestShouldPass");
-    //DYNAMIC_SECTION(testName)
-    //{
-    //    Fixture.RunTest(testName, 1, 1, 1);
-    //}
+    ShaderTestFixture::Desc FixtureDesc{};
+    FixtureDesc.Source = std::string{ R"(
+                        #include "/Test/Public/ShaderTestFramework.hlsli"
+
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            ShaderTestPrivate::Success();
+                        }
+                        )" };
+    ShaderTestFixture Fixture(std::move(FixtureDesc));
+    
+    auto testName = GENERATE("ThisTestShouldFail", "ThisTestShouldPass");
+    DYNAMIC_SECTION(testName)
+    {
+        REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+    }
 }
