@@ -18,7 +18,7 @@ public:
             .DeviceType = GPUDevice::EDeviceType::Software
         };
         ShaderCodeSource Source;
-        std::vector<std::string> CompilationFlags;
+        std::vector<std::wstring> CompilationFlags;
         D3D_SHADER_MODEL ShaderModel = D3D_SHADER_MODEL_6_6;
     };
 
@@ -54,5 +54,6 @@ private:
     GPUDevice m_Device;
     ShaderCompiler m_Compiler;
     ShaderCodeSource m_Source;
-    std::vector<std::string> m_CompilationFlags;
+    std::vector<std::wstring> m_CompilationFlags;
+    D3D_SHADER_MODEL m_ShaderModel;
 };

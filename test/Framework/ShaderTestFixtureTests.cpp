@@ -40,21 +40,40 @@ struct TestParams
 
 SCENARIO("BasicShaderTests")
 {
+    auto [testName, shouldSucceed] = GENERATE
+    (
+        table<std::string, bool>
+        (
+            {
+                std::tuple{"ThisTestShouldFail", false},
+                std::tuple{"ThisTestShouldPass", true}
+            }
+        )
+    );
+
     ShaderTestFixture::Desc FixtureDesc{};
-    FixtureDesc.Source = std::string{ R"(
+    FixtureDesc.Source = std::string( R"(
                         #include "/Test/Public/ShaderTestFramework.hlsli"
 
                         [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        void ThisTestShouldPass(uint3 DispatchThreadId : SV_DispatchThreadID)
                         {
                             ShaderTestPrivate::Success();
                         }
-                        )" };
+                        )");
     ShaderTestFixture Fixture(std::move(FixtureDesc));
-    
-    auto testName = GENERATE("ThisTestShouldFail", "ThisTestShouldPass");
+
     DYNAMIC_SECTION(testName)
     {
-        REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+        if (shouldSucceed)
+        {
+            REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+        }
+        else
+        {
+            const auto result = Fixture.RunTest(testName, 1, 1, 1);
+            REQUIRE(!result);
+        }
+        
     }
 }

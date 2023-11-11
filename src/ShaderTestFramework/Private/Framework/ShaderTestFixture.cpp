@@ -10,12 +10,27 @@ ShaderTestFixture::ShaderTestFixture(Desc InParams)
 	, m_Compiler(std::move(InParams.Mappings))
 	, m_Source(std::move(InParams.Source))
 	, m_CompilationFlags(std::move(InParams.CompilationFlags))
+	, m_ShaderModel(InParams.ShaderModel)
 {
 	
 }
 
 ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32, u32, u32)
 {
+	ShaderCompilationJobDesc job;
+	job.AdditionalFlags = m_CompilationFlags;
+	job.EntryPoint = std::move(InName);
+	job.ShaderModel = m_ShaderModel;
+	job.ShaderType = EShaderType::Compute;
+	job.Source = m_Source;
+
+	const auto compileResult = m_Compiler.CompileShader(job);
+
+	if (!compileResult.has_value())
+	{
+		return Results{ {compileResult.error()} };
+	}
+
 	return Results({});
 }
 
