@@ -1,5 +1,6 @@
 #include "Framework/ShaderTestFixture.h"
 
+#include "D3D12/CommandEngine.h"
 #include "D3D12/GPUDevice.h"
 
 #include <format>
@@ -30,6 +31,31 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32, u
 	{
 		return Results{ {compileResult.error()} };
 	}
+
+	auto Engine = [this]()
+	{
+		auto CommandList = m_Device.CreateCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
+		D3D12_COMMAND_QUEUE_DESC queueDesc;
+		queueDesc.NodeMask = 0;
+		queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+		queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+		queueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
+		auto CommandQueue = m_Device.CreateCommandQueue(queueDesc);
+
+		return CommandEngine(CommandEngine::CreationParams{ std::move(CommandList), std::move(CommandQueue), m_Device });
+	}();
+
+	auto ResourceHeap = [this]()
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC desc;
+		desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		desc.NodeMask = 0;
+		desc.NumDescriptors = 1;
+		desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		return m_Device.CreateDescriptorHeap(desc);
+	}();
+
+	auto RootSignature = m_Device.CreateRootSignature(compileResult.value());
 
 	return Results({});
 }

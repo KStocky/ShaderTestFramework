@@ -6,6 +6,7 @@
 #include "D3D12/Fence.h"
 #include "D3D12/DescriptorHeap.h"
 #include "D3D12/GPUResource.h"
+#include "D3D12/Shader/CompiledShaderData.h"
 #include "D3D12/Shader/PipelineState.h"
 #include "D3D12/Shader/RootSignature.h"
 #include "Platform.h"
@@ -131,7 +132,7 @@ public:
 	bool IsValid() const;
 
 	ExpectedHRes<CommandAllocator> CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandAllocator") const;
-	ExpectedHRes<CommandList> CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandList") const;
+	CommandList CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandList") const;
 	CommandQueue CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName = "DefaultCommandQueue");
 
 	ExpectedHRes<GPUResource> CreateCommittedResource(
@@ -162,6 +163,7 @@ public:
 	}
 
 	RootSignature CreateRootSignature(const D3D12_ROOT_SIGNATURE_DESC1& InDesc) const;
+	RootSignature CreateRootSignature(const CompiledShaderData& InShader) const;
 
 	ExpectedHRes<void> SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes);
 	ExpectedHRes<void> SetSystemVideoMemoryReservation(const u64 InNewReservationBytes);

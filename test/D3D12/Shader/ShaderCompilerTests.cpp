@@ -444,7 +444,7 @@ SCENARIO("ShaderIncludeHandlerTests")
         ShaderCompilationJobDesc job;
         job.Name = "Test";
         job.EntryPoint = "Main";
-        job.ShaderModel = D3D_SHADER_MODEL_6_0;
+        job.ShaderModel = D3D_SHADER_MODEL_6_6;
         job.ShaderType = EShaderType::Compute;
         job.Source = std::string{ R"(
                         #include "/Test/Public/ShaderTestFramework.hlsli"

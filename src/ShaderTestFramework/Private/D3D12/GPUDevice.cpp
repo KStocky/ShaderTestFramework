@@ -189,15 +189,11 @@ ExpectedHRes<CommandAllocator> GPUDevice::CreateCommandAllocator(D3D12_COMMAND_L
 	return CommandAllocator(CommandAllocator::CreationParams{ std::move(allocator), InType });
 }
 
-ExpectedHRes<CommandList> GPUDevice::CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const
+CommandList GPUDevice::CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const
 {
 	ComPtr<ID3D12GraphicsCommandList9> list = nullptr;
 
-	if (const auto hres = m_Device->CreateCommandList1(0, InType, D3D12_COMMAND_LIST_FLAG_NONE, IID_PPV_ARGS(list.GetAddressOf()));
-		FAILED(hres))
-	{
-		return Unexpected{ hres };
-	}
+	ThrowIfFailed(m_Device->CreateCommandList1(0, InType, D3D12_COMMAND_LIST_FLAG_NONE, IID_PPV_ARGS(list.GetAddressOf())));
 	SetName(list.Get(), InName);
 	return CommandList(CommandList::CreationParams{ std::move(list) });
 }
@@ -266,6 +262,20 @@ RootSignature GPUDevice::CreateRootSignature(const D3D12_ROOT_SIGNATURE_DESC1& I
 	ComPtr<ID3D12VersionedRootSignatureDeserializer> deserializer;
 	ThrowIfFailed(D3D12CreateVersionedRootSignatureDeserializer(signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(deserializer.GetAddressOf())));
 	return RootSignature(RootSignature::CreationParams{std::move(rootSignatureObject), std::move(deserializer), std::move(signature)});
+}
+
+RootSignature GPUDevice::CreateRootSignature(const CompiledShaderData& InShader) const
+{
+	ComPtr<ID3D12RootSignature> rootSignatureObject;
+	const auto codeBlob = InShader.GetCompiledShader();
+	ThrowIfFalse(codeBlob);
+
+	ComPtr<ID3D12VersionedRootSignatureDeserializer> deserializer;
+	ThrowIfFailed(D3D12CreateVersionedRootSignatureDeserializer(codeBlob->GetBufferPointer(), codeBlob->GetBufferSize(), IID_PPV_ARGS(deserializer.GetAddressOf())));
+
+	const auto desc = deserializer->GetUnconvertedRootSignatureDesc();
+
+	return CreateRootSignature(desc->Desc_1_1);
 }
 
 ExpectedHRes<void> GPUDevice::SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes)

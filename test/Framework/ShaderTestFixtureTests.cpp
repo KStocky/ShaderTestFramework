@@ -54,7 +54,7 @@ SCENARIO("BasicShaderTests")
     ShaderTestFixture::Desc FixtureDesc{};
     FixtureDesc.Source = std::string( R"(
                         #include "/Test/Public/ShaderTestFramework.hlsli"
-
+                        [RootSignature(SHADER_TEST_RS)]
                         [numthreads(1,1,1)]
                         void ThisTestShouldPass(uint3 DispatchThreadId : SV_DispatchThreadID)
                         {
