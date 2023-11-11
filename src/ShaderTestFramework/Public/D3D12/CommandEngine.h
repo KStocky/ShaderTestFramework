@@ -6,6 +6,7 @@
 #include "D3D12/GPUDevice.h"
 
 #include "Utility/Lambda.h"
+#include "Utility/MoveOnly.h"
 
 class CommandEngineToken
 {
@@ -55,24 +56,25 @@ public:
 	void Execute(const InLambdaType& InFunc)
 	{
 		auto allocator = [this]()
+		{
+			if (m_Allocators.size() == 0 || !m_Queue.HasFencePointBeenReached(m_Allocators.front().FencePoint))
 			{
-				if (m_Allocators.size() == 0 || !m_Queue.HasFencePointBeenReached(m_Allocators.front().FencePoint))
-				{
-					return m_Device->CreateCommandAllocator
-					(
-						D3D12_COMMAND_LIST_TYPE_DIRECT,
-						"Command Allocator"
-					).value();
-				}
+				return m_Device->CreateCommandAllocator
+				(
+					D3D12_COMMAND_LIST_TYPE_DIRECT,
+					"Command Allocator"
+				).value();
+			}
 
-				return m_Allocators.pop_front().Allocator;
-			}();
+			return m_Allocators.pop_front().Allocator;
+		}();
 
-			m_List.Reset(allocator);
-			ScopedCommandContext context(CommandEngineToken{}, &m_List);
-			InFunc(context);
+		m_List.Reset(allocator);
+		ScopedCommandContext context(CommandEngineToken{}, &m_List);
+		InFunc(context);
 
-			m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue.Signal() });
+		m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue.Signal() });
+		m_Queue.ExecuteCommandList(m_List);
 	}
 
 	template<typename ThisType>

@@ -1,32 +1,22 @@
 #include "D3D12/CommandList.h"
 
 #include "D3D12/CommandAllocator.h"
+#include "Utility/Exception.h"
 
 CommandList::CommandList(CreationParams InParams)
 	: m_List(std::move(InParams.List))
 {
 }
 
-ExpectedHRes<void> CommandList::Close()
+void CommandList::Close()
 {
-	if (const auto hres = m_List->Close();
-		FAILED(hres))
-	{
-		return Unexpected{ hres };
-	}
-
-	return {};
+	ThrowIfFailed(m_List->Close());
 }
 
-ExpectedHRes<void> CommandList::Reset(CommandAllocator& InAllocator)
+void CommandList::Reset(CommandAllocator& InAllocator)
 {
-	if (const auto hres = m_List->Reset(InAllocator, nullptr);
-		FAILED(hres))
-	{
-		return Unexpected{ hres };
-	}
-
-	return {};
+	ThrowIfUnexpected(InAllocator.Reset());
+	ThrowIfFailed(m_List->Reset(InAllocator, nullptr));
 }
 
 D3D12_COMMAND_LIST_TYPE CommandList::GetType() const

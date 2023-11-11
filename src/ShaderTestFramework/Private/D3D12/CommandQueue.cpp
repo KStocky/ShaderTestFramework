@@ -10,6 +10,27 @@ CommandQueue::CommandQueue(CreationParams InParams)
 {
 }
 
+CommandQueue::CommandQueue(CommandQueue&& In) noexcept
+	: m_Queue(std::move(In.m_Queue))
+	, m_Fence(std::move(In.m_Fence))
+{
+}
+
+CommandQueue& CommandQueue::operator=(CommandQueue&& In) noexcept
+{
+	m_Queue = std::move(In.m_Queue);
+	m_Fence = std::move(In.m_Fence);
+	return *this;
+}
+
+CommandQueue::~CommandQueue()
+{
+	if (m_Queue)
+	{
+		FlushQueue();
+	}
+}
+
 bool CommandQueue::HasFencePointBeenReached(const Fence::FencePoint& InFencePoint) const
 {
 	return ThrowIfUnexpected(m_Fence.HasCompleted(InFencePoint));

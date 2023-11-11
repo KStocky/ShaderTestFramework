@@ -20,8 +20,8 @@ public:
 	CommandList() = default;
 	CommandList(CreationParams InParams);
 
-	ExpectedHRes<void> Close();
-	ExpectedHRes<void> Reset(CommandAllocator& InAllocator);
+	void Close();
+	void Reset(CommandAllocator& InAllocator);
 
 	D3D12_COMMAND_LIST_TYPE GetType() const;
 
