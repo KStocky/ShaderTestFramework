@@ -151,7 +151,7 @@ public:
 	template<PipelineStateDescType T>
 	PipelineState CreatePipelineState(const T& InDesc) const
 	{
-		const CD3DX12_PIPELINE_STATE_STREAM5 rawStream(InDesc);
+		CD3DX12_PIPELINE_STATE_STREAM5 rawStream(InDesc);
 		const D3D12_PIPELINE_STATE_STREAM_DESC desc
 		{
 			.SizeInBytes = sizeof(rawStream),

@@ -56,4 +56,5 @@ private:
     ShaderCodeSource m_Source;
     std::vector<std::wstring> m_CompilationFlags;
     D3D_SHADER_MODEL m_ShaderModel;
+    bool m_IsWarp = false;
 };

@@ -35,7 +35,7 @@ public:
 	template<typename ThisType>
 	operator ID3D12RootSignature* (this ThisType&& InThis)
 	{
-		return GetRaw(std::forward<ThisType>(InThis));
+		return std::forward<ThisType>(InThis).GetRaw();
 	}
 
 private:

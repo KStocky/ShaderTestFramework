@@ -12,8 +12,8 @@ ShaderTestFixture::ShaderTestFixture(Desc InParams)
 	, m_Source(std::move(InParams.Source))
 	, m_CompilationFlags(std::move(InParams.CompilationFlags))
 	, m_ShaderModel(InParams.ShaderModel)
+	, m_IsWarp(InParams.GPUDeviceParams.DeviceType == GPUDevice::EDeviceType::Software)
 {
-	
 }
 
 ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32, u32, u32)
@@ -32,20 +32,20 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32, u
 		return Results{ {compileResult.error()} };
 	}
 
-	auto Engine = [this]()
+	auto engine = [this]()
 	{
-		auto CommandList = m_Device.CreateCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
+		auto commandList = m_Device.CreateCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
 		D3D12_COMMAND_QUEUE_DESC queueDesc;
 		queueDesc.NodeMask = 0;
 		queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 		queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 		queueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
-		auto CommandQueue = m_Device.CreateCommandQueue(queueDesc);
+		auto commandQueue = m_Device.CreateCommandQueue(queueDesc);
 
-		return CommandEngine(CommandEngine::CreationParams{ std::move(CommandList), std::move(CommandQueue), m_Device });
+		return CommandEngine(CommandEngine::CreationParams{ std::move(commandList), std::move(commandQueue), m_Device });
 	}();
 
-	auto ResourceHeap = [this]()
+	auto resourceHeap = [this]()
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC desc;
 		desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
@@ -55,7 +55,20 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32, u
 		return m_Device.CreateDescriptorHeap(desc);
 	}();
 
-	auto RootSignature = m_Device.CreateRootSignature(compileResult.value());
+	auto rootSignature = m_Device.CreateRootSignature(compileResult.value());
+
+	auto pipelineState = [this, &compileResult, &rootSignature]()
+	{
+		D3D12_COMPUTE_PIPELINE_STATE_DESC desc;
+		desc.CachedPSO.CachedBlobSizeInBytes = 0;
+		desc.CachedPSO.pCachedBlob = nullptr;
+		desc.CS.BytecodeLength = compileResult->GetCompiledShader()->GetBufferSize();
+		desc.CS.pShaderBytecode = compileResult->GetCompiledShader()->GetBufferPointer();
+		desc.Flags = m_IsWarp ? D3D12_PIPELINE_STATE_FLAG_TOOL_DEBUG : D3D12_PIPELINE_STATE_FLAG_NONE;
+		desc.NodeMask = 0;
+		desc.pRootSignature = rootSignature;
+		return m_Device.CreatePipelineState(desc);
+	}(); 
 
 	return Results({});
 }
