@@ -6,6 +6,8 @@
 #include <format>
 #include <ranges>
 
+#include <d3dx12/d3dx12.h>
+
 ShaderTestFixture::ShaderTestFixture(Desc InParams)
 	: m_Device(InParams.GPUDeviceParams)
 	, m_Compiler(std::move(InParams.Mappings))
@@ -68,7 +70,27 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32, u
 		desc.NodeMask = 0;
 		desc.pRootSignature = rootSignature;
 		return m_Device.CreatePipelineState(desc);
-	}(); 
+	}();
+
+	static constexpr u64 bufferSizeInBytes = 10'000'000ull;
+	auto assertBuffer = [this]()
+	{
+		const auto heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+		const auto resourceDesc = CD3DX12_RESOURCE_DESC1::Buffer(bufferSizeInBytes, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
+
+		return m_Device.CreateCommittedResource(heapProps, D3D12_HEAP_FLAG_NONE, resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED);
+	}();
+
+	auto readBackBuffer = [this]()
+	{
+		const auto heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_READBACK);
+		const auto resourceDesc = CD3DX12_RESOURCE_DESC1::Buffer(bufferSizeInBytes);
+
+		return m_Device.CreateCommittedResource(heapProps, D3D12_HEAP_FLAG_NONE, resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED);
+	}();
+
+	const auto assertUAV = ThrowIfUnexpected(resourceHeap.CreateDescriptorHandle(0));
+	m_Device.CreateUnorderedAccessView(assertBuffer, assertUAV);
 
 	return Results({});
 }

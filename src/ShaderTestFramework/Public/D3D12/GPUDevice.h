@@ -135,7 +135,7 @@ public:
 	CommandList CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandList") const;
 	CommandQueue CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName = "DefaultCommandQueue");
 
-	ExpectedHRes<GPUResource> CreateCommittedResource(
+	GPUResource CreateCommittedResource(
 		const D3D12_HEAP_PROPERTIES& InHeapProps,
 		const D3D12_HEAP_FLAGS InFlags,
 		const D3D12_RESOURCE_DESC1& InResourceDesc,
@@ -144,9 +144,9 @@ public:
 		const std::span<DXGI_FORMAT> InCastableFormats = {},
 		const std::string_view InName = "DefaultResource"
 	) const;
-	ExpectedHRes<DescriptorHeap> CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName = "DefaultDescriptorHeap") const;
+	DescriptorHeap CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName = "DefaultDescriptorHeap") const;
 
-	ExpectedHRes<Fence> CreateFence(const u64 InInitialValue, const std::string_view InName = "DefaultFence") const;
+	Fence CreateFence(const u64 InInitialValue, const std::string_view InName = "DefaultFence") const;
 
 	template<PipelineStateDescType T>
 	PipelineState CreatePipelineState(const T& InDesc) const
@@ -165,6 +165,9 @@ public:
 	RootSignature CreateRootSignature(const D3D12_ROOT_SIGNATURE_DESC1& InDesc) const;
 	RootSignature CreateRootSignature(const CompiledShaderData& InShader) const;
 
+	void CreateShaderResourceView(const GPUResource& InResource, const DescriptorHandle InHandle) const;
+	void CreateUnorderedAccessView(const GPUResource& InResource, const DescriptorHandle InHandle) const;
+
 	ExpectedHRes<void> SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes);
 	ExpectedHRes<void> SetSystemVideoMemoryReservation(const u64 InNewReservationBytes);
 
@@ -174,7 +177,7 @@ private:
 
 	ExpectedHRes<void> SetupDebugLayer(const EDebugLevel InDebugLevel);
 	ExpectedHRes<void> CacheHardwareInfo(ID3D12Device12* InDevice);
-	Expected<u32, bool> GetDescriptorSize(const D3D12_DESCRIPTOR_HEAP_TYPE InType) const;
+	u32 GetDescriptorSize(const D3D12_DESCRIPTOR_HEAP_TYPE InType) const;
 
 	ComPtr<ID3D12Device12> m_Device = nullptr;
 	ComPtr<ID3D12Debug6> m_Debug = nullptr;
