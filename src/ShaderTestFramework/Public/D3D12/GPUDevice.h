@@ -131,7 +131,7 @@ public:
 
 	bool IsValid() const;
 
-	ExpectedHRes<CommandAllocator> CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandAllocator") const;
+	CommandAllocator CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandAllocator") const;
 	CommandList CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandList") const;
 	CommandQueue CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName = "DefaultCommandQueue");
 
@@ -166,7 +166,7 @@ public:
 	RootSignature CreateRootSignature(const CompiledShaderData& InShader) const;
 
 	void CreateShaderResourceView(const GPUResource& InResource, const DescriptorHandle InHandle) const;
-	void CreateUnorderedAccessView(const GPUResource& InResource, const DescriptorHandle InHandle) const;
+	void CreateUnorderedAccessView(const GPUResource& InResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc, const DescriptorHandle InHandle) const;
 
 	ExpectedHRes<void> SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes);
 	ExpectedHRes<void> SetSystemVideoMemoryReservation(const u64 InNewReservationBytes);

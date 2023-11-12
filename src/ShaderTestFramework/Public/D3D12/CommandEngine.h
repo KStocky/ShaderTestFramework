@@ -59,14 +59,14 @@ public:
 		{
 			if (m_Allocators.size() == 0 || !m_Queue.HasFencePointBeenReached(m_Allocators.front().FencePoint))
 			{
-				return m_Device->CreateCommandAllocator
+				return m_Device.CreateCommandAllocator
 				(
 					D3D12_COMMAND_LIST_TYPE_DIRECT,
 					"Command Allocator"
-				).value();
+				);
 			}
 
-			return m_Allocators.pop_front().Allocator;
+			return std::move(ThrowIfUnexpected(m_Allocators.pop_front()).Allocator);
 		}();
 
 		m_List.Reset(allocator);

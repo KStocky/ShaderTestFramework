@@ -176,15 +176,11 @@ bool GPUDevice::IsValid() const
 	return m_Device.Get() != nullptr;
 }
 
-ExpectedHRes<CommandAllocator> GPUDevice::CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const
+CommandAllocator GPUDevice::CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const
 {
 	ComPtr<ID3D12CommandAllocator> allocator = nullptr;
 
-	if (const auto hres = m_Device->CreateCommandAllocator(InType, IID_PPV_ARGS(allocator.GetAddressOf()));
-		FAILED(hres))
-	{
-		return Unexpected{ hres };
-	}
+	ThrowIfFailed(m_Device->CreateCommandAllocator(InType, IID_PPV_ARGS(allocator.GetAddressOf())));
 	SetName(allocator.Get(), InName);
 	return CommandAllocator(CommandAllocator::CreationParams{ std::move(allocator), InType });
 }
@@ -282,9 +278,9 @@ void GPUDevice::CreateShaderResourceView(const GPUResource& InResource, const De
 	m_Device->CreateShaderResourceView(InResource, nullptr, InHandle.GetCPUHandle());
 }
 
-void GPUDevice::CreateUnorderedAccessView(const GPUResource& InResource, const DescriptorHandle InHandle) const
+void GPUDevice::CreateUnorderedAccessView(const GPUResource& InResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc, const DescriptorHandle InHandle) const
 {
-	m_Device->CreateUnorderedAccessView(InResource, nullptr, nullptr, InHandle.GetCPUHandle());
+	m_Device->CreateUnorderedAccessView(InResource, nullptr, &InDesc, InHandle.GetCPUHandle());
 }
 
 ExpectedHRes<void> GPUDevice::SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes)

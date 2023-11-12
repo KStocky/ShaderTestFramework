@@ -85,12 +85,33 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32, u
 	{
 		const auto heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_READBACK);
 		const auto resourceDesc = CD3DX12_RESOURCE_DESC1::Buffer(bufferSizeInBytes);
-
 		return m_Device.CreateCommittedResource(heapProps, D3D12_HEAP_FLAG_NONE, resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED);
 	}();
 
-	const auto assertUAV = ThrowIfUnexpected(resourceHeap.CreateDescriptorHandle(0));
-	m_Device.CreateUnorderedAccessView(assertBuffer, assertUAV);
+	const auto assertUAV = [&resourceHeap, &assertBuffer, this]()
+	{
+		const auto uav = ThrowIfUnexpected(resourceHeap.CreateDescriptorHandle(0));
+		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc;
+		uavDesc.Buffer.CounterOffsetInBytes = 0;
+		uavDesc.Buffer.FirstElement = 0;
+		uavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_RAW;
+		uavDesc.Buffer.NumElements = bufferSizeInBytes / 4;
+		uavDesc.Buffer.StructureByteStride = 0;
+		uavDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+		uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
+		m_Device.CreateUnorderedAccessView(assertBuffer, uavDesc, uav);
+		return uav;
+	}();
+
+	engine.Execute(
+		Lambda
+		(
+			[](ScopedCommandContext&)
+			{
+
+			}
+		)
+	);
 
 	return Results({});
 }
