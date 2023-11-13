@@ -3,6 +3,7 @@
 #include "Utility/Concepts.h"
 #include "Utility/FunctionTraits.h"
 #include "Utility/Tuple.h"
+#include "Utility/Type.h"
 #include "Utility/TypeList.h"
 #include "Utility/TypeTraits.h"
 
@@ -126,15 +127,18 @@ public:
 private:
 
 	template<typename T>
-		requires (!std::is_pointer_v<T>)
+	static constexpr bool DerefReq = std::is_pointer_v<std::remove_reference_t<T>>;
+
+	template<typename T>
+		requires !DerefReq<T>
 	static constexpr decltype(auto) Deref(T&& In) noexcept
 	{
 		return In;
 	}
 
 	template<typename T>
-		requires (std::is_pointer_v<T>)
-	static constexpr decltype(auto) Deref(T& In) noexcept
+		requires DerefReq<T>
+	static constexpr decltype(auto) Deref(T In) noexcept
 	{
 		return *In;
 	}

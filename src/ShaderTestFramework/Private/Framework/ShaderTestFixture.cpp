@@ -18,7 +18,7 @@ ShaderTestFixture::ShaderTestFixture(Desc InParams)
 {
 }
 
-ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32, u32, u32)
+ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32 InX, u32 InY, u32 InZ)
 {
 	ShaderCompilationJobDesc job;
 	job.AdditionalFlags = m_CompilationFlags;
@@ -106,12 +106,23 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32, u
 	engine.Execute(
 		Lambda
 		(
-			[](ScopedCommandContext&)
+			[](DescriptorHeap& InHeap, PipelineState& InPipelineState, RootSignature& InRootSig, const u32& InX, const u32& InY, const u32& InZ, ScopedCommandContext& InContext)
 			{
-
-			}
+				InContext->SetPipelineState(InPipelineState);
+				InContext->SetGraphicsRootSignature(InRootSig);
+				InContext->SetDescriptorHeaps(InHeap);
+				InContext->Dispatch(InX, InY, InZ);
+			},
+			&resourceHeap,
+			&pipelineState,
+			&rootSignature,
+			InX,
+			InY,
+			InZ
 		)
 	);
+
+	engine.Flush();
 
 	return Results({});
 }

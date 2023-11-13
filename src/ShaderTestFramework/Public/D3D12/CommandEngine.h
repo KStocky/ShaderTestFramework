@@ -34,7 +34,7 @@ private:
 template<typename T>
 concept CommandEngineFuncType = LambdaType<T> && requires()
 {
-	requires T::ParamTypes::Size == 1;
+	requires T::ParamTypes::Size >= 1;
 	requires std::same_as<typename T::ParamTypes::template Type<0>, ScopedCommandContext&>;
 };
 
@@ -76,6 +76,8 @@ public:
 		m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue.Signal() });
 		m_Queue.ExecuteCommandList(m_List);
 	}
+
+	void Flush();
 
 	template<typename ThisType>
 	auto&& GetQueue(this ThisType&& InSelf)

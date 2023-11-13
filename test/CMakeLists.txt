@@ -5,6 +5,7 @@ add_executable(ShaderTestFrameworkTests)
 
 set(SOURCES
     Container/RingBufferTests.cpp
+    D3D12/CommandListTests.cpp
     D3D12/DescriptorFreeListAllocatorTests.cpp
     D3D12/DescriptorRingAllocatorTests.cpp
     D3D12/DescriptorTests.cpp

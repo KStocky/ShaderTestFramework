@@ -10,16 +10,16 @@
     "DENY_AMPLIFICATION_SHADER_ROOT_ACCESS |" \
     "DENY_MESH_SHADER_ROOT_ACCESS |" \
     "CBV_SRV_UAV_HEAP_DIRECTLY_INDEXED" \
-")," \
-"RootConstants(" \
+")" \
+/*"RootConstants(" \
     "num32BitConstants=2," \
     "b0" \
-")"
+")"*/
 
 namespace ShaderTestPrivate
 {
-    const uint MaxNumAsserts;
-    const uint AssertBufferIndex;
+    static const uint MaxNumAsserts = 4;
+    static const uint AssertBufferIndex = 0;
     static const uint AssertFailureNumBytes = 16;
     
     RWByteAddressBuffer GetAssertBuffer()
