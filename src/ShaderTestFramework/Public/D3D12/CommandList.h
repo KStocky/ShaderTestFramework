@@ -34,6 +34,21 @@ public:
 
 	void Dispatch(const u32 InX, const u32 InY, const u32 InZ);
 
+	template<RootSigConstantType T>
+	void SetComputeRoot32BitConstants(const u32 InRootParamIndex, const T InVal, const u32 InOffset)
+	{
+		const auto val = std::bit_cast<u32>(InVal);
+		m_List->SetComputeRoot32BitConstant(InRootParamIndex, val, InOffset);
+	}
+
+	template<RootSigConstantType T, u64 InSpanSize>
+	void SetComputeRoot32BitConstants(const u32 InRootParamIndex, const std::span<T, InSpanSize> InVals, const u32 InOffset)
+	{
+		m_List->SetComputeRoot32BitConstants(InRootParamIndex, static_cast<u32>(InVals.size()), InVals.data(), InOffset);
+	}
+
+	void SetComputeRootSignature(const RootSignature& InRootSig);
+
 	void SetDescriptorHeaps(const DescriptorHeap& InHeap);
 
 	template<RootSigConstantType T>

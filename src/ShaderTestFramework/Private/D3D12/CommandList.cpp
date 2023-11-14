@@ -19,6 +19,11 @@ void CommandList::Dispatch(const u32 InX, const u32 InY, const u32 InZ)
 	m_List->Dispatch(InX, InY, InZ);
 }
 
+void CommandList::SetComputeRootSignature(const RootSignature& InRootSig)
+{
+    m_List->SetComputeRootSignature(InRootSig);
+}
+
 void CommandList::SetDescriptorHeaps(const DescriptorHeap& InHeap)
 {
 	const auto rawHeap = InHeap.GetRaw();

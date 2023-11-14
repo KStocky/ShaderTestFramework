@@ -109,11 +109,11 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32 In
 			[](DescriptorHeap& InHeap, PipelineState& InPipelineState, RootSignature& InRootSig, GPUResource& InResource, const u32& InX, const u32& InY, const u32& InZ, ScopedCommandContext& InContext)
 			{
 				InContext->SetPipelineState(InPipelineState);
-				InContext->SetGraphicsRootSignature(InRootSig);
+				InContext->SetComputeRootSignature(InRootSig);
 				InContext->SetDescriptorHeaps(InHeap);
 				InContext->SetBufferUAV(InResource);
-				//std::array params{ 10u, 0u };
-				//InContext->SetGraphicsRoot32BitConstants(0, std::span{ params }, 0);
+				std::array params{ 10u, 0u };
+				InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
 				InContext->Dispatch(InX, InY, InZ);
 			},
 			&resourceHeap,
