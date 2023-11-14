@@ -106,16 +106,20 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32 In
 	engine.Execute(
 		Lambda
 		(
-			[](DescriptorHeap& InHeap, PipelineState& InPipelineState, RootSignature& InRootSig, const u32& InX, const u32& InY, const u32& InZ, ScopedCommandContext& InContext)
+			[](DescriptorHeap& InHeap, PipelineState& InPipelineState, RootSignature& InRootSig, GPUResource& InResource, const u32& InX, const u32& InY, const u32& InZ, ScopedCommandContext& InContext)
 			{
 				InContext->SetPipelineState(InPipelineState);
 				InContext->SetGraphicsRootSignature(InRootSig);
 				InContext->SetDescriptorHeaps(InHeap);
+				InContext->SetBufferUAV(InResource);
+				//std::array params{ 10u, 0u };
+				//InContext->SetGraphicsRoot32BitConstants(0, std::span{ params }, 0);
 				InContext->Dispatch(InX, InY, InZ);
 			},
 			&resourceHeap,
 			&pipelineState,
 			&rootSignature,
+			&assertBuffer,
 			InX,
 			InY,
 			InZ

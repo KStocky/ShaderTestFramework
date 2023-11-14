@@ -7,11 +7,13 @@
 
 #include <bit>
 #include <span>
+#include <vector>
 
 #include <d3d12.h>
 
 class CommandAllocator;
 class DescriptorHeap;
+class GPUResource;
 class PipelineState;
 class RootSignature;
 
@@ -49,6 +51,8 @@ public:
 
 	void SetGraphicsRootSignature(const RootSignature& InRootSig);
 	void SetPipelineState(const PipelineState& InState);
+
+	void SetBufferUAV(GPUResource& InResource);
 
 	void Close();
 	void Reset(CommandAllocator& InAllocator);
