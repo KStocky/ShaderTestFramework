@@ -14,6 +14,55 @@ CommandList::CommandList(CreationParams InParams)
 {
 }
 
+void CommandList::CopyBufferResource(GPUResource& InDest, GPUResource& InSource)
+{
+    const auto prevSourceBarrier = InSource.GetBarrier();
+    const auto prevDestBarrier = InSource.GetBarrier();
+
+    GPUEnhancedBarrier newSourceBarrier
+    {
+        .Sync = D3D12_BARRIER_SYNC_COPY,
+        .Access = D3D12_BARRIER_ACCESS_COPY_SOURCE,
+        .Layout = D3D12_BARRIER_LAYOUT_DIRECT_QUEUE_COPY_SOURCE
+    };
+
+    GPUEnhancedBarrier newDestBarrier
+    {
+        .Sync = D3D12_BARRIER_SYNC_COPY,
+        .Access = D3D12_BARRIER_ACCESS_COPY_DEST,
+        .Layout = D3D12_BARRIER_LAYOUT_DIRECT_QUEUE_COPY_DEST
+    };
+
+    InSource.SetBarrier(newSourceBarrier);
+    InSource.SetBarrier(newDestBarrier);
+
+    D3D12_BUFFER_BARRIER bufferBarriers[] =
+    {
+        CD3DX12_BUFFER_BARRIER(
+            prevSourceBarrier.Sync,
+            newSourceBarrier.Sync,
+            prevSourceBarrier.Access,
+            newSourceBarrier.Access,
+            InSource
+        ),
+        CD3DX12_BUFFER_BARRIER(
+            prevDestBarrier.Sync,
+            newDestBarrier.Sync,
+            prevDestBarrier.Access,
+            newDestBarrier.Access,
+            InSource
+        )
+    };
+
+    D3D12_BARRIER_GROUP BufBarrierGroups[] =
+    {
+        CD3DX12_BARRIER_GROUP(2, bufferBarriers)
+    };
+
+    m_List->Barrier(1, BufBarrierGroups);
+    m_List->CopyResource(InDest, InSource);
+}
+
 void CommandList::Dispatch(const u32 InX, const u32 InY, const u32 InZ)
 {
 	m_List->Dispatch(InX, InY, InZ);

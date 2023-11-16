@@ -45,8 +45,9 @@ SCENARIO("BasicShaderTests")
         table<std::string, bool>
         (
             {
-                std::tuple{"ThisTestShouldFail", false},
-                std::tuple{"ThisTestShouldPass", true}
+                std::tuple{"ThisTestDoesNotExist", false},
+                std::tuple{"ThisTestShouldPass", true},
+                std::tuple{"ThisTestShouldFail", false}
             }
         )
     );
@@ -59,6 +60,11 @@ SCENARIO("BasicShaderTests")
                         void ThisTestShouldPass(uint3 DispatchThreadId : SV_DispatchThreadID)
                         {
                             ShaderTestPrivate::Success();
+                        }
+
+                        void ThisTestShouldFail(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            ShaderTestPrivate::AddError(0,0,0,0);
                         }
                         )");
     ShaderTestFixture Fixture(std::move(FixtureDesc));

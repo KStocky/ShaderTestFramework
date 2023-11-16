@@ -6,8 +6,6 @@
 #include <format>
 #include <ranges>
 
-#include <d3dx12/d3dx12.h>
-
 ShaderTestFixture::ShaderTestFixture(Desc InParams)
 	: m_Device(InParams.GPUDeviceParams)
 	, m_Compiler(std::move(InParams.Mappings))
@@ -106,7 +104,7 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32 In
 	engine.Execute(
 		Lambda
 		(
-			[](DescriptorHeap& InHeap, PipelineState& InPipelineState, RootSignature& InRootSig, GPUResource& InResource, const u32& InX, const u32& InY, const u32& InZ, ScopedCommandContext& InContext)
+			[](DescriptorHeap& InHeap, PipelineState& InPipelineState, RootSignature& InRootSig, GPUResource& InResource, GPUResource& InReadback, const u32& InX, const u32& InY, const u32& InZ, ScopedCommandContext& InContext)
 			{
 				InContext->SetPipelineState(InPipelineState);
 				InContext->SetComputeRootSignature(InRootSig);
@@ -115,11 +113,13 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32 In
 				std::array params{ 10u, 0u };
 				InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
 				InContext->Dispatch(InX, InY, InZ);
+				InContext->CopyBufferResource(InReadback, InResource);
 			},
 			&resourceHeap,
 			&pipelineState,
 			&rootSignature,
 			&assertBuffer,
+			&readBackBuffer,
 			InX,
 			InY,
 			InZ
@@ -127,6 +127,25 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32 In
 	);
 
 	engine.Flush();
+
+	const auto [numSuccessAsserts, numFailedAsserts] = [&readBackBuffer]()
+	{
+		const auto mappedReadbackData = readBackBuffer.Map();
+		const auto assertData = mappedReadbackData.Get();
+
+		u32 success = 0;
+		u32 fails = 0;
+
+		std::memcpy(&success, assertData.data(), sizeof(u32));
+		std::memcpy(&fails, assertData.data() + sizeof(u32), sizeof(u32));
+
+		return Tuple{ success, fails };
+	}();
+
+	if (numFailedAsserts != 0)
+	{
+		return Results({ std::format("There were {} failed assertions", numFailedAsserts) });
+	}
 
 	return Results({});
 }

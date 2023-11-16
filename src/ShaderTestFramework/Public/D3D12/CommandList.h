@@ -32,6 +32,8 @@ public:
 	CommandList() = default;
 	CommandList(CreationParams InParams);
 
+	void CopyBufferResource(GPUResource& InDest, GPUResource& InSource);
+
 	void Dispatch(const u32 InX, const u32 InY, const u32 InZ);
 
 	template<RootSigConstantType T>
