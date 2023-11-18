@@ -7,3 +7,8 @@ CommandEngine::CommandEngine(CreationParams InParams)
 	, m_Allocators()
 {
 }
+
+void CommandEngine::Flush()
+{
+	m_Queue.FlushQueue();
+}

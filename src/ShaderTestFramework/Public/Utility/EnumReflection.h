@@ -53,16 +53,17 @@ namespace Private
 
 		constexpr std::size_t begin = [funcSig, end]()
 		{
-			for (size_t i = end - 1; i >= 0; --i)
+			for (size_t i = end; i > 0; --i)
 			{
-				if (funcSig[i] == ')')
+				const auto charIndex = i - 1;
+				if (funcSig[charIndex] == ')')
 				{
 					return std::string_view::npos;
 				}
 
-				if (funcSig[i] == ',')
+				if (funcSig[charIndex] == ',')
 				{
-					return i + 1;
+					return funcSig.find_first_not_of(' ', charIndex + 1);
 				}
 			}
 
@@ -380,7 +381,7 @@ namespace Enum
 			constexpr size_t maxNumColons = 2;
 
 			const size_t firstColonPos = fullName.find_last_of(':');
-			const size_t thirdColonPos = fullName.find_last_of(':', firstColonPos - 2);
+			const size_t thirdColonPos = fullName.find_last_of(':', firstColonPos - maxNumColons);
 
 			const size_t begin = thirdColonPos == std::string_view::npos ? 0 : thirdColonPos + 1;
 
@@ -546,7 +547,7 @@ namespace Enum
 	}
 
 	template<EnumType T1, EnumType T2>
-	constexpr bool EnumsAreEquivilentRanges(const T1 InA = T1{}, const T2 InB = T2{}) noexcept
+	constexpr bool EnumsAreEquivilentRanges() noexcept
 	{
 		using CommonType = std::common_type_t<std::underlying_type_t<T1>, std::underlying_type_t<T2>>;
 

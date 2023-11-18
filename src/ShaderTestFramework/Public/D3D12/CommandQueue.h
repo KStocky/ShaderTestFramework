@@ -20,6 +20,9 @@ public:
 
 	CommandQueue() = default;
 	CommandQueue(CreationParams InParams);
+	CommandQueue(CommandQueue&& In) noexcept;
+	CommandQueue& operator=(CommandQueue&& In) noexcept;
+	~CommandQueue();
 
 	bool HasFencePointBeenReached(const Fence::FencePoint& InFencePoint) const;
 	Fence::FencePoint Signal();

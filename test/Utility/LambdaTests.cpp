@@ -44,6 +44,17 @@ namespace LambdaTypeTests
 		static_assert(!decltype(MutableZeroCaptures)::IsConstCall);
 	}
 
+	void CaptureByRefTests()
+	{
+		int val = 42;
+		double otherVal = 2.0;
+
+		Lambda CaptureByNonAutoRef([]([[maybe_unused]] int& InVal, [[maybe_unused]]double& InOtherVal) { return TypeList<decltype(InVal), decltype(InOtherVal)>{}; }, &val, &otherVal);
+		using RetType = decltype(CaptureByNonAutoRef());
+
+		static_assert(std::is_same_v<RetType::template Type<0>, int&>);
+	}
+
 	void PackingCaptureCallTests()
 	{
 		static constexpr Lambda CaptureReorder([](const double& InFirstDouble, const bool& InFirstBool, const double& InSecondDouble, const bool& InSecondBool) { return Tuple{InFirstDouble, InFirstBool, InSecondDouble, InSecondBool}; }, 4.0, false, 2.0, true);

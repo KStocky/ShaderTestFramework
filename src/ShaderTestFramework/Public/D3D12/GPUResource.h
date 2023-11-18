@@ -5,6 +5,7 @@
 #include "Utility/Pointer.h"
 
 #include <optional>
+#include <span>
 
 #include <d3d12.h>
 
@@ -13,6 +14,35 @@ struct GPUEnhancedBarrier
 	D3D12_BARRIER_SYNC Sync{};
 	D3D12_BARRIER_ACCESS Access{};
 	D3D12_BARRIER_LAYOUT Layout{};
+};
+
+class GPUResource;
+
+class GPUResourceToken
+{
+	friend class GPUResource;
+	GPUResourceToken() = default;
+};
+
+class MappedResource
+{
+public:
+
+	MappedResource(GPUResourceToken, ComPtr<ID3D12Resource2> InResource);
+	MappedResource(const MappedResource&) = delete;
+	MappedResource& operator=(const MappedResource&) = delete;
+	~MappedResource();
+	
+	template<typename ThisType>
+	std::span<const std::byte> Get(this ThisType&& InThis)
+	{
+		return std::forward<ThisType>(InThis).m_MappedData;
+	}
+
+private:
+
+	ComPtr<ID3D12Resource2> m_Resource;
+	std::span<const std::byte> m_MappedData;
 };
 
 class GPUResource : MoveOnly
@@ -38,6 +68,8 @@ public:
 	std::optional<D3D12_CLEAR_VALUE> GetClearValue() const noexcept;
 
 	u64 GetGPUAddress() const noexcept;
+
+	MappedResource Map();
 
 private:
 

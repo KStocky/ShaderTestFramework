@@ -36,6 +36,18 @@ public:
 	D3D12_DESCRIPTOR_HEAP_TYPE GetType() const noexcept;
 	D3D12_DESCRIPTOR_HEAP_FLAGS GetAccess() const;
 
+	template<typename ThisType>
+	ID3D12DescriptorHeap* GetRaw(this ThisType&& InThis)
+	{
+		return std::forward<ThisType>(InThis).m_Heap.Get();
+	}
+
+	template<typename ThisType>
+	operator ID3D12DescriptorHeap*(this ThisType&& InThis)
+	{
+		return std::forward<ThisType>(InThis).GetRaw();
+	}
+
 private:
 
 	ComPtr<ID3D12DescriptorHeap> m_Heap = nullptr;

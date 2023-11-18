@@ -6,6 +6,7 @@
 #include "D3D12/Fence.h"
 #include "D3D12/DescriptorHeap.h"
 #include "D3D12/GPUResource.h"
+#include "D3D12/Shader/CompiledShaderData.h"
 #include "D3D12/Shader/PipelineState.h"
 #include "D3D12/Shader/RootSignature.h"
 #include "Platform.h"
@@ -130,11 +131,11 @@ public:
 
 	bool IsValid() const;
 
-	ExpectedHRes<CommandAllocator> CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandAllocator") const;
-	ExpectedHRes<CommandList> CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandList") const;
+	CommandAllocator CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandAllocator") const;
+	CommandList CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandList") const;
 	CommandQueue CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName = "DefaultCommandQueue");
 
-	ExpectedHRes<GPUResource> CreateCommittedResource(
+	GPUResource CreateCommittedResource(
 		const D3D12_HEAP_PROPERTIES& InHeapProps,
 		const D3D12_HEAP_FLAGS InFlags,
 		const D3D12_RESOURCE_DESC1& InResourceDesc,
@@ -143,14 +144,14 @@ public:
 		const std::span<DXGI_FORMAT> InCastableFormats = {},
 		const std::string_view InName = "DefaultResource"
 	) const;
-	ExpectedHRes<DescriptorHeap> CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName = "DefaultDescriptorHeap") const;
+	DescriptorHeap CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName = "DefaultDescriptorHeap") const;
 
-	ExpectedHRes<Fence> CreateFence(const u64 InInitialValue, const std::string_view InName = "DefaultFence") const;
+	Fence CreateFence(const u64 InInitialValue, const std::string_view InName = "DefaultFence") const;
 
 	template<PipelineStateDescType T>
 	PipelineState CreatePipelineState(const T& InDesc) const
 	{
-		const CD3DX12_PIPELINE_STATE_STREAM5 rawStream(InDesc);
+		CD3DX12_PIPELINE_STATE_STREAM5 rawStream(InDesc);
 		const D3D12_PIPELINE_STATE_STREAM_DESC desc
 		{
 			.SizeInBytes = sizeof(rawStream),
@@ -162,6 +163,10 @@ public:
 	}
 
 	RootSignature CreateRootSignature(const D3D12_ROOT_SIGNATURE_DESC1& InDesc) const;
+	RootSignature CreateRootSignature(const CompiledShaderData& InShader) const;
+
+	void CreateShaderResourceView(const GPUResource& InResource, const DescriptorHandle InHandle) const;
+	void CreateUnorderedAccessView(const GPUResource& InResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc, const DescriptorHandle InHandle) const;
 
 	ExpectedHRes<void> SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes);
 	ExpectedHRes<void> SetSystemVideoMemoryReservation(const u64 InNewReservationBytes);
@@ -172,7 +177,7 @@ private:
 
 	ExpectedHRes<void> SetupDebugLayer(const EDebugLevel InDebugLevel);
 	ExpectedHRes<void> CacheHardwareInfo(ID3D12Device12* InDevice);
-	Expected<u32, bool> GetDescriptorSize(const D3D12_DESCRIPTOR_HEAP_TYPE InType) const;
+	u32 GetDescriptorSize(const D3D12_DESCRIPTOR_HEAP_TYPE InType) const;
 
 	ComPtr<ID3D12Device12> m_Device = nullptr;
 	ComPtr<ID3D12Debug6> m_Debug = nullptr;
@@ -180,7 +185,7 @@ private:
 	ComPtr<IDXGIFactory7> m_Factory = nullptr;
 	ComPtr<IDXGIAdapter4> m_Adapter = nullptr;
 
-	GPUHardwareInfo m_Info;
+	SharedPtr<GPUHardwareInfo> m_Info = nullptr;
 
 	u32 m_CBVDescriptorSize = 0;
 	u32 m_RTVDescriptorSize = 0;

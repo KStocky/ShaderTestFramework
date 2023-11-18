@@ -176,28 +176,20 @@ bool GPUDevice::IsValid() const
 	return m_Device.Get() != nullptr;
 }
 
-ExpectedHRes<CommandAllocator> GPUDevice::CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const
+CommandAllocator GPUDevice::CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const
 {
 	ComPtr<ID3D12CommandAllocator> allocator = nullptr;
 
-	if (const auto hres = m_Device->CreateCommandAllocator(InType, IID_PPV_ARGS(allocator.GetAddressOf()));
-		FAILED(hres))
-	{
-		return Unexpected{ hres };
-	}
+	ThrowIfFailed(m_Device->CreateCommandAllocator(InType, IID_PPV_ARGS(allocator.GetAddressOf())));
 	SetName(allocator.Get(), InName);
 	return CommandAllocator(CommandAllocator::CreationParams{ std::move(allocator), InType });
 }
 
-ExpectedHRes<CommandList> GPUDevice::CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const
+CommandList GPUDevice::CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const
 {
 	ComPtr<ID3D12GraphicsCommandList9> list = nullptr;
 
-	if (const auto hres = m_Device->CreateCommandList1(0, InType, D3D12_COMMAND_LIST_FLAG_NONE, IID_PPV_ARGS(list.GetAddressOf()));
-		FAILED(hres))
-	{
-		return Unexpected{ hres };
-	}
+	ThrowIfFailed(m_Device->CreateCommandList1(0, InType, D3D12_COMMAND_LIST_FLAG_NONE, IID_PPV_ARGS(list.GetAddressOf())));
 	SetName(list.Get(), InName);
 	return CommandList(CommandList::CreationParams{ std::move(list) });
 }
@@ -207,45 +199,44 @@ CommandQueue GPUDevice::CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDes
 	ComPtr<ID3D12CommandQueue> raw = nullptr;
 	ThrowIfFailed(m_Device->CreateCommandQueue(&InDesc, IID_PPV_ARGS(raw.GetAddressOf())));
 	SetName(raw.Get(), InName);
-	return CommandQueue(CommandQueue::CreationParams{ std::move(raw), std::move(ThrowIfUnexpected(CreateFence(0ull))) });
+	return CommandQueue(CommandQueue::CreationParams{ std::move(raw), std::move(CreateFence(0ull)) });
 }
 
-ExpectedHRes<GPUResource> GPUDevice::CreateCommittedResource(const D3D12_HEAP_PROPERTIES& InHeapProps, const D3D12_HEAP_FLAGS InFlags, const D3D12_RESOURCE_DESC1& InResourceDesc, const D3D12_BARRIER_LAYOUT InInitialLayout, const D3D12_CLEAR_VALUE* InClearValue, const std::span<DXGI_FORMAT> InCastableFormats, const std::string_view InName) const
+GPUResource GPUDevice::CreateCommittedResource(const D3D12_HEAP_PROPERTIES& InHeapProps, const D3D12_HEAP_FLAGS InFlags, const D3D12_RESOURCE_DESC1& InResourceDesc, const D3D12_BARRIER_LAYOUT InInitialLayout, const D3D12_CLEAR_VALUE* InClearValue, const std::span<DXGI_FORMAT> InCastableFormats, const std::string_view InName) const
 {
 	ComPtr<ID3D12Resource2> raw{ nullptr };
-	if (const auto hres = m_Device->CreateCommittedResource3(&InHeapProps, InFlags, &InResourceDesc, InInitialLayout, InClearValue, nullptr, static_cast<u32>(InCastableFormats.size()), InCastableFormats.data(), IID_PPV_ARGS(raw.GetAddressOf()));
-		FAILED(hres))
-	{
-		return Unexpected(hres);
-	}
+
+	ThrowIfFailed(
+		m_Device->CreateCommittedResource3(
+		&InHeapProps,
+		InFlags,
+		&InResourceDesc,
+		InInitialLayout,
+		InClearValue,
+		nullptr,
+		static_cast<u32>(InCastableFormats.size()),
+		InCastableFormats.data(),
+		IID_PPV_ARGS(raw.GetAddressOf()))
+		);
 	SetName(raw.Get(), InName);
 	return GPUResource(GPUResource::CreationParams{ std::move(raw), InClearValue ? std::optional{*InClearValue} : std::nullopt, {D3D12_BARRIER_SYNC_NONE, D3D12_BARRIER_ACCESS_NO_ACCESS, InInitialLayout} });
 }
 
-ExpectedHRes<DescriptorHeap> GPUDevice::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName) const
+DescriptorHeap GPUDevice::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName) const
 {
 	ComPtr<ID3D12DescriptorHeap> heap = nullptr;
-	const auto hresult = m_Device->CreateDescriptorHeap(&InDesc, IID_PPV_ARGS(heap.GetAddressOf()));
-	
-	if (FAILED(hresult))
-	{
-		return Unexpected(hresult);
-	}
+	ThrowIfFailed(m_Device->CreateDescriptorHeap(&InDesc, IID_PPV_ARGS(heap.GetAddressOf())));
 
 	SetName(heap.Get(), InName);
-
-	return GetDescriptorSize(InDesc.Type).transform([this, heap](const u32 InDescriptorSize) { return DescriptorHeap(DescriptorHeap::Desc{ std::move(heap), InDescriptorSize }); });
+	const u32 descriptorSize = GetDescriptorSize(InDesc.Type);
+	return DescriptorHeap(DescriptorHeap::Desc{ std::move(heap), descriptorSize });
 }
 
-ExpectedHRes<Fence> GPUDevice::CreateFence(const u64 InInitialValue, const std::string_view InName) const
+Fence GPUDevice::CreateFence(const u64 InInitialValue, const std::string_view InName) const
 {
 	ComPtr<ID3D12Fence1> fence = nullptr;
 
-	if (const auto hres = m_Device->CreateFence(InInitialValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(fence.GetAddressOf()));
-		FAILED(hres))
-	{
-		return Unexpected(hres);
-	}
+	ThrowIfFailed(m_Device->CreateFence(InInitialValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(fence.GetAddressOf())));
 	SetName(fence.Get(), InName);
 	return Fence(Fence::CreationParams{ std::move(fence), InInitialValue });
 }
@@ -266,6 +257,30 @@ RootSignature GPUDevice::CreateRootSignature(const D3D12_ROOT_SIGNATURE_DESC1& I
 	ComPtr<ID3D12VersionedRootSignatureDeserializer> deserializer;
 	ThrowIfFailed(D3D12CreateVersionedRootSignatureDeserializer(signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(deserializer.GetAddressOf())));
 	return RootSignature(RootSignature::CreationParams{std::move(rootSignatureObject), std::move(deserializer), std::move(signature)});
+}
+
+RootSignature GPUDevice::CreateRootSignature(const CompiledShaderData& InShader) const
+{
+	ComPtr<ID3D12RootSignature> rootSignatureObject;
+	const auto codeBlob = InShader.GetCompiledShader();
+	ThrowIfFalse(codeBlob);
+
+	ComPtr<ID3D12VersionedRootSignatureDeserializer> deserializer;
+	ThrowIfFailed(D3D12CreateVersionedRootSignatureDeserializer(codeBlob->GetBufferPointer(), codeBlob->GetBufferSize(), IID_PPV_ARGS(deserializer.GetAddressOf())));
+
+	const auto desc = deserializer->GetUnconvertedRootSignatureDesc();
+
+	return CreateRootSignature(desc->Desc_1_1);
+}
+
+void GPUDevice::CreateShaderResourceView(const GPUResource& InResource, const DescriptorHandle InHandle) const
+{
+	m_Device->CreateShaderResourceView(InResource, nullptr, InHandle.GetCPUHandle());
+}
+
+void GPUDevice::CreateUnorderedAccessView(const GPUResource& InResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc, const DescriptorHandle InHandle) const
+{
+	m_Device->CreateUnorderedAccessView(InResource, nullptr, &InDesc, InHandle.GetCPUHandle());
 }
 
 ExpectedHRes<void> GPUDevice::SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes)
@@ -292,7 +307,7 @@ ExpectedHRes<void> GPUDevice::SetSystemVideoMemoryReservation(const u64 InNewRes
 
 const GPUHardwareInfo& GPUDevice::GetHardwareInfo() const
 {
-	return m_Info;
+	return *m_Info.get();
 }
 
 ExpectedHRes<void> GPUDevice::SetupDebugLayer(const EDebugLevel InDebugLevel)
@@ -311,7 +326,6 @@ ExpectedHRes<void> GPUDevice::SetupDebugLayer(const EDebugLevel InDebugLevel)
 	m_Debug->EnableDebugLayer();
 	m_Debug->SetEnableSynchronizedCommandQueueValidation(true);
 	m_Debug->SetEnableAutoName(true);
-	m_Debug->SetForceLegacyBarrierValidation(true);
 
 	if (InDebugLevel == EDebugLevel::DebugLayerWithValidation)
 	{
@@ -425,8 +439,8 @@ ExpectedHRes<void> GPUDevice::CacheHardwareInfo(ID3D12Device12* InDevice)
 		return Unexpected(hres);
 	}
 
-	m_Info = GPUHardwareInfo
-	{
+	m_Info = MakeShared<GPUHardwareInfo>
+	(
 		GPUAdapterInfo
 		{
 			.Name = adapterDesc.Description,
@@ -482,12 +496,12 @@ ExpectedHRes<void> GPUDevice::CacheHardwareInfo(ID3D12Device12* InDevice)
 			.BackgroundProcessingSupported = !!options6.BackgroundProcessingSupported,
 			.Tier = options6.VariableShadingRateTier
 		}
-	};
+	);
 
 	return {};
 }
 
-Expected<u32, bool> GPUDevice::GetDescriptorSize(const D3D12_DESCRIPTOR_HEAP_TYPE InType) const
+u32 GPUDevice::GetDescriptorSize(const D3D12_DESCRIPTOR_HEAP_TYPE InType) const
 {
 	switch (InType)
 	{
@@ -510,7 +524,10 @@ Expected<u32, bool> GPUDevice::GetDescriptorSize(const D3D12_DESCRIPTOR_HEAP_TYP
 		case D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES:
 		default:
 		{
-			return false;
+			ThrowIfFalse(false, "Unknown Descriptor heap type");
+			
 		}
 	}
+
+	return 0;
 }

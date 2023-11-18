@@ -28,13 +28,16 @@ set(SOURCES
     Public/D3D12/GPUDevice.h
     Public/D3D12/GPUResource.h
     Public/D3D12/Shader/CompiledShaderData.h
+    Public/D3D12/Shader/IncludeHandler.h
     Public/D3D12/Shader/PipelineState.h
     Public/D3D12/Shader/RootSignature.h
     Public/D3D12/Shader/ShaderCompiler.h
     Public/D3D12/Shader/ShaderEnums.h
     Public/D3D12/Shader/ShaderHash.h
+    Public/D3D12/Shader/VirtualShaderDirectoryMapping.h
+    Public/D3D12/Shader/VirtualShaderDirectoryMappingManager.h
+    Public/Framework/ShaderTestFixture.h
     Public/Platform.h
-    Public/ShaderTestFixture.h
     Public/Utility/Algorithm.h
     Public/Utility/Concepts.h
     Public/Utility/EnumReflection.h
@@ -61,10 +64,13 @@ set(SOURCES
     Private/D3D12/GPUDevice.cpp
     Private/D3D12/GPUResource.cpp
     Private/D3D12/Shader/CompiledShaderData.cpp
+    Private/D3D12/Shader/IncludeHandler.cpp
     Private/D3D12/Shader/PipelineState.cpp
     Private/D3D12/Shader/RootSignature.cpp
     Private/D3D12/Shader/ShaderCompiler.cpp
-    Private/ShaderTestFixture.cpp)
+    Private/D3D12/Shader/VirtualShaderDirectoryMappingManager.cpp
+    Private/Framework/ShaderTestFixture.cpp
+    )
 
 file(GLOB_RECURSE AGILITY_HEADERS "${AGILITY_INCLUDE}/*.h*" )
 file(GLOB_RECURSE DXC_HEADERS "${DXC_INCLUDE}/*.h*" )
@@ -82,15 +88,27 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source" FILES ${SOURCES})
 source_group(TREE ${AGILITY_INCLUDE} PREFIX "ThirdParty/AgilitySDK" FILES ${AGILITY_HEADERS})
 source_group(TREE ${DXC_INCLUDE} PREFIX "ThirdParty/DXC" FILES ${DXC_HEADERS})
 
+set(SHADER_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Shader)
+set(SHADER_SOURCE_REL_DIR "Shaders")
+
+set(SHADER_SOURCES
+    Shader/Public/ShaderTestFramework.hlsli
+)
+
+set_source_files_properties(${SHADER_SOURCES} PROPERTIES VS_SETTINGS "ExcludedFromBuild=true")
+target_sources(ShaderTestFramework PRIVATE ${SHADER_SOURCES})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/Shader PREFIX "ShaderSources" FILES ${SHADER_SOURCES})
+
 target_include_directories(ShaderTestFramework PUBLIC ${CMAKE_CURRENT_LIST_DIR}/Public/ )
 
 target_include_directories(ShaderTestFramework PUBLIC ${AGILITY_INCLUDE} ${DXC_INCLUDE} )
 
-target_compile_definitions(ShaderTestFramework PRIVATE D3D12_SDK_VERSION_ID=${SDK_VER})
+target_compile_definitions(ShaderTestFramework PRIVATE D3D12_SDK_VERSION_ID=${SDK_VER} SHADER_SRC="${SHADER_SOURCE_REL_DIR}")
 
 target_add_dll_directory(ShaderTestFramework ${AGILITY_DLL} "/D3D12" SRC_DIRS DEST_DIRS)
 target_add_dll_directory(ShaderTestFramework ${WARP_DLL} "/" SRC_DIRS DEST_DIRS)
 target_add_dll_directory(ShaderTestFramework ${DXC_DLL} "/" SRC_DIRS DEST_DIRS)
+target_add_dll_directory(ShaderTestFramework ${SHADER_SOURCE_DIR} "/${SHADER_SOURCE_REL_DIR}" SRC_DIRS DEST_DIRS)
 
 target_link_libraries(ShaderTestFramework PRIVATE d3d12.lib dxgi.lib DXC dxguid.lib)
 
