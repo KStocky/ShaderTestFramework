@@ -1,4 +1,5 @@
 #include "D3D12/GPUDevice.h"
+#include "D3D12/AgilityDefinitions.h"
 #include "Utility/EnumReflection.h"
 #include "Utility/Exception.h"
 
@@ -117,10 +118,7 @@ GPUDevice::GPUDevice(const CreationParams InDesc)
 	, m_DSVDescriptorSize(0)
 	, m_SamplerDescriptorSize(0)
 {
-	if (!SetupDebugLayer(InDesc.DebugLevel).has_value())
-	{
-		return;
-	}
+    ThrowIfUnexpected(SetupDebugLayer(InDesc.DebugLevel));
 	const u32 factoryCreateFlags = InDesc.DebugLevel != EDebugLevel::Off ? DXGI_CREATE_FACTORY_DEBUG : 0;
 	if (const auto hres = CreateDXGIFactory2(factoryCreateFlags, IID_PPV_ARGS(m_Factory.GetAddressOf()));
 		FAILED(hres))
