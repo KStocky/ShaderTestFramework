@@ -2,8 +2,6 @@
 
 #include <tuplet/tuple.hpp>
 
-#include <compare>
-
 template<typename... InTypes>
 using Tuple = tuplet::tuple<InTypes...>;
 

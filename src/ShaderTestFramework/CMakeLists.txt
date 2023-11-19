@@ -56,7 +56,6 @@ set(SOURCES
     Private/D3D12/CommandEngine.cpp
     Private/D3D12/CommandList.cpp
     Private/D3D12/CommandQueue.cpp
-    Private/D3D12/Descriptor.cpp
     Private/D3D12/DescriptorFreeListAllocator.cpp
     Private/D3D12/DescriptorHeap.cpp
     Private/D3D12/DescriptorRingAllocator.cpp

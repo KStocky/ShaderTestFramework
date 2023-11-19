@@ -6,7 +6,6 @@
 #include "D3D12/GPUDevice.h"
 
 #include "Utility/Lambda.h"
-#include "Utility/MoveOnly.h"
 
 class CommandEngineToken
 {

@@ -8,7 +8,6 @@
 #include "Utility/Pointer.h"
 
 #include <fstream>
-#include <ranges>
 #include <variant>
 
 #include <dxcapi.h>

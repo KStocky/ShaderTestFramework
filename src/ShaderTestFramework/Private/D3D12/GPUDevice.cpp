@@ -1,5 +1,4 @@
 #include "D3D12/GPUDevice.h"
-#include "D3D12/AgilityDefinitions.h"
 #include "Utility/EnumReflection.h"
 #include "Utility/Exception.h"
 

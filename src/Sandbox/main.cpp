@@ -1,8 +1,9 @@
-#include "Framework/ShaderTestFixture.h"
+
+#include <array>
 
 int main()
 {
-    ShaderTestFixture test{ {} };
+    std::array<int, 2> hello{ 1, 2 };
 
-    return test.IsValid() ? 1 : 0;
+    return hello[0];
 }

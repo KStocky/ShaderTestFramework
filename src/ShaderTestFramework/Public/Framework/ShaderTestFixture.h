@@ -2,7 +2,6 @@
 
 #include "D3D12/GPUDevice.h"
 #include "D3D12/Shader/ShaderCompiler.h"
-#include "D3D12/Shader/VirtualShaderDirectoryMappingManager.h"
 
 #include <vector>
 
