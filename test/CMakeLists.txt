@@ -26,6 +26,8 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})
 
 target_link_libraries(ShaderTestFrameworkTests PRIVATE ShaderTestFramework)
 target_compile_options(ShaderTestFrameworkTests PRIVATE ${GLOBAL_COMPILE_FLAGS})
+set_target_properties(ShaderTestFrameworkTests PROPERTIES
+    VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:ShaderTestFrameworkTests>" )
 
 copy_all_dependent_dlls(ShaderTestFrameworkTests)
 add_catch2(ShaderTestFrameworkTests)
