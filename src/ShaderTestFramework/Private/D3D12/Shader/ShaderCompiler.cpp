@@ -109,7 +109,7 @@ ShaderCompiler::ShaderCompiler(std::vector<VirtualShaderDirectoryMapping> InMapp
 	Init();
 }
 
-CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& InJob)
+CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& InJob) const
 {
 	const auto source = InJob.Source.ToString(m_DirectoryManager);
 

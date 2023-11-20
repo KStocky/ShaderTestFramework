@@ -29,8 +29,8 @@ public:
 	DescriptorHeap() = default;
 	DescriptorHeap(Desc InParams) noexcept;
 
-	Expected<DescriptorRange> CreateDescriptorRange(const u32 InBeginIndex, const u32 InNum);
-	Expected<DescriptorHandle> CreateDescriptorHandle(const u32 InIndex);
+	Expected<DescriptorRange> CreateDescriptorRange(const u32 InBeginIndex, const u32 InNum) const;
+	Expected<DescriptorHandle> CreateDescriptorHandle(const u32 InIndex) const;
 
 	u32 GetNumDescriptors() const noexcept;
 	D3D12_DESCRIPTOR_HEAP_TYPE GetType() const noexcept;

@@ -69,7 +69,7 @@ public:
 
 	u64 GetGPUAddress() const noexcept;
 
-	MappedResource Map();
+	MappedResource Map() const;
 
 private:
 

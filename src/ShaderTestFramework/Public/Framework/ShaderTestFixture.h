@@ -1,8 +1,10 @@
 #pragma once
 
+#include "D3D12/CommandEngine.h"
 #include "D3D12/GPUDevice.h"
 #include "D3D12/Shader/ShaderCompiler.h"
 
+#include <D3D12/GPUResource.h>
 #include <vector>
 
 class ShaderTestFixture
@@ -49,6 +51,16 @@ public:
     bool IsUsingAgilitySDK() const;
 
 private:
+
+    CompilationResult CompileShader(std::string InName) const;
+    CommandEngine CreateCommandEngine() const;
+    DescriptorHeap CreateDescriptorHeap() const;
+    PipelineState CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const;
+    RootSignature CreateRootSignature(const CompiledShaderData& InShaderData) const;
+    GPUResource CreateAssertBuffer(const u64 InSizeInBytes) const;
+    GPUResource CreateReadbackBuffer(const u64 InSizeInBytes) const;
+    DescriptorHandle CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap) const;
+    Tuple<u32, u32> ReadbackResults(const GPUResource& InReadbackBuffer) const;
 
     GPUDevice m_Device;
     ShaderCompiler m_Compiler;

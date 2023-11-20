@@ -191,7 +191,7 @@ CommandList GPUDevice::CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::st
 	return CommandList(CommandList::CreationParams{ std::move(list) });
 }
 
-CommandQueue GPUDevice::CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName)
+CommandQueue GPUDevice::CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName) const
 {
 	ComPtr<ID3D12CommandQueue> raw = nullptr;
 	ThrowIfFailed(m_Device->CreateCommandQueue(&InDesc, IID_PPV_ARGS(raw.GetAddressOf())));
