@@ -83,6 +83,31 @@ public:
 		m_Queue.ExecuteCommandList(m_List);
 	}
 
+    template<ExecuteLambdaType InLambdaType>
+    void Execute(const InLambdaType& InFunc)
+    {
+        auto allocator = [this]()
+        {
+            if (m_Allocators.size() == 0 || !m_Queue.HasFencePointBeenReached(m_Allocators.front().FencePoint))
+            {
+                return m_Device.CreateCommandAllocator
+                (
+                    D3D12_COMMAND_LIST_TYPE_DIRECT,
+                    "Command Allocator"
+                );
+            }
+
+            return std::move(ThrowIfUnexpected(m_Allocators.pop_front()).Allocator);
+        }();
+
+        m_List.Reset(allocator);
+        ScopedCommandContext context(CommandEngineToken{}, &m_List);
+        InFunc(context);
+
+        m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue.Signal() });
+        m_Queue.ExecuteCommandList(m_List);
+    }
+
 	void Flush();
 
 	template<typename ThisType>

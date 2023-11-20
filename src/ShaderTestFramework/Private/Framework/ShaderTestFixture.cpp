@@ -101,30 +101,19 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32 In
 		return uav;
 	}();
 
-	engine.Execute(
-		Lambda
-		(
-			[](DescriptorHeap& InHeap, PipelineState& InPipelineState, RootSignature& InRootSig, GPUResource& InResource, GPUResource& InReadback, const u32& InX, const u32& InY, const u32& InZ, ScopedCommandContext& InContext)
-			{
-				InContext->SetPipelineState(InPipelineState);
-				InContext->SetComputeRootSignature(InRootSig);
-				InContext->SetDescriptorHeaps(InHeap);
-				InContext->SetBufferUAV(InResource);
-				std::array params{ 10u, 0u };
-				InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
-				InContext->Dispatch(InX, InY, InZ);
-				InContext->CopyBufferResource(InReadback, InResource);
-			},
-			&resourceHeap,
-			&pipelineState,
-			&rootSignature,
-			&assertBuffer,
-			&readBackBuffer,
-			InX,
-			InY,
-			InZ
-		)
-	);
+    engine.Execute(
+        [&resourceHeap, &pipelineState, &rootSignature, &assertBuffer, &readBackBuffer, InX, InY, InZ](ScopedCommandContext& InContext)
+        {
+            InContext->SetPipelineState(pipelineState);
+            InContext->SetComputeRootSignature(rootSignature);
+            InContext->SetDescriptorHeaps(resourceHeap);
+            InContext->SetBufferUAV(assertBuffer);
+            std::array params{ 10u, 0u };
+            InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
+            InContext->Dispatch(InX, InY, InZ);
+            InContext->CopyBufferResource(readBackBuffer, assertBuffer);
+        }
+    );
 
 	engine.Flush();
 
