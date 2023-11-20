@@ -5,6 +5,7 @@
 #include "D3D12/CommandQueue.h"
 #include "D3D12/GPUDevice.h"
 
+#include "Utility/FunctionTraits.h"
 #include "Utility/Lambda.h"
 
 class CommandEngineToken
@@ -33,9 +34,15 @@ private:
 template<typename T>
 concept CommandEngineFuncType = LambdaType<T> && requires()
 {
-	requires T::ParamTypes::Size >= 1;
+	requires T::ParamTypes::Size == 1;
 	requires std::same_as<typename T::ParamTypes::template Type<0>, ScopedCommandContext&>;
 };
+
+template<typename T>
+concept ExecuteLambdaType =
+    !CommandEngineFuncType<T> &&
+    TFuncTraits<T>::ParamTypes::Size == 1 &&
+    std::is_same_v<typename TFuncTraits<T>::ParamTypes::template Type<0>, ScopedCommandContext&>;
 
 class CommandEngine
 {
