@@ -5,11 +5,16 @@ include("${CMAKE_HOME_DIRECTORY}/cmake/NugetPackages.cmake")
 nuget_get_agility_sdk(AGILITY_FOUND AGILITY_INCLUDE AGILITY_DLL SDK_VER)
 nuget_get_dxc(DXC_FOUND DXC_INCLUDE DXC_DLL DXC_LIB)
 nuget_get_warp(WARP_FOUND WARP_DLL)
+nuget_get_WinPixEventRuntime(WINPIX_FOUND WINPIX_INCLUDE WINPIX_BIN)
 
 add_library(DXC SHARED IMPORTED)
 set_target_properties(DXC PROPERTIES
     IMPORTED_IMPLIB "${DXC_LIB}/dxcompiler.lib"
 )
+
+add_library(WINPIX SHARED IMPORTED)
+set_target_properties(WINPIX PROPERTIES
+    IMPORTED_IMPLIB "${WINPIX_BIN}/WinPixEventRuntime.lib")
 
 add_library(ShaderTestFramework)
 
@@ -75,6 +80,7 @@ set(SOURCES
 
 file(GLOB_RECURSE AGILITY_HEADERS "${AGILITY_INCLUDE}/*.h*" )
 file(GLOB_RECURSE DXC_HEADERS "${DXC_INCLUDE}/*.h*" )
+file(GLOB_RECURSE WINPIX_HEADERS "${WINPIX_INCLUDE}/*.h*" )
 
 target_sources(ShaderTestFramework PRIVATE 
     ${SOURCES})
@@ -85,9 +91,13 @@ target_sources(ShaderTestFramework PRIVATE
 target_sources(ShaderTestFramework PRIVATE 
     ${DXC_HEADERS})
 
+target_sources(ShaderTestFramework PRIVATE 
+    ${WINPIX_HEADERS})
+
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source" FILES ${SOURCES})
 source_group(TREE ${AGILITY_INCLUDE} PREFIX "ThirdParty/AgilitySDK" FILES ${AGILITY_HEADERS})
 source_group(TREE ${DXC_INCLUDE} PREFIX "ThirdParty/DXC" FILES ${DXC_HEADERS})
+source_group(TREE ${WINPIX_INCLUDE} PREFIX "ThirdParty/WinPix" FILES ${WINPIX_HEADERS})
 
 set(SHADER_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Shader)
 set(SHADER_SOURCE_REL_DIR "Shaders")
@@ -103,15 +113,17 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/Shader PREFIX "ShaderSources" FILE
 target_include_directories(ShaderTestFramework PUBLIC ${CMAKE_CURRENT_LIST_DIR}/Public/ )
 
 target_include_directories(ShaderTestFramework PUBLIC ${AGILITY_INCLUDE} ${DXC_INCLUDE} )
+target_include_directories(ShaderTestFramework PRIVATE ${WINPIX_INCLUDE})
 
 target_compile_definitions(ShaderTestFramework PRIVATE D3D12_SDK_VERSION_ID=${SDK_VER} SHADER_SRC="${SHADER_SOURCE_REL_DIR}")
 
 target_add_dll_directory(ShaderTestFramework ${AGILITY_DLL} "/D3D12" SRC_DIRS DEST_DIRS)
 target_add_dll_directory(ShaderTestFramework ${WARP_DLL} "/" SRC_DIRS DEST_DIRS)
 target_add_dll_directory(ShaderTestFramework ${DXC_DLL} "/" SRC_DIRS DEST_DIRS)
+target_add_dll_directory(ShaderTestFramework ${WINPIX_BIN} "/" SRC_DIRS DEST_DIRS)
 target_add_dll_directory(ShaderTestFramework ${SHADER_SOURCE_DIR} "/${SHADER_SOURCE_REL_DIR}" SRC_DIRS DEST_DIRS)
 
-target_link_libraries(ShaderTestFramework PRIVATE d3d12.lib dxgi.lib DXC dxguid.lib)
+target_link_libraries(ShaderTestFramework PRIVATE d3d12.lib dxgi.lib DXC dxguid.lib WINPIX)
 
 target_compile_options(ShaderTestFramework PRIVATE ${GLOBAL_COMPILE_FLAGS})
 
