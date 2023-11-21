@@ -1,0 +1,11 @@
+root = true
+
+# All files
+[*]
+indent_style = space
+cpp_include_cleanup_alternate_files = algorithm:xutility,fstream:iosfwd,sstream:iosfwd,Utility/Concepts.h:concepts,Utility/Concepts.h:type_traits,Utility/Expected.h:expected,d3dx12/d3dx12.h:d3dx12/d3dx12_barriers.h,d3dx12/d3dx12.h:d3dx12/d3dx12_check_feature_support.h,d3dx12/d3dx12.h:d3dx12/d3dx12_core.h,d3dx12/d3dx12.h:d3dx12/d3dx12_default.h,d3dx12/d3dx12.h:d3dx12/d3dx12_pipeline_state_stream.h,d3dx12/d3dx12.h:d3dx12/d3dx12_property_format_table.h,d3dx12/d3dx12.h:d3dx12/d3dx12_render_pass.h,d3dx12/d3dx12.h:d3dx12/d3dx12_resource_helpers.h,d3dx12/d3dx12.h:d3dx12/d3dx12_root_signature.h,d3dx12/d3dx12.h:d3dx12/d3dx12_state_object.h
+cpp_include_cleanup_excluded_files = D3D12/AgilityDefinitions.h
+
+# Xml files
+[*.xml]
+indent_size = 2

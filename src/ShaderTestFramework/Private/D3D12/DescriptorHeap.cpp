@@ -6,7 +6,7 @@ DescriptorHeap::DescriptorHeap(Desc InParams) noexcept
 {
 }
 
-DescriptorHeap::Expected<DescriptorRange> DescriptorHeap::CreateDescriptorRange(const u32 InBeginIndex, const u32 InNum)
+DescriptorHeap::Expected<DescriptorRange> DescriptorHeap::CreateDescriptorRange(const u32 InBeginIndex, const u32 InNum) const
 {
 	if ((InBeginIndex + InNum) > GetNumDescriptors())
 	{
@@ -22,7 +22,7 @@ DescriptorHeap::Expected<DescriptorRange> DescriptorHeap::CreateDescriptorRange(
 	return DescriptorRange(DescriptorHandle{ cpuHandle, gpuHandle }, InNum, m_DescriptorSize);
 }
 
-DescriptorHeap::Expected<DescriptorHandle> DescriptorHeap::CreateDescriptorHandle(const u32 InIndex)
+DescriptorHeap::Expected<DescriptorHandle> DescriptorHeap::CreateDescriptorHandle(const u32 InIndex) const
 {
 	return CreateDescriptorRange(InIndex, 1).transform([](const auto& InRange) { return *InRange[0]; });
 }

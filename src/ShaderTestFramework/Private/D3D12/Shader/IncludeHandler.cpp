@@ -1,6 +1,5 @@
 #include "D3D12/Shader/IncludeHandler.h"
 
-#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <sstream>

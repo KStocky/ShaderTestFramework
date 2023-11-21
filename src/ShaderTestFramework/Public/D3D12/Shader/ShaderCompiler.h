@@ -55,7 +55,7 @@ public:
 
     ShaderCompiler();
     ShaderCompiler(std::vector<VirtualShaderDirectoryMapping> InMappings);
-    CompilationResult CompileShader(const ShaderCompilationJobDesc& InJob);
+    CompilationResult CompileShader(const ShaderCompilationJobDesc& InJob) const;
 
 private:
 

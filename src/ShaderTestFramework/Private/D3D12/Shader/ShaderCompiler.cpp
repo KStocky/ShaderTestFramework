@@ -8,7 +8,6 @@
 #include "Utility/Pointer.h"
 
 #include <fstream>
-#include <ranges>
 #include <variant>
 
 #include <dxcapi.h>
@@ -110,7 +109,7 @@ ShaderCompiler::ShaderCompiler(std::vector<VirtualShaderDirectoryMapping> InMapp
 	Init();
 }
 
-CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& InJob)
+CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& InJob) const
 {
 	const auto source = InJob.Source.ToString(m_DirectoryManager);
 

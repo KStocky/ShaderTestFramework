@@ -118,10 +118,7 @@ GPUDevice::GPUDevice(const CreationParams InDesc)
 	, m_DSVDescriptorSize(0)
 	, m_SamplerDescriptorSize(0)
 {
-	if (!SetupDebugLayer(InDesc.DebugLevel).has_value())
-	{
-		return;
-	}
+    ThrowIfUnexpected(SetupDebugLayer(InDesc.DebugLevel));
 	const u32 factoryCreateFlags = InDesc.DebugLevel != EDebugLevel::Off ? DXGI_CREATE_FACTORY_DEBUG : 0;
 	if (const auto hres = CreateDXGIFactory2(factoryCreateFlags, IID_PPV_ARGS(m_Factory.GetAddressOf()));
 		FAILED(hres))
@@ -194,7 +191,7 @@ CommandList GPUDevice::CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::st
 	return CommandList(CommandList::CreationParams{ std::move(list) });
 }
 
-CommandQueue GPUDevice::CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName)
+CommandQueue GPUDevice::CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName) const
 {
 	ComPtr<ID3D12CommandQueue> raw = nullptr;
 	ThrowIfFailed(m_Device->CreateCommandQueue(&InDesc, IID_PPV_ARGS(raw.GetAddressOf())));

@@ -44,7 +44,7 @@ u64 GPUResource::GetGPUAddress() const noexcept
 	return m_Resource->GetGPUVirtualAddress();
 }
 
-MappedResource GPUResource::Map()
+MappedResource GPUResource::Map() const
 {
 	return MappedResource(GPUResourceToken{}, m_Resource);
 }

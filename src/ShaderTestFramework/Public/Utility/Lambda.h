@@ -3,9 +3,7 @@
 #include "Utility/Concepts.h"
 #include "Utility/FunctionTraits.h"
 #include "Utility/Tuple.h"
-#include "Utility/Type.h"
 #include "Utility/TypeList.h"
-#include "Utility/TypeTraits.h"
 
 template<auto InFunc, typename InCaptureTypes, typename InCaptureIndices>
 class Lambda;
