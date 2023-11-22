@@ -125,9 +125,6 @@ CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& 
 	args.push_back(L"-T");
 	args.push_back(ToWString(MakeShaderTarget(InJob.ShaderModel, InJob.ShaderType)));
 
-	args.push_back(L"-Zs");
-	args.push_back(L"-Zss");
-
 	if (Enum::EnumHasMask(InJob.Flags, EShaderCompileFlags::AllResourcesBound))
 	{
 		args.push_back(L"-all-resources-bound");

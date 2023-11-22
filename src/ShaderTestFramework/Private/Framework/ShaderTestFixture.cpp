@@ -122,6 +122,13 @@ CompilationResult ShaderTestFixture::CompileShader(std::string InName) const
     job.ShaderType = EShaderType::Compute;
     job.Source = m_Source;
 
+    if (ShouldTakeCapture())
+    {
+        job.AdditionalFlags.emplace_back(L"-Qembed_debug");
+        job.AdditionalFlags.emplace_back(L"-Zss");
+        job.AdditionalFlags.emplace_back(L"-Zi");
+    }
+
     return m_Compiler.CompileShader(job);
 }
 
