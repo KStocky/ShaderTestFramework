@@ -6,18 +6,29 @@
 #include <format>
 #include <ranges>
 
+#include <WinPixEventRuntime/pix3.h>
+
 ShaderTestFixture::ShaderTestFixture(Desc InParams)
-	: m_Device(InParams.GPUDeviceParams)
+	: m_Device()
 	, m_Compiler(std::move(InParams.Mappings))
 	, m_Source(std::move(InParams.Source))
 	, m_CompilationFlags(std::move(InParams.CompilationFlags))
 	, m_ShaderModel(InParams.ShaderModel)
 	, m_IsWarp(InParams.GPUDeviceParams.DeviceType == GPUDevice::EDeviceType::Software)
 {
+    PIXLoadLatestWinPixGpuCapturerLibrary();
+    m_Device = GPUDevice{ InParams.GPUDeviceParams };
+}
+
+void ShaderTestFixture::TakeCapture()
+{
+    m_ShouldTakeCapture = true;
 }
 
 ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32 InX, u32 InY, u32 InZ)
 {
+    const auto capturePath = std::format(L"{}.wpix", std::filesystem::path{ InName }.c_str());
+
 	const auto compileResult = CompileShader(std::move(InName));
 
 	if (!compileResult.has_value())
@@ -35,6 +46,18 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32 In
     auto readBackBuffer = CreateReadbackBuffer(bufferSizeInBytes);
 
     const auto assertUAV = CreateAssertBufferUAV(assertBuffer, resourceHeap);
+
+    if (m_ShouldTakeCapture)
+    {
+        const std::filesystem::path captureDir = std::filesystem::current_path() / L"Captures";
+
+        std::filesystem::create_directories(captureDir);
+
+        const std::filesystem::path captureFilePath = captureDir / capturePath;
+        PIXCaptureParameters params;
+        params.GpuCaptureParameters.FileName = captureFilePath.c_str();
+        ThrowIfFailed(PIXBeginCapture(PIX_CAPTURE_GPU, &params));
+    }
 
     engine.Execute(
         [&resourceHeap, 
@@ -59,6 +82,11 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32 In
     );
 
 	engine.Flush();
+
+    if (m_ShouldTakeCapture)
+    {
+        ThrowIfFailed(PIXEndCapture(false));
+    }
 
     const auto [numSuccessAsserts, numFailedAsserts] = ReadbackResults(readBackBuffer);
 

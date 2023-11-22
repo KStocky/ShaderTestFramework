@@ -44,6 +44,7 @@ public:
 
     ShaderTestFixture(Desc InParams);
 
+    void TakeCapture();
     Results RunTest(std::string InName, u32 InX, u32 InY, u32 InZ);
 
     bool IsValid() const;
@@ -68,4 +69,5 @@ private:
     std::vector<std::wstring> m_CompilationFlags;
     D3D_SHADER_MODEL m_ShaderModel;
     bool m_IsWarp = false;
+    bool m_ShouldTakeCapture = false;
 };

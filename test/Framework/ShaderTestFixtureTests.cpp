@@ -61,14 +61,16 @@ SCENARIO("BasicShaderTests")
                         {
                             ShaderTestPrivate::Success();
                         }
-
+                        
+                        [RootSignature(SHADER_TEST_RS)]
+                        [numthreads(1,1,1)]
                         void ThisTestShouldFail(uint3 DispatchThreadId : SV_DispatchThreadID)
                         {
                             ShaderTestPrivate::AddError(0,0,0,0);
                         }
                         )");
     ShaderTestFixture Fixture(std::move(FixtureDesc));
-
+    Fixture.TakeCapture();
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
