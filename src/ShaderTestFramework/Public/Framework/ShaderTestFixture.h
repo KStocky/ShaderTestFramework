@@ -63,11 +63,14 @@ private:
     DescriptorHandle CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap) const;
     Tuple<u32, u32> ReadbackResults(const GPUResource& InReadbackBuffer) const;
 
+    bool ShouldTakeCapture() const;
+
     GPUDevice m_Device;
     ShaderCompiler m_Compiler;
     ShaderCodeSource m_Source;
     std::vector<std::wstring> m_CompilationFlags;
     D3D_SHADER_MODEL m_ShaderModel;
     bool m_IsWarp = false;
-    bool m_ShouldTakeCapture = false;
+    bool m_CaptureRequested = false;
+    bool m_PIXAvailable = false;
 };

@@ -16,13 +16,13 @@ ShaderTestFixture::ShaderTestFixture(Desc InParams)
 	, m_ShaderModel(InParams.ShaderModel)
 	, m_IsWarp(InParams.GPUDeviceParams.DeviceType == GPUDevice::EDeviceType::Software)
 {
-    PIXLoadLatestWinPixGpuCapturerLibrary();
+    m_PIXAvailable = PIXLoadLatestWinPixGpuCapturerLibrary() != nullptr;
     m_Device = GPUDevice{ InParams.GPUDeviceParams };
 }
 
 void ShaderTestFixture::TakeCapture()
 {
-    m_ShouldTakeCapture = true;
+    m_CaptureRequested = true;
 }
 
 ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32 InX, u32 InY, u32 InZ)
@@ -47,7 +47,7 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32 In
 
     const auto assertUAV = CreateAssertBufferUAV(assertBuffer, resourceHeap);
 
-    if (m_ShouldTakeCapture)
+    if (ShouldTakeCapture())
     {
         const std::filesystem::path captureDir = std::filesystem::current_path() / L"Captures";
 
@@ -83,7 +83,7 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32 In
 
 	engine.Flush();
 
-    if (m_ShouldTakeCapture)
+    if (ShouldTakeCapture())
     {
         ThrowIfFailed(PIXEndCapture(false));
     }
@@ -208,6 +208,11 @@ Tuple<u32, u32> ShaderTestFixture::ReadbackResults(const GPUResource& InReadback
     std::memcpy(&fails, assertData.data() + sizeof(u32), sizeof(u32));
 
     return Tuple{ success, fails };
+}
+
+bool ShaderTestFixture::ShouldTakeCapture() const
+{
+    return m_PIXAvailable && m_CaptureRequested;
 }
 
 ShaderTestFixture::Results::Results(std::vector<std::string> InErrors)
