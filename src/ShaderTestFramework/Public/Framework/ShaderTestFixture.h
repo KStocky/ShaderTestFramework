@@ -45,7 +45,7 @@ public:
     ShaderTestFixture(Desc InParams);
 
     void TakeCapture();
-    Results RunTest(std::string InName, u32 InX, u32 InY, u32 InZ);
+    Results RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ);
 
     bool IsValid() const;
 
@@ -53,7 +53,7 @@ public:
 
 private:
 
-    CompilationResult CompileShader(std::string InName) const;
+    CompilationResult CompileShader(const std::string_view InName) const;
     CommandEngine CreateCommandEngine() const;
     DescriptorHeap CreateDescriptorHeap() const;
     PipelineState CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const;

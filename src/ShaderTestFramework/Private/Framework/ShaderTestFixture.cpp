@@ -25,12 +25,11 @@ void ShaderTestFixture::TakeCapture()
     m_CaptureRequested = true;
 }
 
-ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32 InX, u32 InY, u32 InZ)
+ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ)
 {
-    const auto testName = InName;
     const auto capturePath = std::format(L"{}.wpix", std::filesystem::path{ InName }.c_str());
 
-	const auto compileResult = CompileShader(std::move(InName));
+	const auto compileResult = CompileShader(InName);
 
 	if (!compileResult.has_value())
 	{
@@ -60,7 +59,7 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32 In
         ThrowIfFailed(PIXBeginCapture(PIX_CAPTURE_GPU, &params));
     }
 
-    engine.Execute(testName,
+    engine.Execute(InName,
         [&resourceHeap,
         &pipelineState,
         &rootSignature,
@@ -131,7 +130,7 @@ bool ShaderTestFixture::IsUsingAgilitySDK() const
 	return m_Device.GetHardwareInfo().FeatureInfo.EnhancedBarriersSupport;
 }
 
-CompilationResult ShaderTestFixture::CompileShader(std::string InName) const
+CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName) const
 {
     ShaderCompilationJobDesc job;
     job.AdditionalFlags = m_CompilationFlags;
