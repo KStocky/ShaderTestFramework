@@ -27,6 +27,7 @@ void ShaderTestFixture::TakeCapture()
 
 ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32 InX, u32 InY, u32 InZ)
 {
+    const auto testName = InName;
     const auto capturePath = std::format(L"{}.wpix", std::filesystem::path{ InName }.c_str());
 
 	const auto compileResult = CompileShader(std::move(InName));
@@ -59,25 +60,42 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32 In
         ThrowIfFailed(PIXBeginCapture(PIX_CAPTURE_GPU, &params));
     }
 
-    engine.Execute(
-        [&resourceHeap, 
-        &pipelineState, 
-        &rootSignature, 
-        &assertBuffer, 
-        &readBackBuffer, 
-        InX, 
-        InY, 
+    engine.Execute(testName,
+        [&resourceHeap,
+        &pipelineState,
+        &rootSignature,
+        &assertBuffer,
+        &readBackBuffer,
+        InX,
+        InY,
         InZ]
         (ScopedCommandContext& InContext)
         {
-            InContext->SetPipelineState(pipelineState);
-            InContext->SetComputeRootSignature(rootSignature);
-            InContext->SetDescriptorHeaps(resourceHeap);
-            InContext->SetBufferUAV(assertBuffer);
-            std::array params{ 10u, 0u };
-            InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
-            InContext->Dispatch(InX, InY, InZ);
-            InContext->CopyBufferResource(readBackBuffer, assertBuffer);
+            InContext.Section("Test Setup",
+                [&](ScopedCommandContext& InContext)
+                {
+                    InContext->SetPipelineState(pipelineState);
+                    InContext->SetComputeRootSignature(rootSignature);
+                    InContext->SetDescriptorHeaps(resourceHeap);
+                    InContext->SetBufferUAV(assertBuffer);
+                    std::array params{ 10u, 0u };
+                    InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
+                }
+            );
+
+            InContext.Section("Test Dispatch",
+                [InX, InY, InZ](ScopedCommandContext& InContext)
+                {
+                    InContext->Dispatch(InX, InY, InZ);
+                }
+            );
+
+            InContext.Section("Results readback",
+                [&](ScopedCommandContext& InContext)
+                {
+                    InContext->CopyBufferResource(readBackBuffer, assertBuffer);
+                }
+            );
         }
     );
 

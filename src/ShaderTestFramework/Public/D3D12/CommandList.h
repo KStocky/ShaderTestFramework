@@ -75,8 +75,8 @@ public:
 
 	D3D12_COMMAND_LIST_TYPE GetType() const;
 
-	ID3D12CommandList* GetRaw() const;
-	operator ID3D12CommandList* () const;
+    ID3D12GraphicsCommandList* GetRaw() const;
+	operator ID3D12GraphicsCommandList* () const;
 
 private:
 
