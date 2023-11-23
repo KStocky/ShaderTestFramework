@@ -41,7 +41,6 @@ set(SOURCES
     Public/D3D12/Shader/ShaderHash.h
     Public/D3D12/Shader/VirtualShaderDirectoryMapping.h
     Public/D3D12/Shader/VirtualShaderDirectoryMappingManager.h
-    Public/Framework/ComputeTestEngine.h
     Public/Framework/ShaderTestFixture.h
     Public/Platform.h
     Public/Utility/Algorithm.h
@@ -74,7 +73,6 @@ set(SOURCES
     Private/D3D12/Shader/RootSignature.cpp
     Private/D3D12/Shader/ShaderCompiler.cpp
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManager.cpp
-    Private/Framework/ComputeTestEngine.cpp
     Private/Framework/ShaderTestFixture.cpp
     )
 
