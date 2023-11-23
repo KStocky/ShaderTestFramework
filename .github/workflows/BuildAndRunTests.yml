@@ -5,6 +5,9 @@ jobs:
     Build-And-Test:
         runs-on: windows-latest
         steps:
+            - name: Install PIX
+              uses: choco install pix
+              
             - name: Checkout the repo
               uses: actions/checkout@v4
 
