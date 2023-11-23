@@ -1,5 +1,7 @@
 #include "Framework/ShaderTestFixture.h"
 
+#include "Framework/PIXCapturer.h"
+
 #include "D3D12/CommandEngine.h"
 #include "D3D12/GPUDevice.h"
 
@@ -27,8 +29,6 @@ void ShaderTestFixture::TakeCapture()
 
 ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ)
 {
-    const auto capturePath = std::format(L"{}.wpix", std::filesystem::path{ InName }.c_str());
-
 	const auto compileResult = CompileShader(InName);
 
 	if (!compileResult.has_value())
@@ -47,17 +47,7 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
 
     const auto assertUAV = CreateAssertBufferUAV(assertBuffer, resourceHeap);
 
-    if (ShouldTakeCapture())
-    {
-        const std::filesystem::path captureDir = std::filesystem::current_path() / L"Captures";
-
-        std::filesystem::create_directories(captureDir);
-
-        const std::filesystem::path captureFilePath = captureDir / capturePath;
-        PIXCaptureParameters params;
-        params.GpuCaptureParameters.FileName = captureFilePath.c_str();
-        ThrowIfFailed(PIXBeginCapture(PIX_CAPTURE_GPU, &params));
-    }
+    const auto capturer = PIXCapturer(InName, ShouldTakeCapture());
 
     engine.Execute(InName,
         [&resourceHeap,
@@ -99,11 +89,6 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
     );
 
 	engine.Flush();
-
-    if (ShouldTakeCapture())
-    {
-        ThrowIfFailed(PIXEndCapture(false));
-    }
 
     const auto [numSuccessAsserts, numFailedAsserts] = ReadbackResults(readBackBuffer);
 
