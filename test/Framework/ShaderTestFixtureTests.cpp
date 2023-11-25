@@ -85,3 +85,45 @@ SCENARIO("BasicShaderTests")
         
     }
 }
+
+SCENARIO("HLSLFrameworkTests")
+{
+    SKIP("Not implemented yet");
+    auto [testName, shouldSucceed] = GENERATE
+    (
+        table<std::string, bool>
+        (
+            {
+                std::tuple{"GIVEN_TheTestShouldPass_WHEN_Run_THEN_TheTestPasses", false},
+            }
+        )
+    );
+
+    ShaderTestFixture::Desc FixtureDesc{};
+    FixtureDesc.Source = std::string(R"(
+                        #include "/Test/Public/ShaderTestFramework.hlsli"
+                        [RootSignature(SHADER_TEST_RS)]
+                        [numthreads(1,1,1)]
+                        void GIVEN_TheTestShouldPass_WHEN_Run_THEN_TheTestPasses(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            Assert::Equal(4, 4);
+                            Assert::NotEqual(42, 5);
+                            Assert::NearlyEqual(21.0001, 21.0);
+                        }
+                        )");
+    ShaderTestFixture Fixture(std::move(FixtureDesc));
+    Fixture.TakeCapture();
+    DYNAMIC_SECTION(testName)
+    {
+        if (shouldSucceed)
+        {
+            REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+        }
+        else
+        {
+            const auto result = Fixture.RunTest(testName, 1, 1, 1);
+            REQUIRE(!result);
+        }
+
+    }
+}

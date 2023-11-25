@@ -33,3 +33,12 @@ enum class EShaderType : u8
 	Compute,
 	Lib
 };
+
+enum class EHLSLVersion : u8
+{
+    v2016,
+    v2017,
+    v2018,
+    v2021,
+    Default = v2018
+};

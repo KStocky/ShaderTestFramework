@@ -46,6 +46,7 @@ struct ShaderCompilationJobDesc
     std::string EntryPoint;
     D3D_SHADER_MODEL ShaderModel = D3D_SHADER_MODEL_6_0;
     EShaderType ShaderType = EShaderType::None;
+    EHLSLVersion HLSLVersion = EHLSLVersion::Default;
     EShaderCompileFlags Flags = EShaderCompileFlags::None;
 };
 

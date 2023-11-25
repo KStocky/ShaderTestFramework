@@ -249,6 +249,207 @@ SCENARIO("ShaderModelTests")
     }
 }
 
+SCENARIO("HLSLTests")
+{
+    auto [name, code, successCondition] =
+        GENERATE
+        (
+            table<std::string, std::string, bool(*)(const EHLSLVersion)>
+            (
+                {
+                    
+                    std::tuple
+                    {
+                        "Function style macro",
+                        R"(
+                        
+                        #define FUNC(InA, InB) InA + InB
+                        RWBuffer<int> Buff;
+
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            Buff[DispatchThreadId.x] = FUNC(4, 3);
+                        }
+                        )",
+                        [](const EHLSLVersion) { return true; }
+                    },
+                    std::tuple
+                    {
+                        "Global string",
+                        R"(
+                        string hello = "Hi";
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            
+                        }
+                        )",
+                        [](const EHLSLVersion) { return true; }
+                    },
+                    std::tuple
+                    {
+                        "Local string assigned to a uint array",
+                        R"(
+                        
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            uint hello[] = "Hi";
+                        }
+                        )",
+                        [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "Local string",
+                        R"(
+                        
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            string hello = "Hi";
+                        }
+                        )",
+                        [](const EHLSLVersion) { return false; }
+                    },
+                     std::tuple
+                    {
+                        "Operator bool with an empty struct",
+                        R"(
+                        
+                        struct MyStruct
+                        {
+                            operator bool()
+                            {
+                                return true;
+                            }
+                        };
+                        
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            MyStruct testStruct;
+                            bool t = (bool)testStruct;
+                        }
+                        )",
+                        [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "Operator int with an empty struct",
+                        R"(
+                        
+                        struct MyStruct
+                        {
+                            operator int()
+                            {
+                                return 0;
+                            }
+                        };
+                        
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            MyStruct testStruct;
+                            int u = (int)testStruct;
+                        }
+                        )",
+                        [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "Operator bool",
+                        R"(
+                        
+                        struct MyStruct
+                        {
+                            int hi;
+                            operator bool()
+                            {
+                                return true;
+                            }
+                        };
+                        
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            MyStruct testStruct;
+                            bool t = (bool)testStruct;
+                        }
+                        )",
+                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
+                    },
+                    std::tuple
+                    {
+                        "Operator int",
+                        R"(
+                        
+                        struct MyStruct
+                        {
+                            int hi;
+                            
+                            operator int()
+                            {
+                                return 0;
+                            }
+                        };
+                        
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            MyStruct testStruct;
+                            int u = (int)testStruct;
+                        }
+                        )",
+                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
+                    }
+                }
+            )
+        );
+
+    const auto hlslVersion = GENERATE(
+        EHLSLVersion::v2016,
+        EHLSLVersion::v2017,
+        EHLSLVersion::v2018,
+        EHLSLVersion::v2021
+    );
+
+    ShaderCompilationJobDesc job;
+    job.Name = "Test";
+    job.EntryPoint = "Main";
+    job.ShaderModel = D3D_SHADER_MODEL_6_7;
+    job.ShaderType = EShaderType::Compute;
+    job.Source = code;
+    job.HLSLVersion = hlslVersion;
+
+    GIVEN(name)
+    {
+        WHEN("Compiled with HLSL version " << Enum::UnscopedName(hlslVersion))
+        {
+            ShaderCompiler compiler;
+            const auto errors = compiler.CompileShader(job);
+            if (successCondition(hlslVersion))
+            {
+                THEN("Compilation Succeeds")
+                {
+                    const auto error = errors.has_value() ? "" : errors.error();
+                    CAPTURE(error);
+                    REQUIRE(errors.has_value());
+                }
+            }
+            else
+            {
+                THEN("Compilation Fails")
+                {
+                    REQUIRE(!errors.has_value());
+                }
+            }
+        }
+    }
+}
+
+
 SCENARIO("ShaderHashTests")
 {
     GIVEN("a valid shader")
