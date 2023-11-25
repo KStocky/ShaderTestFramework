@@ -119,7 +119,7 @@ CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName
 {
     ShaderCompilationJobDesc job;
     job.AdditionalFlags = m_CompilationFlags;
-    job.EntryPoint = std::move(InName);
+    job.EntryPoint = InName;
     job.ShaderModel = m_ShaderModel;
     job.ShaderType = EShaderType::Compute;
     job.Source = m_Source;
