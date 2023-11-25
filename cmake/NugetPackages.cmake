@@ -42,3 +42,15 @@ function(nuget_get_warp OUT_SUCCEEDED OUT_BINARY_PATH)
 
     return(PROPAGATE ${OUT_SUCCEEDED} ${OUT_BINARY_PATH})
 endfunction()
+
+function(nuget_get_WinPixEventRuntime OUT_SUCCEEDED OUT_INCLUDE_PATH OUT_BINARY_PATH)
+
+    nuget_pkg_get("WinPixEventRuntime" "1.0.231030001" ${OUT_SUCCEEDED} PKG_PATH)
+
+    if (${${OUT_SUCCEEDED}})
+        set(${OUT_INCLUDE_PATH} "${PKG_PATH}/Include")
+        set(${OUT_BINARY_PATH} "${PKG_PATH}/bin/x64")
+    endif()
+
+    return(PROPAGATE ${OUT_SUCCEEDED} ${OUT_INCLUDE_PATH} ${OUT_BINARY_PATH})
+endfunction()

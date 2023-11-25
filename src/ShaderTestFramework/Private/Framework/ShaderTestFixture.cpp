@@ -1,24 +1,35 @@
 #include "Framework/ShaderTestFixture.h"
 
+#include "Framework/PIXCapturer.h"
+
 #include "D3D12/CommandEngine.h"
 #include "D3D12/GPUDevice.h"
 
 #include <format>
 #include <ranges>
 
+#include <WinPixEventRuntime/pix3.h>
+
 ShaderTestFixture::ShaderTestFixture(Desc InParams)
-	: m_Device(InParams.GPUDeviceParams)
+	: m_Device()
 	, m_Compiler(std::move(InParams.Mappings))
 	, m_Source(std::move(InParams.Source))
 	, m_CompilationFlags(std::move(InParams.CompilationFlags))
 	, m_ShaderModel(InParams.ShaderModel)
 	, m_IsWarp(InParams.GPUDeviceParams.DeviceType == GPUDevice::EDeviceType::Software)
 {
+    m_PIXAvailable = PIXLoadLatestWinPixGpuCapturerLibrary() != nullptr;
+    m_Device = GPUDevice{ InParams.GPUDeviceParams };
 }
 
-ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32 InX, u32 InY, u32 InZ)
+void ShaderTestFixture::TakeCapture()
 {
-	const auto compileResult = CompileShader(std::move(InName));
+    m_CaptureRequested = true;
+}
+
+ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ)
+{
+	const auto compileResult = CompileShader(InName);
 
 	if (!compileResult.has_value())
 	{
@@ -36,25 +47,44 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(std::string InName, u32 In
 
     const auto assertUAV = CreateAssertBufferUAV(assertBuffer, resourceHeap);
 
-    engine.Execute(
-        [&resourceHeap, 
-        &pipelineState, 
-        &rootSignature, 
-        &assertBuffer, 
-        &readBackBuffer, 
-        InX, 
-        InY, 
+    const auto capturer = PIXCapturer(InName, ShouldTakeCapture());
+
+    engine.Execute(InName,
+        [&resourceHeap,
+        &pipelineState,
+        &rootSignature,
+        &assertBuffer,
+        &readBackBuffer,
+        InX,
+        InY,
         InZ]
         (ScopedCommandContext& InContext)
         {
-            InContext->SetPipelineState(pipelineState);
-            InContext->SetComputeRootSignature(rootSignature);
-            InContext->SetDescriptorHeaps(resourceHeap);
-            InContext->SetBufferUAV(assertBuffer);
-            std::array params{ 10u, 0u };
-            InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
-            InContext->Dispatch(InX, InY, InZ);
-            InContext->CopyBufferResource(readBackBuffer, assertBuffer);
+            InContext.Section("Test Setup",
+                [&](ScopedCommandContext& InContext)
+                {
+                    InContext->SetPipelineState(pipelineState);
+                    InContext->SetComputeRootSignature(rootSignature);
+                    InContext->SetDescriptorHeaps(resourceHeap);
+                    InContext->SetBufferUAV(assertBuffer);
+                    std::array params{ 10u, 0u };
+                    InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
+                }
+            );
+
+            InContext.Section("Test Dispatch",
+                [InX, InY, InZ](ScopedCommandContext& InContext)
+                {
+                    InContext->Dispatch(InX, InY, InZ);
+                }
+            );
+
+            InContext.Section("Results readback",
+                [&](ScopedCommandContext& InContext)
+                {
+                    InContext->CopyBufferResource(readBackBuffer, assertBuffer);
+                }
+            );
         }
     );
 
@@ -85,14 +115,21 @@ bool ShaderTestFixture::IsUsingAgilitySDK() const
 	return m_Device.GetHardwareInfo().FeatureInfo.EnhancedBarriersSupport;
 }
 
-CompilationResult ShaderTestFixture::CompileShader(std::string InName) const
+CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName) const
 {
     ShaderCompilationJobDesc job;
     job.AdditionalFlags = m_CompilationFlags;
-    job.EntryPoint = std::move(InName);
+    job.EntryPoint = InName;
     job.ShaderModel = m_ShaderModel;
     job.ShaderType = EShaderType::Compute;
     job.Source = m_Source;
+
+    if (ShouldTakeCapture())
+    {
+        job.AdditionalFlags.emplace_back(L"-Qembed_debug");
+        job.AdditionalFlags.emplace_back(L"-Zss");
+        job.AdditionalFlags.emplace_back(L"-Zi");
+    }
 
     return m_Compiler.CompileShader(job);
 }
@@ -180,6 +217,11 @@ Tuple<u32, u32> ShaderTestFixture::ReadbackResults(const GPUResource& InReadback
     std::memcpy(&fails, assertData.data() + sizeof(u32), sizeof(u32));
 
     return Tuple{ success, fails };
+}
+
+bool ShaderTestFixture::ShouldTakeCapture() const
+{
+    return m_PIXAvailable && m_CaptureRequested;
 }
 
 ShaderTestFixture::Results::Results(std::vector<std::string> InErrors)

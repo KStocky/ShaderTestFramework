@@ -8,11 +8,28 @@
 #include "Utility/FunctionTraits.h"
 #include "Utility/Lambda.h"
 
+#include <WinPixEventRuntime/pix3.h>
+
 class CommandEngineToken
 {
 	friend class CommandEngine;
 	CommandEngineToken() = default;
 };
+
+class ScopedCommandContext;
+
+template<typename T>
+concept CommandEngineFuncType = LambdaType<T> && requires()
+{
+    requires T::ParamTypes::Size == 1;
+    requires std::same_as<typename T::ParamTypes::template Type<0>, ScopedCommandContext&>;
+};
+
+template<typename T>
+concept ExecuteLambdaType =
+    !CommandEngineFuncType<T> &&
+    TFuncTraits<T>::ParamTypes::Size == 1 &&
+    std::is_same_v<typename TFuncTraits<T>::ParamTypes::template Type<0>, ScopedCommandContext&>;
 
 class ScopedCommandContext
 {
@@ -27,22 +44,16 @@ public:
 		return m_List;
 	}
 
+    template<ExecuteLambdaType InLambdaType>
+    void Section(const std::string_view InName, InLambdaType&& InFunc)
+    {
+        PIXScopedEvent(m_List->GetRaw(), PIX_COLOR(0, 255, 0), "%s", InName.data());
+        InFunc(*this);
+    }
+
 private:
 	CommandList* m_List = nullptr;
 };
-
-template<typename T>
-concept CommandEngineFuncType = LambdaType<T> && requires()
-{
-	requires T::ParamTypes::Size == 1;
-	requires std::same_as<typename T::ParamTypes::template Type<0>, ScopedCommandContext&>;
-};
-
-template<typename T>
-concept ExecuteLambdaType =
-    !CommandEngineFuncType<T> &&
-    TFuncTraits<T>::ParamTypes::Size == 1 &&
-    std::is_same_v<typename TFuncTraits<T>::ParamTypes::template Type<0>, ScopedCommandContext&>;
 
 class CommandEngine
 {
@@ -84,7 +95,7 @@ public:
 	}
 
     template<ExecuteLambdaType InLambdaType>
-    void Execute(const InLambdaType& InFunc)
+    void Execute(InLambdaType&& InFunc)
     {
         auto allocator = [this]()
         {
@@ -106,6 +117,13 @@ public:
 
         m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue.Signal() });
         m_Queue.ExecuteCommandList(m_List);
+    }
+
+    template<ExecuteLambdaType InLambdaType>
+    void Execute(const std::string_view InName, InLambdaType&& InFunc)
+    {
+        PIXScopedEvent(m_Queue.GetRaw(), 0ull, "%s", InName.data());
+        Execute(std::forward<InLambdaType>(InFunc));
     }
 
 	void Flush();

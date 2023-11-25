@@ -59,7 +59,7 @@ void CommandQueue::FlushQueue()
 void CommandQueue::ExecuteCommandList(CommandList& InList)
 {
 	InList.Close();
-	auto rawList = InList.GetRaw();
+	ID3D12CommandList* rawList = InList.GetRaw();
 	m_Queue->ExecuteCommandLists(1, &rawList);
 }
 

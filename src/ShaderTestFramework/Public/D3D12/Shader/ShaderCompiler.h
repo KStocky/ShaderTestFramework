@@ -40,7 +40,7 @@ struct ShaderMacro
 struct ShaderCompilationJobDesc
 {
     ShaderCodeSource Source;
-    std::string Name;
+    std::string_view Name;
     std::vector<ShaderMacro> Defines;
     std::vector<std::wstring> AdditionalFlags;
     std::string EntryPoint;

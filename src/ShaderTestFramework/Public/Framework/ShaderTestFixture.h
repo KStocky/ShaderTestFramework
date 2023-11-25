@@ -44,7 +44,8 @@ public:
 
     ShaderTestFixture(Desc InParams);
 
-    Results RunTest(std::string InName, u32 InX, u32 InY, u32 InZ);
+    void TakeCapture();
+    Results RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ);
 
     bool IsValid() const;
 
@@ -52,7 +53,7 @@ public:
 
 private:
 
-    CompilationResult CompileShader(std::string InName) const;
+    CompilationResult CompileShader(const std::string_view InName) const;
     CommandEngine CreateCommandEngine() const;
     DescriptorHeap CreateDescriptorHeap() const;
     PipelineState CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const;
@@ -62,10 +63,14 @@ private:
     DescriptorHandle CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap) const;
     Tuple<u32, u32> ReadbackResults(const GPUResource& InReadbackBuffer) const;
 
+    bool ShouldTakeCapture() const;
+
     GPUDevice m_Device;
     ShaderCompiler m_Compiler;
     ShaderCodeSource m_Source;
     std::vector<std::wstring> m_CompilationFlags;
     D3D_SHADER_MODEL m_ShaderModel;
     bool m_IsWarp = false;
+    bool m_CaptureRequested = false;
+    bool m_PIXAvailable = false;
 };

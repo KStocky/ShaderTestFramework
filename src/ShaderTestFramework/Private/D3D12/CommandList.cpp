@@ -135,12 +135,12 @@ D3D12_COMMAND_LIST_TYPE CommandList::GetType() const
 	return m_List->GetType();
 }
 
-ID3D12CommandList* CommandList::GetRaw() const
+ID3D12GraphicsCommandList* CommandList::GetRaw() const
 {
 	return m_List.Get();
 }
 
-CommandList::operator ID3D12CommandList* () const
+CommandList::operator ID3D12GraphicsCommandList* () const
 {
 	return GetRaw();
 }
