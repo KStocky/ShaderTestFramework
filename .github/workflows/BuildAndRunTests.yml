@@ -5,10 +5,6 @@ jobs:
     Build-And-Test:
         runs-on: windows-latest
         steps:
-            - name: Install PIX
-              uses: crazy-max/ghaction-chocolatey@v3
-              with:
-                args: install pix
 
             - name: Checkout the repo
               uses: actions/checkout@v4
