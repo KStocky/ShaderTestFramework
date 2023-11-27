@@ -276,6 +276,20 @@ SCENARIO("HLSLTests")
                     },
                     std::tuple
                     {
+                        "Variadic macro",
+                        R"(
+                        
+                        #define ENTRY(InName, ...) void InName(__VA_ARGS__)
+
+                        [numthreads(1,1,1)]
+                        ENTRY(Main, uint3 DispatchThreadId : SV_DispatchThreadID, uint GroupIndex : SV_GroupIndex)
+                        {
+                        }
+                        )",
+                        [](const EHLSLVersion) { return true; }
+                    },
+                    std::tuple
+                    {
                         "Global string",
                         R"(
                         string hello = "Hi";
