@@ -579,3 +579,167 @@ SCENARIO("HLSLFrameworkTests - Asserts - NotEqual")
         }
     }
 }
+
+SCENARIO("HLSLFrameworkTests - Asserts - IsTrue")
+{
+    auto [testName, shouldSucceed] = GENERATE
+    (
+        table<std::string, bool>
+        (
+            {
+                std::tuple{"GIVEN_TrueLiteral_WHEN_IsTrueCalled_THEN_Succeeds", true},
+                std::tuple{"GIVEN_TrueNonLiteral_WHEN_IsTrueCalled_THEN_Succeeds", true},
+                std::tuple{"GIVEN_TrueExpression_WHEN_IsTrueCalled_THEN_Succeeds", true},
+                std::tuple{"GIVEN_FalseLiteral_WHEN_IsTrueCalled_THEN_Fails", false},
+                std::tuple{"GIVEN_FalseNonLiteral_WHEN_IsTrueCalled_THEN_Fails", false},
+                std::tuple{"GIVEN_FalseExpression_WHEN_IsTrueCalled_THEN_Fails", false}
+            }
+        )
+    );
+
+    ShaderTestFixture::Desc FixtureDesc{};
+    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
+    FixtureDesc.Source = std::string(
+        R"(
+        #include "/Test/Public/ShaderTestFramework.hlsli"
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TrueLiteral_WHEN_IsTrueCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            STF::IsTrue(true);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TrueNonLiteral_WHEN_IsTrueCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            const bool value = true;
+            STF::IsTrue(value);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TrueExpression_WHEN_IsTrueCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            STF::IsTrue(2 == 2);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_FalseLiteral_WHEN_IsTrueCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            STF::IsTrue(false);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_FalseNonLiteral_WHEN_IsTrueCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            const bool value = false;
+            STF::IsTrue(value);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_FalseExpression_WHEN_IsTrueCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            STF::IsTrue(2 == 3);
+        }
+        )");
+    ShaderTestFixture Fixture(std::move(FixtureDesc));
+    DYNAMIC_SECTION(testName)
+    {
+        if (shouldSucceed)
+        {
+            REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+        }
+        else
+        {
+            const auto result = Fixture.RunTest(testName, 1, 1, 1);
+            REQUIRE(!result);
+        }
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - Asserts - IsFalse")
+{
+    auto [testName, shouldSucceed] = GENERATE
+    (
+        table<std::string, bool>
+        (
+            {
+                std::tuple{"GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails", false},
+                std::tuple{"GIVEN_TrueNonLiteral_WHEN_IsFalseCalled_THEN_Fails", false},
+                std::tuple{"GIVEN_TrueExpression_WHEN_IsFalseCalled_THEN_Fails", false},
+                std::tuple{"GIVEN_FalseLiteral_WHEN_IsFalseCalled_THEN_Succeeds", true},
+                std::tuple{"GIVEN_FalseNonLiteral_WHEN_IsFalseCalled_THEN_Succeeds", true},
+                std::tuple{"GIVEN_FalseExpression_WHEN_IsFalseCalled_THEN_Succeeds", true}
+            }
+        )
+    );
+
+    ShaderTestFixture::Desc FixtureDesc{};
+    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
+    FixtureDesc.Source = std::string(
+        R"(
+        #include "/Test/Public/ShaderTestFramework.hlsli"
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            STF::IsFalse(true);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TrueNonLiteral_WHEN_IsFalseCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            const bool value = true;
+            STF::IsFalse(value);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TrueExpression_WHEN_IsFalseCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            STF::IsFalse(2 == 2);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_FalseLiteral_WHEN_IsFalseCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            STF::IsFalse(false);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_FalseNonLiteral_WHEN_IsFalseCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            const bool value = false;
+            STF::IsFalse(value);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_FalseExpression_WHEN_IsFalseCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            STF::IsFalse(2 == 3);
+        }
+        )");
+    ShaderTestFixture Fixture(std::move(FixtureDesc));
+    DYNAMIC_SECTION(testName)
+    {
+        if (shouldSucceed)
+        {
+            REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+        }
+        else
+        {
+            const auto result = Fixture.RunTest(testName, 1, 1, 1);
+            REQUIRE(!result);
+        }
+    }
+}

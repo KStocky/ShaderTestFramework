@@ -99,4 +99,28 @@ namespace STF
             ShaderTestPrivate::AddError();
         }
     }
+    
+    void IsTrue(bool In)
+    {
+        if (In)
+        {
+            ShaderTestPrivate::Success();
+        }
+        else
+        {
+            ShaderTestPrivate::AddError();
+        }
+    }
+    
+    void IsFalse(bool In)
+    {
+        if (!In)
+        {
+            ShaderTestPrivate::Success();
+        }
+        else
+        {
+            ShaderTestPrivate::AddError();
+        }
+    }
 }
