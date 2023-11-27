@@ -396,7 +396,7 @@ SCENARIO("HLSLFrameworkTests - Asserts - AreEqual")
                 std::tuple{"GIVEN_TwoEqualNamedFloat4_WHEN_AreEqualCalled_THEN_Succeeds", true},
                 std::tuple{"GIVEN_TwoNotEqualNamedFloat4_WHEN_AreEqualCalled_THEN_Fails", false},
                 std::tuple{"GIVEN_TwoObjectsWithEqualOperatorOverloads_WHEN_ObjectsAreEqual_THEN_Succeeds", true},
-                std::tuple{"GIVEN_TwoObjectsWithEqualOperatorOverloads_WHEN_ObjectsAreEqual_THEN_Fails", false}
+                std::tuple{"GIVEN_TwoObjectsWithEqualOperatorOverloads_WHEN_ObjectsAreNotEqual_THEN_Fails", false}
             }
         )
     );
@@ -490,7 +490,7 @@ SCENARIO("HLSLFrameworkTests - Asserts - AreEqual")
 
         [RootSignature(SHADER_TEST_RS)]
         [numthreads(1,1,1)]
-        void GIVEN_TwoObjectsWithEqualOperatorOverloads_WHEN_ObjectsAreEqual_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+        void GIVEN_TwoObjectsWithEqualOperatorOverloads_WHEN_ObjectsAreNotEqual_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
         {
             TestStruct left;
             TestStruct right;
@@ -529,7 +529,9 @@ SCENARIO("HLSLFrameworkTests - Asserts - NotEqual")
                 std::tuple{"GIVEN_TwoEqualNamedInts_WHEN_NotEqualCalled_THEN_Fails", false},
                 std::tuple{"GIVEN_TwoNotEqualNamedInts_WHEN_NotEqualCalled_THEN_Succeeds", true},
                 std::tuple{"GIVEN_TwoEqualNamedFloat4_WHEN_NotEqualCalled_THEN_Fails", false},
-                std::tuple{"GIVEN_TwoNotEqualNamedFloat4_WHEN_NotEqualCalled_THEN_Succeeds", true}
+                std::tuple{"GIVEN_TwoNotEqualNamedFloat4_WHEN_NotEqualCalled_THEN_Succeeds", true},
+                std::tuple{"GIVEN_TwoObjectsWithNotEqualOperatorOverloads_WHEN_ObjectsAreEqual_THEN_Fails", false},
+                std::tuple{"GIVEN_TwoObjectsWithNotEqualOperatorOverloads_WHEN_ObjectsAreNotEqual_THEN_Succeeds", true}
             }
         )
     );
@@ -539,6 +541,15 @@ SCENARIO("HLSLFrameworkTests - Asserts - NotEqual")
     FixtureDesc.Source = std::string(
         R"(
         #include "/Test/Public/ShaderTestFramework.hlsli"
+
+        struct TestStruct
+        {
+            int Value;
+            bool operator!=(TestStruct InOther)
+            {
+                return Value != InOther.Value;
+            }
+        };
 
         [RootSignature(SHADER_TEST_RS)]
         [numthreads(1,1,1)]
@@ -599,6 +610,30 @@ SCENARIO("HLSLFrameworkTests - Asserts - NotEqual")
             static const float4 expected = float4(2.0, 2.5, 3.5, 5.75);
             STF::NotEqual(float4(1.0, 2.5, 3.5, 5.75), expected);
         }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TwoObjectsWithNotEqualOperatorOverloads_WHEN_ObjectsAreEqual_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            TestStruct left;
+            TestStruct right;
+
+            left.Value = 42;
+            right.Value = 42;
+            STF::NotEqual(left, right);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TwoObjectsWithNotEqualOperatorOverloads_WHEN_ObjectsAreNotEqual_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            TestStruct left;
+            TestStruct right;
+
+            left.Value = 42;
+            right.Value = 43;
+            STF::NotEqual(left, right);
+        }
         )");
     ShaderTestFixture Fixture(std::move(FixtureDesc));
     DYNAMIC_SECTION(testName)
@@ -625,9 +660,11 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsTrue")
                 std::tuple{"GIVEN_TrueLiteral_WHEN_IsTrueCalled_THEN_Succeeds", true},
                 std::tuple{"GIVEN_TrueNonLiteral_WHEN_IsTrueCalled_THEN_Succeeds", true},
                 std::tuple{"GIVEN_TrueExpression_WHEN_IsTrueCalled_THEN_Succeeds", true},
+                std::tuple{"GIVEN_ObjectWithOperatorBool_WHEN_ObjectsIsTrue_THEN_Succeeds", true},
                 std::tuple{"GIVEN_FalseLiteral_WHEN_IsTrueCalled_THEN_Fails", false},
                 std::tuple{"GIVEN_FalseNonLiteral_WHEN_IsTrueCalled_THEN_Fails", false},
-                std::tuple{"GIVEN_FalseExpression_WHEN_IsTrueCalled_THEN_Fails", false}
+                std::tuple{"GIVEN_FalseExpression_WHEN_IsTrueCalled_THEN_Fails", false},
+                std::tuple{"GIVEN_ObjectWithOperatorBool_WHEN_ObjectsIsFalse_THEN_Fails", false}
             }
         )
     );
@@ -637,6 +674,15 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsTrue")
     FixtureDesc.Source = std::string(
         R"(
         #include "/Test/Public/ShaderTestFramework.hlsli"
+
+        struct TestStruct
+        {
+            bool Value;
+            operator bool()
+            {
+                return Value;
+            }
+        };
 
         [RootSignature(SHADER_TEST_RS)]
         [numthreads(1,1,1)]
@@ -681,6 +727,24 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsTrue")
         {
             STF::IsTrue(2 == 3);
         }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_ObjectWithOperatorBool_WHEN_ObjectsIsTrue_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            TestStruct test;
+            test.Value = true;
+            STF::IsTrue(test);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_ObjectWithOperatorBool_WHEN_ObjectsIsFalse_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            TestStruct test;
+            test.Value = false;
+            STF::IsTrue(test);
+        }
         )");
     ShaderTestFixture Fixture(std::move(FixtureDesc));
     DYNAMIC_SECTION(testName)
@@ -707,9 +771,11 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsFalse")
                 std::tuple{"GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails", false},
                 std::tuple{"GIVEN_TrueNonLiteral_WHEN_IsFalseCalled_THEN_Fails", false},
                 std::tuple{"GIVEN_TrueExpression_WHEN_IsFalseCalled_THEN_Fails", false},
+                std::tuple{"GIVEN_ObjectWithOperatorBool_WHEN_ObjectsIsTrue_THEN_Fails", false},
                 std::tuple{"GIVEN_FalseLiteral_WHEN_IsFalseCalled_THEN_Succeeds", true},
                 std::tuple{"GIVEN_FalseNonLiteral_WHEN_IsFalseCalled_THEN_Succeeds", true},
-                std::tuple{"GIVEN_FalseExpression_WHEN_IsFalseCalled_THEN_Succeeds", true}
+                std::tuple{"GIVEN_FalseExpression_WHEN_IsFalseCalled_THEN_Succeeds", true},
+                std::tuple{"GIVEN_ObjectWithOperatorBool_WHEN_ObjectsIsFalse_THEN_Succeeds", true}
             }
         )
     );
@@ -719,6 +785,15 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsFalse")
     FixtureDesc.Source = std::string(
         R"(
         #include "/Test/Public/ShaderTestFramework.hlsli"
+
+        struct TestStruct
+        {
+            bool Value;
+            operator bool()
+            {
+                return Value;
+            }
+        };
 
         [RootSignature(SHADER_TEST_RS)]
         [numthreads(1,1,1)]
@@ -762,6 +837,24 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsFalse")
         void GIVEN_FalseExpression_WHEN_IsFalseCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
         {
             STF::IsFalse(2 == 3);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_ObjectWithOperatorBool_WHEN_ObjectsIsTrue_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            TestStruct test;
+            test.Value = true;
+            STF::IsFalse(test);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_ObjectWithOperatorBool_WHEN_ObjectsIsFalse_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            TestStruct test;
+            test.Value = false;
+            STF::IsFalse(test);
         }
         )");
     ShaderTestFixture Fixture(std::move(FixtureDesc));

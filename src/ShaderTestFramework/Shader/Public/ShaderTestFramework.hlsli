@@ -100,9 +100,10 @@ namespace STF
         }
     }
     
-    void IsTrue(bool In)
+    template<typename T>
+    void IsTrue(T In)
     {
-        if (In)
+        if ((bool)In)
         {
             ShaderTestPrivate::Success();
         }
@@ -112,9 +113,10 @@ namespace STF
         }
     }
     
-    void IsFalse(bool In)
+    template<typename T>
+    void IsFalse(T In)
     {
-        if (!In)
+        if (!(bool)In)
         {
             ShaderTestPrivate::Success();
         }
