@@ -394,7 +394,9 @@ SCENARIO("HLSLFrameworkTests - Asserts - AreEqual")
                 std::tuple{"GIVEN_TwoEqualNamedInts_WHEN_AreEqualCalled_THEN_Succeeds", true},
                 std::tuple{"GIVEN_TwoNotEqualNamedInts_WHEN_AreEqualCalled_THEN_Fails", false},
                 std::tuple{"GIVEN_TwoEqualNamedFloat4_WHEN_AreEqualCalled_THEN_Succeeds", true},
-                std::tuple{"GIVEN_TwoNotEqualNamedFloat4_WHEN_AreEqualCalled_THEN_Fails", false}
+                std::tuple{"GIVEN_TwoNotEqualNamedFloat4_WHEN_AreEqualCalled_THEN_Fails", false},
+                std::tuple{"GIVEN_TwoObjectsWithEqualOperatorOverloads_WHEN_ObjectsAreEqual_THEN_Succeeds", true},
+                std::tuple{"GIVEN_TwoObjectsWithEqualOperatorOverloads_WHEN_ObjectsAreEqual_THEN_Fails", false}
             }
         )
     );
@@ -404,6 +406,15 @@ SCENARIO("HLSLFrameworkTests - Asserts - AreEqual")
     FixtureDesc.Source = std::string(
         R"(
         #include "/Test/Public/ShaderTestFramework.hlsli"
+
+        struct TestStruct
+        {
+            int Value;
+            bool operator==(TestStruct InOther)
+            {
+                return Value == InOther.Value;
+            }
+        };
 
         [RootSignature(SHADER_TEST_RS)]
         [numthreads(1,1,1)]
@@ -463,6 +474,30 @@ SCENARIO("HLSLFrameworkTests - Asserts - AreEqual")
         {
             static const float4 expected = float4(2.0, 2.5, 3.5, 5.75);
             STF::AreEqual(float4(1.0, 2.5, 3.5, 5.75), expected);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TwoObjectsWithEqualOperatorOverloads_WHEN_ObjectsAreEqual_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            TestStruct left;
+            TestStruct right;
+
+            left.Value = 42;
+            right.Value = 42;
+            STF::AreEqual(left, right);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TwoObjectsWithEqualOperatorOverloads_WHEN_ObjectsAreEqual_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            TestStruct left;
+            TestStruct right;
+
+            left.Value = 42;
+            right.Value = 43;
+            STF::AreEqual(left, right);
         }
         )");
     ShaderTestFixture Fixture(std::move(FixtureDesc));
