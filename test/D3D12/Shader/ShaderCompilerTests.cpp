@@ -764,6 +764,7 @@ SCENARIO("ShaderIncludeHandlerTests")
         job.EntryPoint = "Main";
         job.ShaderModel = D3D_SHADER_MODEL_6_6;
         job.ShaderType = EShaderType::Compute;
+        job.HLSLVersion = EHLSLVersion::v2021;
         job.Source = std::string{ R"(
                         #include "/Test/Public/ShaderTestFramework.hlsli"
 
