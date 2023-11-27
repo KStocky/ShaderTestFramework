@@ -32,12 +32,6 @@ SCENARIO("ShaderTestFixtureTests")
     }
 }
 
-struct TestParams
-{
-    std::vector<std::string> Flags;
-    D3D_SHADER_MODEL ShaderModel;
-};
-
 SCENARIO("BasicShaderTests")
 {
     auto [testName, shouldSucceed] = GENERATE
@@ -472,7 +466,6 @@ SCENARIO("HLSLFrameworkTests - Asserts - AreEqual")
         }
         )");
     ShaderTestFixture Fixture(std::move(FixtureDesc));
-    Fixture.TakeCapture();
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
@@ -484,6 +477,105 @@ SCENARIO("HLSLFrameworkTests - Asserts - AreEqual")
             const auto result = Fixture.RunTest(testName, 1, 1, 1);
             REQUIRE(!result);
         }
+    }
+}
 
+SCENARIO("HLSLFrameworkTests - Asserts - NotEqual")
+{
+    auto [testName, shouldSucceed] = GENERATE
+    (
+        table<std::string, bool>
+        (
+            {
+                std::tuple{"GIVEN_TwoEqualInts_WHEN_NotEqualCalled_THEN_Fails", false},
+                std::tuple{"GIVEN_TwoNotEqualInts_WHEN_NotEqualCalled_THEN_Succeeds", true},
+                std::tuple{"GIVEN_TwoEqualFloat4_WHEN_NotEqualCalled_THEN_Fails", false},
+                std::tuple{"GIVEN_TwoNotEqualFloat4_WHEN_NotEqualCalled_THEN_Succeeds", true},
+                std::tuple{"GIVEN_TwoEqualNamedInts_WHEN_NotEqualCalled_THEN_Fails", false},
+                std::tuple{"GIVEN_TwoNotEqualNamedInts_WHEN_NotEqualCalled_THEN_Succeeds", true},
+                std::tuple{"GIVEN_TwoEqualNamedFloat4_WHEN_NotEqualCalled_THEN_Fails", false},
+                std::tuple{"GIVEN_TwoNotEqualNamedFloat4_WHEN_NotEqualCalled_THEN_Succeeds", true}
+            }
+        )
+    );
+
+    ShaderTestFixture::Desc FixtureDesc{};
+    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
+    FixtureDesc.Source = std::string(
+        R"(
+        #include "/Test/Public/ShaderTestFramework.hlsli"
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TwoEqualInts_WHEN_NotEqualCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            STF::NotEqual(4, 4);
+        }
+        
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TwoNotEqualInts_WHEN_NotEqualCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            STF::NotEqual(4, 5);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TwoEqualFloat4_WHEN_NotEqualCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            STF::NotEqual(float4(1.0, 2.5, 3.5, 5.75), float4(1.0, 2.5, 3.5, 5.75));
+        }
+        
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TwoNotEqualFloat4_WHEN_NotEqualCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            STF::NotEqual(float4(1.0, 2.5, 3.5, 5.75), float4(2.0, 2.5, 3.5, 5.75));
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TwoEqualNamedInts_WHEN_NotEqualCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            static const int expected = 4;
+            STF::NotEqual(4, expected);
+        }
+        
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TwoNotEqualNamedInts_WHEN_NotEqualCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            static const int expected = 5;
+            STF::NotEqual(4, expected);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TwoEqualNamedFloat4_WHEN_NotEqualCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            static const float4 expected = float4(1.0, 2.5, 3.5, 5.75);
+            STF::NotEqual(float4(1.0, 2.5, 3.5, 5.75), expected);
+        }
+        
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TwoNotEqualNamedFloat4_WHEN_NotEqualCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            static const float4 expected = float4(2.0, 2.5, 3.5, 5.75);
+            STF::NotEqual(float4(1.0, 2.5, 3.5, 5.75), expected);
+        }
+        )");
+    ShaderTestFixture Fixture(std::move(FixtureDesc));
+    DYNAMIC_SECTION(testName)
+    {
+        if (shouldSucceed)
+        {
+            REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+        }
+        else
+        {
+            const auto result = Fixture.RunTest(testName, 1, 1, 1);
+            REQUIRE(!result);
+        }
     }
 }

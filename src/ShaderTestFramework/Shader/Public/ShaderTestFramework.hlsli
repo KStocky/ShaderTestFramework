@@ -86,4 +86,17 @@ namespace STF
             ShaderTestPrivate::AddError();
         }
     }
+    
+    template<typename T, typename U>
+    typename enable_if<is_same<T, U>::value>::type NotEqual(const T InA, const U InB)
+    {
+        if (any(InA != InB))
+        {
+            ShaderTestPrivate::Success();
+        }
+        else
+        {
+            ShaderTestPrivate::AddError();
+        }
+    }
 }
