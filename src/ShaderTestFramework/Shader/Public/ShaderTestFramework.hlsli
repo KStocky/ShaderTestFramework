@@ -126,3 +126,55 @@ namespace STF
         }
     }
 }
+
+#define STF_GET_SECTION_VAR_NAME(InID) STF_Section_##InID##_Var
+#define STF_CREATE_SECTION_VAR_IMPL(InID) const int STF_GET_SECTION_VAR_NAME(InID) = InID
+#define STF_CREATE_SECTION_VAR STF_CREATE_SECTION_VAR_IMPL(__COUNTER__)
+
+#define SCENARIO()
+#define BEGIN_SECTION()
+#define END_SECTION()
+
+//[RootSignature(SHADER_TEST_RS)]
+//[numthreads(1, 1, 1)]
+//void MyTestScenario(uint3 DispatchThreadId : SV_DispatchThreadID)
+//{
+//    SCENARIO()
+//    {
+//        STF::AreEqual(5, 5);
+//        
+//        BEGIN_SECTION()
+//            STF::IsTrue(true);
+//        END_SECTION()
+//        
+//        BEGIN_SECTION()
+//            STF::IsFalse(false);
+//            
+//            BEGIN_SECTION()
+//                STF::NotEqual(5, 4);
+//            END_SECTION()
+//        END_SECTION()
+//    }
+//}
+//
+//#define BEGIN_SCENARIO(InName, ...)
+//#define END_SCENARIO()
+//
+//[RootSignature(SHADER_TEST_RS)]
+//[numthreads(1, 1, 1)]
+//BEGIN_SCENARIO(MyTestScenario, uint3 DispatchThreadId : SV_DispatchThreadID)
+//
+//    STF::AreEqual(5, 5);
+//        
+//    BEGIN_SECTION() 
+//        STF::IsTrue(true);
+//    END_SECTION() 
+//        
+//    BEGIN_SECTION() 
+//        STF::IsFalse(false);
+//            
+//        BEGIN_SECTION() 
+//            STF::NotEqual(5, 4);
+//        END_SECTION() 
+//    END_SECTION() 
+//END_SCENARIO()

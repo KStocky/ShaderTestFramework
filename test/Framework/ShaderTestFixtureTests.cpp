@@ -871,3 +871,56 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsFalse")
         }
     }
 }
+
+SCENARIO("HLSLFrameworkTests - Macros - SectionVarCreation")
+{
+    auto [testName, shouldSucceed] = GENERATE
+    (
+        table<std::string, bool>
+        (
+            {
+                std::tuple{"GIVEN_SingleSectionVarCreated_WHEN_Queried_THEN_ValueIsZero", true},
+                std::tuple{"GIVEN_TwoSectionVarsCreated_WHEN_Queried_THEN_ValueAreAsExpected", true}
+            }
+        )
+    );
+
+    ShaderTestFixture::Desc FixtureDesc{};
+    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
+    FixtureDesc.Source = std::string(
+        R"(
+        #include "/Test/Public/ShaderTestFramework.hlsli"
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_SingleSectionVarCreated_WHEN_Queried_THEN_ValueIsZero(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            STF_CREATE_SECTION_VAR;
+
+            STF::AreEqual(STF_GET_SECTION_VAR_NAME(0), 0);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TwoSectionVarsCreated_WHEN_Queried_THEN_ValueAreAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            STF_CREATE_SECTION_VAR;
+            STF_CREATE_SECTION_VAR;
+            STF::AreEqual(STF_GET_SECTION_VAR_NAME(1), 1);
+            STF::AreEqual(STF_GET_SECTION_VAR_NAME(2), 2);
+        }
+        )");
+    ShaderTestFixture Fixture(std::move(FixtureDesc));
+    DYNAMIC_SECTION(testName)
+    {
+        if (shouldSucceed)
+        {
+            REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+        }
+        else
+        {
+            const auto result = Fixture.RunTest(testName, 1, 1, 1);
+            REQUIRE(!result);
+        }
+    }
+}
