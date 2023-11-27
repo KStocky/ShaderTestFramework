@@ -403,6 +403,123 @@ SCENARIO("HLSLTests")
                         }
                         )",
                         [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
+                    },
+                    std::tuple
+                    {
+                        "Counter macro",
+                        R"(
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            int a = __COUNTER__;
+                            int b = __COUNTER__;
+                        }
+                        )",
+                        [](const EHLSLVersion) { return true; }
+                    },
+                    std::tuple
+                    {
+                        "static struct member in templated struct",
+                        R"(
+                        template<int ID>
+                        struct Test
+                        {
+                            static int Num;
+                        };
+                        
+                        template<int ID>
+                        int Test<ID>::Num = 2;
+                        
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                           int i = Test<0>::Num;
+                        }
+                        )",
+                        [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "static variable in templated function",
+                        R"(
+                        template<int ID>
+                        int StaticFunc(int In, bool InShouldChange)
+                        {
+                            static int var = 0;
+                            if (InShouldChange)
+                            {
+                                var = In;
+                            }
+                            return var;
+                        }
+                        
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                           int i = StaticFunc<0>(5, true);
+                        }
+                        )",
+                        [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "static const struct member in templated struct",
+                        R"(
+                        template<int ID>
+                        struct Test
+                        {
+                            static const int Num = 2;
+                        };
+
+                        RWBuffer<int> MyBuffer;
+
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                           MyBuffer[DispatchThreadId.x] = Test<42>::Num;
+                        }
+                        )",
+                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
+                    },
+                    std::tuple
+                    {
+                        "static struct member in non templated struct",
+                        R"(
+                        struct Test
+                        {
+                            static int Num;
+                        };
+
+                        int Test::Num = 2;
+                        RWBuffer<int> MyBuffer;
+
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                           MyBuffer[DispatchThreadId.x] = Test::Num;
+                        }
+                        )",
+                        [](const EHLSLVersion) { return true; }
+                    },
+                    std::tuple
+                    {
+                        "Macro generated struct with static data member",
+                        R"(
+                        struct Test
+                        {
+                            static int Num;
+                        };
+
+                        int Test::Num = 2;
+                        RWBuffer<int> MyBuffer;
+
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                           MyBuffer[DispatchThreadId.x] = Test::Num;
+                        }
+                        )",
+                        [](const EHLSLVersion) { return true; }
                     }
                 }
             )
@@ -423,7 +540,7 @@ SCENARIO("HLSLTests")
     job.Source = code;
     job.HLSLVersion = hlslVersion;
 
-    GIVEN(name)
+    __pragma(warning(push))  if (Catch::Section const& catch_internal_Section79 = Catch::SectionInfo(::Catch::SourceLineInfo("F:\\Projects\\ShaderTestFramework\\test\\D3D12\\Shader\\ShaderCompilerTests.cpp", static_cast<std::size_t>(426)), (Catch::ReusableStringStream() << "    Given: " << name).str())) __pragma(warning(pop))
     {
         WHEN("Compiled with HLSL version " << Enum::UnscopedName(hlslVersion))
         {

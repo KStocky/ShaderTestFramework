@@ -16,6 +16,7 @@ ShaderTestFixture::ShaderTestFixture(Desc InParams)
 	, m_Source(std::move(InParams.Source))
 	, m_CompilationFlags(std::move(InParams.CompilationFlags))
 	, m_ShaderModel(InParams.ShaderModel)
+    , m_HLSLVersion(InParams.HLSLVersion)
 	, m_IsWarp(InParams.GPUDeviceParams.DeviceType == GPUDevice::EDeviceType::Software)
 {
     m_PIXAvailable = PIXLoadLatestWinPixGpuCapturerLibrary() != nullptr;
@@ -123,6 +124,7 @@ CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName
     job.ShaderModel = m_ShaderModel;
     job.ShaderType = EShaderType::Compute;
     job.Source = m_Source;
+    job.HLSLVersion = m_HLSLVersion;
 
     if (ShouldTakeCapture())
     {
