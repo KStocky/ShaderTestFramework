@@ -433,6 +433,19 @@ SCENARIO("HLSLTests")
                     },
                     std::tuple
                     {
+                        "Line macro",
+                        R"(
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            int a = __LINE__;
+                            int b = __LINE__;
+                        }
+                        )",
+                        [](const EHLSLVersion) { return true; }
+                    },
+                    std::tuple
+                    {
                         "static struct member in templated struct",
                         R"(
                         template<int ID>
