@@ -40,6 +40,13 @@ namespace ShaderTestPrivate
     }
 }
 
+namespace ShaderTestPrivate
+{
+    static int NextSectionID = 0;
+    static const int NumTrackers = 32;
+    static bool TrackerAllocations[NumTrackers];
+}
+
 namespace STF
 {
     template<typename T, T v>
@@ -127,9 +134,14 @@ namespace STF
     }
 }
 
-#define STF_GET_SECTION_VAR_NAME(InID) STF_Section_##InID##_Var
-#define STF_CREATE_SECTION_VAR_IMPL(InID) const int STF_GET_SECTION_VAR_NAME(InID) = InID
-#define STF_CREATE_SECTION_VAR STF_CREATE_SECTION_VAR_IMPL(__COUNTER__)
+#define STF_GET_SECTION_VAR_NAME(InLine) STF_Section_##InLine##_Var
+#define STF_GET_SECTION_VAR_VALUE(InLine) STF_Section_##InLine##_Var_Value
+#define STF_CREATE_SECTION_VAR_IMPL(InLine) \
+    static const int STF_GET_SECTION_VAR_VALUE(InLine) = ShaderTestPrivate::NextSectionID++; \
+    static const int STF_GET_SECTION_VAR_NAME(InLine) = STF_GET_SECTION_VAR_VALUE(InLine); \
+    ShaderTestPrivate::TrackerAllocations[STF_GET_SECTION_VAR_VALUE(InLine)] = true
+
+#define STF_CREATE_SECTION_VAR STF_CREATE_SECTION_VAR_IMPL(__LINE__)
 
 #define SCENARIO()
 #define BEGIN_SECTION()

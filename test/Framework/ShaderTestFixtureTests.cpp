@@ -880,7 +880,8 @@ SCENARIO("HLSLFrameworkTests - Macros - SectionVarCreation")
         (
             {
                 std::tuple{"GIVEN_SingleSectionVarCreated_WHEN_Queried_THEN_ValueIsZero", true},
-                std::tuple{"GIVEN_TwoSectionVarsCreated_WHEN_Queried_THEN_ValueAreAsExpected", true}
+                std::tuple{"GIVEN_TwoSectionVarsCreated_WHEN_Queried_THEN_ValueAreAsExpected", true},
+                std::tuple{"GIVEN_TwoSectionVarsCreatedInALoop_WHEN_Queried_THEN_ValueAreAsExpected", true}
             }
         )
     );
@@ -895,22 +896,47 @@ SCENARIO("HLSLFrameworkTests - Macros - SectionVarCreation")
         [numthreads(1,1,1)]
         void GIVEN_SingleSectionVarCreated_WHEN_Queried_THEN_ValueIsZero(uint3 DispatchThreadId : SV_DispatchThreadID)
         {
+            STF::IsFalse(ShaderTestPrivate::TrackerAllocations[0]);
             STF_CREATE_SECTION_VAR;
 
-            STF::AreEqual(STF_GET_SECTION_VAR_NAME(0), 0);
+            STF::IsTrue(ShaderTestPrivate::TrackerAllocations[0]);
         }
 
         [RootSignature(SHADER_TEST_RS)]
         [numthreads(1,1,1)]
         void GIVEN_TwoSectionVarsCreated_WHEN_Queried_THEN_ValueAreAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
         {
+            STF::IsFalse(ShaderTestPrivate::TrackerAllocations[0]);
+            STF::IsFalse(ShaderTestPrivate::TrackerAllocations[1]);
+            STF::IsFalse(ShaderTestPrivate::TrackerAllocations[2]);
             STF_CREATE_SECTION_VAR;
             STF_CREATE_SECTION_VAR;
-            STF::AreEqual(STF_GET_SECTION_VAR_NAME(1), 1);
-            STF::AreEqual(STF_GET_SECTION_VAR_NAME(2), 2);
+            STF::IsTrue(ShaderTestPrivate::TrackerAllocations[0]);
+            STF::IsTrue(ShaderTestPrivate::TrackerAllocations[1]);
+            STF::IsFalse(ShaderTestPrivate::TrackerAllocations[2]);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_TwoSectionVarsCreatedInALoop_WHEN_Queried_THEN_ValueAreAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            STF::IsFalse(ShaderTestPrivate::TrackerAllocations[0]);
+            STF::IsFalse(ShaderTestPrivate::TrackerAllocations[1]);
+            STF::IsFalse(ShaderTestPrivate::TrackerAllocations[2]);
+            
+            for (int i = 0; i < 3; ++i)
+            {
+                STF_CREATE_SECTION_VAR;
+                STF_CREATE_SECTION_VAR;
+            }
+
+            STF::IsTrue(ShaderTestPrivate::TrackerAllocations[0]);
+            STF::IsTrue(ShaderTestPrivate::TrackerAllocations[1]);
+            STF::IsFalse(ShaderTestPrivate::TrackerAllocations[2]);
         }
         )");
     ShaderTestFixture Fixture(std::move(FixtureDesc));
+    Fixture.TakeCapture();
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
