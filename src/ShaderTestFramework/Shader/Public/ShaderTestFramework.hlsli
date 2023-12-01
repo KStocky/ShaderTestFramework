@@ -154,6 +154,12 @@ namespace STF
     template<typename To, typename From>
     To Cast(From In);
     
+    template<>
+    bool Cast<bool, bool>(bool In)
+    {
+        return In;
+    }
+    
     template<typename T, typename U>
     typename enable_if<is_same<T, U>::value>::type AreEqual(const T InA, const U InB)
     {
@@ -183,7 +189,7 @@ namespace STF
     template<typename T>
     void IsTrue(T In)
     {
-        if ((bool)In)
+        if (Cast<bool>(In))
         {
             ShaderTestPrivate::Success();
         }
@@ -196,7 +202,7 @@ namespace STF
     template<typename T>
     void IsFalse(T In)
     {
-        if (!(bool)In)
+        if (!Cast<bool>(In))
         {
             ShaderTestPrivate::Success();
         }

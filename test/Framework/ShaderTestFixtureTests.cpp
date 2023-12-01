@@ -774,11 +774,11 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsTrue")
                 std::tuple{"GIVEN_TrueLiteral_WHEN_IsTrueCalled_THEN_Succeeds", true},
                 std::tuple{"GIVEN_TrueNonLiteral_WHEN_IsTrueCalled_THEN_Succeeds", true},
                 std::tuple{"GIVEN_TrueExpression_WHEN_IsTrueCalled_THEN_Succeeds", true},
-                std::tuple{"GIVEN_ObjectWithOperatorBool_WHEN_ObjectsIsTrue_THEN_Succeeds", true},
+                std::tuple{"GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsTrue_THEN_Succeeds", true},
                 std::tuple{"GIVEN_FalseLiteral_WHEN_IsTrueCalled_THEN_Fails", false},
                 std::tuple{"GIVEN_FalseNonLiteral_WHEN_IsTrueCalled_THEN_Fails", false},
                 std::tuple{"GIVEN_FalseExpression_WHEN_IsTrueCalled_THEN_Fails", false},
-                std::tuple{"GIVEN_ObjectWithOperatorBool_WHEN_ObjectsIsFalse_THEN_Fails", false}
+                std::tuple{"GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsFalse_THEN_Fails", false}
             }
         )
     );
@@ -791,12 +791,17 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsTrue")
 
         struct TestStruct
         {
-            bool Value;
-            operator bool()
-            {
-                return Value;
-            }
+            int Value;
         };
+
+        namespace STF
+        {
+            template<>
+            bool Cast<bool, TestStruct>(TestStruct In)
+            {
+                return In.Value == 0;
+            }
+        }
 
         [RootSignature(SHADER_TEST_RS)]
         [numthreads(1,1,1)]
@@ -844,19 +849,19 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsTrue")
 
         [RootSignature(SHADER_TEST_RS)]
         [numthreads(1,1,1)]
-        void GIVEN_ObjectWithOperatorBool_WHEN_ObjectsIsTrue_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
+        void GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsTrue_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
         {
             TestStruct test;
-            test.Value = true;
+            test.Value = 0;
             STF::IsTrue(test);
         }
 
         [RootSignature(SHADER_TEST_RS)]
         [numthreads(1,1,1)]
-        void GIVEN_ObjectWithOperatorBool_WHEN_ObjectsIsFalse_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+        void GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsFalse_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
         {
             TestStruct test;
-            test.Value = false;
+            test.Value = 1;
             STF::IsTrue(test);
         }
         )");
@@ -885,11 +890,11 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsFalse")
                 std::tuple{"GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails", false},
                 std::tuple{"GIVEN_TrueNonLiteral_WHEN_IsFalseCalled_THEN_Fails", false},
                 std::tuple{"GIVEN_TrueExpression_WHEN_IsFalseCalled_THEN_Fails", false},
-                std::tuple{"GIVEN_ObjectWithOperatorBool_WHEN_ObjectsIsTrue_THEN_Fails", false},
+                std::tuple{"GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsTrue_THEN_Fails", false},
                 std::tuple{"GIVEN_FalseLiteral_WHEN_IsFalseCalled_THEN_Succeeds", true},
                 std::tuple{"GIVEN_FalseNonLiteral_WHEN_IsFalseCalled_THEN_Succeeds", true},
                 std::tuple{"GIVEN_FalseExpression_WHEN_IsFalseCalled_THEN_Succeeds", true},
-                std::tuple{"GIVEN_ObjectWithOperatorBool_WHEN_ObjectsIsFalse_THEN_Succeeds", true}
+                std::tuple{"GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsFalse_THEN_Succeeds", true}
             }
         )
     );
@@ -902,12 +907,17 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsFalse")
 
         struct TestStruct
         {
-            bool Value;
-            operator bool()
-            {
-                return Value;
-            }
+            int Value;
         };
+
+        namespace STF
+        {
+            template<>
+            bool Cast<bool, TestStruct>(TestStruct In)
+            {
+                return In.Value == 0;
+            }
+        }
 
         [RootSignature(SHADER_TEST_RS)]
         [numthreads(1,1,1)]
@@ -955,19 +965,19 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsFalse")
 
         [RootSignature(SHADER_TEST_RS)]
         [numthreads(1,1,1)]
-        void GIVEN_ObjectWithOperatorBool_WHEN_ObjectsIsTrue_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+        void GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsTrue_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
         {
             TestStruct test;
-            test.Value = true;
+            test.Value = 0;
             STF::IsFalse(test);
         }
 
         [RootSignature(SHADER_TEST_RS)]
         [numthreads(1,1,1)]
-        void GIVEN_ObjectWithOperatorBool_WHEN_ObjectsIsFalse_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
+        void GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsFalse_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
         {
             TestStruct test;
-            test.Value = false;
+            test.Value = 1;
             STF::IsFalse(test);
         }
         )");
