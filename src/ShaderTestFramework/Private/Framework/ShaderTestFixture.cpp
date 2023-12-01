@@ -1,6 +1,7 @@
 #include "Framework/ShaderTestFixture.h"
 
 #include "Framework/PIXCapturer.h"
+#include "Utility/EnumReflection.h"
 
 #include "D3D12/CommandEngine.h"
 #include "D3D12/GPUDevice.h"
@@ -131,6 +132,7 @@ CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName
         job.AdditionalFlags.emplace_back(L"-Qembed_debug");
         job.AdditionalFlags.emplace_back(L"-Zss");
         job.AdditionalFlags.emplace_back(L"-Zi");
+        job.Flags = Enum::MakeFlags(EShaderCompileFlags::SkipOptimization, EShaderCompileFlags::O0);
     }
 
     return m_Compiler.CompileShader(job);

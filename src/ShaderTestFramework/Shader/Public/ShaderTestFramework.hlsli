@@ -43,8 +43,78 @@ namespace ShaderTestPrivate
 namespace ShaderTestPrivate
 {
     static int NextSectionID = 0;
-    static const int NumTrackers = 32;
-    static bool TrackerAllocations[NumTrackers];
+    static const int NumSections = 32;
+    static bool SectionAllocations[NumSections];
+}
+
+namespace ShaderTestPrivate
+{
+    static int CurrentSectionID = 0;
+    
+    struct ScenarioSectionInfo
+    {
+        int ParentID;
+        bool HasBeenEntered;
+        bool HasSubsectionBeenEntered;
+        bool HasUnenteredSubsections;
+    };
+    
+    static ScenarioSectionInfo Sections[NumSections];
+    
+    void Init(int InID)
+    {
+        Sections[InID].ParentID = 0;
+        Sections[InID].HasBeenEntered = false;
+        Sections[InID].HasSubsectionBeenEntered = false;
+        Sections[InID].HasUnenteredSubsections = false;
+    }
+    
+    bool TryEnterSection(int InID)
+    {
+        if (!SectionAllocations[InID])
+        {
+            Init(InID);
+            SectionAllocations[InID] = true;
+        }
+        
+        const bool shouldEnter = !Sections[InID].HasBeenEntered || Sections[InID].HasUnenteredSubsections;
+        
+        if (shouldEnter)
+        {
+            if (InID == 0)
+            {
+                CurrentSectionID = 0;
+                Sections[InID].HasBeenEntered = true;
+                Sections[InID].HasSubsectionBeenEntered = false;
+                
+                return true;
+            }
+            else
+            {
+                const bool ourTurn = !Sections[CurrentSectionID].HasSubsectionBeenEntered;
+                if (ourTurn)
+                {
+                    Sections[CurrentSectionID].HasSubsectionBeenEntered = true;
+                    Sections[CurrentSectionID].HasUnenteredSubsections = false;
+                    Sections[InID].ParentID = CurrentSectionID;
+                    Sections[InID].HasBeenEntered = true;
+                    CurrentSectionID = InID;
+                    return true;
+                }
+                else
+                {
+                    Sections[CurrentSectionID].HasUnenteredSubsections = true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    void OnLeave()
+    {
+        CurrentSectionID = Sections[CurrentSectionID].ParentID;
+    }
 }
 
 namespace STF
@@ -139,7 +209,8 @@ namespace STF
 #define STF_CREATE_SECTION_VAR_IMPL(InLine) \
     static const int STF_GET_SECTION_VAR_VALUE(InLine) = ShaderTestPrivate::NextSectionID++; \
     static const int STF_GET_SECTION_VAR_NAME(InLine) = STF_GET_SECTION_VAR_VALUE(InLine); \
-    ShaderTestPrivate::TrackerAllocations[STF_GET_SECTION_VAR_VALUE(InLine)] = true
+    if (!ShaderTestPrivate::SectionAllocations[STF_GET_SECTION_VAR_VALUE(InLine)]) { ShaderTestPrivate::Init(STF_GET_SECTION_VAR_VALUE(InLine)); } \
+    ShaderTestPrivate::SectionAllocations[STF_GET_SECTION_VAR_VALUE(InLine)] = true
 
 #define STF_CREATE_SECTION_VAR STF_CREATE_SECTION_VAR_IMPL(__LINE__)
 

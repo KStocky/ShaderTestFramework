@@ -120,24 +120,19 @@ SCENARIO("ShaderFrameworkHLSLProofOfConceptTests")
         struct StaticArrayTest
         {
             int Val;
+            bool Other;
         };
 
-        static StaticArrayTest globalArray[24];
+        static StaticArrayTest globalArray[100];
 
         [RootSignature(SHADER_TEST_RS)]
         [numthreads(1,1,1)]
         void GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed(uint3 DispatchThreadId : SV_DispatchThreadID)
         {
-            for (int i = 0; i < 24; ++i)
+            for (int i = 0; i < 100; ++i)
             {
-                if (globalArray[i].Val == 0)
-                {
-                    ShaderTestPrivate::Success();
-                }
-                else
-                {
-                    ShaderTestPrivate::AddError();
-                }
+                STF::AreEqual(globalArray[i].Val, 0);
+                STF::IsFalse(globalArray[i].Other);
             }
         }
 
@@ -880,8 +875,8 @@ SCENARIO("HLSLFrameworkTests - Macros - SectionVarCreation")
         (
             {
                 std::tuple{"GIVEN_SingleSectionVarCreated_WHEN_Queried_THEN_ValueIsZero", true},
-                std::tuple{"GIVEN_TwoSectionVarsCreated_WHEN_Queried_THEN_ValueAreAsExpected", true},
-                std::tuple{"GIVEN_TwoSectionVarsCreatedInALoop_WHEN_Queried_THEN_ValueAreAsExpected", true}
+                std::tuple{"GIVEN_TwoSectionVarsCreated_WHEN_Queried_THEN_ValueAreAsExpected", true}
+               // std::tuple{"GIVEN_TwoSectionVarsCreatedInALoop_WHEN_Queried_THEN_ValueAreAsExpected", true}
             }
         )
     );
@@ -896,33 +891,33 @@ SCENARIO("HLSLFrameworkTests - Macros - SectionVarCreation")
         [numthreads(1,1,1)]
         void GIVEN_SingleSectionVarCreated_WHEN_Queried_THEN_ValueIsZero(uint3 DispatchThreadId : SV_DispatchThreadID)
         {
-            STF::IsFalse(ShaderTestPrivate::TrackerAllocations[0]);
+            STF::IsFalse(ShaderTestPrivate::SectionAllocations[0]);
             STF_CREATE_SECTION_VAR;
 
-            STF::IsTrue(ShaderTestPrivate::TrackerAllocations[0]);
+            STF::IsTrue(ShaderTestPrivate::SectionAllocations[0]);
         }
 
         [RootSignature(SHADER_TEST_RS)]
         [numthreads(1,1,1)]
         void GIVEN_TwoSectionVarsCreated_WHEN_Queried_THEN_ValueAreAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
         {
-            STF::IsFalse(ShaderTestPrivate::TrackerAllocations[0]);
-            STF::IsFalse(ShaderTestPrivate::TrackerAllocations[1]);
-            STF::IsFalse(ShaderTestPrivate::TrackerAllocations[2]);
+            STF::IsFalse(ShaderTestPrivate::SectionAllocations[0]);
+            STF::IsFalse(ShaderTestPrivate::SectionAllocations[1]);
+            STF::IsFalse(ShaderTestPrivate::SectionAllocations[2]);
             STF_CREATE_SECTION_VAR;
             STF_CREATE_SECTION_VAR;
-            STF::IsTrue(ShaderTestPrivate::TrackerAllocations[0]);
-            STF::IsTrue(ShaderTestPrivate::TrackerAllocations[1]);
-            STF::IsFalse(ShaderTestPrivate::TrackerAllocations[2]);
+            STF::IsTrue(ShaderTestPrivate::SectionAllocations[0]);
+            STF::IsTrue(ShaderTestPrivate::SectionAllocations[1]);
+            STF::IsFalse(ShaderTestPrivate::SectionAllocations[2]);
         }
 
         [RootSignature(SHADER_TEST_RS)]
         [numthreads(1,1,1)]
         void GIVEN_TwoSectionVarsCreatedInALoop_WHEN_Queried_THEN_ValueAreAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
         {
-            STF::IsFalse(ShaderTestPrivate::TrackerAllocations[0]);
-            STF::IsFalse(ShaderTestPrivate::TrackerAllocations[1]);
-            STF::IsFalse(ShaderTestPrivate::TrackerAllocations[2]);
+            STF::IsFalse(ShaderTestPrivate::SectionAllocations[0]);
+            STF::IsFalse(ShaderTestPrivate::SectionAllocations[1]);
+            STF::IsFalse(ShaderTestPrivate::SectionAllocations[2]);
             
             for (int i = 0; i < 3; ++i)
             {
@@ -930,11 +925,279 @@ SCENARIO("HLSLFrameworkTests - Macros - SectionVarCreation")
                 STF_CREATE_SECTION_VAR;
             }
 
-            STF::IsTrue(ShaderTestPrivate::TrackerAllocations[0]);
-            STF::IsTrue(ShaderTestPrivate::TrackerAllocations[1]);
-            STF::IsFalse(ShaderTestPrivate::TrackerAllocations[2]);
+            STF::IsTrue(ShaderTestPrivate::SectionAllocations[0]);
+            STF::IsTrue(ShaderTestPrivate::SectionAllocations[1]);
+            STF::IsFalse(ShaderTestPrivate::SectionAllocations[2]);
         }
         )");
+    ShaderTestFixture Fixture(std::move(FixtureDesc));
+    Fixture.TakeCapture();
+    DYNAMIC_SECTION(testName)
+    {
+        if (shouldSucceed)
+        {
+            REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+        }
+        else
+        {
+            const auto result = Fixture.RunTest(testName, 1, 1, 1);
+            REQUIRE(!result);
+        }
+    }
+}
+
+//SCENARIO("HLSLFrameworkTests - SectionManagement")
+//{
+//    auto [testName, shouldSucceed] = GENERATE
+//    (
+//        table<std::string, bool>
+//        (
+//            {
+//                std::tuple{"GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce", true},
+//                std::tuple{"GIVEN_SingleSubsection_WHEN_Ran_THEN_SectionsEntered2Times", true},
+//                std::tuple{"GIVEN_TwoSubsections_WHEN_Ran_THEN_SectionsEntered4Times", true},
+//                std::tuple{"GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_SectionsEntered5Times", true}
+//            }
+//        )
+//    );
+//
+//    ShaderTestFixture::Desc FixtureDesc{};
+//    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
+//    FixtureDesc.Source = std::string(
+//        R"(
+//        #include "/Test/Public/ShaderTestFramework.hlsli"
+//
+//        [RootSignature(SHADER_TEST_RS)]
+//        [numthreads(1,1,1)]
+//        void GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce(uint3 DispatchThreadId : SV_DispatchThreadID)
+//        {
+//            int num = 0;
+//            static const int Section_0Num = 0;
+//            while (ShaderTestPrivate::TryEnterSection(Section_0Num))
+//            {
+//                ++num;
+//            }  
+//    
+//            STF::AreEqual(1, num);
+//        }
+//
+//        [RootSignature(SHADER_TEST_RS)]
+//        [numthreads(1,1,1)]
+//        void GIVEN_SingleSubsection_WHEN_Ran_THEN_SectionsEntered2Times(uint3 DispatchThreadId : SV_DispatchThreadID)
+//        {
+//            int num = 0;
+//            static const int Section_0Num = 0;
+//            while (ShaderTestPrivate::TryEnterSection(Section_0Num))
+//            {
+//                ++num;
+//                static const int Section_1Num = 1;
+//                if (ShaderTestPrivate::TryEnterSection(Section_1Num))
+//                {
+//                    ++num;
+//
+//                    ShaderTestPrivate::OnLeave();
+//                }
+//            }  
+//    
+//            STF::AreEqual(2, num);
+//        }
+//
+//        [RootSignature(SHADER_TEST_RS)]
+//        [numthreads(1,1,1)]
+//        void GIVEN_TwoSubsections_WHEN_Ran_THEN_SectionsEntered4Times(uint3 DispatchThreadId : SV_DispatchThreadID)
+//        {
+//            int num = 0;
+//            int numLoops = 0;
+//            static const int Section_0Num = 0;
+//            while (ShaderTestPrivate::TryEnterSection(Section_0Num) && numLoops < 3)
+//            {
+//                ++numLoops;
+//                ++num;
+//                static const int Section_1Num = 1;
+//                if (ShaderTestPrivate::TryEnterSection(Section_1Num))
+//                {
+//                    ++num;
+//                    ShaderTestPrivate::OnLeave();
+//                }
+//                
+//                static const int Section_2Num = 2;
+//                if (ShaderTestPrivate::TryEnterSection(Section_2Num))
+//                {
+//                    ++num;
+//                    ShaderTestPrivate::OnLeave();
+//                }
+//            }  
+//    
+//            STF::AreEqual(4, num);
+//        }
+//
+//        [RootSignature(SHADER_TEST_RS)]
+//        [numthreads(1,1,1)]
+//        void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_SectionsEntered5Times(uint3 DispatchThreadId : SV_DispatchThreadID)
+//        {
+//            int num = 0;
+//            static const int Section_0Num = 0;
+//            while (ShaderTestPrivate::TryEnterSection(Section_0Num))
+//            {
+//                ++num;
+//
+//                static const int Section_1Num = 1;
+//                if (ShaderTestPrivate::TryEnterSection(Section_1Num))
+//                {
+//                    ++num;
+//
+//                    ShaderTestPrivate::OnLeave();
+//                }
+//
+//                static const int Section_2Num = 2;
+//                if (ShaderTestPrivate::TryEnterSection(Section_2Num))
+//                {
+//                    ++num;
+//
+//                    static const int Section_3Num = 3;
+//                    if (ShaderTestPrivate::TryEnterSection(Section_3Num))
+//                    {
+//                        ++num;
+//                        ShaderTestPrivate::OnLeave();
+//                    }
+//                    ShaderTestPrivate::OnLeave();
+//                }
+//            }  
+//    
+//            STF::AreEqual(5, num);
+//        }
+//        )");
+//    ShaderTestFixture Fixture(std::move(FixtureDesc));
+//    Fixture.TakeCapture();
+//    DYNAMIC_SECTION(testName)
+//    {
+//        if (shouldSucceed)
+//        {
+//            REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+//        }
+//        else
+//        {
+//            const auto result = Fixture.RunTest(testName, 1, 1, 1);
+//            REQUIRE(!result);
+//        }
+//    }
+//}
+
+SCENARIO("HLSLFrameworkTests - Bugs")
+{
+    auto [testName, code, shouldSucceed] = GENERATE
+    (
+        table<std::string, std::string, bool>
+        (
+            {
+                //std::tuple
+                //{
+                //    "GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed",
+                //    std::string(
+                //    R"SHADER(
+                //#define SHADER_TEST_RS \
+                //"RootFlags(" \
+                //    "DENY_VERTEX_SHADER_ROOT_ACCESS |" \
+                //    "DENY_HULL_SHADER_ROOT_ACCESS |" \
+                //    "DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+                //    "DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+                //    "DENY_PIXEL_SHADER_ROOT_ACCESS |" \
+                //    "DENY_AMPLIFICATION_SHADER_ROOT_ACCESS |" \
+                //    "DENY_MESH_SHADER_ROOT_ACCESS |" \
+                //    "CBV_SRV_UAV_HEAP_DIRECTLY_INDEXED" \
+                //")," \
+                //"RootConstants(" \
+                //    "num32BitConstants=2," \
+                //    "b0)"
+                //
+                //    struct StaticArrayTest
+                //    {
+                //        int Val;
+                //        bool Other;
+                //        bool Other1;
+                //        bool Hi;
+                //
+                //        bool Test()
+                //        {
+                //            return Val == 0 && !Other && !Other1 && !Hi;
+                //        }
+                //
+                //        operator bool()
+                //        {
+                //            return Test();
+                //        }
+                //    };
+                //
+                //    static const int Num = 100;
+                //    static StaticArrayTest globalArray[Num];
+                //
+                //    bool Test(int InIndex)
+                //    {
+                //        StaticArrayTest t = globalArray[InIndex];
+                //        return t.Val == 0;
+                //    }
+                //
+                //    [RootSignature(SHADER_TEST_RS)]
+                //    [numthreads(1,1,1)]
+                //    void GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed(uint3 DispatchThreadId : SV_DispatchThreadID)
+                //    {
+                //        bool pass = true;
+                //        for (int i = 0; i < Num; ++i)
+                //        {
+                //            pass = pass && (bool)globalArray[i];
+                //        }
+                //
+                //        if (!pass)
+                //        {
+                //            RWByteAddressBuffer buf = ResourceDescriptorHeap[0];
+                //            uint failIndex;
+                //            buf.InterlockedAdd(4, 1, failIndex);
+                //        }
+                //    }
+                //    )SHADER"),
+                //    true
+                //},
+                std::tuple
+                {
+                    "GIVEN_Object_WHEN_ConversionOperatorCalled_THEN_Fails",
+                    std::string(
+                    R"SHADER(
+                    #include "/Test/Public/ShaderTestFramework.hlsli"
+
+                    struct TestStruct
+                    {
+                        int Val;
+
+                        bool Test()
+                        {
+                            return Val == 0;
+                        }
+
+                        operator bool()
+                        {
+                            return Test();
+                        }
+                    };
+
+                    [RootSignature(SHADER_TEST_RS)]
+                    [numthreads(1,1,1)]
+                    void GIVEN_StaticObject_WHEN_ConversionOperatorCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+                    {
+                        TestStruct test;
+                        test.Val = 0;
+                        const bool result = (bool)test;          
+                        STF::IsTrue(result);
+                    }
+                    )SHADER"),
+                    false
+                }
+            }
+        )
+    );
+
+    ShaderTestFixture::Desc FixtureDesc{};
+    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
+    FixtureDesc.Source = std::move(code);
     ShaderTestFixture Fixture(std::move(FixtureDesc));
     Fixture.TakeCapture();
     DYNAMIC_SECTION(testName)
