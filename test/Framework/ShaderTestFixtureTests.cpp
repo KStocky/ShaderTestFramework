@@ -375,6 +375,125 @@ namespace
     }
 }
 
+SCENARIO("HLSLFrameworkTests - Cast")
+{
+    auto [testName, source, shouldSucceed] = GENERATE
+    (
+        table<std::string, std::string, bool>
+        (
+            {
+                std::tuple
+                {
+                    "GIVEN_StructDoesNotHaveOverloadOfCast_WHEN_CastCalled_THEN_Fails",
+                    std::string(
+                    R"(
+                    #include "/Test/Public/ShaderTestFramework.hlsli"
+
+                    struct TestStruct
+                    {
+                        int Value;
+                    };
+
+                    [RootSignature(SHADER_TEST_RS)]
+                    [numthreads(1,1,1)]
+                    void GIVEN_StructDoesNotHaveOverloadOfCast_WHEN_CastCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+                    {
+                        TestStruct test;
+                        test.Value = 42;
+                        int result = STF::Cast<int>(test);
+                        STF::AreEqual(result, 42);
+                    }
+                    )"),
+                    false
+                },
+                std::tuple
+                {
+                    "GIVEN_StructDoesHaveOverloadOfCast_WHEN_CastCalled_THEN_Succeeds",
+                    std::string(
+                    R"(
+                    #include "/Test/Public/ShaderTestFramework.hlsli"
+
+                    struct TestStruct
+                    {
+                        int Value;
+                    };
+
+                    namespace STF
+                    {
+                        template<>
+                        int Cast<int, TestStruct>(TestStruct In)
+                        {
+                            return In.Value;
+                        }
+                    }
+
+                    [RootSignature(SHADER_TEST_RS)]
+                    [numthreads(1,1,1)]
+                    void GIVEN_StructDoesHaveOverloadOfCast_WHEN_CastCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
+                    {
+                        TestStruct test;
+                        test.Value = 42;
+                        int result = STF::Cast<int>(test);
+                        STF::AreEqual(result, 42);
+                    }
+                    )"),
+                    true
+                },
+                std::tuple
+                {
+                    "GIVEN_StructDoesHasDifferentOverloadOfCast_WHEN_CastCalled_THEN_Fails",
+                    std::string(
+                    R"(
+                    #include "/Test/Public/ShaderTestFramework.hlsli"
+
+                    struct TestStruct
+                    {
+                        int Value;
+                    };
+
+                    namespace STF
+                    {
+                        template<>
+                        float Cast<float, TestStruct>(TestStruct In)
+                        {
+                            return (float)In.Value;
+                        }
+                    }
+
+                    [RootSignature(SHADER_TEST_RS)]
+                    [numthreads(1,1,1)]
+                    void GIVEN_StructDoesHasDifferentOverloadOfCast_WHEN_CastCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+                    {
+                        TestStruct test;
+                        test.Value = 42;
+                        int result = STF::Cast<int>(test);
+                        STF::AreEqual(result, 42);
+                    }
+                    )"),
+                    false
+                }
+            }
+        )
+    );
+
+    ShaderTestFixture::Desc FixtureDesc{};
+    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
+    FixtureDesc.Source = std::move(source);
+    ShaderTestFixture Fixture(std::move(FixtureDesc));
+    DYNAMIC_SECTION(testName)
+    {
+        if (shouldSucceed)
+        {
+            REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+        }
+        else
+        {
+            const auto result = Fixture.RunTest(testName, 1, 1, 1);
+            REQUIRE(!result);
+        }
+    }
+}
+
 SCENARIO("HLSLFrameworkTests - Asserts - AreEqual")
 {
     auto [testName, shouldSucceed] = GENERATE

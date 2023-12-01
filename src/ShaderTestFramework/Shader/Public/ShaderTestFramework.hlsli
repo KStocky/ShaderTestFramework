@@ -151,6 +151,9 @@ namespace STF
         using type = T;  
     };
     
+    template<typename To, typename From>
+    To Cast(From In);
+    
     template<typename T, typename U>
     typename enable_if<is_same<T, U>::value>::type AreEqual(const T InA, const U InB)
     {
