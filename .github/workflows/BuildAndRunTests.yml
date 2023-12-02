@@ -1,5 +1,5 @@
 name: Build-And-Run-Tests
-run-name: ${{github.actor}} is Running Build And Run Tests
+run-name: "${{github.actor}}:${{github.event.head_commit.message}}"
 on: [push]
 jobs:
     Build-And-Test:
