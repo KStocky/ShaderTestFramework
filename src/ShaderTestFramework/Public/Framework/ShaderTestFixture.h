@@ -54,6 +54,10 @@ public:
 
 private:
 
+    static constexpr u32 SectionDataSize = sizeof(u32) * 4;
+    static constexpr u32 NumSections = 32;
+    static constexpr u32 PerThreadScratchDataSize = SectionDataSize * NumSections + sizeof(u32);
+
     CompilationResult CompileShader(const std::string_view InName) const;
     CommandEngine CreateCommandEngine() const;
     DescriptorHeap CreateDescriptorHeap() const;
@@ -61,7 +65,10 @@ private:
     RootSignature CreateRootSignature(const CompiledShaderData& InShaderData) const;
     GPUResource CreateAssertBuffer(const u64 InSizeInBytes) const;
     GPUResource CreateReadbackBuffer(const u64 InSizeInBytes) const;
+    GPUResource CreateScratchBuffer(const u32 InNumThreads) const;
+    u32 CalculateNumThreads(const CompiledShaderData& InShaderData, u32 InX, u32 InY, u32 InZ) const;
     DescriptorHandle CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap) const;
+    DescriptorHandle CreateScratchBufferUAV(const GPUResource& InScratchBuffer, const DescriptorHeap& InHeap) const;
     Tuple<u32, u32> ReadbackResults(const GPUResource& InReadbackBuffer) const;
 
     bool ShouldTakeCapture() const;

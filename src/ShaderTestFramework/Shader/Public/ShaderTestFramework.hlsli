@@ -12,7 +12,7 @@
     "CBV_SRV_UAV_HEAP_DIRECTLY_INDEXED" \
 ")," \
 "RootConstants(" \
-    "num32BitConstants=2," \
+    "num32BitConstants=3," \
     "b0" \
 ")"
 
@@ -20,6 +20,7 @@ namespace ShaderTestPrivate
 {
     const uint MaxNumAsserts;
     const uint AssertBufferIndex;
+    const uint ScratchBufferIndex;
     static const uint AssertFailureNumBytes = 16;
     
     RWByteAddressBuffer GetAssertBuffer()
@@ -44,7 +45,6 @@ namespace ShaderTestPrivate
 {
     static int NextSectionID = 0;
     static const int NumSections = 32;
-    static bool SectionAllocations[NumSections];
 }
 
 namespace ShaderTestPrivate
@@ -61,22 +61,8 @@ namespace ShaderTestPrivate
     
     static ScenarioSectionInfo Sections[NumSections];
     
-    void Init(int InID)
-    {
-        Sections[InID].ParentID = 0;
-        Sections[InID].HasBeenEntered = false;
-        Sections[InID].HasSubsectionBeenEntered = false;
-        Sections[InID].HasUnenteredSubsections = false;
-    }
-    
     bool TryEnterSection(int InID)
     {
-        if (!SectionAllocations[InID])
-        {
-            Init(InID);
-            SectionAllocations[InID] = true;
-        }
-        
         const bool shouldEnter = !Sections[InID].HasBeenEntered || Sections[InID].HasUnenteredSubsections;
         
         if (shouldEnter)
@@ -114,6 +100,58 @@ namespace ShaderTestPrivate
     void OnLeave()
     {
         CurrentSectionID = Sections[CurrentSectionID].ParentID;
+    }
+    
+    struct PerThreadScratchData
+    {
+        int CurrentSectionID;
+        ScenarioSectionInfo Sections[NumSections];
+    };
+    
+    RWStructuredBuffer<PerThreadScratchData> GetScratchBuffer()
+    {
+        return ResourceDescriptorHeap[ScratchBufferIndex];
+    }
+    
+    bool TryEnterSection(uint InThreadId, int InID)
+    {
+        const bool shouldEnter = !GetScratchBuffer()[InThreadId].Sections[InID].HasBeenEntered || GetScratchBuffer()[InThreadId].Sections[InID].HasUnenteredSubsections;
+        
+        if (shouldEnter)
+        {
+            if (InID == 0)
+            {
+                GetScratchBuffer()[InThreadId].CurrentSectionID = 0;
+                GetScratchBuffer()[InThreadId].Sections[InID].HasBeenEntered = true;
+                GetScratchBuffer()[InThreadId].Sections[InID].HasSubsectionBeenEntered = false;
+                
+                return true;
+            }
+            else
+            {
+                const bool ourTurn = !GetScratchBuffer()[InThreadId].Sections[GetScratchBuffer()[InThreadId].CurrentSectionID].HasSubsectionBeenEntered;
+                if (ourTurn)
+                {
+                    GetScratchBuffer()[InThreadId].Sections[GetScratchBuffer()[InThreadId].CurrentSectionID].HasSubsectionBeenEntered = true;
+                    GetScratchBuffer()[InThreadId].Sections[GetScratchBuffer()[InThreadId].CurrentSectionID].HasUnenteredSubsections = false;
+                    GetScratchBuffer()[InThreadId].Sections[InID].ParentID = GetScratchBuffer()[InThreadId].CurrentSectionID;
+                    GetScratchBuffer()[InThreadId].Sections[InID].HasBeenEntered = true;
+                    GetScratchBuffer()[InThreadId].CurrentSectionID = InID;
+                    return true;
+                }
+                else
+                {
+                    GetScratchBuffer()[InThreadId].Sections[GetScratchBuffer()[InThreadId].CurrentSectionID].HasUnenteredSubsections = true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    void OnLeave(uint InThreadId)
+    {
+        GetScratchBuffer()[InThreadId].CurrentSectionID = GetScratchBuffer()[InThreadId].Sections[GetScratchBuffer()[InThreadId].CurrentSectionID].ParentID;
     }
 }
 
@@ -216,10 +254,7 @@ namespace STF
 #define STF_GET_SECTION_VAR_NAME(InLine) STF_Section_##InLine##_Var
 #define STF_GET_SECTION_VAR_VALUE(InLine) STF_Section_##InLine##_Var_Value
 #define STF_CREATE_SECTION_VAR_IMPL(InLine) \
-    static const int STF_GET_SECTION_VAR_VALUE(InLine) = ShaderTestPrivate::NextSectionID++; \
-    static const int STF_GET_SECTION_VAR_NAME(InLine) = STF_GET_SECTION_VAR_VALUE(InLine); \
-    if (!ShaderTestPrivate::SectionAllocations[STF_GET_SECTION_VAR_VALUE(InLine)]) { ShaderTestPrivate::Init(STF_GET_SECTION_VAR_VALUE(InLine)); } \
-    ShaderTestPrivate::SectionAllocations[STF_GET_SECTION_VAR_VALUE(InLine)] = true
+    static const int STF_GET_SECTION_VAR_NAME(InLine) = ShaderTestPrivate::NextSectionID++; \
 
 #define STF_CREATE_SECTION_VAR STF_CREATE_SECTION_VAR_IMPL(__LINE__)
 
