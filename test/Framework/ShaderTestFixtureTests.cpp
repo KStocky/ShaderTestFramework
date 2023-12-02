@@ -1005,7 +1005,7 @@ SCENARIO("HLSLFrameworkTests - Macros - SectionVarCreation")
             {
                 std::tuple{"GIVEN_SingleSectionVarCreated_WHEN_Queried_THEN_ValueIsZero", true},
                 std::tuple{"GIVEN_TwoSectionVarsCreated_WHEN_Queried_THEN_ValueAreAsExpected", true}
-               // std::tuple{"GIVEN_TwoSectionVarsCreatedInALoop_WHEN_Queried_THEN_ValueAreAsExpected", true}
+                // std::tuple{"GIVEN_TwoSectionVarsCreatedInALoop_WHEN_Queried_THEN_ValueAreAsExpected", true}
             }
         )
     );
@@ -1219,68 +1219,103 @@ SCENARIO("HLSLFrameworkTests - Bugs")
         table<std::string, std::string, bool>
         (
             {
+                std::tuple
+                {
+                    "GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed",
+                    std::string(
+                    R"SHADER(
+                #define SHADER_TEST_RS \
+                "RootFlags(" \
+                    "DENY_VERTEX_SHADER_ROOT_ACCESS |" \
+                    "DENY_HULL_SHADER_ROOT_ACCESS |" \
+                    "DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+                    "DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+                    "DENY_PIXEL_SHADER_ROOT_ACCESS |" \
+                    "DENY_AMPLIFICATION_SHADER_ROOT_ACCESS |" \
+                    "DENY_MESH_SHADER_ROOT_ACCESS |" \
+                    "CBV_SRV_UAV_HEAP_DIRECTLY_INDEXED" \
+                ")," \
+                "RootConstants(" \
+                    "num32BitConstants=2," \
+                    "b0)"
+                
+                    struct StaticArrayTest
+                    {
+                        int Val;
+                        bool Other;
+                        bool Other1;
+                        bool Hi;
+                    };
+                
+                    static const int Num = 100;
+                    static StaticArrayTest globalArray[Num];
+                
+                    bool Test(int InIndex)
+                    {
+                        StaticArrayTest t = globalArray[InIndex];
+                        return t.Val == 0 && !t.Other && !t.Other1 && !t.Hi;
+                    }
+                
+                    [RootSignature(SHADER_TEST_RS)]
+                    [numthreads(1,1,1)]
+                    void GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed(uint3 DispatchThreadId : SV_DispatchThreadID)
+                    {
+                        bool pass = true;
+                        for (int i = 0; i < Num; ++i)
+                        {
+                            pass = pass && Test(i);
+                        }
+                
+                        if (!pass)
+                        {
+                            RWByteAddressBuffer buf = ResourceDescriptorHeap[0];
+                            uint failIndex;
+                            buf.InterlockedAdd(4, 1, failIndex);
+                        }
+                    }
+                    )SHADER"),
+                    true
+                },
                 //std::tuple
                 //{
-                //    "GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed",
+                //    "GIVEN_WarpAndNoOptimizations_WHEN_ThisIsRun_THEN_ItWillSomeTimesFail",
                 //    std::string(
                 //    R"SHADER(
-                //#define SHADER_TEST_RS \
-                //"RootFlags(" \
-                //    "DENY_VERTEX_SHADER_ROOT_ACCESS |" \
-                //    "DENY_HULL_SHADER_ROOT_ACCESS |" \
-                //    "DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
-                //    "DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
-                //    "DENY_PIXEL_SHADER_ROOT_ACCESS |" \
-                //    "DENY_AMPLIFICATION_SHADER_ROOT_ACCESS |" \
-                //    "DENY_MESH_SHADER_ROOT_ACCESS |" \
-                //    "CBV_SRV_UAV_HEAP_DIRECTLY_INDEXED" \
-                //")," \
-                //"RootConstants(" \
-                //    "num32BitConstants=2," \
-                //    "b0)"
+                //    
+                //    #define RS \
+                //    "RootFlags(" \
+                //        "DENY_VERTEX_SHADER_ROOT_ACCESS |" \
+                //        "DENY_HULL_SHADER_ROOT_ACCESS |" \
+                //        "DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+                //        "DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+                //        "DENY_PIXEL_SHADER_ROOT_ACCESS |" \
+                //        "DENY_AMPLIFICATION_SHADER_ROOT_ACCESS |" \
+                //        "DENY_MESH_SHADER_ROOT_ACCESS |" \
+                //        "CBV_SRV_UAV_HEAP_DIRECTLY_INDEXED" \
+                //    ")," \
+                //    "RootConstants(" \
+                //        "num32BitConstants=2," \
+                //        "b0" \
+                //    ")"
                 //
-                //    struct StaticArrayTest
-                //    {
-                //        int Val;
-                //        bool Other;
-                //        bool Other1;
-                //        bool Hi;
+                //    static bool StaticBool[1];
                 //
-                //        bool Test()
-                //        {
-                //            return Val == 0 && !Other && !Other1 && !Hi;
-                //        }
-                //
-                //        operator bool()
-                //        {
-                //            return Test();
-                //        }
-                //    };
-                //
-                //    static const int Num = 100;
-                //    static StaticArrayTest globalArray[Num];
-                //
-                //    bool Test(int InIndex)
-                //    {
-                //        StaticArrayTest t = globalArray[InIndex];
-                //        return t.Val == 0;
-                //    }
-                //
-                //    [RootSignature(SHADER_TEST_RS)]
+                //    [RootSignature(RS)]
                 //    [numthreads(1,1,1)]
-                //    void GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed(uint3 DispatchThreadId : SV_DispatchThreadID)
+                //    void GIVEN_WarpAndNoOptimizations_WHEN_ThisIsRun_THEN_ItWillSomeTimesFail(uint3 DispatchThreadId : SV_DispatchThreadID)
                 //    {
-                //        bool pass = true;
-                //        for (int i = 0; i < Num; ++i)
+                //        if(StaticBool[0])
                 //        {
-                //            pass = pass && (bool)globalArray[i];
+                //            RWByteAddressBuffer results = ResourceDescriptorHeap[0];
+                //            uint old;
+                //            results.InterlockedAdd(4, 1, old);
                 //        }
                 //
-                //        if (!pass)
+                //        for (int i = 0; i < 1; ++i)
                 //        {
-                //            RWByteAddressBuffer buf = ResourceDescriptorHeap[0];
-                //            uint failIndex;
-                //            buf.InterlockedAdd(4, 1, failIndex);
+                //            static int value = 0;
+                //            static int name = value;
+                //            StaticBool[name] = true;
                 //        }
                 //    }
                 //    )SHADER"),
@@ -1325,6 +1360,7 @@ SCENARIO("HLSLFrameworkTests - Bugs")
     );
 
     ShaderTestFixture::Desc FixtureDesc{};
+    FixtureDesc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
     FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
     FixtureDesc.Source = std::move(code);
     ShaderTestFixture Fixture(std::move(FixtureDesc));
