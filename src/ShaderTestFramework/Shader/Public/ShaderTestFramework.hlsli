@@ -248,6 +248,14 @@ STF_DECLARE_TEST_FUNC(InID)
 
 #define SCENARIO(InName, ...) STF_DEFINE_TEST_ENTRY_FUNC(__LINE__, InName, __VA_ARGS__)
 
+#define STF_BEGIN_SECTION_IMPL(InID) STF_CREATE_SECTION_VAR_IMPL(InID); \
+    if (ShaderTestPrivate::TryEnterSection(STF_GET_SECTION_VAR_NAME(InID))) \
+    {\
+
+#define BEGIN_SECTION STF_BEGIN_SECTION_IMPL(__LINE__)
+
+#define END_SECTION ShaderTestPrivate::OnLeave(); }
+
 //[RootSignature(SHADER_TEST_RS)]
 //[numthreads(1, 1, 1)]
 //void MyTestScenario(uint3 DispatchThreadId : SV_DispatchThreadID)
