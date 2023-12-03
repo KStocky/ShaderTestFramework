@@ -12,15 +12,13 @@
     "CBV_SRV_UAV_HEAP_DIRECTLY_INDEXED" \
 ")," \
 "RootConstants(" \
-    "num32BitConstants=2," \
+    "num32BitConstants=1," \
     "b0" \
 ")"
 
 namespace ShaderTestPrivate
 {
-    const uint MaxNumAsserts;
     const uint AssertBufferIndex;
-    static const uint AssertFailureNumBytes = 16;
     
     RWByteAddressBuffer GetAssertBuffer()
     {
@@ -255,48 +253,3 @@ STF_DECLARE_TEST_FUNC(InID)
 #define BEGIN_SECTION STF_BEGIN_SECTION_IMPL(__LINE__)
 
 #define END_SECTION ShaderTestPrivate::OnLeave(); }
-
-//[RootSignature(SHADER_TEST_RS)]
-//[numthreads(1, 1, 1)]
-//void MyTestScenario(uint3 DispatchThreadId : SV_DispatchThreadID)
-//{
-//    SCENARIO()
-//    {
-//        STF::AreEqual(5, 5);
-//        
-//        BEGIN_SECTION()
-//            STF::IsTrue(true);
-//        END_SECTION()
-//        
-//        BEGIN_SECTION()
-//            STF::IsFalse(false);
-//            
-//            BEGIN_SECTION()
-//                STF::NotEqual(5, 4);
-//            END_SECTION()
-//        END_SECTION()
-//    }
-//}
-//
-//#define BEGIN_SCENARIO(InName, ...)
-//#define END_SCENARIO()
-//
-//[RootSignature(SHADER_TEST_RS)]
-//[numthreads(1, 1, 1)]
-//SCENARIO(MyTestScenario, uint3 DispatchThreadId : SV_DispatchThreadID)
-//{
-//
-//    STF::AreEqual(5, 5);
-//        
-//    BEGIN_SECTION() 
-//        STF::IsTrue(true);
-//    END_SECTION() 
-//        
-//    BEGIN_SECTION() 
-//        STF::IsFalse(false);
-//            
-//        BEGIN_SECTION() 
-//            STF::NotEqual(5, 4);
-//        END_SECTION() 
-//    END_SECTION() 
-//}

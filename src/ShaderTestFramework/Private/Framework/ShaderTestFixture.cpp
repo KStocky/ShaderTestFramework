@@ -67,7 +67,7 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
                     InContext->SetComputeRootSignature(rootSignature);
                     InContext->SetDescriptorHeaps(resourceHeap);
                     InContext->SetBufferUAV(assertBuffer);
-                    std::array params{ 10u, 0u };
+                    std::array params{ 0u };
                     InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
                 }
             );
