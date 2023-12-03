@@ -197,6 +197,11 @@ namespace STF
     {
         return In;
     }
+
+    uint FlattenIndex(const uint3 InIndex, const uint3 InDimensions)
+    {
+        return (InIndex.z * InDimensions.x * InDimensions.y) + (InIndex.y * InDimensions.x) + InIndex.x;
+    }
     
     template<typename T, typename U>
     typename enable_if<is_same<T, U>::value>::type AreEqual(const T InA, const U InB)
