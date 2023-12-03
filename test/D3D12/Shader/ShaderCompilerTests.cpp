@@ -590,6 +590,80 @@ SCENARIO("HLSLTests")
                         }
                         )",
                         [](const EHLSLVersion) { return true; }
+                    },
+                    std::tuple
+                    {
+                    "Forward Declare function in other function and define it",
+                    R"(
+                        
+                        int GetAnswer();
+                        RWBuffer<int> MyBuffer;
+
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                           int GetAnswer();
+                           MyBuffer[DispatchThreadId.x] = GetAnswer();
+
+                            int GetAnswer()
+                            {
+                                return 42;
+                            }
+                        }
+                        )",
+                        [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                    "Define struct member function later",
+                    R"(
+                        
+                        RWBuffer<int> MyBuffer;
+
+                        struct TestStruct
+                        {
+                            int GetAnswer();
+                        };
+
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            TestStruct t;
+                            MyBuffer[DispatchThreadId.x] = t.GetAnswer();
+                        }
+                        
+                        int TestStruct::GetAnswer()
+                        {
+                            return 42;
+                        }
+                        )",
+                        [](const EHLSLVersion) { return true; }
+                    },
+                    std::tuple
+                    {
+                    "Define struct member function in function",
+                    R"(
+                        
+                        RWBuffer<int> MyBuffer;
+
+                        struct TestStruct
+                        {
+                            int GetAnswer();
+                        };
+
+                        [numthreads(1,1,1)]
+                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
+                        {
+                            TestStruct t;
+                            MyBuffer[DispatchThreadId.x] = t.GetAnswer();
+
+                            int TestStruct::GetAnswer()
+                            {
+                                return 42;
+                            }
+                        }
+                        )",
+                        [](const EHLSLVersion) { return false; }
                     }
                 }
             )
