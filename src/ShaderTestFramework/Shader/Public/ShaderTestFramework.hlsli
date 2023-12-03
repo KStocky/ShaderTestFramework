@@ -40,7 +40,7 @@ namespace ShaderTestPrivate
 
 namespace ShaderTestPrivate
 {
-    static int NextSectionID = 0;
+    static int NextSectionID = 1;
     static const int NumSections = 32;
 }
 
@@ -75,22 +75,30 @@ namespace ShaderTestPrivate
         }
     }
     
-    bool TryEnterSection(int InID)
+    bool ShouldEnter(int InID)
     {
-        const bool shouldEnter = !Scratch.Sections[InID].HasBeenEntered || Scratch.Sections[InID].HasUnenteredSubsections;
-        
-        if (!shouldEnter)
-        {
-            return false;
-        }
-        
-        if (InID == 0)
+        return !Scratch.Sections[InID].HasBeenEntered || Scratch.Sections[InID].HasUnenteredSubsections;
+    }
+    
+    bool TryLoopScenario()
+    {
+        if (ShouldEnter(0))
         {
             Scratch.CurrentSectionID = 0;
-            Scratch.Sections[InID].HasBeenEntered = true;
-            Scratch.Sections[InID].HasSubsectionBeenEntered = false;
+            Scratch.Sections[0].HasBeenEntered = true;
+            Scratch.Sections[0].HasSubsectionBeenEntered = false;
                 
             return true;
+        }
+        
+        return false;
+    }
+    
+    bool TryEnterSection(int InID)
+    {
+        if (!ShouldEnter(InID))
+        {
+            return false;
         }
 
         const bool ourTurn = !Scratch.Sections[Scratch.CurrentSectionID].HasSubsectionBeenEntered;
@@ -235,8 +243,7 @@ namespace STF
 {\
     ShaderTestPrivate::InitScratch();\
     STF_DECLARE_TEST_FUNC(InID); \
-    STF_CREATE_SECTION_VAR_IMPL(InID);\
-    while(ShaderTestPrivate::TryEnterSection(STF_GET_SECTION_VAR_NAME(InID)))\
+    while(ShaderTestPrivate::TryLoopScenario())\
     {\
         STF_GET_TEST_FUNC_NAME(InID)();\
     }\

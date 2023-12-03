@@ -1068,27 +1068,27 @@ SCENARIO("HLSLFrameworkTests - Macros - SectionVarCreation")
         [numthreads(1,1,1)]
         void GIVEN_SingleSectionVarCreated_WHEN_Queried_THEN_ValueIsZero(uint3 DispatchThreadId : SV_DispatchThreadID)
         {
-            STF::AreEqual(0, ShaderTestPrivate::NextSectionID);
+            STF::AreEqual(1, ShaderTestPrivate::NextSectionID);
             STF_CREATE_SECTION_VAR;
 
-            STF::AreEqual(1, ShaderTestPrivate::NextSectionID);
+            STF::AreEqual(2, ShaderTestPrivate::NextSectionID);
         }
 
         [RootSignature(SHADER_TEST_RS)]
         [numthreads(1,1,1)]
         void GIVEN_TwoSectionVarsCreated_WHEN_Queried_THEN_ValueAreAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
         {
-            STF::AreEqual(0, ShaderTestPrivate::NextSectionID);
+            STF::AreEqual(1, ShaderTestPrivate::NextSectionID);
             STF_CREATE_SECTION_VAR;
             STF_CREATE_SECTION_VAR;
-            STF::AreEqual(2, ShaderTestPrivate::NextSectionID);
+            STF::AreEqual(3, ShaderTestPrivate::NextSectionID);
         }
 
         [RootSignature(SHADER_TEST_RS)]
         [numthreads(1,1,1)]
         void GIVEN_TwoSectionVarsCreatedInALoop_WHEN_Queried_THEN_ValueAreAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
         {
-            STF::AreEqual(0, ShaderTestPrivate::NextSectionID);
+            STF::AreEqual(1, ShaderTestPrivate::NextSectionID);
             
             for (int i = 0; i < 3; ++i)
             {
@@ -1096,7 +1096,7 @@ SCENARIO("HLSLFrameworkTests - Macros - SectionVarCreation")
                 STF_CREATE_SECTION_VAR;
             }
 
-            STF::AreEqual(2, ShaderTestPrivate::NextSectionID);
+            STF::AreEqual(3, ShaderTestPrivate::NextSectionID);
         }
         )");
     ShaderTestFixture Fixture(std::move(FixtureDesc));
@@ -1421,8 +1421,7 @@ SCENARIO("HLSLFrameworkTests - SectionManagement")
         {
             ShaderTestPrivate::InitScratch();
             int num = 0;
-            static const int Section_0Num = 0;
-            while (ShaderTestPrivate::TryEnterSection(Section_0Num))
+            while (ShaderTestPrivate::TryLoopScenario())
             {
                 ++num;
             }  
@@ -1436,8 +1435,7 @@ SCENARIO("HLSLFrameworkTests - SectionManagement")
         {
             ShaderTestPrivate::InitScratch();
             int num = 0;
-            static const int Section_0Num = 0;
-            while (ShaderTestPrivate::TryEnterSection(Section_0Num))
+            while (ShaderTestPrivate::TryLoopScenario())
             {
                 ++num;
                 static const int Section_1Num = 1;
@@ -1458,8 +1456,7 @@ SCENARIO("HLSLFrameworkTests - SectionManagement")
         {
             ShaderTestPrivate::InitScratch();
             int num = 0;
-            static const int Section_0Num = 0;
-            while (ShaderTestPrivate::TryEnterSection(Section_0Num))
+            while (ShaderTestPrivate::TryLoopScenario())
             {
                 ++num;
                 static const int Section_1Num = 1;
@@ -1486,8 +1483,7 @@ SCENARIO("HLSLFrameworkTests - SectionManagement")
         {
             ShaderTestPrivate::InitScratch();
             int num = 0;
-            static const int Section_0Num = 0;
-            while (ShaderTestPrivate::TryEnterSection(Section_0Num))
+            while (ShaderTestPrivate::TryLoopScenario())
             {
                 ++num;
 
