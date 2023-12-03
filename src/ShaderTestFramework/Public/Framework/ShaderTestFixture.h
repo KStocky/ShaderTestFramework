@@ -66,7 +66,6 @@ private:
     GPUResource CreateAssertBuffer(const u64 InSizeInBytes) const;
     GPUResource CreateReadbackBuffer(const u64 InSizeInBytes) const;
     GPUResource CreateScratchBuffer(const u32 InNumThreads) const;
-    u32 CalculateNumThreads(const CompiledShaderData& InShaderData, u32 InX, u32 InY, u32 InZ) const;
     DescriptorHandle CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap) const;
     DescriptorHandle CreateScratchBufferUAV(const GPUResource& InScratchBuffer, const DescriptorHeap& InHeap) const;
     Tuple<u32, u32> ReadbackResults(const GPUResource& InReadbackBuffer) const;

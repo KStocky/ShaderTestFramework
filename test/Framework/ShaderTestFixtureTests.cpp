@@ -1334,6 +1334,72 @@ SCENARIO("HLSLFrameworkTests - FlattenIndex")
     }
 }
 
+SCENARIO("HLSLFrameworkTests - ThreadDimensionCalculations")
+{
+    auto [testName, dimX, dimY, dimZ] = GENERATE
+    (
+        table<std::string, u32, u32, u32>
+        (
+            {
+                std::tuple{"GIVEN_SingleThreadDispatched_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected", 1, 1, 1},
+                std::tuple{"GIVEN_SingleThreadPerGroupAnd10Groups_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected", 10, 10, 10},
+                std::tuple{"GIVEN_SingleGroupWithGroupSizeOf10_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected", 1, 1, 1},
+                std::tuple{"GIVEN_GroupWithSide2WithGroupSizeOfSide2_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected", 2, 2, 2}
+            }
+        )
+    );
+
+    ShaderTestFixture::Desc FixtureDesc{};
+    FixtureDesc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
+    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
+    FixtureDesc.Source = std::string(
+        R"(
+        #include "/Test/Public/ShaderTestFramework.hlsli"
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_SingleThreadDispatched_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            const uint3 expectedDim = uint3(1,1,1);
+    
+            STF::AreEqual(expectedDim, ShaderTestPrivate::DispatchDimensions);
+        }
+        
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(1,1,1)]
+        void GIVEN_SingleThreadPerGroupAnd10Groups_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            const uint3 expectedDim = uint3(10,10,10);
+    
+            STF::AreEqual(expectedDim, ShaderTestPrivate::DispatchDimensions);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(10,10,10)]
+        void GIVEN_SingleGroupWithGroupSizeOf10_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            const uint3 expectedDim = uint3(10,10,10);
+    
+            STF::AreEqual(expectedDim, ShaderTestPrivate::DispatchDimensions);
+        }
+
+        [RootSignature(SHADER_TEST_RS)]
+        [numthreads(2,2,2)]
+        void GIVEN_GroupWithSide2WithGroupSizeOfSide2_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
+        {
+            const uint3 expectedDim = uint3(4,4,4);
+    
+            STF::AreEqual(expectedDim, ShaderTestPrivate::DispatchDimensions);
+        }
+        )");
+    ShaderTestFixture Fixture(std::move(FixtureDesc));
+    Fixture.TakeCapture();
+    DYNAMIC_SECTION(testName)
+    {
+        REQUIRE(Fixture.RunTest(testName, dimX, dimY, dimZ));
+    }
+}
+
 SCENARIO("HLSLFrameworkTests - Bugs")
 {
     auto [testName, code, shouldSucceed] = GENERATE
