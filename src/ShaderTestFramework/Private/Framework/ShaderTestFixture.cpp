@@ -49,23 +49,6 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
 
     const auto assertUAV = CreateAssertBufferUAV(assertBuffer, resourceHeap);
 
-    const auto [numThreads, dimX, dimY, dimZ] = [&compileResult, InX, InY, InZ]()
-    {
-        u32 threadX = 0;
-        u32 threadY = 0;
-        u32 threadZ = 0;
-        compileResult->GetReflection()->GetThreadGroupSize(&threadX, &threadY, &threadZ);
-
-        const u32 dimX = threadX * InX;
-        const u32 dimY = threadY * InY;
-        const u32 dimZ = threadZ * InZ;
-
-        return Tuple{ dimX * dimY * dimZ, dimX, dimY, dimZ };
-    }();
-
-    auto scratchBuffer = CreateScratchBuffer(numThreads);
-    const auto scratchBufferUAV = CreateScratchBufferUAV(scratchBuffer, resourceHeap);
-
     const auto capturer = PIXCapturer(InName, ShouldTakeCapture());
 
     engine.Execute(InName,
@@ -73,11 +56,8 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
         &pipelineState,
         &rootSignature,
         &assertBuffer,
-        &scratchBuffer,
         &readBackBuffer,
-        InX, InY, InZ,
-        dimX, dimY, dimZ,
-        numThreads]
+        InX, InY, InZ]
         (ScopedCommandContext& InContext)
         {
             InContext.Section("Test Setup",
@@ -87,8 +67,7 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
                     InContext->SetComputeRootSignature(rootSignature);
                     InContext->SetDescriptorHeaps(resourceHeap);
                     InContext->SetBufferUAV(assertBuffer);
-                    InContext->SetBufferUAV(scratchBuffer);
-                    std::array params{ dimX, dimY, dimZ, 10u, 0u, 1u, numThreads };
+                    std::array params{ 10u, 0u };
                     InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
                 }
             );
@@ -240,30 +219,6 @@ Tuple<u32, u32> ShaderTestFixture::ReadbackResults(const GPUResource& InReadback
     std::memcpy(&fails, assertData.data() + sizeof(u32), sizeof(u32));
 
     return Tuple{ success, fails };
-}
-
-GPUResource ShaderTestFixture::CreateScratchBuffer(const u32 InNumThreads) const
-{
-    const u32 bufferSize = InNumThreads * PerThreadScratchDataSize;
-    const auto heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
-    const auto resourceDesc = CD3DX12_RESOURCE_DESC1::Buffer(bufferSize, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
-
-    return m_Device.CreateCommittedResource(heapProps, D3D12_HEAP_FLAG_NONE, resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED);
-}
-
-DescriptorHandle ShaderTestFixture::CreateScratchBufferUAV(const GPUResource& InScratchBuffer, const DescriptorHeap& InHeap) const
-{
-    const auto uav = ThrowIfUnexpected(InHeap.CreateDescriptorHandle(1));
-    D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc;
-    uavDesc.Buffer.CounterOffsetInBytes = 0;
-    uavDesc.Buffer.FirstElement = 0;
-    uavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
-    uavDesc.Buffer.NumElements = static_cast<u32>(InScratchBuffer.GetDesc().Width) / PerThreadScratchDataSize;
-    uavDesc.Buffer.StructureByteStride = PerThreadScratchDataSize;
-    uavDesc.Format = DXGI_FORMAT_UNKNOWN;
-    uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
-    m_Device.CreateUnorderedAccessView(InScratchBuffer, uavDesc, uav);
-    return uav;
 }
 
 bool ShaderTestFixture::ShouldTakeCapture() const

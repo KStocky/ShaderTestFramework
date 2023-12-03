@@ -1084,7 +1084,7 @@ SCENARIO("HLSLFrameworkTests - SectionManagement")
     );
 
     ShaderTestFixture::Desc FixtureDesc{};
-    FixtureDesc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
+    FixtureDesc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Hardware;
     FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
     FixtureDesc.Source = std::string(
         R"(
@@ -1094,6 +1094,7 @@ SCENARIO("HLSLFrameworkTests - SectionManagement")
         [numthreads(1,1,1)]
         void GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce(uint3 DispatchThreadId : SV_DispatchThreadID)
         {
+            ShaderTestPrivate::InitScratch();
             int num = 0;
             static const int Section_0Num = 0;
             while (ShaderTestPrivate::TryEnterSection(Section_0Num))
@@ -1108,6 +1109,7 @@ SCENARIO("HLSLFrameworkTests - SectionManagement")
         [numthreads(1,1,1)]
         void GIVEN_SingleSubsection_WHEN_Ran_THEN_SectionsEntered2Times(uint3 DispatchThreadId : SV_DispatchThreadID)
         {
+            ShaderTestPrivate::InitScratch();
             int num = 0;
             static const int Section_0Num = 0;
             while (ShaderTestPrivate::TryEnterSection(Section_0Num))
@@ -1129,23 +1131,24 @@ SCENARIO("HLSLFrameworkTests - SectionManagement")
         [numthreads(1,1,1)]
         void GIVEN_TwoSubsections_WHEN_Ran_THEN_SectionsEntered4Times(uint3 DispatchThreadId : SV_DispatchThreadID)
         {
+            ShaderTestPrivate::InitScratch();
             int num = 0;
             static const int Section_0Num = 0;
-            while (ShaderTestPrivate::TryEnterSection(0, Section_0Num))
+            while (ShaderTestPrivate::TryEnterSection(Section_0Num))
             {
                 ++num;
                 static const int Section_1Num = 1;
-                if (ShaderTestPrivate::TryEnterSection(0, Section_1Num))
+                if (ShaderTestPrivate::TryEnterSection(Section_1Num))
                 {
                     ++num;
-                    ShaderTestPrivate::OnLeave(0);
+                    ShaderTestPrivate::OnLeave();
                 }
                 
                 static const int Section_2Num = 2;
-                if (ShaderTestPrivate::TryEnterSection(0, Section_2Num))
+                if (ShaderTestPrivate::TryEnterSection(Section_2Num))
                 {
                     ++num;
-                    ShaderTestPrivate::OnLeave(0);
+                    ShaderTestPrivate::OnLeave();
                 }
             }  
     
@@ -1156,33 +1159,33 @@ SCENARIO("HLSLFrameworkTests - SectionManagement")
         [numthreads(1,1,1)]
         void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_SectionsEntered5Times(uint3 DispatchThreadId : SV_DispatchThreadID)
         {
+            ShaderTestPrivate::InitScratch();
             int num = 0;
-            const uint id = 0;
             static const int Section_0Num = 0;
-            while (ShaderTestPrivate::TryEnterSection(id, Section_0Num))
+            while (ShaderTestPrivate::TryEnterSection(Section_0Num))
             {
                 ++num;
 
                 static const int Section_1Num = 1;
-                if (ShaderTestPrivate::TryEnterSection(id, Section_1Num))
+                if (ShaderTestPrivate::TryEnterSection(Section_1Num))
                 {
                     ++num;
 
-                    ShaderTestPrivate::OnLeave(id);
+                    ShaderTestPrivate::OnLeave();
                 }
 
                 static const int Section_2Num = 2;
-                if (ShaderTestPrivate::TryEnterSection(id, Section_2Num))
+                if (ShaderTestPrivate::TryEnterSection(Section_2Num))
                 {
                     ++num;
 
                     static const int Section_3Num = 3;
-                    if (ShaderTestPrivate::TryEnterSection(id, Section_3Num))
+                    if (ShaderTestPrivate::TryEnterSection(Section_3Num))
                     {
                         ++num;
-                        ShaderTestPrivate::OnLeave(id);
+                        ShaderTestPrivate::OnLeave();
                     }
-                    ShaderTestPrivate::OnLeave(id);
+                    ShaderTestPrivate::OnLeave();
                 }
             }  
     
@@ -1331,138 +1334,6 @@ SCENARIO("HLSLFrameworkTests - FlattenIndex")
             const auto result = Fixture.RunTest(testName, 1, 1, 1);
             REQUIRE(!result);
         }
-    }
-}
-
-SCENARIO("HLSLFrameworkTests - ThreadDimensionCalculations")
-{
-    auto [testName, dimX, dimY, dimZ] = GENERATE
-    (
-        table<std::string, u32, u32, u32>
-        (
-            {
-                std::tuple{"GIVEN_SingleThreadDispatched_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected", 1, 1, 1},
-                std::tuple{"GIVEN_SingleThreadPerGroupAnd10Groups_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected", 10, 10, 10},
-                std::tuple{"GIVEN_SingleGroupWithGroupSizeOf10_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected", 1, 1, 1},
-                std::tuple{"GIVEN_GroupWithSide2WithGroupSizeOfSide2_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected", 2, 2, 2}
-            }
-        )
-    );
-
-    ShaderTestFixture::Desc FixtureDesc{};
-    FixtureDesc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
-    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
-    FixtureDesc.Source = std::string(
-        R"(
-        #include "/Test/Public/ShaderTestFramework.hlsli"
-
-        [RootSignature(SHADER_TEST_RS)]
-        [numthreads(1,1,1)]
-        void GIVEN_SingleThreadDispatched_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
-        {
-            const uint3 expectedDim = uint3(1,1,1);
-    
-            STF::AreEqual(expectedDim, ShaderTestPrivate::DispatchDimensions);
-        }
-        
-        [RootSignature(SHADER_TEST_RS)]
-        [numthreads(1,1,1)]
-        void GIVEN_SingleThreadPerGroupAnd10Groups_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
-        {
-            const uint3 expectedDim = uint3(10,10,10);
-    
-            STF::AreEqual(expectedDim, ShaderTestPrivate::DispatchDimensions);
-        }
-
-        [RootSignature(SHADER_TEST_RS)]
-        [numthreads(10,10,10)]
-        void GIVEN_SingleGroupWithGroupSizeOf10_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
-        {
-            const uint3 expectedDim = uint3(10,10,10);
-    
-            STF::AreEqual(expectedDim, ShaderTestPrivate::DispatchDimensions);
-        }
-
-        [RootSignature(SHADER_TEST_RS)]
-        [numthreads(2,2,2)]
-        void GIVEN_GroupWithSide2WithGroupSizeOfSide2_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
-        {
-            const uint3 expectedDim = uint3(4,4,4);
-    
-            STF::AreEqual(expectedDim, ShaderTestPrivate::DispatchDimensions);
-        }
-        )");
-    ShaderTestFixture Fixture(std::move(FixtureDesc));
-    Fixture.TakeCapture();
-    DYNAMIC_SECTION(testName)
-    {
-        REQUIRE(Fixture.RunTest(testName, dimX, dimY, dimZ));
-    }
-}
-
-SCENARIO("HLSLFrameworkTests - ScratchBufferSizeCalculations")
-{
-    auto [testName, dimX, dimY, dimZ] = GENERATE
-    (
-        table<std::string, u32, u32, u32>
-        (
-            {
-                std::tuple{"GIVEN_SingleThreadDispatched_WHEN_ScratchBufferSizeQueried_THEN_IsAsExpected", 1, 1, 1},
-                std::tuple{"GIVEN_SingleThreadPerGroupAnd10Groups_WHEN_ScratchBufferSizeQueried_THEN_IsAsExpected", 10, 10, 10},
-                std::tuple{"GIVEN_SingleGroupWithGroupSizeOf10_WHEN_ScratchBufferSizeQueried_THEN_IsAsExpected", 1, 1, 1},
-                std::tuple{"GIVEN_GroupWithSide2WithGroupSizeOfSide2_WHEN_ScratchBufferSizeQueried_THEN_IsAsExpected", 2, 2, 2}
-            }
-        )
-    );
-
-    ShaderTestFixture::Desc FixtureDesc{};
-    FixtureDesc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
-    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
-    FixtureDesc.Source = std::string(
-        R"(
-        #include "/Test/Public/ShaderTestFramework.hlsli"
-
-        [RootSignature(SHADER_TEST_RS)]
-        [numthreads(1,1,1)]
-        void GIVEN_SingleThreadDispatched_WHEN_ScratchBufferSizeQueried_THEN_IsAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
-        {
-            const uint expectedSize = 1;
-    
-            STF::AreEqual(expectedSize, ShaderTestPrivate::ScratchBufferSize);
-        }
-        
-        [RootSignature(SHADER_TEST_RS)]
-        [numthreads(1,1,1)]
-        void GIVEN_SingleThreadPerGroupAnd10Groups_WHEN_ScratchBufferSizeQueried_THEN_IsAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
-        {
-            const uint expectedSize = 10 * 10 * 10;
-    
-            STF::AreEqual(expectedSize, ShaderTestPrivate::ScratchBufferSize);
-        }
-
-        [RootSignature(SHADER_TEST_RS)]
-        [numthreads(10,10,10)]
-        void GIVEN_SingleGroupWithGroupSizeOf10_WHEN_ScratchBufferSizeQueried_THEN_IsAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
-        {
-            const uint expectedSize = 10 * 10 * 10;
-    
-            STF::AreEqual(expectedSize, ShaderTestPrivate::ScratchBufferSize);
-        }
-
-        [RootSignature(SHADER_TEST_RS)]
-        [numthreads(2,2,2)]
-        void GIVEN_GroupWithSide2WithGroupSizeOfSide2_WHEN_ScratchBufferSizeQueried_THEN_IsAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
-        {
-            const uint expectedSize = 4 * 4 * 4;
-    
-            STF::AreEqual(expectedSize, ShaderTestPrivate::ScratchBufferSize);
-        }
-        )");
-    ShaderTestFixture Fixture(std::move(FixtureDesc));
-    Fixture.TakeCapture();
-    DYNAMIC_SECTION(testName)
-    {
-        REQUIRE(Fixture.RunTest(testName, dimX, dimY, dimZ));
     }
 }
 

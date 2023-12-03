@@ -12,17 +12,14 @@
     "CBV_SRV_UAV_HEAP_DIRECTLY_INDEXED" \
 ")," \
 "RootConstants(" \
-    "num32BitConstants=7," \
+    "num32BitConstants=2," \
     "b0" \
 ")"
 
 namespace ShaderTestPrivate
 {
-    const uint3 DispatchDimensions;
     const uint MaxNumAsserts;
     const uint AssertBufferIndex;
-    const uint ScratchBufferIndex;
-    const uint ScratchBufferSize;
     static const uint AssertFailureNumBytes = 16;
     
     RWByteAddressBuffer GetAssertBuffer()
@@ -51,8 +48,6 @@ namespace ShaderTestPrivate
 
 namespace ShaderTestPrivate
 {
-    static int CurrentSectionID = 0;
-    
     struct ScenarioSectionInfo
     {
         int ParentID;
@@ -61,37 +56,55 @@ namespace ShaderTestPrivate
         bool HasUnenteredSubsections;
     };
     
-    static ScenarioSectionInfo Sections[NumSections];
+    struct PerThreadScratchData
+    {
+        int CurrentSectionID;
+        ScenarioSectionInfo Sections[NumSections];
+    };
+    
+    static PerThreadScratchData Scratch;
+    
+    void InitScratch()
+    {
+        Scratch.CurrentSectionID = 0;
+        for (uint i = 0; i < NumSections; ++i)
+        {
+            Scratch.Sections[i].ParentID = 0;
+            Scratch.Sections[i].HasBeenEntered = false;
+            Scratch.Sections[i].HasSubsectionBeenEntered = false;
+            Scratch.Sections[i].HasUnenteredSubsections = false;
+        }
+    }
     
     bool TryEnterSection(int InID)
     {
-        const bool shouldEnter = !Sections[InID].HasBeenEntered || Sections[InID].HasUnenteredSubsections;
+        const bool shouldEnter = !Scratch.Sections[InID].HasBeenEntered || Scratch.Sections[InID].HasUnenteredSubsections;
         
         if (shouldEnter)
         {
             if (InID == 0)
             {
-                CurrentSectionID = 0;
-                Sections[InID].HasBeenEntered = true;
-                Sections[InID].HasSubsectionBeenEntered = false;
+                Scratch.CurrentSectionID = 0;
+                Scratch.Sections[InID].HasBeenEntered = true;
+                Scratch.Sections[InID].HasSubsectionBeenEntered = false;
                 
                 return true;
             }
             else
             {
-                const bool ourTurn = !Sections[CurrentSectionID].HasSubsectionBeenEntered;
+                const bool ourTurn = !Scratch.Sections[Scratch.CurrentSectionID].HasSubsectionBeenEntered;
                 if (ourTurn)
                 {
-                    Sections[CurrentSectionID].HasSubsectionBeenEntered = true;
-                    Sections[CurrentSectionID].HasUnenteredSubsections = false;
-                    Sections[InID].ParentID = CurrentSectionID;
-                    Sections[InID].HasBeenEntered = true;
-                    CurrentSectionID = InID;
+                    Scratch.Sections[Scratch.CurrentSectionID].HasSubsectionBeenEntered = true;
+                    Scratch.Sections[Scratch.CurrentSectionID].HasUnenteredSubsections = false;
+                    Scratch.Sections[InID].ParentID = Scratch.CurrentSectionID;
+                    Scratch.Sections[InID].HasBeenEntered = true;
+                    Scratch.CurrentSectionID = InID;
                     return true;
                 }
                 else
                 {
-                    Sections[CurrentSectionID].HasUnenteredSubsections = true;
+                    Scratch.Sections[Scratch.CurrentSectionID].HasUnenteredSubsections = true;
                 }
             }
         }
@@ -101,59 +114,7 @@ namespace ShaderTestPrivate
     
     void OnLeave()
     {
-        CurrentSectionID = Sections[CurrentSectionID].ParentID;
-    }
-    
-    struct PerThreadScratchData
-    {
-        int CurrentSectionID;
-        ScenarioSectionInfo Sections[NumSections];
-    };
-    
-    RWStructuredBuffer<PerThreadScratchData> GetScratchBuffer()
-    {
-        return ResourceDescriptorHeap[ScratchBufferIndex];
-    }
-    
-    bool TryEnterSection(uint InThreadId, int InID)
-    {
-        const bool shouldEnter = !GetScratchBuffer()[InThreadId].Sections[InID].HasBeenEntered || GetScratchBuffer()[InThreadId].Sections[InID].HasUnenteredSubsections;
-        
-        if (shouldEnter)
-        {
-            if (InID == 0)
-            {
-                GetScratchBuffer()[InThreadId].CurrentSectionID = 0;
-                GetScratchBuffer()[InThreadId].Sections[InID].HasBeenEntered = true;
-                GetScratchBuffer()[InThreadId].Sections[InID].HasSubsectionBeenEntered = false;
-                
-                return true;
-            }
-            else
-            {
-                const bool ourTurn = !GetScratchBuffer()[InThreadId].Sections[GetScratchBuffer()[InThreadId].CurrentSectionID].HasSubsectionBeenEntered;
-                if (ourTurn)
-                {
-                    GetScratchBuffer()[InThreadId].Sections[GetScratchBuffer()[InThreadId].CurrentSectionID].HasSubsectionBeenEntered = true;
-                    GetScratchBuffer()[InThreadId].Sections[GetScratchBuffer()[InThreadId].CurrentSectionID].HasUnenteredSubsections = false;
-                    GetScratchBuffer()[InThreadId].Sections[InID].ParentID = GetScratchBuffer()[InThreadId].CurrentSectionID;
-                    GetScratchBuffer()[InThreadId].Sections[InID].HasBeenEntered = true;
-                    GetScratchBuffer()[InThreadId].CurrentSectionID = InID;
-                    return true;
-                }
-                else
-                {
-                    GetScratchBuffer()[InThreadId].Sections[GetScratchBuffer()[InThreadId].CurrentSectionID].HasUnenteredSubsections = true;
-                }
-            }
-        }
-        
-        return false;
-    }
-    
-    void OnLeave(uint InThreadId)
-    {
-        GetScratchBuffer()[InThreadId].CurrentSectionID = GetScratchBuffer()[InThreadId].Sections[GetScratchBuffer()[InThreadId].CurrentSectionID].ParentID;
+        Scratch.CurrentSectionID = Scratch.Sections[Scratch.CurrentSectionID].ParentID;
     }
 }
 
