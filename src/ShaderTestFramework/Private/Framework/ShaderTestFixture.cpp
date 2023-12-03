@@ -1,6 +1,7 @@
 #include "Framework/ShaderTestFixture.h"
 
 #include "Framework/PIXCapturer.h"
+#include "Utility/EnumReflection.h"
 
 #include "D3D12/CommandEngine.h"
 #include "D3D12/GPUDevice.h"
@@ -16,6 +17,7 @@ ShaderTestFixture::ShaderTestFixture(Desc InParams)
 	, m_Source(std::move(InParams.Source))
 	, m_CompilationFlags(std::move(InParams.CompilationFlags))
 	, m_ShaderModel(InParams.ShaderModel)
+    , m_HLSLVersion(InParams.HLSLVersion)
 	, m_IsWarp(InParams.GPUDeviceParams.DeviceType == GPUDevice::EDeviceType::Software)
 {
     m_PIXAvailable = PIXLoadLatestWinPixGpuCapturerLibrary() != nullptr;
@@ -55,9 +57,7 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
         &rootSignature,
         &assertBuffer,
         &readBackBuffer,
-        InX,
-        InY,
-        InZ]
+        InX, InY, InZ]
         (ScopedCommandContext& InContext)
         {
             InContext.Section("Test Setup",
@@ -67,7 +67,7 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
                     InContext->SetComputeRootSignature(rootSignature);
                     InContext->SetDescriptorHeaps(resourceHeap);
                     InContext->SetBufferUAV(assertBuffer);
-                    std::array params{ 10u, 0u };
+                    std::array params{ 0u };
                     InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
                 }
             );
@@ -123,12 +123,14 @@ CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName
     job.ShaderModel = m_ShaderModel;
     job.ShaderType = EShaderType::Compute;
     job.Source = m_Source;
+    job.HLSLVersion = m_HLSLVersion;
 
     if (ShouldTakeCapture())
     {
         job.AdditionalFlags.emplace_back(L"-Qembed_debug");
         job.AdditionalFlags.emplace_back(L"-Zss");
         job.AdditionalFlags.emplace_back(L"-Zi");
+        job.Flags = Enum::MakeFlags(EShaderCompileFlags::SkipOptimization, EShaderCompileFlags::O0);
     }
 
     return m_Compiler.CompileShader(job);
@@ -152,7 +154,7 @@ DescriptorHeap ShaderTestFixture::CreateDescriptorHeap() const
     D3D12_DESCRIPTOR_HEAP_DESC desc;
     desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
     desc.NodeMask = 0;
-    desc.NumDescriptors = 1;
+    desc.NumDescriptors = 2;
     desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     return m_Device.CreateDescriptorHeap(desc);
 }

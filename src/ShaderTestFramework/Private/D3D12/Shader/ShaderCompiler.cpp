@@ -15,7 +15,7 @@
 
 namespace
 {
-	std::wstring ToWString(const std::string& InString)
+	std::wstring ToWString(const std::string_view InString)
 	{
 		return std::wstring(InString.cbegin(), InString.cend());
 	}
@@ -124,6 +124,9 @@ CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& 
 	args.push_back(ToWString(InJob.EntryPoint));
 	args.push_back(L"-T");
 	args.push_back(ToWString(MakeShaderTarget(InJob.ShaderModel, InJob.ShaderType)));
+    args.push_back(L"-HV");
+    args.push_back(ToWString(Enum::UnscopedName(InJob.HLSLVersion).substr(1)));
+    args.push_back(L"-WX");
 
 	if (Enum::EnumHasMask(InJob.Flags, EShaderCompileFlags::AllResourcesBound))
 	{

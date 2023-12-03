@@ -21,6 +21,7 @@ public:
         ShaderCodeSource Source;
         std::vector<std::wstring> CompilationFlags;
         D3D_SHADER_MODEL ShaderModel = D3D_SHADER_MODEL_6_6;
+        EHLSLVersion HLSLVersion = EHLSLVersion::Default;
     };
 
     class Results
@@ -70,6 +71,7 @@ private:
     ShaderCodeSource m_Source;
     std::vector<std::wstring> m_CompilationFlags;
     D3D_SHADER_MODEL m_ShaderModel;
+    EHLSLVersion m_HLSLVersion;
     bool m_IsWarp = false;
     bool m_CaptureRequested = false;
     bool m_PIXAvailable = false;
