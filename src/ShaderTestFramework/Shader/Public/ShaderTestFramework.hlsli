@@ -59,6 +59,7 @@ namespace ShaderTestPrivate
     struct PerThreadScratchData
     {
         int CurrentSectionID;
+        int NextSectionID;
         ScenarioSectionInfo Sections[NumSections];
     };
     
@@ -217,18 +218,35 @@ namespace STF
             ShaderTestPrivate::AddError();
         }
     }
+
+    void Fail()
+    {
+        ShaderTestPrivate::AddError();
+    }
 }
 
-#define STF_GET_SECTION_VAR_NAME(InLine) STF_Section_##InLine##_Var
-#define STF_GET_SECTION_VAR_VALUE(InLine) STF_Section_##InLine##_Var_Value
-#define STF_CREATE_SECTION_VAR_IMPL(InLine) \
-    static const int STF_GET_SECTION_VAR_NAME(InLine) = ShaderTestPrivate::NextSectionID++; \
+#define STF_GET_SECTION_VAR_NAME(InID) STF_Section_##InID##_Var
+#define STF_CREATE_SECTION_VAR_IMPL(InID) \
+    static const int STF_GET_SECTION_VAR_NAME(InID) = ShaderTestPrivate::NextSectionID++ \
 
 #define STF_CREATE_SECTION_VAR STF_CREATE_SECTION_VAR_IMPL(__LINE__)
 
-#define SCENARIO()
-#define BEGIN_SECTION()
-#define END_SECTION()
+#define STF_GET_TEST_FUNC_NAME(InID) STF_TEST_FUNC_##InID
+#define STF_DECLARE_TEST_FUNC(InID) void STF_GET_TEST_FUNC_NAME(InID)()
+
+#define STF_DEFINE_TEST_ENTRY_FUNC(InID, InName, ...) void InName(__VA_ARGS__) \
+{\
+    ShaderTestPrivate::InitScratch();\
+    STF_DECLARE_TEST_FUNC(InID); \
+    STF_CREATE_SECTION_VAR_IMPL(InID);\
+    while(ShaderTestPrivate::TryEnterSection(STF_GET_SECTION_VAR_NAME(InID)))\
+    {\
+        STF_GET_TEST_FUNC_NAME(InID)();\
+    }\
+}\
+STF_DECLARE_TEST_FUNC(InID)
+
+#define SCENARIO(InName, ...) STF_DEFINE_TEST_ENTRY_FUNC(__LINE__, InName, __VA_ARGS__)
 
 //[RootSignature(SHADER_TEST_RS)]
 //[numthreads(1, 1, 1)]
@@ -257,7 +275,8 @@ namespace STF
 //
 //[RootSignature(SHADER_TEST_RS)]
 //[numthreads(1, 1, 1)]
-//BEGIN_SCENARIO(MyTestScenario, uint3 DispatchThreadId : SV_DispatchThreadID)
+//SCENARIO(MyTestScenario, uint3 DispatchThreadId : SV_DispatchThreadID)
+//{
 //
 //    STF::AreEqual(5, 5);
 //        
@@ -272,4 +291,4 @@ namespace STF
 //            STF::NotEqual(5, 4);
 //        END_SECTION() 
 //    END_SECTION() 
-//END_SCENARIO()
+//}
