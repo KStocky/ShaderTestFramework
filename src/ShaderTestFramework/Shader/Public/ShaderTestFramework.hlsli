@@ -79,36 +79,35 @@ namespace ShaderTestPrivate
     {
         const bool shouldEnter = !Scratch.Sections[InID].HasBeenEntered || Scratch.Sections[InID].HasUnenteredSubsections;
         
-        if (shouldEnter)
+        if (!shouldEnter)
         {
-            if (InID == 0)
-            {
-                Scratch.CurrentSectionID = 0;
-                Scratch.Sections[InID].HasBeenEntered = true;
-                Scratch.Sections[InID].HasSubsectionBeenEntered = false;
-                
-                return true;
-            }
-            else
-            {
-                const bool ourTurn = !Scratch.Sections[Scratch.CurrentSectionID].HasSubsectionBeenEntered;
-                if (ourTurn)
-                {
-                    Scratch.Sections[Scratch.CurrentSectionID].HasSubsectionBeenEntered = true;
-                    Scratch.Sections[Scratch.CurrentSectionID].HasUnenteredSubsections = false;
-                    Scratch.Sections[InID].ParentID = Scratch.CurrentSectionID;
-                    Scratch.Sections[InID].HasBeenEntered = true;
-                    Scratch.CurrentSectionID = InID;
-                    return true;
-                }
-                else
-                {
-                    Scratch.Sections[Scratch.CurrentSectionID].HasUnenteredSubsections = true;
-                }
-            }
+            return false;
         }
         
-        return false;
+        if (InID == 0)
+        {
+            Scratch.CurrentSectionID = 0;
+            Scratch.Sections[InID].HasBeenEntered = true;
+            Scratch.Sections[InID].HasSubsectionBeenEntered = false;
+                
+            return true;
+        }
+
+        const bool ourTurn = !Scratch.Sections[Scratch.CurrentSectionID].HasSubsectionBeenEntered;
+        if (ourTurn)
+        {
+            Scratch.Sections[Scratch.CurrentSectionID].HasSubsectionBeenEntered = true;
+            Scratch.Sections[Scratch.CurrentSectionID].HasUnenteredSubsections = false;
+            Scratch.Sections[InID].ParentID = Scratch.CurrentSectionID;
+            Scratch.Sections[InID].HasBeenEntered = true;
+            Scratch.CurrentSectionID = InID;
+            return true;
+        }
+        else
+        {
+            Scratch.Sections[Scratch.CurrentSectionID].HasUnenteredSubsections = true;
+            return false;
+        }
     }
     
     void OnLeave()
