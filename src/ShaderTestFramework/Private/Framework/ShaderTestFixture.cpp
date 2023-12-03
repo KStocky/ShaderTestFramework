@@ -76,7 +76,8 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
         &scratchBuffer,
         &readBackBuffer,
         InX, InY, InZ,
-        dimX, dimY, dimZ]
+        dimX, dimY, dimZ,
+        numThreads]
         (ScopedCommandContext& InContext)
         {
             InContext.Section("Test Setup",
@@ -87,7 +88,7 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
                     InContext->SetDescriptorHeaps(resourceHeap);
                     InContext->SetBufferUAV(assertBuffer);
                     InContext->SetBufferUAV(scratchBuffer);
-                    std::array params{ dimX, dimY, dimZ, 10u, 0u, 1u, };
+                    std::array params{ dimX, dimY, dimZ, 10u, 0u, 1u, numThreads };
                     InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
                 }
             );

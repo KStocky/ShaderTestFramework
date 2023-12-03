@@ -12,7 +12,7 @@
     "CBV_SRV_UAV_HEAP_DIRECTLY_INDEXED" \
 ")," \
 "RootConstants(" \
-    "num32BitConstants=6," \
+    "num32BitConstants=7," \
     "b0" \
 ")"
 
@@ -22,6 +22,7 @@ namespace ShaderTestPrivate
     const uint MaxNumAsserts;
     const uint AssertBufferIndex;
     const uint ScratchBufferIndex;
+    const uint ScratchBufferSize;
     static const uint AssertFailureNumBytes = 16;
     
     RWByteAddressBuffer GetAssertBuffer()
