@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-include("${CMAKE_HOME_DIRECTORY}/cmake/DllDependencyManagement.cmake")
+include("${CMAKE_HOME_DIRECTORY}/cmake/AssetDependencyManagement.cmake")
 include("${CMAKE_HOME_DIRECTORY}/cmake/Nuget.cmake")
 
 project(
@@ -19,7 +19,7 @@ set(GLOBAL_COMPILE_FLAGS
     $<$<CXX_COMPILER_ID:MSVC>:/W4> 
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic> )
 
-dll_dependency_init()
+asset_dependency_init()
 nuget_initialize("${CMAKE_HOME_DIRECTORY}/extern")
 
 add_subdirectory(src)

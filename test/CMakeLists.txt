@@ -1,4 +1,4 @@
-include("${CMAKE_HOME_DIRECTORY}/cmake/DllDependencyManagement.cmake")
+include("${CMAKE_HOME_DIRECTORY}/cmake/AssetDependencyManagement.cmake")
 include("${CMAKE_HOME_DIRECTORY}/cmake/ExternalProjects.cmake")
 
 add_executable(ShaderTestFrameworkTests)
@@ -59,16 +59,6 @@ set(SHADER_SOURCES
     Shader/Framework/ShaderTestFixtureTests/ShaderFrameworkHLSLProofOfConceptTests.hlsl
 )
 
-set_source_files_properties(${SHADER_SOURCES} PROPERTIES VS_SETTINGS "ExcludedFromBuild=true")
-target_sources(ShaderTestFrameworkTests PRIVATE ${SHADER_SOURCES})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/Shader PREFIX "ShaderSources" FILES ${SHADER_SOURCES})
-set(SHADER_SOURCE_REL_DIR "ShaderTests")
-set(SHADER_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Shader)
-target_compile_definitions(ShaderTestFrameworkTests PRIVATE SHADER_SRC="${SHADER_SOURCE_REL_DIR}" USE_PIX)
-target_add_dll_directory(ShaderTestFrameworkTests ${SHADER_SOURCE_DIR} "/${SHADER_SOURCE_REL_DIR}" SRC_DIRS DEST_DIRS)
-
-
-
 set(SOURCES
     Container/RingBufferTests.cpp
     D3D12/CommandEngineTests.cpp
@@ -87,14 +77,23 @@ set(SOURCES
     Utility/TypeTraitsTests.cpp
 )
 
+set(SHADER_SOURCE_REL_DIR "ShaderTests")
+set(SHADER_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Shader)
+
+target_sources(ShaderTestFrameworkTests PRIVATE ${SHADER_SOURCES})
 target_sources(ShaderTestFrameworkTests PRIVATE ${SOURCES})
 
+set_source_files_properties(${SHADER_SOURCES} PROPERTIES VS_SETTINGS "ExcludedFromBuild=true")
+set_target_properties(ShaderTestFrameworkTests PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:ShaderTestFrameworkTests>" )
+
+source_group(TREE ${SHADER_SOURCE_DIR} PREFIX "ShaderSources" FILES ${SHADER_SOURCES})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})
 
-target_link_libraries(ShaderTestFrameworkTests PRIVATE ShaderTestFramework)
+target_compile_definitions(ShaderTestFrameworkTests PRIVATE SHADER_SRC="${SHADER_SOURCE_REL_DIR}" USE_PIX)
 target_compile_options(ShaderTestFrameworkTests PRIVATE ${GLOBAL_COMPILE_FLAGS})
-set_target_properties(ShaderTestFrameworkTests PROPERTIES
-    VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:ShaderTestFrameworkTests>" )
+target_link_libraries(ShaderTestFrameworkTests PRIVATE ShaderTestFramework)
 
-copy_all_dependent_dlls(ShaderTestFrameworkTests)
+target_add_asset_directory(ShaderTestFrameworkTests ${SHADER_SOURCE_DIR} "/${SHADER_SOURCE_REL_DIR}")
+copy_all_dependent_assets(ShaderTestFrameworkTests)
+
 add_catch2(ShaderTestFrameworkTests)
