@@ -75,7 +75,7 @@ std::string ShaderCodeSource::ToString(const VirtualShaderDirectoryMappingManage
 				return InPath;
 			}();
 
-			std::ifstream file(InPath);
+			std::ifstream file(realPath);
 
 			if (file.is_open())
 			{

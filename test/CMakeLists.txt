@@ -3,6 +3,36 @@ include("${CMAKE_HOME_DIRECTORY}/cmake/ExternalProjects.cmake")
 
 add_executable(ShaderTestFrameworkTests)
 
+set(SHADER_SOURCES
+    Shader/Framework/BasicShaderTests.hlsl
+    Shader/Framework/HLSLFrameworkTests/Asserts/AreEqual.hlsl
+    Shader/Framework/HLSLFrameworkTests/Asserts/Fail.hlsl
+    Shader/Framework/HLSLFrameworkTests/Asserts/IsFalse.hlsl
+    Shader/Framework/HLSLFrameworkTests/Asserts/IsTrue.hlsl
+    Shader/Framework/HLSLFrameworkTests/Asserts/NotEqual.hlsl
+    Shader/Framework/HLSLFrameworkTests/Bugs/GIVEN_Object_WHEN_ConversionOperatorCalled_THEN_Fails.hlsl
+    Shader/Framework/HLSLFrameworkTests/Bugs/GIVEN_WarpAndNoOptimizations_WHEN_ThisIsRun_THEN_ItWillSomeTimesFail.hlsl
+    Shader/Framework/HLSLFrameworkTests/Cast/GIVEN_StructDoesHasDifferentOverloadOfCast_WHEN_CastCalled_THEN_Fails.hlsl
+    Shader/Framework/HLSLFrameworkTests/Cast/GIVEN_StructDoesHaveOverloadOfCast_WHEN_CastCalled_THEN_Succeeds.hlsl
+    Shader/Framework/HLSLFrameworkTests/Cast/GIVEN_StructDoesNotHaveOverloadOfCast_WHEN_CastCalled_THEN_Fails.hlsl
+    Shader/Framework/HLSLFrameworkTests/Macros/Scenario.hlsl
+    Shader/Framework/HLSLFrameworkTests/Macros/Sections.hlsl
+    Shader/Framework/HLSLFrameworkTests/Macros/SectionVarCreation.hlsl
+    Shader/Framework/HLSLFrameworkTests/FlattenIndex.hlsl
+    Shader/Framework/HLSLFrameworkTests/SectionManagement.hlsl
+    Shader/Framework/ShaderFrameworkHLSLProofOfConceptTests.hlsl
+)
+
+set_source_files_properties(${SHADER_SOURCES} PROPERTIES VS_SETTINGS "ExcludedFromBuild=true")
+target_sources(ShaderTestFrameworkTests PRIVATE ${SHADER_SOURCES})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/Shader PREFIX "ShaderSources" FILES ${SHADER_SOURCES})
+set(SHADER_SOURCE_REL_DIR "ShaderTests")
+set(SHADER_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Shader)
+target_compile_definitions(ShaderTestFrameworkTests PRIVATE SHADER_SRC="${SHADER_SOURCE_REL_DIR}" USE_PIX)
+target_add_dll_directory(ShaderTestFrameworkTests ${SHADER_SOURCE_DIR} "/${SHADER_SOURCE_REL_DIR}" SRC_DIRS DEST_DIRS)
+
+
+
 set(SOURCES
     Container/RingBufferTests.cpp
     D3D12/CommandEngineTests.cpp
