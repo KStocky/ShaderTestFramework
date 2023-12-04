@@ -19,18 +19,30 @@ namespace
 
         return VirtualShaderDirectoryMapping{ "/Tests", std::move(shaderDir) };
     }
+
+    ShaderTestFixture::Desc CreateDescForHLSLFrameworkTest(fs::path&& InPath)
+    {
+        ShaderTestFixture::Desc desc{};
+
+        desc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
+        desc.HLSLVersion = EHLSLVersion::v2021;
+        desc.Source = std::move(InPath);
+        desc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
+
+        return desc;
+    }
 }
 
 SCENARIO("ShaderTestFixtureTests")
 {
     GIVEN("Default Constructed Fixture")
     {
-        ShaderTestFixture Test{ {} };
+        ShaderTestFixture test{ {} };
         WHEN("Queried for Validity")
         {
             THEN("Is Valid")
             {
-                REQUIRE(Test.IsValid());
+                REQUIRE(test.IsValid());
             }
         }
 
@@ -38,7 +50,7 @@ SCENARIO("ShaderTestFixtureTests")
         {
             THEN("Has Agility")
             {
-                REQUIRE(Test.IsUsingAgilitySDK());
+                REQUIRE(test.IsUsingAgilitySDK());
             }
         }
     }
@@ -57,23 +69,17 @@ SCENARIO("BasicShaderTests")
             }
         )
     );
-
-    ShaderTestFixture::Desc FixtureDesc{};
-   
-    FixtureDesc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
-    FixtureDesc.Source = fs::path("/Tests/Framework/BasicShaderTests.hlsl");
-    ShaderTestFixture Fixture(std::move(FixtureDesc));
-    Fixture.TakeCapture();
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/BasicShaderTests.hlsl")));
+    fixture.TakeCapture();
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
         {
-            REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
         }
         else
         {
-            const auto result = Fixture.RunTest(testName, 1, 1, 1);
+            const auto result = fixture.RunTest(testName, 1, 1, 1);
             REQUIRE(!result);
         }
         
@@ -82,36 +88,18 @@ SCENARIO("BasicShaderTests")
 
 SCENARIO("ShaderFrameworkHLSLProofOfConceptTests")
 {
-    auto [testName, shouldSucceed] = GENERATE
+    auto testName = GENERATE
     (
-        table<std::string, bool>
-        (
-            {
-                std::tuple{"GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent", true},
-                std::tuple{"GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed", true},
-                std::tuple{"SectionTest", true}
-            }
-        )
+        "GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent",
+        "GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed",
+        "SectionTest"
     );
 
-    ShaderTestFixture::Desc FixtureDesc{};
-    FixtureDesc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
-    FixtureDesc.Source = fs::path("/Tests/Framework/ShaderFrameworkHLSLProofOfConceptTests.hlsl");
-    ShaderTestFixture Fixture(std::move(FixtureDesc));
-    Fixture.TakeCapture();
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/ShaderFrameworkHLSLProofOfConceptTests.hlsl")));
+    fixture.TakeCapture();
     DYNAMIC_SECTION(testName)
     {
-        if (shouldSucceed)
-        {
-            REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
-        }
-        else
-        {
-            const auto result = Fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
-        }
-
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
     }
 }
 
@@ -237,20 +225,16 @@ SCENARIO("HLSLFrameworkTests - Cast")
         )
     );
 
-    ShaderTestFixture::Desc FixtureDesc{};
-    FixtureDesc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
-    FixtureDesc.Source = fs::path(std::format("/Tests/Framework/HLSLFrameworkTests/Cast/{}.hlsl", testName));
-    ShaderTestFixture Fixture(std::move(FixtureDesc));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/Framework/HLSLFrameworkTests/Cast/{}.hlsl", testName))));
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
         {
-            REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
         }
         else
         {
-            const auto result = Fixture.RunTest(testName, 1, 1, 1);
+            const auto result = fixture.RunTest(testName, 1, 1, 1);
             REQUIRE(!result);
         }
     }
@@ -277,20 +261,16 @@ SCENARIO("HLSLFrameworkTests - Asserts - AreEqual")
         )
     );
 
-    ShaderTestFixture::Desc FixtureDesc{};
-    FixtureDesc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
-    FixtureDesc.Source = fs::path("/Tests/Framework/HLSLFrameworkTests/Asserts/AreEqual.hlsl");
-    ShaderTestFixture Fixture(std::move(FixtureDesc));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/Asserts/AreEqual.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
         {
-            REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
         }
         else
         {
-            const auto result = Fixture.RunTest(testName, 1, 1, 1);
+            const auto result = fixture.RunTest(testName, 1, 1, 1);
             REQUIRE(!result);
         }
     }
@@ -317,20 +297,16 @@ SCENARIO("HLSLFrameworkTests - Asserts - NotEqual")
         )
     );
 
-    ShaderTestFixture::Desc FixtureDesc{};
-    FixtureDesc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
-    FixtureDesc.Source = fs::path("/Tests/Framework/HLSLFrameworkTests/Asserts/NotEqual.hlsl");
-    ShaderTestFixture Fixture(std::move(FixtureDesc));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/Asserts/NotEqual.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
         {
-            REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
         }
         else
         {
-            const auto result = Fixture.RunTest(testName, 1, 1, 1);
+            const auto result = fixture.RunTest(testName, 1, 1, 1);
             REQUIRE(!result);
         }
     }
@@ -355,20 +331,16 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsTrue")
         )
     );
 
-    ShaderTestFixture::Desc FixtureDesc{};
-    FixtureDesc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
-    FixtureDesc.Source = fs::path("/Tests/Framework/HLSLFrameworkTests/Asserts/IsTrue.hlsl");
-    ShaderTestFixture Fixture(std::move(FixtureDesc));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/Asserts/IsTrue.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
         {
-            REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
         }
         else
         {
-            const auto result = Fixture.RunTest(testName, 1, 1, 1);
+            const auto result = fixture.RunTest(testName, 1, 1, 1);
             REQUIRE(!result);
         }
     }
@@ -387,20 +359,16 @@ SCENARIO("HLSLFrameworkTests - Asserts - Fail")
         )
     );
 
-    ShaderTestFixture::Desc FixtureDesc{};
-    FixtureDesc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
-    FixtureDesc.Source = fs::path("/Tests/Framework/HLSLFrameworkTests/Asserts/Fail.hlsl");
-    ShaderTestFixture Fixture(std::move(FixtureDesc));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/Asserts/Fail.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
         {
-            REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
         }
         else
         {
-            const auto result = Fixture.RunTest(testName, 1, 1, 1);
+            const auto result = fixture.RunTest(testName, 1, 1, 1);
             REQUIRE(!result);
         }
     }
@@ -425,20 +393,16 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsFalse")
         )
     );
 
-    ShaderTestFixture::Desc FixtureDesc{};
-    FixtureDesc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
-    FixtureDesc.Source = fs::path("/Tests/Framework/HLSLFrameworkTests/Asserts/IsFalse.hlsl");
-    ShaderTestFixture Fixture(std::move(FixtureDesc));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/Asserts/IsFalse.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
         {
-            REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
         }
         else
         {
-            const auto result = Fixture.RunTest(testName, 1, 1, 1);
+            const auto result = fixture.RunTest(testName, 1, 1, 1);
             REQUIRE(!result);
         }
     }
@@ -453,15 +417,10 @@ SCENARIO("HLSLFrameworkTests - Macros - SectionVarCreation")
         "GIVEN_TwoSectionVarsCreatedInALoop_WHEN_Queried_THEN_ValueAreAsExpected"
     );
 
-    ShaderTestFixture::Desc FixtureDesc{};
-    FixtureDesc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
-    FixtureDesc.Source = fs::path("/Tests/Framework/HLSLFrameworkTests/Macros/SectionVarCreation.hlsl");
-    ShaderTestFixture Fixture(std::move(FixtureDesc));
-
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/Macros/SectionVarCreation.hlsl")));
     DYNAMIC_SECTION(testName)
     {
-        REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
     }
 }
 
@@ -477,15 +436,10 @@ SCENARIO("HLSLFrameworkTests - Macros - SCENARIO")
         "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce"
     );
 
-    ShaderTestFixture::Desc FixtureDesc{};
-    FixtureDesc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
-    FixtureDesc.Source = fs::path("/Tests/Framework/HLSLFrameworkTests/Macros/Scenario.hlsl");
-    ShaderTestFixture Fixture(std::move(FixtureDesc));
-
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/Macros/Scenario.hlsl")));
     DYNAMIC_SECTION(testName)
     {
-        REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
     }
 }
 
@@ -499,15 +453,10 @@ SCENARIO("HLSLFrameworkTests - Macros - SECTIONS")
         "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce"
     );
 
-    ShaderTestFixture::Desc FixtureDesc{};
-    FixtureDesc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
-    FixtureDesc.Source = fs::path("/Tests/Framework/HLSLFrameworkTests/Macros/Sections.hlsl");
-    ShaderTestFixture Fixture(std::move(FixtureDesc));
-
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/Macros/Sections.hlsl")));
     DYNAMIC_SECTION(testName)
     {
-        REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
     }
 }
 
@@ -521,16 +470,10 @@ SCENARIO("HLSLFrameworkTests - SectionManagement")
         "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_SectionsEntered5Times"
     );
 
-    ShaderTestFixture::Desc FixtureDesc{};
-    FixtureDesc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    FixtureDesc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
-    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
-    FixtureDesc.Source = fs::path("/Tests/Framework/HLSLFrameworkTests/SectionManagement.hlsl");
-    ShaderTestFixture Fixture(std::move(FixtureDesc));
-
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/SectionManagement.hlsl")));
     DYNAMIC_SECTION(testName)
     {
-        REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
     }
 }
 
@@ -546,16 +489,10 @@ SCENARIO("HLSLFrameworkTests - FlattenIndex")
         "GIVEN_CubeSide3_WHEN_IndicesIncrementedInXThenYThenZ_AND_WHEN_Flattened_THEN_DifferenceIs1"
     );
 
-    ShaderTestFixture::Desc FixtureDesc{};
-    FixtureDesc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    FixtureDesc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
-    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
-    FixtureDesc.Source = fs::path("/Tests/Framework/HLSLFrameworkTests/FlattenIndex.hlsl");
-    ShaderTestFixture Fixture(std::move(FixtureDesc));
-
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/FlattenIndex.hlsl")));
     DYNAMIC_SECTION(testName)
     {
-        REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
     }
 }
 
@@ -580,22 +517,18 @@ SCENARIO("HLSLFrameworkTests - Bugs")
         )
     );
 
-    ShaderTestFixture::Desc FixtureDesc{};
-    FixtureDesc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    FixtureDesc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
-    FixtureDesc.HLSLVersion = EHLSLVersion::v2021;
-    FixtureDesc.Source = FixtureDesc.Source = fs::path(std::format("/Tests/Framework/HLSLFrameworkTests/Bugs/{}.hlsl", testName));
-    ShaderTestFixture Fixture(std::move(FixtureDesc));
-    Fixture.TakeCapture();
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/Framework/HLSLFrameworkTests/Bugs/{}.hlsl", testName))));
+    fixture.TakeCapture();
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
         {
-            REQUIRE(Fixture.RunTest(testName, 1, 1, 1));
+            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
         }
         else
         {
-            const auto result = Fixture.RunTest(testName, 1, 1, 1);
+            const auto result = fixture.RunTest(testName, 1, 1, 1);
             REQUIRE(!result);
         }
     }
