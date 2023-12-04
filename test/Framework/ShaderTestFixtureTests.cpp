@@ -1,6 +1,5 @@
 
 #include "Framework/ShaderTestFixture.h"
-#include "D3D12/Shader/IncludeHandler.h"
 #include "D3D12/Shader/ShaderEnums.h"
 
 #include <string>
@@ -16,6 +15,7 @@ namespace
         fs::path shaderDir = fs::current_path();
         shaderDir += "/";
         shaderDir += SHADER_SRC;
+        shaderDir += "/Framework/ShaderTestFixtureTests";
 
         return VirtualShaderDirectoryMapping{ "/Tests", std::move(shaderDir) };
     }
@@ -69,7 +69,7 @@ SCENARIO("BasicShaderTests")
             }
         )
     );
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/BasicShaderTests.hlsl")));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/BasicShaderTests.hlsl")));
     fixture.TakeCapture();
     DYNAMIC_SECTION(testName)
     {
@@ -95,7 +95,7 @@ SCENARIO("ShaderFrameworkHLSLProofOfConceptTests")
         "SectionTest"
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/ShaderFrameworkHLSLProofOfConceptTests.hlsl")));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/ShaderFrameworkHLSLProofOfConceptTests.hlsl")));
     fixture.TakeCapture();
     DYNAMIC_SECTION(testName)
     {
@@ -225,7 +225,7 @@ SCENARIO("HLSLFrameworkTests - Cast")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/Framework/HLSLFrameworkTests/Cast/{}.hlsl", testName))));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/HLSLFrameworkTests/Cast/{}.hlsl", testName))));
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
@@ -261,7 +261,7 @@ SCENARIO("HLSLFrameworkTests - Asserts - AreEqual")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/Asserts/AreEqual.hlsl")));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Asserts/AreEqual.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
@@ -297,7 +297,7 @@ SCENARIO("HLSLFrameworkTests - Asserts - NotEqual")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/Asserts/NotEqual.hlsl")));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Asserts/NotEqual.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
@@ -331,7 +331,7 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsTrue")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/Asserts/IsTrue.hlsl")));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Asserts/IsTrue.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
@@ -359,7 +359,7 @@ SCENARIO("HLSLFrameworkTests - Asserts - Fail")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/Asserts/Fail.hlsl")));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Asserts/Fail.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
@@ -393,7 +393,7 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsFalse")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/Asserts/IsFalse.hlsl")));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Asserts/IsFalse.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
@@ -417,7 +417,7 @@ SCENARIO("HLSLFrameworkTests - Macros - SectionVarCreation")
         "GIVEN_TwoSectionVarsCreatedInALoop_WHEN_Queried_THEN_ValueAreAsExpected"
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/Macros/SectionVarCreation.hlsl")));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Macros/SectionVarCreation.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         REQUIRE(fixture.RunTest(testName, 1, 1, 1));
@@ -436,7 +436,7 @@ SCENARIO("HLSLFrameworkTests - Macros - SCENARIO")
         "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce"
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/Macros/Scenario.hlsl")));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Macros/Scenario.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         REQUIRE(fixture.RunTest(testName, 1, 1, 1));
@@ -453,7 +453,7 @@ SCENARIO("HLSLFrameworkTests - Macros - SECTIONS")
         "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce"
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/Macros/Sections.hlsl")));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Macros/Sections.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         REQUIRE(fixture.RunTest(testName, 1, 1, 1));
@@ -470,7 +470,7 @@ SCENARIO("HLSLFrameworkTests - SectionManagement")
         "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_SectionsEntered5Times"
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/SectionManagement.hlsl")));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/SectionManagement.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         REQUIRE(fixture.RunTest(testName, 1, 1, 1));
@@ -489,7 +489,7 @@ SCENARIO("HLSLFrameworkTests - FlattenIndex")
         "GIVEN_CubeSide3_WHEN_IndicesIncrementedInXThenYThenZ_AND_WHEN_Flattened_THEN_DifferenceIs1"
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Framework/HLSLFrameworkTests/FlattenIndex.hlsl")));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/FlattenIndex.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         REQUIRE(fixture.RunTest(testName, 1, 1, 1));
@@ -518,7 +518,7 @@ SCENARIO("HLSLFrameworkTests - Bugs")
     );
 
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/Framework/HLSLFrameworkTests/Bugs/{}.hlsl", testName))));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/HLSLFrameworkTests/Bugs/{}.hlsl", testName))));
     fixture.TakeCapture();
     DYNAMIC_SECTION(testName)
     {

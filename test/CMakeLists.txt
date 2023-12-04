@@ -4,23 +4,23 @@ include("${CMAKE_HOME_DIRECTORY}/cmake/ExternalProjects.cmake")
 add_executable(ShaderTestFrameworkTests)
 
 set(SHADER_SOURCES
-    Shader/Framework/BasicShaderTests.hlsl
-    Shader/Framework/HLSLFrameworkTests/Asserts/AreEqual.hlsl
-    Shader/Framework/HLSLFrameworkTests/Asserts/Fail.hlsl
-    Shader/Framework/HLSLFrameworkTests/Asserts/IsFalse.hlsl
-    Shader/Framework/HLSLFrameworkTests/Asserts/IsTrue.hlsl
-    Shader/Framework/HLSLFrameworkTests/Asserts/NotEqual.hlsl
-    Shader/Framework/HLSLFrameworkTests/Bugs/GIVEN_Object_WHEN_ConversionOperatorCalled_THEN_Fails.hlsl
-    Shader/Framework/HLSLFrameworkTests/Bugs/GIVEN_WarpAndNoOptimizations_WHEN_ThisIsRun_THEN_ItWillSomeTimesFail.hlsl
-    Shader/Framework/HLSLFrameworkTests/Cast/GIVEN_StructDoesHasDifferentOverloadOfCast_WHEN_CastCalled_THEN_Fails.hlsl
-    Shader/Framework/HLSLFrameworkTests/Cast/GIVEN_StructDoesHaveOverloadOfCast_WHEN_CastCalled_THEN_Succeeds.hlsl
-    Shader/Framework/HLSLFrameworkTests/Cast/GIVEN_StructDoesNotHaveOverloadOfCast_WHEN_CastCalled_THEN_Fails.hlsl
-    Shader/Framework/HLSLFrameworkTests/Macros/Scenario.hlsl
-    Shader/Framework/HLSLFrameworkTests/Macros/Sections.hlsl
-    Shader/Framework/HLSLFrameworkTests/Macros/SectionVarCreation.hlsl
-    Shader/Framework/HLSLFrameworkTests/FlattenIndex.hlsl
-    Shader/Framework/HLSLFrameworkTests/SectionManagement.hlsl
-    Shader/Framework/ShaderFrameworkHLSLProofOfConceptTests.hlsl
+    Shader/Framework/ShaderTestFixtureTests/BasicShaderTests.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Asserts/AreEqual.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Asserts/Fail.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Asserts/IsFalse.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Asserts/IsTrue.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Asserts/NotEqual.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Bugs/GIVEN_Object_WHEN_ConversionOperatorCalled_THEN_Fails.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Bugs/GIVEN_WarpAndNoOptimizations_WHEN_ThisIsRun_THEN_ItWillSomeTimesFail.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Cast/GIVEN_StructDoesHasDifferentOverloadOfCast_WHEN_CastCalled_THEN_Fails.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Cast/GIVEN_StructDoesHaveOverloadOfCast_WHEN_CastCalled_THEN_Succeeds.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Cast/GIVEN_StructDoesNotHaveOverloadOfCast_WHEN_CastCalled_THEN_Fails.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Macros/Scenario.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Macros/Sections.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Macros/SectionVarCreation.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/FlattenIndex.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/SectionManagement.hlsl
+    Shader/Framework/ShaderTestFixtureTests/ShaderFrameworkHLSLProofOfConceptTests.hlsl
 )
 
 set_source_files_properties(${SHADER_SOURCES} PROPERTIES VS_SETTINGS "ExcludedFromBuild=true")
