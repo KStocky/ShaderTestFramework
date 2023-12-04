@@ -116,11 +116,11 @@ target_include_directories(ShaderTestFramework PUBLIC ${AGILITY_INCLUDE} ${DXC_I
 
 target_compile_definitions(ShaderTestFramework PRIVATE D3D12_SDK_VERSION_ID=${SDK_VER} SHADER_SRC="${SHADER_SOURCE_REL_DIR}" USE_PIX)
 
-target_add_asset_directory(ShaderTestFramework ${AGILITY_DLL} "/D3D12" SRC_DIRS DEST_DIRS)
-target_add_asset_directory(ShaderTestFramework ${WARP_DLL} "/" SRC_DIRS DEST_DIRS)
-target_add_asset_directory(ShaderTestFramework ${DXC_DLL} "/" SRC_DIRS DEST_DIRS)
-target_add_asset_directory(ShaderTestFramework ${WINPIX_BIN} "/" SRC_DIRS DEST_DIRS)
-target_add_asset_directory(ShaderTestFramework ${SHADER_SOURCE_DIR} "/${SHADER_SOURCE_REL_DIR}" SRC_DIRS DEST_DIRS)
+target_add_asset_directory(ShaderTestFramework ${AGILITY_DLL} "/D3D12")
+target_add_asset_directory(ShaderTestFramework ${WARP_DLL} "/")
+target_add_asset_directory(ShaderTestFramework ${DXC_DLL} "/")
+target_add_asset_directory(ShaderTestFramework ${WINPIX_BIN} "/")
+target_add_asset_directory(ShaderTestFramework ${SHADER_SOURCE_DIR} "/${SHADER_SOURCE_REL_DIR}")
 
 target_link_libraries(ShaderTestFramework PRIVATE d3d12.lib dxgi.lib DXC dxguid.lib WINPIX)
 

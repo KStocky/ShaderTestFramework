@@ -12,8 +12,7 @@ function(asset_dependency_init)
     endforeach()
 endfunction()
 
-function(target_add_asset_directory IN_TARGET IN_ABSOLUTE_SRC IN_RELATIVE_DEST OUT_SRC_LIST OUT_DST_LIST)
-
+function(target_add_asset_directory IN_TARGET IN_ABSOLUTE_SRC IN_RELATIVE_DEST)
     if(DEFINED CACHE{TARGET_DIRECTORY_SRC_${IN_TARGET}})
         set(TARGET_DIRECTORY_SRC_${IN_TARGET} "${TARGET_DIRECTORY_SRC_${IN_TARGET}};${IN_ABSOLUTE_SRC}" CACHE INTERNAL "${IN_TARGET} Src DLL Directories")
         set(TARGET_DIRECTORY_DST_${IN_TARGET} "${TARGET_DIRECTORY_DST_${IN_TARGET}};${IN_RELATIVE_DEST}" CACHE INTERNAL "${IN_TARGET} Dst DLL Directories")
@@ -21,10 +20,6 @@ function(target_add_asset_directory IN_TARGET IN_ABSOLUTE_SRC IN_RELATIVE_DEST O
         set(TARGET_DIRECTORY_SRC_${IN_TARGET} "${IN_ABSOLUTE_SRC}" CACHE INTERNAL "${IN_TARGET} Src DLL Directories")
         set(TARGET_DIRECTORY_DST_${IN_TARGET} "${IN_RELATIVE_DEST}" CACHE INTERNAL "${IN_TARGET} Dst DLL Directories")
     endif()
-    
-
-    set("${OUT_SRC_LIST}" "${TARGET_DIRECTORY_SRC_${IN_TARGET}}" PARENT_SCOPE)
-    set("${OUT_DST_LIST}" "${TARGET_DIRECTORY_DST_${IN_TARGET}}" PARENT_SCOPE)
 endfunction()
 
 function(get_all_target_dependencies IN_TARGET IN_OUT_DEPENDENCIES)
