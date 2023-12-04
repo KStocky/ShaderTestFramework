@@ -395,56 +395,15 @@ SCENARIO("ShaderHashTests")
 SCENARIO("ShaderReflectionTests - Resource binding")
 {
 
-    auto [name, code, expectedNumBufferInResources] =
+    auto [name, expectedNumBufferInResources] =
         GENERATE
         (
-            table<std::string, std::string, u32>
+            table<std::string, u32>
             (
                 {
-                    std::tuple
-                    {
-                        "A shader with a single input Buffer",
-                        R"(
-                        RWBuffer<int> Buff;
-
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                            Buff[DispatchThreadId.x] = 0;
-                        }
-                        )",
-                        1
-                    },
-                    std::tuple
-                    {
-                        "A shader with an array of Buffers",
-                        R"(
-                        RWBuffer<int> Buff[2];
-
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                            Buff[0][DispatchThreadId.x] = 0;
-                            Buff[1][DispatchThreadId.x] = 0;
-                        }
-                        )",
-                        2
-                    },
-                    std::tuple
-                    {
-                        "A shader with an unbounded array of Buffers",
-                        R"(
-                        RWBuffer<int> Buff[];
-
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                            Buff[0][DispatchThreadId.x] = 0;
-                            Buff[1][DispatchThreadId.x] = 0;
-                        }
-                        )",
-                        0
-                    }
+                    std::tuple{"SingleInputBuffer", 1},
+                    std::tuple{"ArrayOfBuffers", 2},
+                    std::tuple{"UnboundedArrayOfBuffers", 0}
                 }
             )
         );
@@ -452,16 +411,10 @@ SCENARIO("ShaderReflectionTests - Resource binding")
 
     GIVEN(name)
     {
-        ShaderCompilationJobDesc job;
-        job.Name = "Test";
-        job.EntryPoint = "Main";
-        job.ShaderModel = D3D_SHADER_MODEL_6_0;
-        job.ShaderType = EShaderType::Compute;
-        job.Source = code;
-
         WHEN("when compiled")
         {
-            ShaderCompiler compiler;
+            auto compiler = CreateCompiler();
+            const auto job = CreateCompilationJob(EShaderType::Compute, D3D_SHADER_MODEL_6_0, EHLSLVersion::Default, {}, std::format("/Tests/ResourceBinding/{}.hlsl", name));
             const auto result = compiler.CompileShader(job);
 
             REQUIRE(result.has_value());
@@ -502,25 +455,10 @@ SCENARIO("ShaderIncludeHandlerTests")
 {
     GIVEN("Shader that includes test framework")
     {
-        ShaderCompilationJobDesc job;
-        job.Name = "Test";
-        job.EntryPoint = "Main";
-        job.ShaderModel = D3D_SHADER_MODEL_6_6;
-        job.ShaderType = EShaderType::Compute;
-        job.HLSLVersion = EHLSLVersion::v2021;
-        job.Source = std::string{ R"(
-                        #include "/Test/Public/ShaderTestFramework.hlsli"
-
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                            ShaderTestPrivate::Success();
-                        }
-                        )" };
-
         WHEN("compiled")
         {
-            ShaderCompiler compiler;
+            auto compiler = CreateCompiler();
+            const auto job = CreateCompilationJob(EShaderType::Compute, D3D_SHADER_MODEL_6_6, EHLSLVersion::v2021, {}, L"/Tests/ShaderIncludeHandlerTests/ShaderWithInclude.hlsl");
             const auto result = compiler.CompileShader(job);
 
             THEN("Success")

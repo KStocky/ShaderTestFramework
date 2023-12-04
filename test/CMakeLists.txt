@@ -26,6 +26,10 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/StaticStructMemberInTemplatedStruct.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/StaticVariableInTemplatedFunction.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/VariadicMacro.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ResourceBinding/ArrayOfBuffers.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ResourceBinding/SingleInputBuffer.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ResourceBinding/UnboundedArrayOfBuffers.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderIncludeHandlerTests/ShaderWithInclude.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/ClosestHitShaderWithAttributes.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/ClosestHitShaderWithNoAttributes.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/ComputeShaderWith16BitFloats.hlsl
