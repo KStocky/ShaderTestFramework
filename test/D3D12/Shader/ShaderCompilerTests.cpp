@@ -154,435 +154,120 @@ SCENARIO("ShaderModelTests")
 
 SCENARIO("HLSLTests")
 {
-    auto [name, code, successCondition] =
+    auto [name, successCondition] =
         GENERATE
         (
-            table<std::string, std::string, bool(*)(const EHLSLVersion)>
+            table<std::string, bool(*)(const EHLSLVersion)>
             (
-                {
-                    
+                { 
                     std::tuple
                     {
-                        "Function style macro",
-                        R"(
-                        
-                        #define FUNC(InA, InB) InA + InB
-                        RWBuffer<int> Buff;
-
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                            Buff[DispatchThreadId.x] = FUNC(4, 3);
-                        }
-                        )",
+                        "FunctionStyleMacro",
                         [](const EHLSLVersion) { return true; }
                     },
                     std::tuple
                     {
-                        "Variadic macro",
-                        R"(
-                        
-                        #define ENTRY(InName, ...) void InName(__VA_ARGS__)
-
-                        [numthreads(1,1,1)]
-                        ENTRY(Main, uint3 DispatchThreadId : SV_DispatchThreadID, uint GroupIndex : SV_GroupIndex)
-                        {
-                        }
-                        )",
+                        "VariadicMacro",
                         [](const EHLSLVersion) { return true; }
                     },
                     std::tuple
                     {
-                        "Global string",
-                        R"(
-                        string hello = "Hi";
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                            
-                        }
-                        )",
+                        "GlobalString",
                         [](const EHLSLVersion) { return true; }
                     },
                     std::tuple
                     {
-                        "Local string assigned to a uint array",
-                        R"(
-                        
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                            uint hello[] = "Hi";
-                        }
-                        )",
+                        "LocalStringAssignedToAUintArray",
                         [](const EHLSLVersion) { return false; }
                     },
                     std::tuple
                     {
-                        "Local string",
-                        R"(
-                        
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                            string hello = "Hi";
-                        }
-                        )",
+                        "LocalString",
                         [](const EHLSLVersion) { return false; }
                     },
                      std::tuple
                     {
-                        "Operator bool with an empty struct",
-                        R"(
-                        
-                        struct MyStruct
-                        {
-                            operator bool()
-                            {
-                                return true;
-                            }
-                        };
-                        
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                            MyStruct testStruct;
-                            bool t = (bool)testStruct;
-                        }
-                        )",
+                        "OperatorBoolWithAnEmptyStruct",
                         [](const EHLSLVersion) { return false; }
                     },
                     std::tuple
                     {
-                        "Operator int with an empty struct",
-                        R"(
-                        
-                        struct MyStruct
-                        {
-                            operator int()
-                            {
-                                return 0;
-                            }
-                        };
-                        
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                            MyStruct testStruct;
-                            int u = (int)testStruct;
-                        }
-                        )",
+                        "OperatorIntWithAnEmptyStruct",
                         [](const EHLSLVersion) { return false; }
                     },
                     std::tuple
                     {
-                        "Operator bool",
-                        R"(
-                        
-                        struct MyStruct
-                        {
-                            int hi;
-                            operator bool()
-                            {
-                                return true;
-                            }
-                        };
-                        
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                            MyStruct testStruct;
-                            bool t = (bool)testStruct;
-                        }
-                        )",
+                        "OperatorBool",
                         [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
                     },
                     std::tuple
                     {
-                        "Operator int",
-                        R"(
-                        
-                        struct MyStruct
-                        {
-                            int hi;
-                            
-                            operator int()
-                            {
-                                return 0;
-                            }
-                        };
-                        
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                            MyStruct testStruct;
-                            int u = (int)testStruct;
-                        }
-                        )",
+                        "OperatorInt",
                         [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
                     },
                     std::tuple
                     {
-                        "Counter macro",
-                        R"(
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                            int a = __COUNTER__;
-                            int b = __COUNTER__;
-                        }
-                        )",
+                        "CounterMacro",
                         [](const EHLSLVersion) { return true; }
                     },
                     std::tuple
                     {
-                        "Line macro",
-                        R"(
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                            int a = __LINE__;
-                            int b = __LINE__;
-                        }
-                        )",
+                        "LineMacro",
                         [](const EHLSLVersion) { return true; }
                     },
                     std::tuple
                     {
-                        "static struct member in templated struct",
-                        R"(
-                        template<int ID>
-                        struct Test
-                        {
-                            static int Num;
-                        };
-                        
-                        template<int ID>
-                        int Test<ID>::Num = 2;
-                        
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                           int i = Test<0>::Num;
-                        }
-                        )",
+                        "StaticStructMemberInTemplatedStruct",
                         [](const EHLSLVersion) { return false; }
                     },
                     std::tuple
                     {
-                        "static variable in templated function",
-                        R"(
-                        template<int ID>
-                        int StaticFunc(int In, bool InShouldChange)
-                        {
-                            static int var = 0;
-                            if (InShouldChange)
-                            {
-                                var = In;
-                            }
-                            return var;
-                        }
-                        
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                           int i = StaticFunc<0>(5, true);
-                        }
-                        )",
+                        "StaticVariableInTemplatedFunction",
                         [](const EHLSLVersion) { return false; }
                     },
                     std::tuple
                     {
-                        "static const struct member in templated struct",
-                        R"(
-                        template<int ID>
-                        struct Test
-                        {
-                            static const int Num = 2;
-                        };
-
-                        RWBuffer<int> MyBuffer;
-
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                           MyBuffer[DispatchThreadId.x] = Test<42>::Num;
-                        }
-                        )",
+                        "StaticConstStructMemberInTemplatedStruct",
                         [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
                     },
                     std::tuple
                     {
-                        "static struct member in non templated struct",
-                        R"(
-                        struct Test
-                        {
-                            static int Num;
-                        };
-
-                        int Test::Num = 2;
-                        RWBuffer<int> MyBuffer;
-
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                           MyBuffer[DispatchThreadId.x] = Test::Num;
-                        }
-                        )",
+                        "StaticStructMemberInNonTemplatedStruct",
                         [](const EHLSLVersion) { return true; }
                     },
                     std::tuple
                     {
-                        "Macro generated struct with static data member",
-                        R"(
-                        struct Test
-                        {
-                            static int Num;
-                        };
-
-                        int Test::Num = 2;
-                        RWBuffer<int> MyBuffer;
-
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                           MyBuffer[DispatchThreadId.x] = Test::Num;
-                        }
-                        )",
+                        "MacroGeneratedStructWithStaticDataMember",
                         [](const EHLSLVersion) { return true; }
                     },
                     std::tuple
                     {
-                        "Forward Declare function",
-                        R"(
-                        
-                        int GetAnswer();
-                        RWBuffer<int> MyBuffer;
-
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                           MyBuffer[DispatchThreadId.x] = GetAnswer();
-                        }
-
-                        int GetAnswer()
-                        {
-                            return 42;
-                        }
-                        )",
+                        "ForwardDeclareFunction",
                         [](const EHLSLVersion) { return true; }
                     },
                     std::tuple
                     {
-                        "Forward Declare function in other function",
-                        R"(
-                        
-                        int GetAnswer();
-                        RWBuffer<int> MyBuffer;
-
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                           int GetAnswer();
-                           MyBuffer[DispatchThreadId.x] = GetAnswer();
-                        }
-
-                        int GetAnswer()
-                        {
-                            return 42;
-                        }
-                        )",
+                        "ForwardDeclareFunctionInOtherFunction",
                         [](const EHLSLVersion) { return true; }
                     },
                     std::tuple
                     {
-                    "Forward Declare function in other function and define it",
-                    R"(
-                        
-                        int GetAnswer();
-                        RWBuffer<int> MyBuffer;
-
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                           int GetAnswer();
-                           MyBuffer[DispatchThreadId.x] = GetAnswer();
-
-                            int GetAnswer()
-                            {
-                                return 42;
-                            }
-                        }
-                        )",
+                        "ForwardDeclareFunctionInOtherFunctionAndDefineIt",
                         [](const EHLSLVersion) { return false; }
                     },
                     std::tuple
                     {
-                    "Define struct member function later",
-                    R"(
-                        
-                        RWBuffer<int> MyBuffer;
-
-                        struct TestStruct
-                        {
-                            int GetAnswer();
-                        };
-
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                            TestStruct t;
-                            MyBuffer[DispatchThreadId.x] = t.GetAnswer();
-                        }
-                        
-                        int TestStruct::GetAnswer()
-                        {
-                            return 42;
-                        }
-                        )",
+                        "DefineStructMemberFunctionLater",
                         [](const EHLSLVersion) { return true; }
                     },
                     std::tuple
                     {
-                    "Define struct member function in function",
-                    R"(
-                        
-                        RWBuffer<int> MyBuffer;
-
-                        struct TestStruct
-                        {
-                            int GetAnswer();
-                        };
-
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                            TestStruct t;
-                            MyBuffer[DispatchThreadId.x] = t.GetAnswer();
-
-                            int TestStruct::GetAnswer()
-                            {
-                                return 42;
-                            }
-                        }
-                        )",
+                        "DefineStructMemberFunctionInFunction",
                         [](const EHLSLVersion) { return false; }
                     },
                     std::tuple
                     {
-                    "Cleanup attribute",
-                    R"(
-                        
-                        RWBuffer<int> MyBuffer;
-                        void DoTheThing(){}
-
-                        [numthreads(1,1,1)]
-                        void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
-                        {
-                            int x __attribute__((cleanup(DoTheThing)));
-                            MyBuffer[DispatchThreadId.x] = 4;
-                        }
-                        )",
+                        "CleanupAttribute",
                         [](const EHLSLVersion) { return false; }
                     }
                 }
@@ -596,19 +281,13 @@ SCENARIO("HLSLTests")
         EHLSLVersion::v2021
     );
 
-    ShaderCompilationJobDesc job;
-    job.Name = "Test";
-    job.EntryPoint = "Main";
-    job.ShaderModel = D3D_SHADER_MODEL_6_7;
-    job.ShaderType = EShaderType::Compute;
-    job.Source = code;
-    job.HLSLVersion = hlslVersion;
+    auto compiler = CreateCompiler();
 
     GIVEN(name)
     {
         WHEN("Compiled with HLSL version " << Enum::UnscopedName(hlslVersion))
         {
-            ShaderCompiler compiler;
+            const auto job = CreateCompilationJob(EShaderType::Compute, D3D_SHADER_MODEL_6_7, hlslVersion, {}, std::format("/Tests/HLSLTests/{}.hlsl", name));
             const auto errors = compiler.CompileShader(job);
             if (successCondition(hlslVersion))
             {

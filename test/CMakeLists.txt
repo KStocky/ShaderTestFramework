@@ -4,6 +4,28 @@ include("${CMAKE_HOME_DIRECTORY}/cmake/ExternalProjects.cmake")
 add_executable(ShaderTestFrameworkTests)
 
 set(SHADER_SOURCES
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CleanupAttribute.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CounterMacro.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/DefineStructMemberFunctionInFunction.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/DefineStructMemberFunctionLater.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/ForwardDeclareFunction.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/ForwardDeclareFunctionInOtherFunction.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/ForwardDeclareFunctionInOtherFunctionAndDefineIt.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/FunctionStyleMacro.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/GlobalString.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/LineMacro.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/LocalString.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/LocalStringAssignedToAUintArray.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/MacroGeneratedStructWithStaticDataMember.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/OperatorBool.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/OperatorBoolWithAnEmptyStruct.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/OperatorInt.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/OperatorIntWithAnEmptyStruct.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/StaticConstStructMemberInTemplatedStruct.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/StaticStructMemberInNonTemplatedStruct.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/StaticStructMemberInTemplatedStruct.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/StaticVariableInTemplatedFunction.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/VariadicMacro.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/ClosestHitShaderWithAttributes.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/ClosestHitShaderWithNoAttributes.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/ComputeShaderWith16BitFloats.hlsl
