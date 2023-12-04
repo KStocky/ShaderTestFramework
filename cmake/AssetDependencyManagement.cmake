@@ -1,6 +1,6 @@
 include_guard(GLOBAL)
 
-function(dll_dependency_init)
+function(asset_dependency_init)
     get_cmake_property(CACHE_VARS CACHE_VARIABLES)
 
     set(PREFIXES_TO_DELETE "TARGET_DIRECTORY_SRC;TARGET_DIRECTORY_DST")
@@ -12,7 +12,7 @@ function(dll_dependency_init)
     endforeach()
 endfunction()
 
-function(target_add_dll_directory IN_TARGET IN_ABSOLUTE_SRC IN_RELATIVE_DEST OUT_SRC_LIST OUT_DST_LIST)
+function(target_add_asset_directory IN_TARGET IN_ABSOLUTE_SRC IN_RELATIVE_DEST OUT_SRC_LIST OUT_DST_LIST)
 
     if(DEFINED CACHE{TARGET_DIRECTORY_SRC_${IN_TARGET}})
         set(TARGET_DIRECTORY_SRC_${IN_TARGET} "${TARGET_DIRECTORY_SRC_${IN_TARGET}};${IN_ABSOLUTE_SRC}" CACHE INTERNAL "${IN_TARGET} Src DLL Directories")
@@ -42,7 +42,7 @@ function(get_all_target_dependencies IN_TARGET IN_OUT_DEPENDENCIES)
     return(PROPAGATE ${IN_OUT_DEPENDENCIES})
 endfunction()
 
-function(copy_all_dependent_dlls IN_TARGET)
+function(copy_all_dependent_assets IN_TARGET)
 
     add_custom_command(TARGET ${IN_TARGET} PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E remove_directory
@@ -53,12 +53,12 @@ function(copy_all_dependent_dlls IN_TARGET)
 
     foreach(TARGET IN LISTS ALL_LIBS)
         if (DEFINED CACHE{TARGET_DIRECTORY_SRC_${TARGET}})
-            foreach(DLL_DIR IN ZIP_LISTS TARGET_DIRECTORY_SRC_${TARGET} TARGET_DIRECTORY_DST_${TARGET})
+            foreach(ASSET_DIR IN ZIP_LISTS TARGET_DIRECTORY_SRC_${TARGET} TARGET_DIRECTORY_DST_${TARGET})
 
                 add_custom_command(TARGET ${IN_TARGET} POST_BUILD
                     COMMAND ${CMAKE_COMMAND} -E copy_directory
-                    ${DLL_DIR_0}
-                    "$<TARGET_FILE_DIR:${IN_TARGET}>${DLL_DIR_1}")
+                    ${ASSET_DIR_0}
+                    "$<TARGET_FILE_DIR:${IN_TARGET}>${ASSET_DIR_1}")
             endforeach()
         endif()
     endforeach()
