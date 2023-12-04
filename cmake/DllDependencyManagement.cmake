@@ -49,6 +49,7 @@ function(copy_all_dependent_dlls IN_TARGET)
         "$<TARGET_FILE_DIR:${IN_TARGET}>/")
 
     get_all_target_dependencies(${IN_TARGET} ALL_LIBS)
+    list(APPEND ALL_LIBS ${IN_TARGET})
 
     foreach(TARGET IN LISTS ALL_LIBS)
         if (DEFINED CACHE{TARGET_DIRECTORY_SRC_${TARGET}})
