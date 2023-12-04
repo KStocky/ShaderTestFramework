@@ -1,4 +1,4 @@
-include("${CMAKE_HOME_DIRECTORY}/cmake/DllDependencyManagement.cmake")
+include("${CMAKE_HOME_DIRECTORY}/cmake/AssetDependencyManagement.cmake")
 
 add_executable(Sandbox)
 target_sources(Sandbox PRIVATE 
