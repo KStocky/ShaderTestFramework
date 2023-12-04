@@ -4,6 +4,16 @@ include("${CMAKE_HOME_DIRECTORY}/cmake/ExternalProjects.cmake")
 add_executable(ShaderTestFrameworkTests)
 
 set(SHADER_SOURCES
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/ClosestHitShaderWithAttributes.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/ClosestHitShaderWithNoAttributes.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/ComputeShaderWith16BitFloats.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/ComputeShaderWith64BitIntegers.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/ComputeShaderWithDynamicResources.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/ComputeShaderWithSinglePrecisionDotAndAccumulate.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/ComputeShaderWithWritableMSAATextures.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/PixelShaderWithQuadAny.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/PixelShaderWithSamplerFeedback.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/PixelShaderWithSV_Barycentrics.hlsl
     Shader/Framework/ShaderTestFixtureTests/BasicShaderTests.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Asserts/AreEqual.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Asserts/Fail.hlsl
