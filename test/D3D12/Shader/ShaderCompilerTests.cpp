@@ -269,6 +269,11 @@ SCENARIO("HLSLTests")
                     {
                         "CleanupAttribute",
                         [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "SizeofOperator",
+                        [](const EHLSLVersion) { return true; }
                     }
                 }
             )
