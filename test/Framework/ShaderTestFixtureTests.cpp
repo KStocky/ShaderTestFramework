@@ -93,6 +93,7 @@ SCENARIO("ShaderFrameworkHLSLProofOfConceptTests")
         "GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent",
         "GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed",
         "GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported",
+        "GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned",
         "SectionTest"
     );
 
