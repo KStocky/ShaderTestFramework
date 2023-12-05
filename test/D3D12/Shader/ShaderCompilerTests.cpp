@@ -274,6 +274,11 @@ SCENARIO("HLSLTests")
                     {
                         "SizeofOperator",
                         [](const EHLSLVersion) { return true; }
+                    },
+                    std::tuple
+                    {
+                        "HasMemberCheck",
+                        [](const EHLSLVersion) { return false; }
                     }
                 }
             )

@@ -13,6 +13,7 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/ForwardDeclareFunctionInOtherFunctionAndDefineIt.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/FunctionStyleMacro.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/GlobalString.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/HasMemberCheck.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/LineMacro.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/LocalString.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/LocalStringAssignedToAUintArray.hlsl
