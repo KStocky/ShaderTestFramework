@@ -452,10 +452,12 @@ SCENARIO("HLSLFrameworkTests - Macros - SECTIONS")
         "GIVEN_EmptySection_WHEN_Ran_THEN_NoAssertMade",
         "GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce",
         "GIVEN_TwoSections_WHEN_Ran_THEN_EachSectionIsEnteredOnce",
-        "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce"
+        "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce",
+        "GIVEN_TwoSubSectionsWithTwoNestedSubsections_WHEN_Ran_THEN_ExpectedSubsectionEntryOccurs"
     );
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Macros/Sections.hlsl")));
+    fixture.TakeCapture();
     DYNAMIC_SECTION(testName)
     {
         REQUIRE(fixture.RunTest(testName, 1, 1, 1));

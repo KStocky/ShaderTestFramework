@@ -2,97 +2,112 @@
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
-SCENARIO(GIVEN_EmptySection_WHEN_Ran_THEN_NoAssertMade, uint3 DispatchThreadId : SV_DispatchThreadID)
+void GIVEN_EmptySection_WHEN_Ran_THEN_NoAssertMade(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    BEGIN_SECTION
-    END_SECTION
+    SCENARIO()
+    {
+        BEGIN_SECTION
+        END_SECTION
+    }
 }
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
-SCENARIO(GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce, uint3 DispatchThreadId : SV_DispatchThreadID)
+void GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    static int counter = 1;
-    const int numEntered = counter++;
-    static int num = 0;
-
-    BEGIN_SECTION
-        ++num;
-    END_SECTION
-
+    int num = 0;
+    SCENARIO()
+    {
+        BEGIN_SECTION
+            ++num;
+        END_SECTION
+    }
+    
     STF::AreEqual(1, num);
-    STF::AreEqual(1, numEntered);
 }
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
-SCENARIO(GIVEN_TwoSections_WHEN_Ran_THEN_EachSectionIsEnteredOnce, uint3 DispatchThreadId : SV_DispatchThreadID)
+void GIVEN_TwoSections_WHEN_Ran_THEN_EachSectionIsEnteredOnce(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    static int counter = 1;
-    const int numEntered = counter++;
-    static int num1 = 0;
-    static int num2 = 0;
-
-    BEGIN_SECTION
-        ++num1;
-    END_SECTION
+    int num1 = 0;
+    int num2 = 0;
+    SCENARIO()
+    {
+        BEGIN_SECTION
+            ++num1;
+        END_SECTION
         
-    BEGIN_SECTION
-        ++num2;
-    END_SECTION
-
-    if (numEntered == 1)
-    {
-        STF::AreEqual(1, num1);
-        STF::AreEqual(0, num2);
+        BEGIN_SECTION
+            ++num2;
+        END_SECTION
     }
-    else if (numEntered == 2)
-    {
-        STF::AreEqual(1, num1);
-        STF::AreEqual(1, num2);
-    }
-    else
-    {
-        STF::Fail();
-    }
+    
+    STF::AreEqual(1, num1);
+    STF::AreEqual(1, num2);
+    
 }
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
-SCENARIO(GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce, uint3 DispatchThreadId : SV_DispatchThreadID)
+void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    static int counter = 1;
-    const int numEntered = counter++;
-    static int num1 = 0;
-    static int num2 = 0;
-    static int num3 = 0;
-
-    BEGIN_SECTION
-        ++num1;
-    END_SECTION
-
-    BEGIN_SECTION
-        ++num2;
+    int num1 = 0;
+    int num2 = 0;
+    int num3 = 0;
+    SCENARIO()
+    {
+        BEGIN_SECTION
+            ++num1;
+        END_SECTION
 
         BEGIN_SECTION
-            ++num3;
+
+            ++num2;
+
+            BEGIN_SECTION
+                ++num3;
+            END_SECTION
         END_SECTION
-    END_SECTION
+    }
     
-    if (numEntered == 1)
+    STF::AreEqual(1, num1);
+    STF::AreEqual(1, num2);
+    STF::AreEqual(1, num3);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void GIVEN_TwoSubSectionsWithTwoNestedSubsections_WHEN_Ran_THEN_ExpectedSubsectionEntryOccurs(uint3 DispatchThreadId : SV_DispatchThreadID)
+{
+    int num1 = 0;
+    int num2 = 0;
+    int num3 = 0;
+    int num4 = 0;
+    
+    SCENARIO()
     {
-        STF::AreEqual(1, num1);
-        STF::AreEqual(0, num2);
-        STF::AreEqual(0, num3);
+        BEGIN_SECTION
+            ++num1;
+        END_SECTION
+
+        BEGIN_SECTION
+
+            ++num2;
+
+            BEGIN_SECTION
+                ++num3;
+            END_SECTION
+        
+            BEGIN_SECTION
+                ++num4;
+            END_SECTION
+        END_SECTION
+
     }
-    else if (numEntered == 2)
-    {
-        STF::AreEqual(1, num1);
-        STF::AreEqual(1, num2);
-        STF::AreEqual(1, num3);
-    }
-    else
-    {
-        STF::Fail();
-    }
+    
+    STF::AreEqual(1, num1);
+    STF::AreEqual(2, num2);
+    STF::AreEqual(1, num3);
+    STF::AreEqual(1, num4);
 }

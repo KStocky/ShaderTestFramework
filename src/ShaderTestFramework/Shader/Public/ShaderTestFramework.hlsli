@@ -40,7 +40,6 @@ namespace ShaderTestPrivate
 
 namespace ShaderTestPrivate
 {
-    static int NextSectionID = 1;
     static const int NumSections = 32;
 }
 
@@ -66,9 +65,10 @@ namespace ShaderTestPrivate
     void InitScratch()
     {
         Scratch.CurrentSectionID = 0;
+        Scratch.NextSectionID = 1;
         for (uint i = 0; i < NumSections; ++i)
         {
-            Scratch.Sections[i].ParentID = 0;
+            Scratch.Sections[i].ParentID = i == 0 ? -1 : 0;
             Scratch.Sections[i].HasBeenEntered = false;
             Scratch.Sections[i].HasSubsectionBeenEntered = false;
             Scratch.Sections[i].HasUnenteredSubsections = false;
@@ -112,14 +112,19 @@ namespace ShaderTestPrivate
             return true;
         }
         else
-        {
-            Scratch.Sections[Scratch.CurrentSectionID].HasUnenteredSubsections = true;
+        {   
+            for (int id = Scratch.CurrentSectionID; id != -1; id = Scratch.Sections[id].ParentID)
+            {
+                Scratch.Sections[id].HasUnenteredSubsections = true;
+            }
+            
             return false;
         }
     }
     
     void OnLeave()
     {
+        Scratch.Sections[Scratch.CurrentSectionID].HasSubsectionBeenEntered = false;
         Scratch.CurrentSectionID = Scratch.Sections[Scratch.CurrentSectionID].ParentID;
     }
 }
@@ -232,7 +237,7 @@ namespace STF
 
 #define STF_GET_SECTION_VAR_NAME(InID) STF_Section_##InID##_Var
 #define STF_CREATE_SECTION_VAR_IMPL(InID) \
-    static const int STF_GET_SECTION_VAR_NAME(InID) = ShaderTestPrivate::NextSectionID++ \
+    static const int STF_GET_SECTION_VAR_NAME(InID) = ShaderTestPrivate::Scratch.NextSectionID++ \
 
 #define STF_CREATE_SECTION_VAR STF_CREATE_SECTION_VAR_IMPL(__LINE__)
 
@@ -250,7 +255,12 @@ namespace STF
 }\
 STF_DECLARE_TEST_FUNC(InID)
 
-#define SCENARIO(InName, ...) STF_DEFINE_TEST_ENTRY_FUNC(__LINE__, InName, __VA_ARGS__)
+#define STF_SCENARIO_IMPL(InID)\
+ShaderTestPrivate::InitScratch();\
+while(ShaderTestPrivate::TryLoopScenario())
+
+
+#define SCENARIO() STF_SCENARIO_IMPL(__LINE__)
 
 #define STF_BEGIN_SECTION_IMPL(InID) STF_CREATE_SECTION_VAR_IMPL(InID); \
     if (ShaderTestPrivate::TryEnterSection(STF_GET_SECTION_VAR_NAME(InID))) \
