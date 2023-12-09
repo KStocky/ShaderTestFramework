@@ -542,6 +542,20 @@ SCENARIO("HLSLFrameworkTests - TypeTraits - IsWritableContainer")
     }
 }
 
+SCENARIO("HLSLFrameworkTests - TypeTraits - TypeID")
+{
+    auto testName = GENERATE
+    (
+        "NoDuplicateTypeIDs"
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/TypeTraits/TypeIDTests.hlsl")));
+    DYNAMIC_SECTION(testName)
+    {
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+    }
+}
+
 SCENARIO("HLSLFrameworkTests - SectionManagement")
 {
     auto testName = GENERATE

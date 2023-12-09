@@ -63,6 +63,7 @@ private:
     GPUResource CreateReadbackBuffer(const u64 InSizeInBytes) const;
     DescriptorHandle CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap) const;
     Tuple<u32, u32> ReadbackResults(const GPUResource& InReadbackBuffer) const;
+    std::vector<ShaderMacro> GenerateTypeIDDefines() const;
 
     bool ShouldTakeCapture() const;
 

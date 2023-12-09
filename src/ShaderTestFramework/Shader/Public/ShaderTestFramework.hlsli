@@ -306,6 +306,34 @@ namespace STF
     };
 }
 
+#ifndef TYPE_ID_BOOL
+#define TYPE_ID_BOOL 1
+#endif
+
+namespace STF
+{
+    template<typename T>
+    struct type_id : integral_constant<uint, 0>
+    {};
+
+    template<> struct type_id<bool> : integral_constant<uint, TYPE_ID_BOOL>{};
+
+    template<> struct type_id<int> : integral_constant<uint, TYPE_ID_INT>{};
+    template<> struct type_id<int2> : integral_constant<uint, TYPE_ID_INT2>{};
+    template<> struct type_id<int3> : integral_constant<uint, TYPE_ID_INT3>{};
+    template<> struct type_id<int4> : integral_constant<uint, TYPE_ID_INT4>{};
+
+    template<> struct type_id<uint> : integral_constant<uint, TYPE_ID_UINT>{};
+    template<> struct type_id<uint2> : integral_constant<uint, TYPE_ID_UINT2>{};
+    template<> struct type_id<uint3> : integral_constant<uint, TYPE_ID_UINT3>{};
+    template<> struct type_id<uint4> : integral_constant<uint, TYPE_ID_UINT4>{};
+
+    template<> struct type_id<float> : integral_constant<uint, TYPE_ID_FLOAT>{};
+    template<> struct type_id<float2> : integral_constant<uint, TYPE_ID_FLOAT2>{};
+    template<> struct type_id<float3> : integral_constant<uint, TYPE_ID_FLOAT3>{};
+    template<> struct type_id<float4> : integral_constant<uint, TYPE_ID_FLOAT4>{};
+}
+
 namespace STF
 {
     template<typename T, typename U>

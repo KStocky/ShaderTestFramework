@@ -124,6 +124,7 @@ CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName
     job.ShaderType = EShaderType::Compute;
     job.Source = m_Source;
     job.HLSLVersion = m_HLSLVersion;
+    job.Defines = GenerateTypeIDDefines();
 
     if (ShouldTakeCapture())
     {
@@ -224,6 +225,26 @@ Tuple<u32, u32> ShaderTestFixture::ReadbackResults(const GPUResource& InReadback
 bool ShaderTestFixture::ShouldTakeCapture() const
 {
     return m_PIXAvailable && m_CaptureRequested;
+}
+
+std::vector<ShaderMacro> ShaderTestFixture::GenerateTypeIDDefines() const
+{
+    return std::vector<ShaderMacro>
+    {
+        { "TYPE_ID_BOOL", "1" },
+        { "TYPE_ID_INT", "2" },
+        { "TYPE_ID_INT2", "3" },
+        { "TYPE_ID_INT3", "4" },
+        { "TYPE_ID_INT4", "5" },
+        { "TYPE_ID_UINT", "6" },
+        { "TYPE_ID_UINT2", "7" },
+        { "TYPE_ID_UINT3", "8" },
+        { "TYPE_ID_UINT4", "9" },
+        { "TYPE_ID_FLOAT", "10" },
+        { "TYPE_ID_FLOAT2", "11" },
+        { "TYPE_ID_FLOAT3", "12" },
+        { "TYPE_ID_FLOAT4", "13" }
+    };
 }
 
 ShaderTestFixture::Results::Results(std::vector<std::string> InErrors)

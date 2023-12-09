@@ -32,6 +32,7 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/ResourceBinding/ArrayOfBuffers.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ResourceBinding/SingleInputBuffer.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ResourceBinding/UnboundedArrayOfBuffers.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderIncludeHandlerTests/Include.hlsli
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderIncludeHandlerTests/ShaderWithInclude.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/ClosestHitShaderWithAttributes.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/ClosestHitShaderWithNoAttributes.hlsl
@@ -65,6 +66,7 @@ set(SHADER_SOURCES
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/SectionManagement.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/TypeTraits/IsContainerTests.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/TypeTraits/IsWritableContainerTests.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/TypeTraits/TypeIDTests.hlsl
     Shader/Framework/ShaderTestFixtureTests/ShaderFrameworkHLSLProofOfConceptTests.hlsl
 )
 
