@@ -404,6 +404,36 @@ namespace STF
 
 namespace STF
 {
+    template<typename T>
+    struct fundamental_type_info;
+
+    template<typename T, uint InRank>
+    struct fundamental_type_info_base
+    {
+        using base_type = T;
+        static const uint rank = InRank;
+    };
+
+    template<> struct fundamental_type_info<bool> : fundamental_type_info_base<bool, 1>{};
+
+    template<> struct fundamental_type_info<uint> : fundamental_type_info_base<uint, 1>{};
+    template<> struct fundamental_type_info<uint2> : fundamental_type_info_base<uint, 2>{};
+    template<> struct fundamental_type_info<uint3> : fundamental_type_info_base<uint, 3>{};
+    template<> struct fundamental_type_info<uint4> : fundamental_type_info_base<uint, 4>{};
+
+    template<> struct fundamental_type_info<int> : fundamental_type_info_base<int, 1>{};
+    template<> struct fundamental_type_info<int2> : fundamental_type_info_base<int, 2>{};
+    template<> struct fundamental_type_info<int3> : fundamental_type_info_base<int, 3>{};
+    template<> struct fundamental_type_info<int4> : fundamental_type_info_base<int, 4>{};
+
+    template<> struct fundamental_type_info<float> : fundamental_type_info_base<float, 1>{};
+    template<> struct fundamental_type_info<float2> : fundamental_type_info_base<float, 2>{};
+    template<> struct fundamental_type_info<float3> : fundamental_type_info_base<float, 3>{};
+    template<> struct fundamental_type_info<float4> : fundamental_type_info_base<float, 4>{};
+}
+
+namespace STF
+{
     template<typename T, typename U>
     typename enable_if<is_same<T, U>::value>::type AreEqual(const T InA, const U InB)
     {
