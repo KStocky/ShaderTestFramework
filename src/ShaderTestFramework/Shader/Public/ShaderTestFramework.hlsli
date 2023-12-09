@@ -384,6 +384,26 @@ namespace STF
 
 namespace STF
 {
+    template<typename T>
+    struct is_fundamental : false_type{};
+
+    template<> struct is_fundamental<bool> : true_type{};
+    template<> struct is_fundamental<int> : true_type{};
+    template<> struct is_fundamental<int2> : true_type{};
+    template<> struct is_fundamental<int3> : true_type{};
+    template<> struct is_fundamental<int4> : true_type{};
+    template<> struct is_fundamental<uint> : true_type{};
+    template<> struct is_fundamental<uint2> : true_type{};
+    template<> struct is_fundamental<uint3> : true_type{};
+    template<> struct is_fundamental<uint4> : true_type{};
+    template<> struct is_fundamental<float> : true_type{};
+    template<> struct is_fundamental<float2> : true_type{};
+    template<> struct is_fundamental<float3> : true_type{};
+    template<> struct is_fundamental<float4> : true_type{};
+}
+
+namespace STF
+{
     template<typename T, typename U>
     typename enable_if<is_same<T, U>::value>::type AreEqual(const T InA, const U InB)
     {
