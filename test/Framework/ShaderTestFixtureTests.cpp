@@ -458,7 +458,84 @@ SCENARIO("HLSLFrameworkTests - Macros - SECTIONS")
     );
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Macros/Sections.hlsl")));
+    DYNAMIC_SECTION(testName)
+    {
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - Container")
+{
+    auto [testName, shouldSucceed] = GENERATE
+    (
+        table<std::string, bool>
+        (
+            {
+                std::tuple{"GIVEN_IntArray_WHEN_PropertiesQueried_THEN_AsExpected", true},
+                std::tuple{"GIVEN_IntArray_WHEN_StoreCalled_THEN_Succeeds", true},
+                std::tuple{"GIVEN_IntArray_WHEN_LoadCalled_THEN_ReturnsExpectedValue", true},
+                std::tuple{"GIVEN_IntArray_WHEN_StoreCalledWithDifferentType_THEN_Fails", false }
+            }
+        )
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/HLSLFrameworkTests/Container/ArrayTests/{}.hlsl", testName))));
     fixture.TakeCapture();
+    DYNAMIC_SECTION(testName)
+    {
+        if (shouldSucceed)
+        {
+            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+        }
+        else
+        {
+            const auto result = fixture.RunTest(testName, 1, 1, 1);
+            REQUIRE(!result);
+        }
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - TypeTraits - IsContainer")
+{
+    auto testName = GENERATE
+    (
+        "GIVEN_BuiltInArray_WHEN_IsContainerQueried_THEN_True",
+        "GIVEN_NonArray_WHEN_IsContainerQueried_THEN_False",
+        "GIVEN_VectorType_WHEN_IsContainerQueried_THEN_False",
+        "GIVEN_Buffer_WHEN_IsContainerQueried_THEN_True",
+        "GIVEN_RWBuffer_WHEN_IsContainerQueried_THEN_True",
+        "GIVEN_StructuredBuffer_WHEN_IsContainerQueried_THEN_True",
+        "GIVEN_RWStructuredBuffer_WHEN_IsContainerQueried_THEN_True",
+        "GIVEN_ByteAddressBuffer_WHEN_IsContainerQueried_THEN_True",
+        "GIVEN_RWByteAddressBuffer_WHEN_IsContainerQueried_THEN_True",
+        "GIVEN_ContainerInstantiation_WHEN_IsContainerQueried_THEN_True"
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/TypeTraits/IsContainerTests.hlsl")));
+    DYNAMIC_SECTION(testName)
+    {
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - TypeTraits - IsWritableContainer")
+{
+    auto testName = GENERATE
+    (
+        "GIVEN_BuiltInArray_WHEN_IsWritableContainerQueried_THEN_True",
+        "GIVEN_NonArray_WHEN_IsWritableContainerQueried_THEN_False",
+        "GIVEN_VectorType_WHEN_IsWritableContainerQueried_THEN_False",
+        "GIVEN_Buffer_WHEN_IsWritableContainerQueried_THEN_False",
+        "GIVEN_RWBuffer_WHEN_IsWritableContainerQueried_THEN_True",
+        "GIVEN_StructuredBuffer_WHEN_IsWritableContainerQueried_THEN_False",
+        "GIVEN_RWStructuredBuffer_WHEN_IsWritableContainerQueried_THEN_True",
+        "GIVEN_ByteAddressBuffer_WHEN_IsWritableContainerQueried_THEN_False",
+        "GIVEN_RWByteAddressBuffer_WHEN_IsWritableContainerQueried_THEN_True",
+        "GIVEN_WritableContainerInstantiation_WHEN_IsWritableContainerQueried_THEN_True",
+        "GIVEN_NonWritableContainerInstantiation_WHEN_IsWritableContainerQueried_THEN_False"
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/TypeTraits/IsWritableContainerTests.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         REQUIRE(fixture.RunTest(testName, 1, 1, 1));

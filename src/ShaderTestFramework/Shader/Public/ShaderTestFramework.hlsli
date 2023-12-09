@@ -175,7 +175,139 @@ namespace STF
     {
         return (InIndex.z * InDimensions.x * InDimensions.y) + (InIndex.y * InDimensions.x) + InIndex.x;
     }
+
+    template<typename T>
+    struct is_container : false_type
+    {};
+
+    template<typename T, uint Size>
+    struct is_container<T[Size]> : true_type
+    {};
+
+    template<typename T>
+    struct is_container<Buffer<T> > : true_type
+    {};
+
+    template<typename T>
+    struct is_container<RWBuffer<T> > : true_type
+    {};
+
+    template<typename T>
+    struct is_container<StructuredBuffer<T> > : true_type
+    {};
+
+    template<typename T>
+    struct is_container<RWStructuredBuffer<T> > : true_type
+    {};
+
+    template<>
+    struct is_container<RWByteAddressBuffer> : true_type
+    {};
+
+    template<>
+    struct is_container<ByteAddressBuffer> : true_type
+    {};
+
+    template<typename T>
+    struct is_writable_container : false_type
+    {};
+
+    template<typename T>
+    struct is_writable_container<RWStructuredBuffer<T> > : true_type
+    {};
+
+    template<>
+    struct is_writable_container<RWByteAddressBuffer> : true_type
+    {};
+
+    template<typename T>
+    struct is_writable_container<RWBuffer<T> > : true_type
+    {};
+
+    template<typename T, uint Size>
+    struct is_writable_container<T[Size]> : true_type
+    {};
+
+    template<typename ContainerType>
+    struct container;
     
+    template<typename T, uint Size>
+    struct container<T[Size]>
+    {
+        using underlying_type = T[Size];
+        using element_type = T;
+        static const bool writable = is_writable_container<underlying_type>::value;
+
+        underlying_type Data;
+
+        uint size()
+        {
+            return Size;
+        }
+
+        uint size_in_bytes()
+        {
+            return sizeof(T) * Size;
+        }
+
+        element_type load(const uint InIndex)
+        {
+            return Data[InIndex];
+        }
+
+        template<typename U>
+        typename enable_if<writable && is_same<element_type, U>::value>::type store(const uint InIndex, const U InItem)
+        {
+            Data[InIndex] = InItem;
+        }
+    };
+
+    template<typename T>
+    struct container<Buffer<T> >
+    {
+        using underlying_type = Buffer<T>;
+        using element_type = T;
+        static const bool writable = is_writable_container<underlying_type>::value;
+
+        underlying_type Data;
+
+        uint size()
+        {
+            uint ret = 0;
+            Data.GetDimensions(ret);
+            return ret;
+        }
+
+        uint size_in_bytes()
+        {
+            return sizeof(T) * size();
+        }
+
+        element_type load(const uint InIndex)
+        {
+            return Data[InIndex];
+        }
+
+        template<typename U>
+        typename enable_if<writable && is_same<element_type, U>::value>::type store(const uint InIndex, const U InItem)
+        {
+            Data[InIndex] = InItem;
+        }
+    };
+
+    template<typename T>
+    struct is_container<container<T> > : true_type
+    {};
+
+    template<typename T>
+    struct is_writable_container<container<T> >
+    {
+        static const bool value = container<T>::writable;
+    };
+}
+
+namespace STF
+{
     template<typename T, typename U>
     typename enable_if<is_same<T, U>::value>::type AreEqual(const T InA, const U InB)
     {

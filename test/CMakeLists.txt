@@ -54,11 +54,17 @@ set(SHADER_SOURCES
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Cast/GIVEN_StructDoesHasDifferentOverloadOfCast_WHEN_CastCalled_THEN_Fails.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Cast/GIVEN_StructDoesHaveOverloadOfCast_WHEN_CastCalled_THEN_Succeeds.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Cast/GIVEN_StructDoesNotHaveOverloadOfCast_WHEN_CastCalled_THEN_Fails.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Container/ArrayTests/GIVEN_IntArray_WHEN_LoadCalled_THEN_ReturnsExpectedValue.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Container/ArrayTests/GIVEN_IntArray_WHEN_PropertiesQueried_THEN_AsExpected.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Container/ArrayTests/GIVEN_IntArray_WHEN_StoreCalled_THEN_Succeeds.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Container/ArrayTests/GIVEN_IntArray_WHEN_StoreCalledWithDifferentType_THEN_Fails.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Macros/Scenario.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Macros/Sections.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Macros/SectionVarCreation.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/FlattenIndex.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/SectionManagement.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/TypeTraits/IsContainerTests.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/TypeTraits/IsWritableContainerTests.hlsl
     Shader/Framework/ShaderTestFixtureTests/ShaderFrameworkHLSLProofOfConceptTests.hlsl
 )
 
