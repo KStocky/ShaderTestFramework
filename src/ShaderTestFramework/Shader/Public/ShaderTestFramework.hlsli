@@ -260,6 +260,30 @@ namespace STF
         {
             Data[InIndex] = InItem;
         }
+
+        template<typename U>
+        typename enable_if<writable && is_same<element_type, U>::value>::type store(const uint InIndex, const U InItem, const U InItem2)
+        {
+            Data[InIndex] = InItem;
+            Data[InIndex + 1] = InItem2;
+        }
+
+        template<typename U>
+        typename enable_if<writable && is_same<element_type, U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3)
+        {
+            Data[InIndex] = InItem;
+            Data[InIndex + 1] = InItem2;
+            Data[InIndex + 2] = InItem3;
+        }
+
+        template<typename U>
+        typename enable_if<writable && is_same<element_type, U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3, const U InItem4)
+        {
+            Data[InIndex] = InItem;
+            Data[InIndex + 1] = InItem2;
+            Data[InIndex + 2] = InItem3;
+            Data[InIndex + 3] = InItem4;
+        }
     };
 
     template<typename T>
@@ -292,6 +316,30 @@ namespace STF
         typename enable_if<writable && is_same<element_type, U>::value>::type store(const uint InIndex, const U InItem)
         {
             Data[InIndex] = InItem;
+        }
+
+        template<typename U>
+        typename enable_if<writable && is_same<element_type, U>::value>::type store(const uint InIndex, const U InItem, const U InItem2)
+        {
+            Data[InIndex] = InItem;
+            Data[InIndex + 1] = InItem2;
+        }
+
+        template<typename U>
+        typename enable_if<writable && is_same<element_type, U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3)
+        {
+            Data[InIndex] = InItem;
+            Data[InIndex + 1] = InItem2;
+            Data[InIndex + 2] = InItem3;
+        }
+
+        template<typename U>
+        typename enable_if<writable && is_same<element_type, U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3, const U InItem4)
+        {
+            Data[InIndex] = InItem;
+            Data[InIndex + 1] = InItem2;
+            Data[InIndex + 2] = InItem3;
+            Data[InIndex + 3] = InItem4;
         }
     };
 

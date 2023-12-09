@@ -59,6 +59,12 @@ set(SHADER_SOURCES
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Container/ArrayTests/GIVEN_IntArray_WHEN_PropertiesQueried_THEN_AsExpected.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Container/ArrayTests/GIVEN_IntArray_WHEN_StoreCalled_THEN_Succeeds.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Container/ArrayTests/GIVEN_IntArray_WHEN_StoreCalledWithDifferentType_THEN_Fails.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Container/ArrayTests/GIVEN_IntArray_WHEN_Store2Called_THEN_Succeeds.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Container/ArrayTests/GIVEN_IntArray_WHEN_Store2CalledWithDifferentType_THEN_Fails.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Container/ArrayTests/GIVEN_IntArray_WHEN_Store3Called_THEN_Succeeds.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Container/ArrayTests/GIVEN_IntArray_WHEN_Store3CalledWithDifferentType_THEN_Fails.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Container/ArrayTests/GIVEN_IntArray_WHEN_Store4Called_THEN_Succeeds.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Container/ArrayTests/GIVEN_IntArray_WHEN_Store4CalledWithDifferentType_THEN_Fails.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Macros/Scenario.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Macros/Sections.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Macros/SectionVarCreation.hlsl
