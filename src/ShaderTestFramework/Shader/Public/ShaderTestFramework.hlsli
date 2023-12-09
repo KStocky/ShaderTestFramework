@@ -113,10 +113,7 @@ namespace ShaderTestPrivate
         }
         else
         {   
-            for (int id = Scratch.CurrentSectionID; id != -1; id = Scratch.Sections[id].ParentID)
-            {
-                Scratch.Sections[id].HasUnenteredSubsections = true;
-            }
+            Scratch.Sections[Scratch.CurrentSectionID].HasUnenteredSubsections = true;
             
             return false;
         }
@@ -125,7 +122,9 @@ namespace ShaderTestPrivate
     void OnLeave()
     {
         Scratch.Sections[Scratch.CurrentSectionID].HasSubsectionBeenEntered = false;
+        const bool hasUnenteredSubsections = Scratch.Sections[Scratch.CurrentSectionID].HasUnenteredSubsections;
         Scratch.CurrentSectionID = Scratch.Sections[Scratch.CurrentSectionID].ParentID;
+        Scratch.Sections[Scratch.CurrentSectionID].HasUnenteredSubsections = Scratch.Sections[Scratch.CurrentSectionID].HasUnenteredSubsections || hasUnenteredSubsections;
     }
 }
 
