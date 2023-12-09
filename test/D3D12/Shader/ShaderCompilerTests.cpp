@@ -279,6 +279,11 @@ SCENARIO("HLSLTests")
                     {
                         "HasMemberCheck",
                         [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "ArrayTemplateSpecialization",
+                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
                     }
                 }
             )
