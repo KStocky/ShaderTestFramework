@@ -213,6 +213,23 @@ namespace ProofOfConcept
     }
 }
 
+SCENARIO("HLSLFrameworkTests - ByteWriter")
+{
+    auto testName = GENERATE
+    (
+        "GIVEN_FundamentalType_WHEN_HasWriterQueried_THEN_True",
+        "GIVEN_NonFundamentalTypeWithNoWriter_WHEN_HasWriterQueried_THEN_False",
+        "GIVEN_NonFundamentalTypeWithWriter_WHEN_HasWriterQueried_THEN_True",
+        "GIVEN_FundamentalType_WHEN_BytesRequiredQueried_THEN_ExpectedNumberReturned"
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/ByteWriter/ByteWriterTests.hlsl")));
+    DYNAMIC_SECTION(testName)
+    {
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+    }
+}
+
 SCENARIO("HLSLFrameworkTests - Cast")
 {
     auto [testName, shouldSucceed] = GENERATE

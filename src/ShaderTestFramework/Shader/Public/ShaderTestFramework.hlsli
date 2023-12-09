@@ -434,6 +434,56 @@ namespace STF
 
 namespace STF
 {
+    template<typename T, typename = void>
+    struct ByteWriter
+    {
+        static const bool HasWriter = false;
+    };
+
+    template<typename T>
+    struct ByteWriter<T, typename enable_if<is_fundamental<T>::value>::type>
+    {
+        static const bool HasWriter = true;
+
+        static uint BytesRequired(T)
+        {
+            return sizeof(T);
+        }
+
+        template<typename ContainerType, uint InRank>
+        struct WriteEnabler
+        {
+            static const bool value = is_same<typename ContainerType::element_type, uint>::value && fundamental_type_info<T>::rank == InRank;
+        };
+
+        template<typename U>
+        static typename enable_if<WriteEnabler<container<U>, 1>::value>::type Write(container<U> InContainer, const uint InIndex, const T In)
+        {
+            InContainer.store(InIndex, asuint(In));
+        }
+
+        template<typename U>
+        static typename enable_if<WriteEnabler<container<U>, 2>::value>::type Write(container<U> InContainer, const uint InIndex, const T In)
+        {
+            InContainer.store(InIndex, asuint(In.x), asuint(In.y));
+        }
+
+        template<typename U>
+        static typename enable_if<WriteEnabler<container<U>, 3>::value>::type Write(container<U> InContainer, const uint InIndex, const T In)
+        {
+            InContainer.store(InIndex, asuint(In.x), asuint(In.y), asuint(In.z));
+        }
+
+        template<typename U>
+        static typename enable_if<WriteEnabler<container<U>, 4>::value>::type Write(container<U> InContainer, const uint InIndex, const T In)
+        {
+            InContainer.store(InIndex, asuint(In.x), asuint(In.y), asuint(In.z), asuint(In.w));
+        }
+    };
+}
+
+namespace STF
+{
     template<typename T, typename U>
     typename enable_if<is_same<T, U>::value>::type AreEqual(const T InA, const U InB)
     {

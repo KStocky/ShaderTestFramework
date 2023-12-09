@@ -19,6 +19,7 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/LocalString.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/LocalStringAssignedToAUintArray.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/MacroGeneratedStructWithStaticDataMember.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/NestedStructTemplates.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/OperatorBool.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/OperatorBoolWithAnEmptyStruct.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/OperatorInt.hlsl
@@ -52,6 +53,7 @@ set(SHADER_SOURCES
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Asserts/NotEqual.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Bugs/GIVEN_Object_WHEN_ConversionOperatorCalled_THEN_Fails.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Bugs/GIVEN_WarpAndNoOptimizations_WHEN_ThisIsRun_THEN_ItWillSomeTimesFail.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/ByteWriter/ByteWriterTests.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Cast/GIVEN_StructDoesHasDifferentOverloadOfCast_WHEN_CastCalled_THEN_Fails.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Cast/GIVEN_StructDoesHaveOverloadOfCast_WHEN_CastCalled_THEN_Succeeds.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Cast/GIVEN_StructDoesNotHaveOverloadOfCast_WHEN_CastCalled_THEN_Fails.hlsl

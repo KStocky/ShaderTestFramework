@@ -284,6 +284,11 @@ SCENARIO("HLSLTests")
                     {
                         "ArrayTemplateSpecialization",
                         [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
+                    },
+                    std::tuple
+                    {
+                        "NestedStructTemplates",
+                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
                     }
                 }
             )
