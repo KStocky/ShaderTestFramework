@@ -444,40 +444,54 @@ namespace STF
     struct ByteWriter<T, typename enable_if<is_fundamental<T>::value>::type>
     {
         static const bool HasWriter = true;
+        static const bool IsBoolWriter = is_same<typename fundamental_type_info<T>::base_type, bool>::value;
 
         static uint BytesRequired(T)
         {
             return sizeof(T);
         }
 
-        template<typename ContainerType, uint InRank>
+        template<typename ContainerType, uint InRank, bool ForBools = false>
         struct WriteEnabler
         {
-            static const bool value = is_same<typename ContainerType::element_type, uint>::value && fundamental_type_info<T>::rank == InRank;
+            static const bool cond_for_bools = 
+                is_same<typename ContainerType::element_type, uint>::value && 
+                ForBools;
+            
+            static const bool cond_for_non_bools = 
+                is_same<typename ContainerType::element_type, uint>::value && 
+                fundamental_type_info<T>::rank == InRank;
+            static const bool value = IsBoolWriter ? cond_for_bools : cond_for_non_bools;
         };
 
         template<typename U>
-        static typename enable_if<WriteEnabler<container<U>, 1>::value>::type Write(container<U> InContainer, const uint InIndex, const T In)
+        static typename enable_if<WriteEnabler<container<U>, 1>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
         {
             InContainer.store(InIndex, asuint(In));
         }
 
         template<typename U>
-        static typename enable_if<WriteEnabler<container<U>, 2>::value>::type Write(container<U> InContainer, const uint InIndex, const T In)
+        static typename enable_if<WriteEnabler<container<U>, 2>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
         {
             InContainer.store(InIndex, asuint(In.x), asuint(In.y));
         }
 
         template<typename U>
-        static typename enable_if<WriteEnabler<container<U>, 3>::value>::type Write(container<U> InContainer, const uint InIndex, const T In)
+        static typename enable_if<WriteEnabler<container<U>, 3>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
         {
             InContainer.store(InIndex, asuint(In.x), asuint(In.y), asuint(In.z));
         }
 
         template<typename U>
-        static typename enable_if<WriteEnabler<container<U>, 4>::value>::type Write(container<U> InContainer, const uint InIndex, const T In)
+        static typename enable_if<WriteEnabler<container<U>, 4>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
         {
             InContainer.store(InIndex, asuint(In.x), asuint(In.y), asuint(In.z), asuint(In.w));
+        }
+        
+        template<typename U>
+        static typename enable_if<WriteEnabler<container<U>, 0, true>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
+        {
+            ByteWriter<uint>::Write(InContainer, InIndex, In ? 1u : 0u);
         }
     };
 }

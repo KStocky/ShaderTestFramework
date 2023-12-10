@@ -39,6 +39,141 @@ void GIVEN_FundamentalType_WHEN_BytesRequiredQueried_THEN_ExpectedNumberReturned
     STF::AreEqual(16u, STF::ByteWriter<float4>::BytesRequired(float4(1.0f, 2.0f, 3.0f, 4.0f)));
 }
 
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_UIntBufferAndBool_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten()
+{
+    STF::container<uint[4]> buffer;
+    STF::ByteWriter<bool>::Write(buffer, 0u, true);
+    STF::AreEqual(1u, buffer.Data[0]);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_UIntBufferAndInt_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten()
+{
+    STF::container<uint[4]> buffer;
+    STF::ByteWriter<int>::Write(buffer, 0u, 42);
+    STF::AreEqual(42, asint(buffer.Data[0]));
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_UIntBufferAndInt2_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten()
+{
+    STF::container<uint[4]> buffer;
+    const int2 expectedVal = int2(42, 53);
+    STF::ByteWriter<int2>::Write(buffer, 0u, expectedVal);
+    const int2 actualVal = int2(asint(buffer.Data[0]), asint(buffer.Data[1]));
+    STF::AreEqual(expectedVal, actualVal);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_UIntBufferAndInt3_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten()
+{
+    STF::container<uint[4]> buffer;
+    const int3 expectedVal = int3(42, 53, 98);
+    STF::ByteWriter<int3>::Write(buffer, 0u, expectedVal);
+    const int3 actualVal = int3(asint(buffer.Data[0]), asint(buffer.Data[1]), asint(buffer.Data[2]));
+    STF::AreEqual(expectedVal, actualVal);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_UIntBufferAndInt4_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten()
+{
+    STF::container<uint[4]> buffer;
+    const int4 expectedVal = int4(42, 53, 98, 32);
+    STF::ByteWriter<int4>::Write(buffer, 0u, expectedVal);
+    const int4 actualVal = int4(asint(buffer.Data[0]), asint(buffer.Data[1]), asint(buffer.Data[2]), asint(buffer.Data[3]));
+    STF::AreEqual(expectedVal, actualVal);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_UIntBufferAndUInt_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten()
+{
+    STF::container<uint[4]> buffer;
+    STF::ByteWriter<uint>::Write(buffer, 0u, 42u);
+    STF::AreEqual(42u, asuint(buffer.Data[0]));
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_UIntBufferAndUInt2_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten()
+{
+    STF::container<uint[4]> buffer;
+    const uint2 expectedVal = uint2(42u, 53u);
+    STF::ByteWriter<uint2>::Write(buffer, 0u, expectedVal);
+    const uint2 actualVal = int2(asuint(buffer.Data[0]), asuint(buffer.Data[1]));
+    STF::AreEqual(expectedVal, actualVal);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_UIntBufferAndUInt3_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten()
+{
+    STF::container<uint[4]> buffer;
+    const uint3 expectedVal = uint3(42u, 53u, 98u);
+    STF::ByteWriter<uint3>::Write(buffer, 0u, expectedVal);
+    const uint3 actualVal = uint3(asuint(buffer.Data[0]), asuint(buffer.Data[1]), asuint(buffer.Data[2]));
+    STF::AreEqual(expectedVal, actualVal);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_UIntBufferAndUInt4_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten()
+{
+    STF::container<uint[4]> buffer;
+    const uint4 expectedVal = uint4(42u, 53u, 98u, 32u);
+    STF::ByteWriter<uint4>::Write(buffer, 0u, expectedVal);
+    const uint4 actualVal = uint4(asuint(buffer.Data[0]), asuint(buffer.Data[1]), asuint(buffer.Data[2]), asuint(buffer.Data[3]));
+    STF::AreEqual(expectedVal, actualVal);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_UIntBufferAndFloat_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten()
+{
+    STF::container<uint[4]> buffer;
+    STF::ByteWriter<float>::Write(buffer, 0u, 42.0f);
+    STF::AreEqual(42.0f, asfloat(buffer.Data[0]));
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_UIntBufferAndFloat2_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten()
+{
+    STF::container<uint[4]> buffer;
+    const float2 expectedVal = float2(42.0f, 2.0f);
+    STF::ByteWriter<float2>::Write(buffer, 0u, expectedVal);
+    const float2 actualVal = int2(asfloat(buffer.Data[0]), asfloat(buffer.Data[1]));
+    STF::AreEqual(expectedVal, actualVal);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_UIntBufferAndFloat3_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten()
+{
+    STF::container<uint[4]> buffer;
+    const float3 expectedVal = float3(42.0f, 2.0f, -0.5f);
+    STF::ByteWriter<float3>::Write(buffer, 0u, expectedVal);
+    const float3 actualVal = float3(asfloat(buffer.Data[0]), asfloat(buffer.Data[1]), asfloat(buffer.Data[2]));
+    STF::AreEqual(expectedVal, actualVal);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_UIntBufferAndFloat4_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten()
+{
+    STF::container<uint[4]> buffer;
+    const float4 expectedVal = float4(42.0f, 2.0f, -0.5f, 12.5f);
+    STF::ByteWriter<float4>::Write(buffer, 0u, expectedVal);
+    const float4 actualVal = float4(asfloat(buffer.Data[0]), asfloat(buffer.Data[1]), asfloat(buffer.Data[2]), asfloat(buffer.Data[3]));
+    STF::AreEqual(expectedVal, actualVal);
+}
+
 struct NoWriter
 {
     int a;
