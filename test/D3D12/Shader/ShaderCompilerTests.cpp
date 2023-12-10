@@ -289,6 +289,11 @@ SCENARIO("HLSLTests")
                     {
                         "NestedStructTemplates",
                         [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
+                    },
+                    std::tuple
+                    {
+                        "TernaryInTypeTrait",
+                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
                     }
                 }
             )
