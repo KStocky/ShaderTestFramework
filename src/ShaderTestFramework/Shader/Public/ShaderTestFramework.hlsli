@@ -280,74 +280,26 @@ namespace STF
         using element_type = uint;
     };
 
-    template<typename ContainerType>
+    template<typename ContainerType, typename = void>
     struct container;
     
-    template<typename T, uint Size>
-    struct container<T[Size]>
-    {
-        using underlying_type = T[Size];
-        using element_type = T;
-        static const bool writable = container_traits<underlying_type>::is_writable;
-
-        underlying_type Data;
-
-        uint size()
-        {
-            return Size;
-        }
-
-        uint size_in_bytes()
-        {
-            return sizeof(T) * Size;
-        }
-
-        element_type load(const uint InIndex)
-        {
-            return Data[InIndex];
-        }
-
-        template<typename U>
-        typename enable_if<writable && is_same<element_type, U>::value>::type store(const uint InIndex, const U InItem)
-        {
-            Data[InIndex] = InItem;
-        }
-
-        template<typename U>
-        typename enable_if<writable && is_same<element_type, U>::value>::type store(const uint InIndex, const U InItem, const U InItem2)
-        {
-            Data[InIndex] = InItem;
-            Data[InIndex + 1] = InItem2;
-        }
-
-        template<typename U>
-        typename enable_if<writable && is_same<element_type, U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3)
-        {
-            Data[InIndex] = InItem;
-            Data[InIndex + 1] = InItem2;
-            Data[InIndex + 2] = InItem3;
-        }
-
-        template<typename U>
-        typename enable_if<writable && is_same<element_type, U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3, const U InItem4)
-        {
-            Data[InIndex] = InItem;
-            Data[InIndex + 1] = InItem2;
-            Data[InIndex + 2] = InItem3;
-            Data[InIndex + 3] = InItem4;
-        }
-    };
-
     template<typename T>
-    struct container<Buffer<T> >
+    struct container<T, typename enable_if<container_traits<T>::is_container>::type>
     {
-        using underlying_type = Buffer<T>;
-        using element_type = T;
+        using underlying_type = T;
+        using element_type = typename container_traits<underlying_type>::element_type;
         static const bool writable = container_traits<underlying_type>::is_writable;
 
         underlying_type Data;
 
-        uint size()
+        template<typename U = T>
+        typename enable_if<is_same<U, T>::value && array_traits<U>::is_array, uint>::type size()
+        {
+            return array_traits<U>::size;
+        }
+
+        template<typename U = T>
+        typename enable_if<is_same<U, T>::value && !array_traits<U>::is_array, uint>::type size()
         {
             uint ret = 0;
             Data.GetDimensions(ret);
@@ -356,29 +308,48 @@ namespace STF
 
         uint size_in_bytes()
         {
-            return sizeof(T) * size();
+            return sizeof(element_type) * size();
         }
 
-        element_type load(const uint InIndex)
+        template<typename U = T>
+        typename enable_if<is_same<U, T>::value && !array_traits<U>::is_array, uint>::type load(const uint InIndex)
+        {
+            return Data.Load(InIndex);
+        }
+
+        template<typename U = T>
+        typename enable_if<is_same<U, T>::value && array_traits<U>::is_array, uint>::type load(const uint InIndex)
         {
             return Data[InIndex];
         }
 
         template<typename U>
-        typename enable_if<writable && is_same<element_type, U>::value>::type store(const uint InIndex, const U InItem)
+        struct BufferEnabler
+        {
+            static const bool value = writable && is_same<element_type, U>::value && !container_traits<underlying_type>::is_byte_address;
+        };
+
+        template<typename U>
+        struct ByteAddressEnabler
+        {
+            static const bool value = writable && is_same<element_type, U>::value && container_traits<underlying_type>::is_byte_address;
+        };
+
+        template<typename U>
+        typename enable_if<BufferEnabler<U>::value>::type store(const uint InIndex, const U InItem)
         {
             Data[InIndex] = InItem;
         }
 
         template<typename U>
-        typename enable_if<writable && is_same<element_type, U>::value>::type store(const uint InIndex, const U InItem, const U InItem2)
+        typename enable_if<BufferEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2)
         {
             Data[InIndex] = InItem;
             Data[InIndex + 1] = InItem2;
         }
 
         template<typename U>
-        typename enable_if<writable && is_same<element_type, U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3)
+        typename enable_if<BufferEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3)
         {
             Data[InIndex] = InItem;
             Data[InIndex + 1] = InItem2;
@@ -386,12 +357,36 @@ namespace STF
         }
 
         template<typename U>
-        typename enable_if<writable && is_same<element_type, U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3, const U InItem4)
+        typename enable_if<BufferEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3, const U InItem4)
         {
             Data[InIndex] = InItem;
             Data[InIndex + 1] = InItem2;
             Data[InIndex + 2] = InItem3;
             Data[InIndex + 3] = InItem4;
+        }
+
+        template<typename U>
+        typename enable_if<ByteAddressEnabler<U>::value>::type store(const uint InIndex, const U InItem)
+        {
+            Data.Store(InIndex, InItem);
+        }
+
+        template<typename U>
+        typename enable_if<ByteAddressEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2)
+        {
+            Data.Store(InIndex, uint2(InItem, InItem2));
+        }
+
+        template<typename U>
+        typename enable_if<ByteAddressEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3)
+        {
+            Data.Store(InIndex, uint3(InItem, InItem2, InItem3));
+        }
+
+        template<typename U>
+        typename enable_if<ByteAddressEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3, const U InItem4)
+        {
+            Data.Store(InIndex, uint4(InItem, InItem2, InItem3, InItem4));
         }
     };
 
