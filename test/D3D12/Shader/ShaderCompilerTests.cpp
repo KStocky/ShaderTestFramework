@@ -294,6 +294,11 @@ SCENARIO("HLSLTests")
                     {
                         "TernaryInTypeTrait",
                         [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
+                    },
+                    std::tuple
+                    {
+                        "DeferSFINAE",
+                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
                     }
                 }
             )
