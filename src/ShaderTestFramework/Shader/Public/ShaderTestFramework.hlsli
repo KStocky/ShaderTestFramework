@@ -405,31 +405,31 @@ namespace STF
 namespace STF
 {
     template<typename T>
-    struct fundamental_type_info;
+    struct fundamental_type_traits;
 
     template<typename T, uint InRank>
-    struct fundamental_type_info_base
+    struct fundamental_type_traits_base
     {
         using base_type = T;
         static const uint rank = InRank;
     };
 
-    template<> struct fundamental_type_info<bool> : fundamental_type_info_base<bool, 1>{};
+    template<> struct fundamental_type_traits<bool> : fundamental_type_traits_base<bool, 1>{};
 
-    template<> struct fundamental_type_info<uint> : fundamental_type_info_base<uint, 1>{};
-    template<> struct fundamental_type_info<uint2> : fundamental_type_info_base<uint, 2>{};
-    template<> struct fundamental_type_info<uint3> : fundamental_type_info_base<uint, 3>{};
-    template<> struct fundamental_type_info<uint4> : fundamental_type_info_base<uint, 4>{};
+    template<> struct fundamental_type_traits<uint> : fundamental_type_traits_base<uint, 1>{};
+    template<> struct fundamental_type_traits<uint2> : fundamental_type_traits_base<uint, 2>{};
+    template<> struct fundamental_type_traits<uint3> : fundamental_type_traits_base<uint, 3>{};
+    template<> struct fundamental_type_traits<uint4> : fundamental_type_traits_base<uint, 4>{};
 
-    template<> struct fundamental_type_info<int> : fundamental_type_info_base<int, 1>{};
-    template<> struct fundamental_type_info<int2> : fundamental_type_info_base<int, 2>{};
-    template<> struct fundamental_type_info<int3> : fundamental_type_info_base<int, 3>{};
-    template<> struct fundamental_type_info<int4> : fundamental_type_info_base<int, 4>{};
+    template<> struct fundamental_type_traits<int> : fundamental_type_traits_base<int, 1>{};
+    template<> struct fundamental_type_traits<int2> : fundamental_type_traits_base<int, 2>{};
+    template<> struct fundamental_type_traits<int3> : fundamental_type_traits_base<int, 3>{};
+    template<> struct fundamental_type_traits<int4> : fundamental_type_traits_base<int, 4>{};
 
-    template<> struct fundamental_type_info<float> : fundamental_type_info_base<float, 1>{};
-    template<> struct fundamental_type_info<float2> : fundamental_type_info_base<float, 2>{};
-    template<> struct fundamental_type_info<float3> : fundamental_type_info_base<float, 3>{};
-    template<> struct fundamental_type_info<float4> : fundamental_type_info_base<float, 4>{};
+    template<> struct fundamental_type_traits<float> : fundamental_type_traits_base<float, 1>{};
+    template<> struct fundamental_type_traits<float2> : fundamental_type_traits_base<float, 2>{};
+    template<> struct fundamental_type_traits<float3> : fundamental_type_traits_base<float, 3>{};
+    template<> struct fundamental_type_traits<float4> : fundamental_type_traits_base<float, 4>{};
 }
 
 namespace STF
@@ -444,7 +444,7 @@ namespace STF
     struct ByteWriter<T, typename enable_if<is_fundamental<T>::value>::type>
     {
         static const bool HasWriter = true;
-        static const bool IsBoolWriter = is_same<typename fundamental_type_info<T>::base_type, bool>::value;
+        static const bool IsBoolWriter = is_same<typename fundamental_type_traits<T>::base_type, bool>::value;
 
         static uint BytesRequired(T)
         {
@@ -460,7 +460,7 @@ namespace STF
             
             static const bool cond_for_non_bools = 
                 is_same<typename ContainerType::element_type, uint>::value && 
-                fundamental_type_info<T>::rank == InRank;
+                fundamental_type_traits<T>::rank == InRank;
             static const bool value = IsBoolWriter ? cond_for_bools : cond_for_non_bools;
         };
 
