@@ -177,6 +177,22 @@ namespace STF
     }
 
     template<typename T>
+    struct array_traits
+    {
+        static const bool is_array = false;
+        static const uint size = 0;
+        using element_type = void;
+    };
+
+    template<typename T, uint Size>
+    struct array_traits<T[Size]>
+    {
+        static const bool is_array = true;
+        static const uint size = Size;
+        using element_type = T;
+    };
+
+    template<typename T>
     struct container_traits
     {
         static const bool is_container = false;
