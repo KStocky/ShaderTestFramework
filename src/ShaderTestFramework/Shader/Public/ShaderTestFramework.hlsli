@@ -177,56 +177,92 @@ namespace STF
     }
 
     template<typename T>
-    struct is_container : false_type
-    {};
+    struct container_traits
+    {
+        static const bool is_container = false;
+        static const bool is_writable = false;
+        static const bool is_byte_address = false;
+        static const bool is_structured = false;
+        static const bool is_resource = false;
+        using element_type = void;
+    };
 
     template<typename T, uint Size>
-    struct is_container<T[Size]> : true_type
-    {};
+    struct container_traits<T[Size]>
+    {
+        static const bool is_container = true;
+        static const bool is_writable = true;
+        static const bool is_byte_address = false;
+        static const bool is_structured = false;
+        static const bool is_resource = false;
+        using element_type = T;
+    };
 
     template<typename T>
-    struct is_container<Buffer<T> > : true_type
-    {};
+    struct container_traits<Buffer<T> >
+    {
+        static const bool is_container = true;
+        static const bool is_writable = false;
+        static const bool is_byte_address = false;
+        static const bool is_structured = false;
+        static const bool is_resource = true;
+        using element_type = T;
+    };
 
     template<typename T>
-    struct is_container<RWBuffer<T> > : true_type
-    {};
+    struct container_traits<RWBuffer<T> >
+    {
+        static const bool is_container = true;
+        static const bool is_writable = true;
+        static const bool is_byte_address = false;
+        static const bool is_structured = false;
+        static const bool is_resource = true;
+        using element_type = T;
+    };
 
     template<typename T>
-    struct is_container<StructuredBuffer<T> > : true_type
-    {};
+    struct container_traits<StructuredBuffer<T> >
+    {
+        static const bool is_container = true;
+        static const bool is_writable = false;
+        static const bool is_byte_address = false;
+        static const bool is_structured = true;
+        static const bool is_resource = true;
+        using element_type = T;
+    };
 
     template<typename T>
-    struct is_container<RWStructuredBuffer<T> > : true_type
-    {};
+    struct container_traits<RWStructuredBuffer<T> >
+    {
+        static const bool is_container = true;
+        static const bool is_writable = true;
+        static const bool is_byte_address = false;
+        static const bool is_structured = true;
+        static const bool is_resource = true;
+        using element_type = T;
+    };
 
     template<>
-    struct is_container<RWByteAddressBuffer> : true_type
-    {};
+    struct container_traits<ByteAddressBuffer>
+    {
+        static const bool is_container = true;
+        static const bool is_writable = false;
+        static const bool is_byte_address = true;
+        static const bool is_structured = false;
+        static const bool is_resource = true;
+        using element_type = uint;
+    };
 
     template<>
-    struct is_container<ByteAddressBuffer> : true_type
-    {};
-
-    template<typename T>
-    struct is_writable_container : false_type
-    {};
-
-    template<typename T>
-    struct is_writable_container<RWStructuredBuffer<T> > : true_type
-    {};
-
-    template<>
-    struct is_writable_container<RWByteAddressBuffer> : true_type
-    {};
-
-    template<typename T>
-    struct is_writable_container<RWBuffer<T> > : true_type
-    {};
-
-    template<typename T, uint Size>
-    struct is_writable_container<T[Size]> : true_type
-    {};
+    struct container_traits<RWByteAddressBuffer>
+    {
+        static const bool is_container = true;
+        static const bool is_writable = true;
+        static const bool is_byte_address = true;
+        static const bool is_structured = false;
+        static const bool is_resource = true;
+        using element_type = uint;
+    };
 
     template<typename ContainerType>
     struct container;
@@ -236,7 +272,7 @@ namespace STF
     {
         using underlying_type = T[Size];
         using element_type = T;
-        static const bool writable = is_writable_container<underlying_type>::value;
+        static const bool writable = container_traits<underlying_type>::is_writable;
 
         underlying_type Data;
 
@@ -291,7 +327,7 @@ namespace STF
     {
         using underlying_type = Buffer<T>;
         using element_type = T;
-        static const bool writable = is_writable_container<underlying_type>::value;
+        static const bool writable = container_traits<underlying_type>::is_writable;
 
         underlying_type Data;
 
@@ -344,13 +380,14 @@ namespace STF
     };
 
     template<typename T>
-    struct is_container<container<T> > : true_type
-    {};
-
-    template<typename T>
-    struct is_writable_container<container<T> >
+    struct container_traits<container<T> >
     {
-        static const bool value = container<T>::writable;
+        static const bool is_container = container_traits<T>::is_container;
+        static const bool is_writable = container_traits<T>::is_writable;
+        static const bool is_byte_address = container_traits<T>::is_byte_address;
+        static const bool is_structured = container_traits<T>::is_structured;
+        static const bool is_resource = container_traits<T>::is_resource;
+        using element_type = typename container_traits<T>::element_type;
     };
 }
 
