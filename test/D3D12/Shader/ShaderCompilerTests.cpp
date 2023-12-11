@@ -304,6 +304,11 @@ SCENARIO("HLSLTests")
                     {
                         "GloballyCoherentInStruct",
                         [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "GloballyCoherentTypeModifier",
+                        [](const EHLSLVersion) { return false; }
                     }
                 }
             )

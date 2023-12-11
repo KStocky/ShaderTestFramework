@@ -15,6 +15,7 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/ForwardDeclareFunctionInOtherFunctionAndDefineIt.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/FunctionStyleMacro.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/GloballyCoherentInStruct.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/GloballyCoherentTypeModifier.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/GlobalString.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/HasMemberCheck.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/LineMacro.hlsl
