@@ -299,6 +299,11 @@ SCENARIO("HLSLTests")
                     {
                         "DeferSFINAE",
                         [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
+                    },
+                    std::tuple
+                    {
+                        "GloballyCoherentInStruct",
+                        [](const EHLSLVersion) { return false; }
                     }
                 }
             )
