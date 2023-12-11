@@ -43,6 +43,20 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
 	auto rootSignature = CreateRootSignature(compileResult.value());
     auto pipelineState = CreatePipelineState(rootSignature, compileResult->GetCompiledShader());
 
+    const auto [dimX, dimY, dimZ] = [&compileResult, InX, InY, InZ]()
+        {
+            u32 threadX = 0;
+            u32 threadY = 0;
+            u32 threadZ = 0;
+            compileResult->GetReflection()->GetThreadGroupSize(&threadX, &threadY, &threadZ);
+
+            const u32 dimX = threadX * InX;
+            const u32 dimY = threadY * InY;
+            const u32 dimZ = threadZ * InZ;
+
+            return Tuple{ dimX, dimY, dimZ };
+        }();
+
 	static constexpr u64 bufferSizeInBytes = 8ull;
     auto assertBuffer = CreateAssertBuffer(bufferSizeInBytes);
     auto readBackBuffer = CreateReadbackBuffer(bufferSizeInBytes);
@@ -57,7 +71,8 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
         &rootSignature,
         &assertBuffer,
         &readBackBuffer,
-        InX, InY, InZ]
+        InX, InY, InZ,
+        dimX, dimY, dimZ]
         (ScopedCommandContext& InContext)
         {
             InContext.Section("Test Setup",
@@ -67,7 +82,7 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
                     InContext->SetComputeRootSignature(rootSignature);
                     InContext->SetDescriptorHeaps(resourceHeap);
                     InContext->SetBufferUAV(assertBuffer);
-                    std::array params{ 0u };
+                    std::array params{ 0u, dimX, dimY, dimZ };
                     InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
                 }
             );
