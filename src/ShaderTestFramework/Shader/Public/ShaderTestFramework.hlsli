@@ -21,7 +21,7 @@ namespace ShaderTestPrivate
     const uint AssertBufferIndex;
     const uint3 DispatchDimensions;
     
-    RWByteAddressBuffer GetAssertBuffer()
+    globallycoherent RWByteAddressBuffer GetAssertBuffer()
     {
         return ResourceDescriptorHeap[AssertBufferIndex];
     }
