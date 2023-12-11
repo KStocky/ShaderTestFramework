@@ -109,6 +109,6 @@ void SectionTest(uint3 DispatchThreadId : SV_DispatchThreadID)
 	}
 	else
 	{
-		ShaderTestPrivate::AddError();
+		STF::Fail();
 	}
 }

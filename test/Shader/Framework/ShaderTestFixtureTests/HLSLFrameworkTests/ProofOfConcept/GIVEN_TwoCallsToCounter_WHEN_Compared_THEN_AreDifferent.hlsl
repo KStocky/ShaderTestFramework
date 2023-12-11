@@ -12,6 +12,6 @@ void GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent(uint3 DispatchThrea
 	}
 	else
 	{
-		ShaderTestPrivate::AddError();
+		STF::Fail();
 	}
 }

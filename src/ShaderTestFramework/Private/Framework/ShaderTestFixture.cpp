@@ -60,9 +60,12 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
 
 	const u64 bufferSizeInBytes = CalculateAssertBufferSize();
     auto assertBuffer = CreateAssertBuffer(bufferSizeInBytes);
+    auto allocationBuffer = CreateAssertBuffer(12ull);
     auto readBackBuffer = CreateReadbackBuffer(bufferSizeInBytes);
+    auto readBackAllocationBuffer = CreateReadbackBuffer(12ull);
 
-    const auto assertUAV = CreateAssertBufferUAV(assertBuffer, resourceHeap);
+    const auto assertUAV = CreateAssertBufferUAV(assertBuffer, resourceHeap, 0);
+    const auto allocationUAV = CreateAssertBufferUAV(allocationBuffer, resourceHeap, 1);
 
     const auto capturer = PIXCapturer(InName, ShouldTakeCapture());
 
@@ -71,7 +74,9 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
         &pipelineState,
         &rootSignature,
         &assertBuffer,
+        &allocationBuffer,
         &readBackBuffer,
+        &readBackAllocationBuffer,
         InX, InY, InZ,
         dimX, dimY, dimZ,
         bufferSizeInBytes,
@@ -85,10 +90,11 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
                     InContext->SetDescriptorHeaps(resourceHeap);
                     InContext->SetComputeRootSignature(rootSignature);
                     InContext->SetBufferUAV(assertBuffer);
+                    InContext->SetBufferUAV(allocationBuffer);
                     std::array params
                     { 
                         0u, dimX, dimY, dimZ, 
-                        m_AssertInfo.NumRecordedFailedAsserts, m_AssertInfo.NumBytesAssertData, static_cast<u32>(bufferSizeInBytes) 
+                        m_AssertInfo.NumRecordedFailedAsserts, m_AssertInfo.NumBytesAssertData, static_cast<u32>(bufferSizeInBytes), 1u
                     };
                     InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
                 }
@@ -105,6 +111,7 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
                 [&](ScopedCommandContext& InContext)
                 {
                     InContext->CopyBufferResource(readBackBuffer, assertBuffer);
+                    InContext->CopyBufferResource(readBackAllocationBuffer, allocationBuffer);
                 }
             );
         }
@@ -112,7 +119,7 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
 
 	engine.Flush();
 
-    const auto [numSuccessAsserts, numFailedAsserts] = ReadbackResults(readBackBuffer);
+    const auto [numSuccessAsserts, numFailedAsserts] = ReadbackResults(readBackAllocationBuffer, readBackBuffer);
 
 	if (numFailedAsserts != 0)
 	{
@@ -215,9 +222,9 @@ GPUResource ShaderTestFixture::CreateReadbackBuffer(const u64 InSizeInBytes) con
     return m_Device.CreateCommittedResource(heapProps, D3D12_HEAP_FLAG_NONE, resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED);
 }
 
-DescriptorHandle ShaderTestFixture::CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap) const
+DescriptorHandle ShaderTestFixture::CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap, const u32 InIndex) const
 {
-    const auto uav = ThrowIfUnexpected(InHeap.CreateDescriptorHandle(0));
+    const auto uav = ThrowIfUnexpected(InHeap.CreateDescriptorHandle(InIndex));
     D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc;
     uavDesc.Buffer.CounterOffsetInBytes = 0;
     uavDesc.Buffer.FirstElement = 0;
@@ -230,9 +237,9 @@ DescriptorHandle ShaderTestFixture::CreateAssertBufferUAV(const GPUResource& InA
     return uav;
 }
 
-Tuple<u32, u32> ShaderTestFixture::ReadbackResults(const GPUResource& InReadbackBuffer) const
+Tuple<u32, u32> ShaderTestFixture::ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource&) const
 {
-    const auto mappedReadbackData = InReadbackBuffer.Map();
+    const auto mappedReadbackData = InAllocationBuffer.Map();
     const auto assertData = mappedReadbackData.Get();
 
     u32 success = 0;
@@ -276,11 +283,12 @@ u64 ShaderTestFixture::CalculateAssertBufferSize() const
         return (In + 3ull) & ~3ull;
     };
 
-    const u64 header = 2 * sizeof(u32);
     const u64 assertInfoSection = m_AssertInfo.NumRecordedFailedAsserts * sizeof(HLSLAssertMetaData);
-    const u64 assertDataSection = m_AssertInfo.NumBytesAssertData > 0 ? sizeof(u32) + RoundUpToMultipleOf4(m_AssertInfo.NumBytesAssertData) : 0;
+    const u64 assertDataSection = m_AssertInfo.NumBytesAssertData > 0 ? RoundUpToMultipleOf4(m_AssertInfo.NumBytesAssertData) : 0;
 
-    return header + assertInfoSection + assertDataSection;
+    const u64 requestedSize = assertInfoSection + assertDataSection;
+
+    return requestedSize > 0 ? requestedSize : 4ull;
 }
 
 ShaderTestFixture::Results::Results(std::vector<std::string> InErrors)

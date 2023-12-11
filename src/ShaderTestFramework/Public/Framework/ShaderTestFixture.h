@@ -78,8 +78,8 @@ private:
     RootSignature CreateRootSignature(const CompiledShaderData& InShaderData) const;
     GPUResource CreateAssertBuffer(const u64 InSizeInBytes) const;
     GPUResource CreateReadbackBuffer(const u64 InSizeInBytes) const;
-    DescriptorHandle CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap) const;
-    Tuple<u32, u32> ReadbackResults(const GPUResource& InReadbackBuffer) const;
+    DescriptorHandle CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap, const u32 InIndex) const;
+    Tuple<u32, u32> ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer) const;
     std::vector<ShaderMacro> GenerateTypeIDDefines() const;
 
     u64 CalculateAssertBufferSize() const;

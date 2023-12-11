@@ -12,45 +12,9 @@
     "CBV_SRV_UAV_HEAP_DIRECTLY_INDEXED" \
 ")," \
 "RootConstants(" \
-    "num32BitConstants=7," \
+    "num32BitConstants=8," \
     "b0" \
 ")"
-
-namespace ShaderTestPrivate
-{
-    const uint AssertBufferIndex;
-    const uint3 DispatchDimensions;
-    const uint MaxNumAsserts;
-    const uint SizeInBytesOfAssertData;
-    const uint SizeInBytesOfAssertBuffer;
-
-    struct HLSLAssertMetaData
-    {
-        uint LineNumber;
-        uint ThreadId;
-        uint ThreadIdType;
-        uint TypeId;
-        uint DataAddress;
-        uint DataSize;
-    };
-    
-    globallycoherent RWByteAddressBuffer GetAssertBuffer()
-    {
-        return ResourceDescriptorHeap[AssertBufferIndex];
-    }
-    
-    void Success()
-    {
-        uint successIndex;
-        GetAssertBuffer().InterlockedAdd(0, 1, successIndex);
-    }
-    
-    void AddError()
-    {
-        uint assertIndex;
-        GetAssertBuffer().InterlockedAdd(4, 1, assertIndex);
-    }
-}
 
 namespace ShaderTestPrivate
 {
@@ -432,21 +396,6 @@ namespace STF
     };
 }
 
-namespace STF
-{
-    void RegisterThreadID(uint InID)
-    {
-        ShaderTestPrivate::Scratch.ThreadID.Type = ShaderTestPrivate::EThreadIDType::Int;
-        ShaderTestPrivate::Scratch.ThreadID.Data = InID;
-    }
-
-    void RegisterThreadID(uint3 InID)
-    {
-        ShaderTestPrivate::Scratch.ThreadID.Type = ShaderTestPrivate::EThreadIDType::Int3;
-        ShaderTestPrivate::Scratch.ThreadID.Data = STF::FlattenIndex(InID, ShaderTestPrivate::DispatchDimensions);
-    }
-}
-
 #ifndef TYPE_ID_BOOL
 #define TYPE_ID_BOOL 1
 #endif
@@ -589,10 +538,167 @@ namespace STF
     };
 }
 
+namespace ShaderTestPrivate
+{
+    const uint AssertBufferIndex;
+    const uint3 DispatchDimensions;
+    const uint MaxNumAsserts;
+    const uint SizeInBytesOfAssertData;
+    const uint SizeInBytesOfAssertBuffer;
+    const uint AllocationBufferIndex;
+
+    struct HLSLAssertMetaData
+    {
+        uint LineNumber;
+        uint ThreadId;
+        uint ThreadIdType;
+        uint TypeId;
+        uint DataAddress;
+        uint DataSize;
+    };
+
+    uint GetAddressOfDataSectionAllocation()
+    {
+        return SizeInBytesOfAssertData == 0 ? 
+            0 :
+            sizeof(HLSLAssertMetaData) * MaxNumAsserts;
+    }
+    
+    RWByteAddressBuffer GetAssertBuffer()
+    {
+        return ResourceDescriptorHeap[AssertBufferIndex];
+    }
+
+    globallycoherent RWByteAddressBuffer GetAllocationBuffer()
+    {
+        return ResourceDescriptorHeap[AllocationBufferIndex];
+    }
+    
+    void Success()
+    {
+        uint successIndex;
+        GetAllocationBuffer().InterlockedAdd(0, 1, successIndex);
+    }
+    
+    uint AddAssert()
+    {
+        uint assertIndex;
+        GetAllocationBuffer().InterlockedAdd(4, 1, assertIndex);
+        return assertIndex;
+    }
+
+    void AddAssertMetaInfo(const uint InMetaIndex, const uint InId, const uint InTypeId, const uint2 InAddressAndSize)
+    {
+        RWByteAddressBuffer buffer = GetAssertBuffer();
+        const uint metaAddress = InMetaIndex * sizeof(uint);
+        buffer.Store4(metaAddress, uint4(InId, Scratch.ThreadID.Data, (uint)Scratch.ThreadID.Type, InTypeId));
+        buffer.Store2(metaAddress + 16, InAddressAndSize);
+    }
+
+    template<typename T>
+    typename STF::enable_if<STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(uint InAddress, T In1, T In2)
+    {
+        using Writer = STF::ByteWriter<T>;
+        const uint size1 = Writer::BytesRequired(In1);
+        const uint size2 = Writer::BytesRequired(In2);
+        const uint size = size1 + size2;
+        uint address = 0;
+        GetAllocationBuffer().InterlockedAdd(InAddress, size, address);
+
+        if (address + size < SizeInBytesOfAssertBuffer)
+        {
+            STF::container<RWByteAddressBuffer> buffer;
+            buffer.Data = GetAssertBuffer();
+            Writer::Write(buffer, address, In1);
+            Writer::Write(buffer, address + size1, In2);
+            return uint2(address, size);
+        }
+
+        return uint2(0, 0);
+    }
+
+    template<typename T>
+    typename STF::enable_if<!STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(uint InAddress, T In1, T In2)
+    {
+        return uint2(0, 0);
+    }
+
+    template<typename T>
+    typename STF::enable_if<STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(uint InAddress, T In)
+    {
+        using Writer = STF::ByteWriter<T>;
+        const uint size1 = Writer::BytesRequired(In);
+        const uint size = size1;
+        uint address = 0;
+        GetAllocationBuffer().InterlockedAdd(InAddress, size, address);
+
+        if (address + size < SizeInBytesOfAssertBuffer)
+        {
+            STF::container<RWByteAddressBuffer> buffer;
+            buffer.Data = GetAssertBuffer();
+            Writer::Write(buffer, address, In);
+            return uint2(address, size);
+        }
+
+        return uint2(0, 0);
+    }
+
+    template<typename T>
+    typename STF::enable_if<!STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(uint InAddress, T In)
+    {
+        return uint2(0, 0);
+    }
+    
+    template<typename T>
+    void AddError(T In1, T In2, int InId)
+    {
+        const uint metaIndex = AddAssert();
+        if (metaIndex < MaxNumAsserts)
+        {
+            const uint addressDataAllocationNum = GetAddressOfDataSectionAllocation();
+            if (addressDataAllocationNum > 0)
+            {
+                const uint2 addressAndSize = AddAssertData(addressDataAllocationNum, In1, In2);
+                AddAssertMetaInfo(metaIndex, InId, STF::type_id<T>::value, addressAndSize);
+            }
+        }
+    }
+
+    template<typename T>
+    void AddError(T In, int InId)
+    {
+        const uint metaIndex = AddAssert();
+        if (metaIndex < MaxNumAsserts)
+        {
+            const uint addressDataAllocationNum = GetAddressOfDataSectionAllocation();
+            if (addressDataAllocationNum > 0)
+            {
+                const uint2 addressAndSize = AddAssertData(addressDataAllocationNum, In);
+                AddAssertMetaInfo(metaIndex, InId, STF::type_id<T>::value, addressAndSize);
+            }
+        }
+    }
+}
+
+namespace STF
+{
+    void RegisterThreadID(uint InID)
+    {
+        ShaderTestPrivate::Scratch.ThreadID.Type = ShaderTestPrivate::EThreadIDType::Int;
+        ShaderTestPrivate::Scratch.ThreadID.Data = InID;
+    }
+
+    void RegisterThreadID(uint3 InID)
+    {
+        ShaderTestPrivate::Scratch.ThreadID.Type = ShaderTestPrivate::EThreadIDType::Int3;
+        ShaderTestPrivate::Scratch.ThreadID.Data = STF::FlattenIndex(InID, ShaderTestPrivate::DispatchDimensions);
+    }
+}
+
 namespace STF
 {
     template<typename T, typename U>
-    typename enable_if<is_same<T, U>::value>::type AreEqual(const T InA, const U InB)
+    typename enable_if<is_same<T, U>::value>::type AreEqual(const T InA, const U InB, int InId = -1)
     {
         if (all(InA == InB))
         {
@@ -600,12 +706,12 @@ namespace STF
         }
         else
         {
-            ShaderTestPrivate::AddError();
+            ShaderTestPrivate::AddError(InA, InB, InId);
         }
     }
     
     template<typename T, typename U>
-    typename enable_if<is_same<T, U>::value>::type NotEqual(const T InA, const U InB)
+    typename enable_if<is_same<T, U>::value>::type NotEqual(const T InA, const U InB, int InId = -1)
     {
         if (any(InA != InB))
         {
@@ -613,12 +719,12 @@ namespace STF
         }
         else
         {
-            ShaderTestPrivate::AddError();
+            ShaderTestPrivate::AddError(InA, InB, InId);
         }
     }
     
     template<typename T>
-    void IsTrue(T In)
+    void IsTrue(T In, int InId = -1)
     {
         if (Cast<bool>(In))
         {
@@ -626,12 +732,12 @@ namespace STF
         }
         else
         {
-            ShaderTestPrivate::AddError();
+            ShaderTestPrivate::AddError(In, InId);
         }
     }
     
     template<typename T>
-    void IsFalse(T In)
+    void IsFalse(T In, int InId = -1)
     {
         if (!Cast<bool>(In))
         {
@@ -639,13 +745,13 @@ namespace STF
         }
         else
         {
-            ShaderTestPrivate::AddError();
+            ShaderTestPrivate::AddError(In, InId);
         }
     }
 
-    void Fail()
+    void Fail(int InId = -1)
     {
-        ShaderTestPrivate::AddError();
+        ShaderTestPrivate::AddError(false, InId);
     }
 }
 
