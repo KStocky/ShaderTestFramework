@@ -636,6 +636,8 @@ namespace STF
     }
 }
 
+#define STF_JOIN(a, b) a##b
+
 #define STF_NUM_ARGS_N( \
           _1,  _2,  _3,  _4,  _5,  _6,  _7,  _8,  _9, _10, \
          _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, \
@@ -678,12 +680,18 @@ namespace STF
 }\
 STF_DECLARE_TEST_FUNC(InID)
 
-#define STF_SCENARIO_IMPL(InID)\
+#define STF_SCENARIO_IF_0(InScenarioID, Ignored)\
 ShaderTestPrivate::InitScratch();\
 while(ShaderTestPrivate::TryLoopScenario())
 
+#define STF_SCENARIO_IF_1(InScenarioID, InThreadID)\
+ShaderTestPrivate::InitScratch();\
+STF::RegisterThreadID(InThreadID); \
+while(ShaderTestPrivate::TryLoopScenario())
 
-#define SCENARIO() STF_SCENARIO_IMPL(__LINE__)
+#define STF_SCENARIO_IMPL(InName, InNumArgs, InScenarioID, ...) STF_JOIN(InName, InNumArgs)(InScenarioID, __VA_ARGS__)
+
+#define SCENARIO(...) STF_SCENARIO_IMPL(STF_SCENARIO_IF_, STF_NUM_ARGS(__VA_ARGS__), __LINE__, __VA_ARGS__)
 
 #define STF_BEGIN_SECTION_IMPL(InID) STF_CREATE_SECTION_VAR_IMPL(InID); \
     if (ShaderTestPrivate::TryEnterSection(STF_GET_SECTION_VAR_NAME(InID))) \

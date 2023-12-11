@@ -462,7 +462,10 @@ SCENARIO("HLSLFrameworkTests - Macros - SCENARIO")
         "GIVEN_ScenarioWithNoSections_WHEN_Ran_THEN_FunctionOnlyEnteredOnce",
         "GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce",
         "GIVEN_TwoSections_WHEN_Ran_THEN_EachSectionIsEnteredOnce",
-        "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce"
+        "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce",
+        "GIVEN_ScenarioWithoutId_WHEN_Ran_THEN_IdIsNone",
+        "GIVEN_ScenarioWithDispatchThreadId_WHEN_Ran_THEN_IdIsInt3",
+        "GIVEN_ScenarioWithIntId_WHEN_Ran_THEN_IdIsInt"
     );
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Macros/Scenario.hlsl")));

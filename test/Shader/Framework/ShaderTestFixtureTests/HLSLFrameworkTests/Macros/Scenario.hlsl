@@ -135,3 +135,36 @@ void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnte
         }
     }
 }
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_ScenarioWithoutId_WHEN_Ran_THEN_IdIsNone(uint3 DispatchThreadId : SV_DispatchThreadID)
+{
+    SCENARIO()
+    {
+    }
+    STF::AreEqual(0u, ShaderTestPrivate::Scratch.ThreadID.Data);
+    STF::AreEqual(ShaderTestPrivate::EThreadIDType::None, ShaderTestPrivate::Scratch.ThreadID.Type);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(42,1,1)]
+void GIVEN_ScenarioWithDispatchThreadId_WHEN_Ran_THEN_IdIsInt3(uint3 DispatchThreadId : SV_DispatchThreadID)
+{
+    SCENARIO(DispatchThreadId)
+    {
+    }
+    STF::AreEqual(STF::FlattenIndex(DispatchThreadId, ShaderTestPrivate::DispatchDimensions), ShaderTestPrivate::Scratch.ThreadID.Data);
+    STF::AreEqual(ShaderTestPrivate::EThreadIDType::Int3, ShaderTestPrivate::Scratch.ThreadID.Type);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(42,1,1)]
+void GIVEN_ScenarioWithIntId_WHEN_Ran_THEN_IdIsInt(uint3 DispatchThreadId : SV_DispatchThreadID)
+{
+    SCENARIO(42)
+    {
+    }
+    STF::AreEqual(42u, ShaderTestPrivate::Scratch.ThreadID.Data);
+    STF::AreEqual(ShaderTestPrivate::EThreadIDType::Int, ShaderTestPrivate::Scratch.ThreadID.Type);
+}
