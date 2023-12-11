@@ -18,6 +18,7 @@ ShaderTestFixture::ShaderTestFixture(Desc InParams)
 	, m_CompilationFlags(std::move(InParams.CompilationFlags))
 	, m_ShaderModel(InParams.ShaderModel)
     , m_HLSLVersion(InParams.HLSLVersion)
+    , m_AssertInfo(InParams.AssertInfo)
 	, m_IsWarp(InParams.GPUDeviceParams.DeviceType == GPUDevice::EDeviceType::Software)
 {
     m_PIXAvailable = PIXLoadLatestWinPixGpuCapturerLibrary() != nullptr;
@@ -57,7 +58,7 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
             return Tuple{ dimX, dimY, dimZ };
         }();
 
-	static constexpr u64 bufferSizeInBytes = 8ull;
+	const u64 bufferSizeInBytes = CalculateAssertBufferSize();
     auto assertBuffer = CreateAssertBuffer(bufferSizeInBytes);
     auto readBackBuffer = CreateReadbackBuffer(bufferSizeInBytes);
 
@@ -72,17 +73,23 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
         &assertBuffer,
         &readBackBuffer,
         InX, InY, InZ,
-        dimX, dimY, dimZ]
+        dimX, dimY, dimZ,
+        bufferSizeInBytes,
+        this]
         (ScopedCommandContext& InContext)
         {
             InContext.Section("Test Setup",
                 [&](ScopedCommandContext& InContext)
                 {
                     InContext->SetPipelineState(pipelineState);
-                    InContext->SetComputeRootSignature(rootSignature);
                     InContext->SetDescriptorHeaps(resourceHeap);
+                    InContext->SetComputeRootSignature(rootSignature);
                     InContext->SetBufferUAV(assertBuffer);
-                    std::array params{ 0u, dimX, dimY, dimZ };
+                    std::array params
+                    { 
+                        0u, dimX, dimY, dimZ, 
+                        m_AssertInfo.NumRecordedFailedAsserts, m_AssertInfo.NumBytesAssertData, static_cast<u32>(bufferSizeInBytes) 
+                    };
                     InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
                 }
             );
@@ -260,6 +267,20 @@ std::vector<ShaderMacro> ShaderTestFixture::GenerateTypeIDDefines() const
         { "TYPE_ID_FLOAT3", "12" },
         { "TYPE_ID_FLOAT4", "13" }
     };
+}
+
+u64 ShaderTestFixture::CalculateAssertBufferSize() const
+{    
+    auto RoundUpToMultipleOf4 = [](const u64 In)
+    {
+        return ((In + 3) >> 2) << 2;
+    };
+
+    const u64 header = 2 * sizeof(u32);
+    const u64 assertInfoSection = m_AssertInfo.NumRecordedFailedAsserts * sizeof(HLSLAssertMetaData);
+    const u64 assertDataSection = m_AssertInfo.NumBytesAssertData > 0 ? sizeof(u32) + RoundUpToMultipleOf4(m_AssertInfo.NumBytesAssertData) : 0;
+
+    return header + assertInfoSection + assertDataSection;
 }
 
 ShaderTestFixture::Results::Results(std::vector<std::string> InErrors)

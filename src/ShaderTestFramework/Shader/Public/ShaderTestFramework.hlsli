@@ -12,7 +12,7 @@
     "CBV_SRV_UAV_HEAP_DIRECTLY_INDEXED" \
 ")," \
 "RootConstants(" \
-    "num32BitConstants=4," \
+    "num32BitConstants=7," \
     "b0" \
 ")"
 
@@ -20,6 +20,19 @@ namespace ShaderTestPrivate
 {
     const uint AssertBufferIndex;
     const uint3 DispatchDimensions;
+    const uint MaxNumAsserts;
+    const uint SizeInBytesOfAssertData;
+    const uint SizeInBytesOfAssertBuffer;
+
+    struct HLSLAssertMetaData
+    {
+        uint LineNumber;
+        uint ThreadId;
+        uint ThreadIdType;
+        uint TypeId;
+        uint DataAddress;
+        uint DataSize;
+    };
     
     globallycoherent RWByteAddressBuffer GetAssertBuffer()
     {

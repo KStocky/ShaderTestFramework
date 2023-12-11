@@ -20,7 +20,7 @@ namespace
         return VirtualShaderDirectoryMapping{ "/Tests", std::move(shaderDir) };
     }
 
-    ShaderTestFixture::Desc CreateDescForHLSLFrameworkTest(fs::path&& InPath)
+    ShaderTestFixture::Desc CreateDescForHLSLFrameworkTest(fs::path&& InPath, ShaderTestFixture::FailedAssertParams InAssertParams = {})
     {
         ShaderTestFixture::Desc desc{};
 
@@ -28,7 +28,7 @@ namespace
         desc.HLSLVersion = EHLSLVersion::v2021;
         desc.Source = std::move(InPath);
         desc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
-
+        desc.AssertInfo = InAssertParams;
         return desc;
     }
 }
@@ -191,6 +191,28 @@ namespace ProofOfConcept
         }
 
         REQUIRE(num == 5);
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - AssertBufferTests")
+{
+    auto [testName, numRecordedFailedAsserts, numBytesAssertData] = GENERATE
+    (
+        table<std::string, u32, u32>
+        (
+            {
+                std::tuple{"GIVEN_ZeroAssertsRecorded_WHEN_Ran_THEN_AssertBufferInfoAsExpected", 0, 0},
+                std::tuple{"GIVEN_FiveAssertsRecordedAndNoData_WHEN_Ran_THEN_AssertBufferInfoAsExpected", 5, 0},
+                std::tuple{"GIVEN_FiveAssertsRecordedAnd100BytesOfData_WHEN_Ran_THEN_AssertBufferInfoAsExpected", 5, 100},
+                std::tuple{"GIVEN_FiveAssertsRecordedAndNonMultipleOf4BytesOfData_WHEN_Ran_THEN_AssertBufferInfoAsExpected", 5, 97}
+            }
+        )
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/AssertBufferSizeTests.hlsl"), {numRecordedFailedAsserts, numBytesAssertData}));
+    DYNAMIC_SECTION(testName)
+    {
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
     }
 }
 

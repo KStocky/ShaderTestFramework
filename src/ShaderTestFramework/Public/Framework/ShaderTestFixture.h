@@ -11,6 +11,12 @@ class ShaderTestFixture
 {
 public:
 
+    struct FailedAssertParams
+    {
+        u32 NumRecordedFailedAsserts = 0;
+        u32 NumBytesAssertData = 0;
+    };
+
     struct Desc
     {
         std::vector<VirtualShaderDirectoryMapping> Mappings;
@@ -22,6 +28,17 @@ public:
         std::vector<std::wstring> CompilationFlags;
         D3D_SHADER_MODEL ShaderModel = D3D_SHADER_MODEL_6_6;
         EHLSLVersion HLSLVersion = EHLSLVersion::Default;
+        FailedAssertParams AssertInfo;
+    };
+
+    struct HLSLAssertMetaData
+    {
+        u32 LineNumber = 0;
+        u32 ThreadId = 0;
+        u32 ThreadIdType = 0;
+        u32 TypeId = 0;
+        u32 DataAddress = 0;
+        u32 DataSize = 0;
     };
 
     class Results
@@ -65,6 +82,8 @@ private:
     Tuple<u32, u32> ReadbackResults(const GPUResource& InReadbackBuffer) const;
     std::vector<ShaderMacro> GenerateTypeIDDefines() const;
 
+    u64 CalculateAssertBufferSize() const;
+
     bool ShouldTakeCapture() const;
 
     GPUDevice m_Device;
@@ -73,6 +92,7 @@ private:
     std::vector<std::wstring> m_CompilationFlags;
     D3D_SHADER_MODEL m_ShaderModel;
     EHLSLVersion m_HLSLVersion;
+    FailedAssertParams m_AssertInfo;
     bool m_IsWarp = false;
     bool m_CaptureRequested = false;
     bool m_PIXAvailable = false;
