@@ -69,10 +69,15 @@ set(SHADER_SOURCES
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Container/ArrayTests/GIVEN_IntArray_WHEN_Store3CalledWithDifferentType_THEN_Fails.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Container/ArrayTests/GIVEN_IntArray_WHEN_Store4Called_THEN_Succeeds.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Container/ArrayTests/GIVEN_IntArray_WHEN_Store4CalledWithDifferentType_THEN_Fails.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/FlattenIndex.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Macros/Scenario.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Macros/Sections.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Macros/SectionVarCreation.hlsl
-    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/FlattenIndex.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/ProofOfConcept/GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/ProofOfConcept/GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/ProofOfConcept/GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/ProofOfConcept/GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/ProofOfConcept/SectionTest.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/SectionManagement.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/ThreadDimensionTests.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/ThreadIdRegistrationTests.hlsl
@@ -81,7 +86,6 @@ set(SHADER_SOURCES
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/TypeTraits/FundamentalTypeTests.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/TypeTraits/FundamentalTypeTraitsTests.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/TypeTraits/TypeIDTests.hlsl
-    Shader/Framework/ShaderTestFixtureTests/ShaderFrameworkHLSLProofOfConceptTests.hlsl
 )
 
 set(SOURCES

@@ -86,25 +86,6 @@ SCENARIO("BasicShaderTests")
     }
 }
 
-SCENARIO("ShaderFrameworkHLSLProofOfConceptTests")
-{
-    auto testName = GENERATE
-    (
-        "GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent",
-        "GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed",
-        "GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported",
-        "GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned",
-        "SectionTest"
-    );
-
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/ShaderFrameworkHLSLProofOfConceptTests.hlsl")));
-    fixture.TakeCapture();
-    DYNAMIC_SECTION(testName)
-    {
-        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
-    }
-}
-
 namespace ProofOfConcept
 {
     static int CurrentTracker = 0;
@@ -491,6 +472,37 @@ SCENARIO("HLSLFrameworkTests - Macros - SECTIONS")
     DYNAMIC_SECTION(testName)
     {
         REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - ProofOfConcept")
+{
+    auto [testName, shouldSucceed] = GENERATE
+    (
+        table<std::string, bool>
+        (
+            {
+                std::tuple{"GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent", true},
+                std::tuple{"GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed", true},
+                std::tuple{"SectionTest", true},
+                std::tuple{"GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported", true},
+                std::tuple{"GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned", true}
+            }
+        )
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/HLSLFrameworkTests/ProofOfConcept/{}.hlsl", testName))));
+    DYNAMIC_SECTION(testName)
+    {
+        if (shouldSucceed)
+        {
+            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+        }
+        else
+        {
+            const auto result = fixture.RunTest(testName, 1, 1, 1);
+            REQUIRE(!result);
+        }
     }
 }
 
