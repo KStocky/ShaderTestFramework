@@ -78,6 +78,7 @@ set(SHADER_SOURCES
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/ProofOfConcept/GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/ProofOfConcept/GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/ProofOfConcept/SectionTest.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/ProofOfConcept/VariadicMacroOverloading.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/SectionManagement.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/ThreadDimensionTests.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/ThreadIdRegistrationTests.hlsl

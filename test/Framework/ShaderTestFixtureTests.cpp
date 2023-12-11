@@ -486,7 +486,8 @@ SCENARIO("HLSLFrameworkTests - ProofOfConcept")
                 std::tuple{"GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed", true},
                 std::tuple{"SectionTest", true},
                 std::tuple{"GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported", true},
-                std::tuple{"GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned", true}
+                std::tuple{"GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned", true},
+                std::tuple{"VariadicMacroOverloading", true}
             }
         )
     );
