@@ -53,11 +53,25 @@ namespace ShaderTestPrivate
         bool HasSubsectionBeenEntered;
         bool HasUnenteredSubsections;
     };
+
+    enum class EThreadIDType
+    {
+        None,
+        Int,
+        Int3
+    };
+
+    struct ThreadIDInfo
+    {
+        uint Data;
+        EThreadIDType Type;
+    };
     
     struct PerThreadScratchData
     {
         int CurrentSectionID;
         int NextSectionID;
+        ThreadIDInfo ThreadID;
         ScenarioSectionInfo Sections[NumSections];
     };
     
@@ -67,6 +81,8 @@ namespace ShaderTestPrivate
     {
         Scratch.CurrentSectionID = 0;
         Scratch.NextSectionID = 1;
+        Scratch.ThreadID.Data = 0;
+        Scratch.ThreadID.Type = EThreadIDType::None;
         for (uint i = 0; i < NumSections; ++i)
         {
             Scratch.Sections[i].ParentID = i == 0 ? -1 : 0;
@@ -401,6 +417,21 @@ namespace STF
         static const bool is_resource = container_traits<T>::is_resource;
         using element_type = typename container_traits<T>::element_type;
     };
+}
+
+namespace STF
+{
+    void RegisterThreadID(uint InID)
+    {
+        ShaderTestPrivate::Scratch.ThreadID.Type = ShaderTestPrivate::EThreadIDType::Int;
+        ShaderTestPrivate::Scratch.ThreadID.Data = InID;
+    }
+
+    void RegisterThreadID(uint3 InID)
+    {
+        ShaderTestPrivate::Scratch.ThreadID.Type = ShaderTestPrivate::EThreadIDType::Int3;
+        ShaderTestPrivate::Scratch.ThreadID.Data = STF::FlattenIndex(InID, ShaderTestPrivate::DispatchDimensions);
+    }
 }
 
 #ifndef TYPE_ID_BOOL

@@ -75,6 +75,7 @@ set(SHADER_SOURCES
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/FlattenIndex.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/SectionManagement.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/ThreadDimensionTests.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/ThreadIdRegistrationTests.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/TypeTraits/ArrayTraitsTests.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/TypeTraits/ContainerTraitsTests.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/TypeTraits/FundamentalTypeTests.hlsl
