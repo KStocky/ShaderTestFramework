@@ -273,7 +273,7 @@ u64 ShaderTestFixture::CalculateAssertBufferSize() const
 {    
     auto RoundUpToMultipleOf4 = [](const u64 In)
     {
-        return ((In + 3) >> 2) << 2;
+        return (In + 3ull) & ~3ull;
     };
 
     const u64 header = 2 * sizeof(u32);
