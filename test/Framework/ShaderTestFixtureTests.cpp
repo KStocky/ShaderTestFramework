@@ -493,33 +493,20 @@ SCENARIO("HLSLFrameworkTests - Macros - SECTIONS")
 
 SCENARIO("HLSLFrameworkTests - ProofOfConcept")
 {
-    auto [testName, shouldSucceed] = GENERATE
+    auto testName = GENERATE
     (
-        table<std::string, bool>
-        (
-            {
-                std::tuple{"GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent", true},
-                std::tuple{"GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed", true},
-                std::tuple{"SectionTest", true},
-                std::tuple{"GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported", true},
-                std::tuple{"GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned", true},
-                std::tuple{"VariadicMacroOverloading", true}
-            }
-        )
+        "GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent",
+        "GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed",
+        "SectionTest",
+        "GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported",
+        "GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned",
+        "VariadicMacroOverloading"
     );
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/HLSLFrameworkTests/ProofOfConcept/{}.hlsl", testName))));
     DYNAMIC_SECTION(testName)
     {
-        if (shouldSucceed)
-        {
-            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
-        }
-        else
-        {
-            const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
-        }
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
     }
 }
 
