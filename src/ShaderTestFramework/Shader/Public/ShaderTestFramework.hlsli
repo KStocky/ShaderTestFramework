@@ -819,3 +819,5 @@ while(ShaderTestPrivate::TryLoopScenario())
 #define BEGIN_SECTION STF_BEGIN_SECTION_IMPL(__LINE__)
 
 #define END_SECTION ShaderTestPrivate::OnLeave(); }
+
+#define ASSERT(InName, ...) STF::InName(__VA_ARGS__, __LINE__)

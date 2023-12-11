@@ -73,6 +73,7 @@ set(SHADER_SOURCES
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Container/ArrayTests/GIVEN_IntArray_WHEN_Store4Called_THEN_Succeeds.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Container/ArrayTests/GIVEN_IntArray_WHEN_Store4CalledWithDifferentType_THEN_Fails.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/FlattenIndex.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Macros/AssertMacro.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Macros/NumArgs.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Macros/Scenario.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Macros/Sections.hlsl

@@ -442,6 +442,36 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsFalse")
     }
 }
 
+SCENARIO("HLSLFrameworkTests - Asserts - AssertMacro")
+{
+    auto [testName, shouldSucceed] = GENERATE
+    (
+        table<std::string, bool>
+        (
+            {
+                std::tuple{"GIVEN_TwoEqualInts_WHEN_AreEqualCalled_THEN_Succeeds", true},
+                std::tuple{"GIVEN_TwoNotEqualInts_WHEN_AreEqualCalled_THEN_Fails", false},
+                std::tuple{"GIVEN_TwoEqualInts_WHEN_NotEqualCalled_THEN_Fails", false},
+                std::tuple{"GIVEN_TwoNotEqualInts_WHEN_NotEqualCalled_THEN_Succeeds", true}
+            }
+        )
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Macros/AssertMacro.hlsl")));
+    DYNAMIC_SECTION(testName)
+    {
+        if (shouldSucceed)
+        {
+            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+        }
+        else
+        {
+            const auto result = fixture.RunTest(testName, 1, 1, 1);
+            REQUIRE(!result);
+        }
+    }
+}
+
 SCENARIO("HLSLFrameworkTests - Macros - NumArgs")
 {
     auto testName = GENERATE
