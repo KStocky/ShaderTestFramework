@@ -70,7 +70,6 @@ SCENARIO("BasicShaderTests")
         )
     );
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/BasicShaderTests.hlsl")));
-    fixture.TakeCapture();
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
@@ -557,7 +556,6 @@ SCENARIO("HLSLFrameworkTests - Container")
     );
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/HLSLFrameworkTests/Container/ArrayTests/{}.hlsl", testName))));
-    fixture.TakeCapture();
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
@@ -763,7 +761,6 @@ SCENARIO("HLSLFrameworkTests - Bugs")
 
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/HLSLFrameworkTests/Bugs/{}.hlsl", testName))));
-    fixture.TakeCapture();
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
