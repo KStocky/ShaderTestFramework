@@ -193,7 +193,7 @@ namespace ProofOfConcept
     }
 }
 
-SCENARIO("HLSLFrameworkTests - AssertBufferTests")
+SCENARIO("HLSLFrameworkTests - AssertBuffer - SizeTests")
 {
     auto [testName, numRecordedFailedAsserts, numBytesAssertData] = GENERATE
     (
@@ -208,7 +208,7 @@ SCENARIO("HLSLFrameworkTests - AssertBufferTests")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/AssertBufferSizeTests.hlsl"), {numRecordedFailedAsserts, numBytesAssertData}));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/AssertBuffer/SizeTests.hlsl"), {numRecordedFailedAsserts, numBytesAssertData}));
     DYNAMIC_SECTION(testName)
     {
         REQUIRE(fixture.RunTest(testName, 1, 1, 1));
