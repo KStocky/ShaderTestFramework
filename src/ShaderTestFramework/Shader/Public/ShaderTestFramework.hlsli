@@ -556,13 +556,6 @@ namespace ShaderTestPrivate
         uint DataAddress;
         uint DataSize;
     };
-
-    uint GetAddressOfDataSectionAllocation()
-    {
-        return SizeInBytesOfAssertData == 0 ? 
-            0 :
-            sizeof(HLSLAssertMetaData) * MaxNumAsserts;
-    }
     
     RWByteAddressBuffer GetAssertBuffer()
     {
@@ -596,14 +589,14 @@ namespace ShaderTestPrivate
     }
 
     template<typename T>
-    typename STF::enable_if<STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(uint InAddress, T In1, T In2)
+    typename STF::enable_if<STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(T In1, T In2)
     {
         using Writer = STF::ByteWriter<T>;
         const uint size1 = Writer::BytesRequired(In1);
         const uint size2 = Writer::BytesRequired(In2);
         const uint size = size1 + size2;
         uint address = 0;
-        GetAllocationBuffer().InterlockedAdd(InAddress, size, address);
+        GetAllocationBuffer().InterlockedAdd(8, size, address);
 
         if (address + size < SizeInBytesOfAssertBuffer)
         {
@@ -618,19 +611,19 @@ namespace ShaderTestPrivate
     }
 
     template<typename T>
-    typename STF::enable_if<!STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(uint InAddress, T In1, T In2)
+    typename STF::enable_if<!STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(T In1, T In2)
     {
         return uint2(0, 0);
     }
 
     template<typename T>
-    typename STF::enable_if<STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(uint InAddress, T In)
+    typename STF::enable_if<STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(T In)
     {
         using Writer = STF::ByteWriter<T>;
         const uint size1 = Writer::BytesRequired(In);
         const uint size = size1;
         uint address = 0;
-        GetAllocationBuffer().InterlockedAdd(InAddress, size, address);
+        GetAllocationBuffer().InterlockedAdd(8, size, address);
 
         if (address + size < SizeInBytesOfAssertBuffer)
         {
@@ -644,7 +637,7 @@ namespace ShaderTestPrivate
     }
 
     template<typename T>
-    typename STF::enable_if<!STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(uint InAddress, T In)
+    typename STF::enable_if<!STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(T In)
     {
         return uint2(0, 0);
     }
@@ -655,10 +648,9 @@ namespace ShaderTestPrivate
         const uint metaIndex = AddAssert();
         if (metaIndex < MaxNumAsserts)
         {
-            const uint addressDataAllocationNum = GetAddressOfDataSectionAllocation();
-            if (addressDataAllocationNum > 0)
+            if (SizeInBytesOfAssertData > 0)
             {
-                const uint2 addressAndSize = AddAssertData(addressDataAllocationNum, In1, In2);
+                const uint2 addressAndSize = AddAssertData(In1, In2);
                 AddAssertMetaInfo(metaIndex, InId, STF::type_id<T>::value, addressAndSize);
             }
         }
@@ -670,10 +662,9 @@ namespace ShaderTestPrivate
         const uint metaIndex = AddAssert();
         if (metaIndex < MaxNumAsserts)
         {
-            const uint addressDataAllocationNum = GetAddressOfDataSectionAllocation();
-            if (addressDataAllocationNum > 0)
+            if (SizeInBytesOfAssertData > 0)
             {
-                const uint2 addressAndSize = AddAssertData(addressDataAllocationNum, In);
+                const uint2 addressAndSize = AddAssertData(In);
                 AddAssertMetaInfo(metaIndex, InId, STF::type_id<T>::value, addressAndSize);
             }
         }
