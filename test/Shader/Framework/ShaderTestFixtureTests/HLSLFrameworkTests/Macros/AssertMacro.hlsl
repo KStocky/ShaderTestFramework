@@ -56,9 +56,9 @@ void GIVEN_FalseLiteral_WHEN_IsFalseCalled_THEN_Succeeds(uint3 DispatchThreadId 
     ASSERT(IsFalse, false);
 }
 
-//[RootSignature(SHADER_TEST_RS)]
-//[numthreads(1,1,1)]
-//void GIVEN_TestWithFailAssert_WHEN_Ran_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
-//{
-//    ASSERT(Fail);
-//}
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_TestWithFailAssert_WHEN_Ran_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
+{
+    ASSERT(Fail);
+}

@@ -442,7 +442,7 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsFalse")
     }
 }
 
-SCENARIO("HLSLFrameworkTests - Asserts - AssertMacro")
+SCENARIO("HLSLFrameworkTests - Macros - AssertMacro")
 {
     auto [testName, shouldSucceed] = GENERATE
     (
@@ -456,8 +456,8 @@ SCENARIO("HLSLFrameworkTests - Asserts - AssertMacro")
                 std::tuple{"GIVEN_TrueLiteral_WHEN_IsTrueCalled_THEN_Succeeds", true},
                 std::tuple{"GIVEN_FalseLiteral_WHEN_IsTrueCalled_THEN_Fails", false},
                 std::tuple{"GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails", false},
-                std::tuple{"GIVEN_FalseLiteral_WHEN_IsFalseCalled_THEN_Succeeds", true}
-                //std::tuple{"GIVEN_TestWithFailAssert_WHEN_Ran_THEN_Fails", true}
+                std::tuple{"GIVEN_FalseLiteral_WHEN_IsFalseCalled_THEN_Succeeds", true},
+                std::tuple{"GIVEN_TestWithFailAssert_WHEN_Ran_THEN_Fails", false}
             }
         )
     );

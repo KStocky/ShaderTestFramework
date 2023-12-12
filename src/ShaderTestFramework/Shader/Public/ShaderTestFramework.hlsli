@@ -820,4 +820,8 @@ while(ShaderTestPrivate::TryLoopScenario())
 
 #define END_SECTION ShaderTestPrivate::OnLeave(); }
 
-#define ASSERT(InName, ...) STF::InName(__VA_ARGS__, __LINE__)
+#define STF_ASSERT_IF_0(InName, InId) STF::InName(InId)
+#define STF_ASSERT_IF_1(InName, InId, InArg) STF::InName(InArg, InId)
+#define STF_ASSERT_IF_2(InName, InId, InArg1, InArg2) STF::InName(InArg1, InArg2, InId)
+#define STF_ASSERT_IMPL(InStem, InNumArgs, InName, InId, ...) STF_JOIN(InStem, InNumArgs)(InName, InId, ##__VA_ARGS__)
+#define ASSERT(InName, ...) STF_ASSERT_IMPL(STF_ASSERT_IF_, STF_NUM_ARGS(__VA_ARGS__), InName, __LINE__, ##__VA_ARGS__)
