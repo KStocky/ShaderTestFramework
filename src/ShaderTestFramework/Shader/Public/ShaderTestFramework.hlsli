@@ -799,7 +799,7 @@ namespace STF
 }\
 STF_DECLARE_TEST_FUNC(InID)
 
-#define STF_SCENARIO_IF_0(InScenarioID, Ignored)\
+#define STF_SCENARIO_IF_0(InScenarioID)\
 ShaderTestPrivate::InitScratch();\
 while(ShaderTestPrivate::TryLoopScenario())
 
@@ -808,9 +808,9 @@ ShaderTestPrivate::InitScratch();\
 STF::RegisterThreadID(InThreadID); \
 while(ShaderTestPrivate::TryLoopScenario())
 
-#define STF_SCENARIO_IMPL(InName, InNumArgs, InScenarioID, ...) STF_JOIN(InName, InNumArgs)(InScenarioID, __VA_ARGS__)
+#define STF_SCENARIO_IMPL(InName, InNumArgs, InScenarioID, ...) STF_JOIN(InName, InNumArgs)(InScenarioID, ##__VA_ARGS__)
 
-#define SCENARIO(...) STF_SCENARIO_IMPL(STF_SCENARIO_IF_, STF_NUM_ARGS(__VA_ARGS__), __LINE__, __VA_ARGS__)
+#define SCENARIO(...) STF_SCENARIO_IMPL(STF_SCENARIO_IF_, STF_NUM_ARGS(__VA_ARGS__), __LINE__, ##__VA_ARGS__)
 
 #define STF_BEGIN_SECTION_IMPL(InID) STF_CREATE_SECTION_VAR_IMPL(InID); \
     if (ShaderTestPrivate::TryEnterSection(STF_GET_SECTION_VAR_NAME(InID))) \
