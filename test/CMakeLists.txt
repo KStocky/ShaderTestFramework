@@ -103,6 +103,7 @@ set(SOURCES
     D3D12/DescriptorTests.cpp
     D3D12/Shader/ShaderCompilerTests.cpp
     D3D12/Shader/VirtualShaderDirectoryMappingManagerTests.cpp
+    Framework/AssertBufferProcessorTests.cpp
     Framework/ShaderTestFixtureTests.cpp
     Utility/ConceptsTests.cpp
     Utility/EnumReflectionTests.cpp

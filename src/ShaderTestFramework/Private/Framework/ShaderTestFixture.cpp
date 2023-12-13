@@ -1,5 +1,6 @@
 #include "Framework/ShaderTestFixture.h"
 
+#include "Framework/AssertBufferProcessor.h"
 #include "Framework/PIXCapturer.h"
 #include "Utility/EnumReflection.h"
 
@@ -119,14 +120,7 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
 
 	engine.Flush();
 
-    const auto [numSuccessAsserts, numFailedAsserts] = ReadbackResults(readBackAllocationBuffer, readBackBuffer);
-
-	if (numFailedAsserts != 0)
-	{
-		return Results({ std::format("There were {} successful asserts and {} failed assertions", numSuccessAsserts, numFailedAsserts) });
-	}
-
-	return Results({});
+    return Results{ ReadbackResults(readBackAllocationBuffer, readBackBuffer) };
 }
 
 bool ShaderTestFixture::IsValid() const
@@ -237,18 +231,21 @@ DescriptorHandle ShaderTestFixture::CreateAssertBufferUAV(const GPUResource& InA
     return uav;
 }
 
-Tuple<u32, u32> ShaderTestFixture::ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource&) const
+std::vector<std::string> ShaderTestFixture::ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer) const
 {
-    const auto mappedReadbackData = InAllocationBuffer.Map();
-    const auto assertData = mappedReadbackData.Get();
+    const auto mappedAllocationData = InAllocationBuffer.Map();
+    const auto allocationData = mappedAllocationData.Get();
 
     u32 success = 0;
     u32 fails = 0;
 
-    std::memcpy(&success, assertData.data(), sizeof(u32));
-    std::memcpy(&fails, assertData.data() + sizeof(u32), sizeof(u32));
+    std::memcpy(&success, allocationData.data(), sizeof(u32));
+    std::memcpy(&fails, allocationData.data() + sizeof(u32), sizeof(u32));
 
-    return Tuple{ success, fails };
+    const auto mappedAssertData = InAssertBuffer.Map();
+    const auto assertData = mappedAssertData.Get();
+
+    return STF::ProcessAssertBuffer(success, fails, assertData, {});
 }
 
 bool ShaderTestFixture::ShouldTakeCapture() const
@@ -283,7 +280,7 @@ u64 ShaderTestFixture::CalculateAssertBufferSize() const
         return (In + 3ull) & ~3ull;
     };
 
-    const u64 assertInfoSection = m_AssertInfo.NumRecordedFailedAsserts * sizeof(HLSLAssertMetaData);
+    const u64 assertInfoSection = m_AssertInfo.NumRecordedFailedAsserts * sizeof(STF::HLSLAssertMetaData);
     const u64 assertDataSection = m_AssertInfo.NumBytesAssertData > 0 ? RoundUpToMultipleOf4(m_AssertInfo.NumBytesAssertData) : 0;
 
     const u64 requestedSize = assertInfoSection + assertDataSection;

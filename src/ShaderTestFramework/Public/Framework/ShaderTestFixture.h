@@ -31,16 +31,6 @@ public:
         FailedAssertParams AssertInfo;
     };
 
-    struct HLSLAssertMetaData
-    {
-        u32 LineNumber = 0;
-        u32 ThreadId = 0;
-        u32 ThreadIdType = 0;
-        u32 TypeId = 0;
-        u32 DataAddress = 0;
-        u32 DataSize = 0;
-    };
-
     class Results
     {
     public:
@@ -79,7 +69,7 @@ private:
     GPUResource CreateAssertBuffer(const u64 InSizeInBytes) const;
     GPUResource CreateReadbackBuffer(const u64 InSizeInBytes) const;
     DescriptorHandle CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap, const u32 InIndex) const;
-    Tuple<u32, u32> ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer) const;
+    std::vector<std::string> ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer) const;
     std::vector<ShaderMacro> GenerateTypeIDDefines() const;
 
     u64 CalculateAssertBufferSize() const;
