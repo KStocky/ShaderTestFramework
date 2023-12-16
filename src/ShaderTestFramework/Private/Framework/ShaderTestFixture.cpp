@@ -1,6 +1,7 @@
 #include "Framework/ShaderTestFixture.h"
 
 #include "Framework/AssertBufferProcessor.h"
+#include "Framework/HLSLTypes.h"
 #include "Framework/PIXCapturer.h"
 #include "Utility/EnumReflection.h"
 
@@ -17,6 +18,7 @@ ShaderTestFixture::ShaderTestFixture(Desc InParams)
 	, m_Compiler(std::move(InParams.Mappings))
 	, m_Source(std::move(InParams.Source))
 	, m_CompilationFlags(std::move(InParams.CompilationFlags))
+    , m_Defines()
 	, m_ShaderModel(InParams.ShaderModel)
     , m_HLSLVersion(InParams.HLSLVersion)
     , m_AssertInfo(InParams.AssertInfo)
@@ -24,6 +26,8 @@ ShaderTestFixture::ShaderTestFixture(Desc InParams)
 {
     m_PIXAvailable = PIXLoadLatestWinPixGpuCapturerLibrary() != nullptr;
     m_Device = GPUDevice{ InParams.GPUDeviceParams };
+
+    PopulateDefaultTypeConverters();
 }
 
 void ShaderTestFixture::TakeCapture()
@@ -147,7 +151,7 @@ CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName
     job.ShaderType = EShaderType::Compute;
     job.Source = m_Source;
     job.HLSLVersion = m_HLSLVersion;
-    job.Defines = GenerateTypeIDDefines();
+    job.Defines = m_Defines;
 
     if (ShouldTakeCapture())
     {
@@ -171,6 +175,14 @@ CommandEngine ShaderTestFixture::CreateCommandEngine() const
     auto commandQueue = m_Device.CreateCommandQueue(queueDesc);
 
     return CommandEngine(CommandEngine::CreationParams{ std::move(commandList), std::move(commandQueue), m_Device });
+}
+
+void ShaderTestFixture::RegisterTypeConverter(std::string InTypeIDName, STF::TypeConverter InConverter)
+{
+    const u32 typeId = m_NextTypeID++;
+    ThrowIfFalse(typeId == static_cast<u32>(m_TypeConverterMap.size()));
+    m_Defines.push_back(ShaderMacro{ std::move(InTypeIDName), std::format("{}", typeId) });
+    m_TypeConverterMap.push_back(std::move(InConverter));
 }
 
 DescriptorHeap ShaderTestFixture::CreateDescriptorHeap() const
@@ -242,35 +254,59 @@ std::vector<std::string> ShaderTestFixture::ReadbackResults(const GPUResource& I
     std::memcpy(&success, allocationData.data(), sizeof(u32));
     std::memcpy(&fails, allocationData.data() + sizeof(u32), sizeof(u32));
 
+
     const auto mappedAssertData = InAssertBuffer.Map();
     const auto assertData = mappedAssertData.Get();
 
     return STF::ProcessAssertBuffer(success, fails, assertData, {});
 }
 
+void ShaderTestFixture::PopulateDefaultTypeConverters()
+{
+    std::array typeIdDefines =
+    {
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UNDEFINED", [](const std::span<const std::byte>) -> std::string 
+        { 
+            return "Undefined Type"; 
+        } },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_BOOL", [](const std::span<const std::byte> InBytes) -> std::string
+        { 
+            if (InBytes.size_bytes() != 4)
+            {
+                return std::format("Unexpected num bytes: {} for type bool", InBytes.size_bytes());
+            }
+
+            u32 data;
+            std::memcpy(&data, InBytes.data(), InBytes.size_bytes());
+
+            return std::format("{}", data != 0 ? "true" : "false");
+        } },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT", STF::CreateDefaultTypeConverter<i32>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT2", STF::CreateDefaultTypeConverter<int2>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT3", STF::CreateDefaultTypeConverter<int3>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT4", STF::CreateDefaultTypeConverter<int4>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT", STF::CreateDefaultTypeConverter<u32>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT2", STF::CreateDefaultTypeConverter<uint2>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT3", STF::CreateDefaultTypeConverter<uint3>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT4", STF::CreateDefaultTypeConverter<uint4>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT", STF::CreateDefaultTypeConverter<float>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT2", STF::CreateDefaultTypeConverter<float2>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT3", STF::CreateDefaultTypeConverter<float3>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT4", STF::CreateDefaultTypeConverter<float4>() },
+    };
+    
+    m_Defines.reserve(typeIdDefines.size());
+    m_TypeConverterMap.reserve(typeIdDefines.size());
+
+    for (auto&& [define, converter] : typeIdDefines)
+    {
+        RegisterTypeConverter(std::move(define), std::move(converter));
+    }
+}
+
 bool ShaderTestFixture::ShouldTakeCapture() const
 {
     return m_PIXAvailable && m_CaptureRequested;
-}
-
-std::vector<ShaderMacro> ShaderTestFixture::GenerateTypeIDDefines() const
-{
-    return std::vector<ShaderMacro>
-    {
-        { "TYPE_ID_BOOL", "1" },
-        { "TYPE_ID_INT", "2" },
-        { "TYPE_ID_INT2", "3" },
-        { "TYPE_ID_INT3", "4" },
-        { "TYPE_ID_INT4", "5" },
-        { "TYPE_ID_UINT", "6" },
-        { "TYPE_ID_UINT2", "7" },
-        { "TYPE_ID_UINT3", "8" },
-        { "TYPE_ID_UINT4", "9" },
-        { "TYPE_ID_FLOAT", "10" },
-        { "TYPE_ID_FLOAT2", "11" },
-        { "TYPE_ID_FLOAT3", "12" },
-        { "TYPE_ID_FLOAT4", "13" }
-    };
 }
 
 u64 ShaderTestFixture::CalculateAssertBufferSize() const

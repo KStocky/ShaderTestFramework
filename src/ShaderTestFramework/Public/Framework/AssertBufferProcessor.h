@@ -1,9 +1,10 @@
 #pragma once
 
 #include "Platform.h"
+#include "Utility/Concepts.h"
+#include "Utility/Type.h"
 
 #include <functional>
-#include <unordered_map>
 #include <span>
 #include <string>
 #include <vector>
@@ -20,11 +21,31 @@ namespace STF
         u32 DataSize = 0;
     };
 
-    using TypeConverterMap = std::unordered_map<u32, std::function<std::string(std::span<const std::byte>)>>;
+    using TypeConverter = std::function<std::string(std::span<const std::byte>)>;
+
+    using TypeConverterMap = std::vector<TypeConverter>;
 
     std::vector<std::string> ProcessAssertBuffer(
         const u32 InNumSuccessful,
         const u32 InNumFailed,
         std::span<const std::byte> InAssertData,
         const TypeConverterMap& InTypeHandlerMap);
+
+    template<HLSLTypeTriviallyConvertibleType T>
+    TypeConverter CreateDefaultTypeConverter()
+    {
+        return 
+            [](const std::span<const std::byte> InBytes) -> std::string
+            {
+                if (InBytes.size_bytes() != sizeof(T))
+                {
+                    return std::format("Unexpected num bytes: {} for type {}", InBytes.size_bytes(), TypeToString<T>());
+                }
+
+                T data;
+                std::memcpy(&data, InBytes.data(), InBytes.size_bytes());
+
+                return std::format("{}", data);
+            };
+    }
 }
