@@ -71,7 +71,7 @@ concept ConstexprDefaultConstructableEmptyCallableType = ConstexprDefaultConstru
 template<typename T>
 concept HLSLBaseType = std::same_as<T, i32> || std::same_as<T, u32> || std::same_as<T, float>;
 
-#if _MSC_VER < 1932
+#if _MSC_VER <= 1936
 
 namespace Private
 {
@@ -108,7 +108,7 @@ namespace Private
 
 template<typename T, typename CharT>
 concept Formattable =
-#if _MSC_VER >= 1932
+#if _MSC_VER > 1936
 std::formattable<T, CharT>;
 #else
 Private::formattable<T, CharT>;
