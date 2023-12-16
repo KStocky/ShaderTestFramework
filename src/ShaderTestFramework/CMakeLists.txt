@@ -42,6 +42,7 @@ set(SOURCES
     Public/D3D12/Shader/VirtualShaderDirectoryMapping.h
     Public/D3D12/Shader/VirtualShaderDirectoryMappingManager.h
     Public/Framework/AssertBufferProcessor.h
+    Public/Framework/HLSLTypes.h
     Public/Framework/PIXCapturer.h
     Public/Framework/ShaderTestFixture.h
     Public/Platform.h

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Platform.h"
 #include <concepts>
 #include <type_traits>
 
@@ -65,4 +66,7 @@ concept EmptyCallableType = std::is_empty_v<T> && CallableType<T, U...>;
 
 template<typename T, typename... U>
 concept ConstexprDefaultConstructableEmptyCallableType = ConstexprDefaultConstructableType<T> && EmptyCallableType<T, U...>;
+
+template<typename T>
+concept HLSLBaseType = std::same_as<T, i32> || std::same_as<T, u32> || std::same_as<T, float>;
 
