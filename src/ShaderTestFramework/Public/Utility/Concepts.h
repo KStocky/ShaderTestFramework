@@ -71,8 +71,6 @@ concept ConstexprDefaultConstructableEmptyCallableType = ConstexprDefaultConstru
 template<typename T>
 concept HLSLBaseType = std::same_as<T, i32> || std::same_as<T, u32> || std::same_as<T, float>;
 
-#if _MSC_VER <= 1936
-
 namespace Private
 {
     template <class Ty, class Context, class Formatter = Context::template formatter_type<std::remove_const_t<Ty>>>
@@ -104,15 +102,15 @@ namespace Private
 
 }
 
-#endif // _HAS_CXX23
+//#endif
 
 template<typename T, typename CharT>
-concept Formattable =
-#if _MSC_VER > 1936
-std::formattable<T, CharT>;
-#else
-Private::formattable<T, CharT>;
-#endif
+concept Formattable = Private::formattable<T, CharT>;
+//#if _MSC_VER > 1936
+//std::formattable<T, CharT>;
+//#else
+//Private::formattable<T, CharT>;
+//#endif
 
 template<typename T>
 concept HLSLTypeTriviallyConvertibleType =
