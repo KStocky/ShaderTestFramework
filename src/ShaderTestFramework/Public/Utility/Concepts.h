@@ -2,6 +2,7 @@
 
 #include "Platform.h"
 #include <concepts>
+#include <format>
 #include <type_traits>
 
 namespace ConceptsPrivate
@@ -69,4 +70,10 @@ concept ConstexprDefaultConstructableEmptyCallableType = ConstexprDefaultConstru
 
 template<typename T>
 concept HLSLBaseType = std::same_as<T, i32> || std::same_as<T, u32> || std::same_as<T, float>;
+
+template<typename T>
+concept HLSLTypeTriviallyConvertibleType =
+    std::is_trivially_copyable_v<T> &&
+    (alignof(T) == 4) &&
+    std::formattable<T, char>;
 
