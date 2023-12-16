@@ -102,15 +102,13 @@ namespace Private
 
 }
 
-//#endif
-
 template<typename T, typename CharT>
-concept Formattable = Private::formattable<T, CharT>;
-//#if _MSC_VER > 1936
-//std::formattable<T, CharT>;
-//#else
-//Private::formattable<T, CharT>;
-//#endif
+concept Formattable =
+#if _MSC_VER > 1937
+std::formattable<T, CharT>;
+#else
+Private::formattable<T, CharT>;
+#endif
 
 template<typename T>
 concept HLSLTypeTriviallyConvertibleType =
