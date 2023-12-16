@@ -198,3 +198,16 @@ TEMPLATE_TEST_CASE_SIG("HLSL Type operation Tests", "[template][nttp]", ((typena
     HLSLTypeOpTestFixture<T, S> fixture;
     REQUIRE(fixture);
 }
+
+namespace HLSLTypesConceptsTests
+{
+    static_assert(HLSLTypeTriviallyConvertibleType<int2>);
+    static_assert(HLSLTypeTriviallyConvertibleType<int3>);
+    static_assert(HLSLTypeTriviallyConvertibleType<int4>);
+    static_assert(HLSLTypeTriviallyConvertibleType<uint2>);
+    static_assert(HLSLTypeTriviallyConvertibleType<uint3>);
+    static_assert(HLSLTypeTriviallyConvertibleType<uint4>);
+    static_assert(HLSLTypeTriviallyConvertibleType<float2>);
+    static_assert(HLSLTypeTriviallyConvertibleType<float3>);
+    static_assert(HLSLTypeTriviallyConvertibleType<float4>);
+}

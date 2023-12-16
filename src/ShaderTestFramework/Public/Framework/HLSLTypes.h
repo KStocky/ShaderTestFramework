@@ -3,6 +3,8 @@
 #include "Platform.h"
 #include "Utility/Concepts.h"
 
+#include <format>
+
 template<HLSLBaseType T, u32 InNumComponents>
 struct HLSLVector;
 
@@ -122,11 +124,11 @@ template<HLSLBaseType T>
 struct HLSLVector<T, 4>
 {
     constexpr HLSLVector() = default;
-
+    
     constexpr explicit HLSLVector(const T InAll) noexcept
         : HLSLVector(InAll, InAll, InAll, InAll)
     {}
-
+    
     constexpr HLSLVector(const T InX, const T InY, const T InZ, const T InW) noexcept
         : x(InX)
         , y(InY)
@@ -194,3 +196,33 @@ using int4 = HLSLVector<i32, 4>;
 using uint2 = HLSLVector<u32, 2>;
 using uint3 = HLSLVector<u32, 3>;
 using uint4 = HLSLVector<u32, 4>;
+
+template <typename T>
+struct std::formatter<HLSLVector<T, 2>> : std::formatter<string_view> {
+    auto format(const HLSLVector<T, 2>& In, auto& ctx) const {
+        std::string temp;
+        std::format_to(std::back_inserter(temp), "({}, {})",
+            In.x, In.y);
+        return std::formatter<string_view>::format(temp, ctx);
+    }
+};
+
+template <typename T>
+struct std::formatter<HLSLVector<T, 3>> : std::formatter<string_view> {
+    auto format(const HLSLVector<T, 3>& In, auto& ctx) const {
+        std::string temp;
+        std::format_to(std::back_inserter(temp), "({}, {}, {})",
+            In.x, In.y, In.z);
+        return std::formatter<string_view>::format(temp, ctx);
+    }
+};
+
+template <typename T>
+struct std::formatter<HLSLVector<T, 4>> : std::formatter<string_view> {
+    auto format(const HLSLVector<T, 4>& In, auto& ctx) const {
+        std::string temp;
+        std::format_to(std::back_inserter(temp), "({}, {}, {}, {})",
+            In.x, In.y, In.z, In.w);
+        return std::formatter<string_view>::format(temp, ctx);
+    }
+};
