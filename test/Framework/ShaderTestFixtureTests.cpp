@@ -206,7 +206,7 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing")
                 std::tuple{ "GIVEN_ZeroAssertBuffer_WHEN_NonZeroSuccessfulAndFailedAssertsMade_THEN_HasExpectedResults", STF::TestRunResults{ {}, 2, 2, uint3(1,1,1) }, 0, 0 },
                 std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_ZeroAssertsMade_THEN_HasExpectedResults", STF::TestRunResults{ {}, 0, 0, uint3(1,1,1) }, 10, 0 },
                 std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_NonZeroSuccessfulAssertsMade_THEN_HasExpectedResults", STF::TestRunResults{ {}, 2, 0, uint3(1,1,1) }, 10, 0 },
-                //std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_FailedAssert_THEN_HasExpectedResults", STF::TestRunResults{ {STF::FailedAssert{{}, STF::HLSLAssertMetaData{42, 0, 0, 1, 0, 0}}}, 0, 1, uint3(1,1,1) }, 10, 0 }
+                std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_FailedAssert_THEN_HasExpectedResults", STF::TestRunResults{ {STF::FailedAssert{{}, STF::HLSLAssertMetaData{42, 0, 0, 1, 0, 0}}}, 0, 1, uint3(1,1,1) }, 10, 0 }
             }
         )
     );

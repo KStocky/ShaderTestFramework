@@ -648,11 +648,12 @@ namespace ShaderTestPrivate
         const uint metaIndex = AddAssert();
         if (metaIndex < MaxNumAsserts)
         {
+            uint2 addressAndSize = uint2(0, 0);
             if (SizeInBytesOfAssertData > 0)
             {
-                const uint2 addressAndSize = AddAssertData(In1, In2);
-                AddAssertMetaInfo(metaIndex, InId, STF::type_id<T>::value, addressAndSize);
+                addressAndSize = AddAssertData(In1, In2);
             }
+            AddAssertMetaInfo(metaIndex, InId, STF::type_id<T>::value, addressAndSize);
         }
     }
 
@@ -662,11 +663,13 @@ namespace ShaderTestPrivate
         const uint metaIndex = AddAssert();
         if (metaIndex < MaxNumAsserts)
         {
+            uint2 addressAndSize = uint2(0, 0);
             if (SizeInBytesOfAssertData > 0)
             {
-                const uint2 addressAndSize = AddAssertData(In);
-                AddAssertMetaInfo(metaIndex, InId, STF::type_id<T>::value, addressAndSize);
+                addressAndSize = AddAssertData(In);
             }
+            
+            AddAssertMetaInfo(metaIndex, InId, STF::type_id<T>::value, addressAndSize);
         }
     }
 }
