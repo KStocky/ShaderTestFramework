@@ -48,6 +48,11 @@ namespace STF
     {
     }
 
+    const TestRunResults* Results::GetTestResults() const
+    {
+        return std::get_if<TestRunResults>(&m_Result);
+    }
+
     std::ostream& operator<<(std::ostream& InOs, const STF::Results& In)
     {
         std::visit(
@@ -87,6 +92,7 @@ STF::TestRunResults STF::ProcessAssertBuffer(
     STF::TestRunResults ret{};
     ret.NumSucceeded = InNumSuccessful;
     ret.NumFailed = InNumFailed;
+    ret.DispatchDimensions = InDispatchDimensions;
 
     const bool hasFailedAssertInfo = InLayout.NumFailedAsserts > 0;
     const bool allSucceeded = InNumFailed == 0;
@@ -104,7 +110,6 @@ STF::TestRunResults STF::ProcessAssertBuffer(
     const u32 numAssertsToProcess = std::min(InNumFailed, InLayout.NumFailedAsserts);
 
     ret.FailedAsserts.reserve(numAssertsToProcess);
-    ret.DispatchDimensions = InDispatchDimensions;
 
     for (u32 assertIndex = 0; assertIndex < numAssertsToProcess; ++assertIndex)
     {

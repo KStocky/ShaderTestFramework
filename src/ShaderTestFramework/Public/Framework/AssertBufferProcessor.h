@@ -32,7 +32,7 @@ namespace STF
         u32 DataAddress = 0;
         u32 DataSize = 0;
 
-        auto operator<=>(const HLSLAssertMetaData& InB) const = default;
+        friend auto operator<=>(const HLSLAssertMetaData&, const HLSLAssertMetaData&) = default;
     };
 
     struct AssertBufferLayout
@@ -40,7 +40,7 @@ namespace STF
         u32 NumFailedAsserts = 0;
         u32 NumBytesAssertData = 0;
 
-        auto operator<=>(const AssertBufferLayout& InB) const = default;
+        friend auto operator<=>(const AssertBufferLayout&, const AssertBufferLayout&) = default;
     };
 
     using TypeConverter = std::function<std::string(std::span<const std::byte>)>;
@@ -51,6 +51,8 @@ namespace STF
     {
         std::vector<std::byte> Data;
         HLSLAssertMetaData Info;
+
+        friend auto operator<=>(const FailedAssert&, const FailedAssert&) = default;
     };
 
     struct TestRunResults
@@ -59,6 +61,8 @@ namespace STF
         u32 NumSucceeded = 0;
         u32 NumFailed = 0;
         uint3 DispatchDimensions;
+
+        friend auto operator<=>(const TestRunResults&, const TestRunResults&) = default;
     };
 
     class Results
@@ -86,6 +90,8 @@ namespace STF
                 return false;
             } }, InThis.m_Result);
         }
+
+        const TestRunResults* GetTestResults() const;
 
         friend std::ostream& operator<<(std::ostream& InOs, const Results& In);
 

@@ -193,6 +193,36 @@ namespace ProofOfConcept
     }
 }
 
+SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing")
+{
+    auto [testName, expected, numRecordedAsserts, numBytesData] = GENERATE
+    (
+        table<std::string, STF::TestRunResults, u32, u32>
+        (
+            {
+                std::tuple{ "GIVEN_ZeroAssertBuffer_WHEN_ZeroAssertsMade_THEN_HasExpectedResults", STF::TestRunResults{ {}, 0, 0, uint3(1,1,1) }, 0, 0 },
+                std::tuple{ "GIVEN_ZeroAssertBuffer_WHEN_NonZeroSuccessfulAssertsMade_THEN_HasExpectedResults", STF::TestRunResults{ {}, 2, 0, uint3(1,1,1) }, 0, 0 },
+                std::tuple{ "GIVEN_ZeroAssertBuffer_WHEN_NonZeroFailedAssertsMade_THEN_HasExpectedResults", STF::TestRunResults{ {}, 0, 2, uint3(1,1,1) }, 0, 0 },
+                std::tuple{ "GIVEN_ZeroAssertBuffer_WHEN_NonZeroSuccessfulAndFailedAssertsMade_THEN_HasExpectedResults", STF::TestRunResults{ {}, 2, 2, uint3(1,1,1) }, 0, 0 },
+                std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_ZeroAssertsMade_THEN_HasExpectedResults", STF::TestRunResults{ {}, 0, 0, uint3(1,1,1) }, 10, 0 },
+                std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_NonZeroSuccessfulAssertsMade_THEN_HasExpectedResults", STF::TestRunResults{ {}, 2, 0, uint3(1,1,1) }, 10, 0 },
+                //std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_FailedAssert_THEN_HasExpectedResults", STF::TestRunResults{ {STF::FailedAssert{{}, STF::HLSLAssertMetaData{42, 0, 0, 1, 0, 0}}}, 0, 1, uint3(1,1,1) }, 10, 0 }
+            }
+        )
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/AssertBuffer/ResultsProcessing.hlsl"), { numRecordedAsserts, numBytesData }));
+    fixture.TakeCapture();
+    DYNAMIC_SECTION(testName)
+    {
+        const auto results = fixture.RunTest(testName, 1, 1, 1);
+        CAPTURE(results);
+        const auto actual = results.GetTestResults();
+        REQUIRE(actual);
+        REQUIRE(*actual == expected);
+    }
+}
+
 SCENARIO("HLSLFrameworkTests - AssertBuffer - SizeTests")
 {
     auto [testName, numRecordedFailedAsserts, numBytesAssertData] = GENERATE
