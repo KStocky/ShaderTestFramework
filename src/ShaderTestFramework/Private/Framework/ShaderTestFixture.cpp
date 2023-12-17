@@ -35,13 +35,13 @@ void ShaderTestFixture::TakeCapture()
     m_CaptureRequested = true;
 }
 
-ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ)
+STF::Results ShaderTestFixture::RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ)
 {
 	const auto compileResult = CompileShader(InName);
 
 	if (!compileResult.has_value())
 	{
-		return Results{ {compileResult.error()} };
+		return STF::Results{ {compileResult.error()} };
 	}
 
     auto engine = CreateCommandEngine();
@@ -124,7 +124,7 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
 
 	engine.Flush();
 
-    return Results{ ReadbackResults(readBackAllocationBuffer, readBackBuffer) };
+    return ReadbackResults(readBackAllocationBuffer, readBackBuffer, uint3(dimX, dimY, dimZ));
 }
 
 bool ShaderTestFixture::IsValid() const
@@ -243,7 +243,7 @@ DescriptorHandle ShaderTestFixture::CreateAssertBufferUAV(const GPUResource& InA
     return uav;
 }
 
-std::vector<std::string> ShaderTestFixture::ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer) const
+STF::Results ShaderTestFixture::ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer, const uint3 InDispatchDimensions) const
 {
     const auto mappedAllocationData = InAllocationBuffer.Map();
     const auto allocationData = mappedAllocationData.Get();
@@ -258,7 +258,7 @@ std::vector<std::string> ShaderTestFixture::ReadbackResults(const GPUResource& I
     const auto mappedAssertData = InAssertBuffer.Map();
     const auto assertData = mappedAssertData.Get();
 
-    return STF::ProcessAssertBuffer(success, fails, m_AssertInfo, assertData, {});
+    return STF::ProcessAssertBuffer(success, fails, InDispatchDimensions, m_AssertInfo, assertData, {});
 }
 
 void ShaderTestFixture::PopulateDefaultTypeConverters()
@@ -322,18 +322,4 @@ u64 ShaderTestFixture::CalculateAssertBufferSize() const
     const u64 requestedSize = assertInfoSection + assertDataSection;
 
     return requestedSize > 0 ? requestedSize : 4ull;
-}
-
-ShaderTestFixture::Results::Results(std::vector<std::string> InErrors)
-	: m_Errors(std::move(InErrors))
-{
-}
-
-std::ostream& operator<<(std::ostream& InOs, const ShaderTestFixture::Results& In)
-{
-	for (const auto& [index, error] : std::views::enumerate(In.m_Errors))
-	{
-		InOs << std::format("{}. {}\n", index, error);
-	}
-	return InOs;
 }

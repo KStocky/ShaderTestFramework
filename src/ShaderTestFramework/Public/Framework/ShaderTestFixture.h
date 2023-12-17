@@ -5,6 +5,7 @@
 #include "D3D12/GPUResource.h"
 #include "D3D12/Shader/ShaderCompiler.h"
 #include "Framework/AssertBufferProcessor.h"
+#include "Framework/HLSLTypes.h"
 #include <vector>
 
 class ShaderTestFixture
@@ -22,32 +23,13 @@ public:
         std::vector<std::wstring> CompilationFlags;
         D3D_SHADER_MODEL ShaderModel = D3D_SHADER_MODEL_6_6;
         EHLSLVersion HLSLVersion = EHLSLVersion::Default;
-        STF::AssertBufferLayout AssertInfo;
-    };
-
-    class Results
-    {
-    public:
-
-        Results(std::vector<std::string> InErrors);
-
-        template<typename ThisType>
-        operator bool(this ThisType&& InThis)
-        {
-            return InThis.m_Errors.empty();
-        }
-
-        friend std::ostream& operator<<(std::ostream& InOs, const Results& In);
-
-    private:
-
-        std::vector<std::string> m_Errors;
+        STF::AssertBufferLayout AssertInfo{};
     };
 
     ShaderTestFixture(Desc InParams);
 
     void TakeCapture();
-    Results RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ);
+    STF::Results RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ);
     void RegisterTypeConverter(std::string InTypeIDName, STF::TypeConverter InConverter);
 
     bool IsValid() const;
@@ -64,7 +46,7 @@ private:
     GPUResource CreateAssertBuffer(const u64 InSizeInBytes) const;
     GPUResource CreateReadbackBuffer(const u64 InSizeInBytes) const;
     DescriptorHandle CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap, const u32 InIndex) const;
-    std::vector<std::string> ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer) const;
+    STF::Results ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer, const uint3 InDispatchDimensions) const;
     void PopulateDefaultTypeConverters();
 
     u64 CalculateAssertBufferSize() const;
