@@ -11,12 +11,6 @@ class ShaderTestFixture
 {
 public:
 
-    struct FailedAssertParams
-    {
-        u32 NumRecordedFailedAsserts = 0;
-        u32 NumBytesAssertData = 0;
-    };
-
     struct Desc
     {
         std::vector<VirtualShaderDirectoryMapping> Mappings;
@@ -28,7 +22,7 @@ public:
         std::vector<std::wstring> CompilationFlags;
         D3D_SHADER_MODEL ShaderModel = D3D_SHADER_MODEL_6_6;
         EHLSLVersion HLSLVersion = EHLSLVersion::Default;
-        FailedAssertParams AssertInfo;
+        STF::AssertBufferLayout AssertInfo;
     };
 
     class Results
@@ -85,7 +79,7 @@ private:
     std::vector<ShaderMacro> m_Defines;
     D3D_SHADER_MODEL m_ShaderModel;
     EHLSLVersion m_HLSLVersion;
-    FailedAssertParams m_AssertInfo;
+    STF::AssertBufferLayout m_AssertInfo;
     
     u32 m_NextTypeID = 0u;
     bool m_IsWarp = false;

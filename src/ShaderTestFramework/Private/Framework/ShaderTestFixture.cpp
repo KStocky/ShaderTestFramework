@@ -99,7 +99,7 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
                     std::array params
                     { 
                         0u, dimX, dimY, dimZ, 
-                        m_AssertInfo.NumRecordedFailedAsserts, m_AssertInfo.NumBytesAssertData, static_cast<u32>(bufferSizeInBytes), 1u
+                        m_AssertInfo.NumFailedAsserts, m_AssertInfo.NumBytesAssertData, static_cast<u32>(bufferSizeInBytes), 1u
                     };
                     InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
                 }
@@ -316,7 +316,7 @@ u64 ShaderTestFixture::CalculateAssertBufferSize() const
         return (In + 3ull) & ~3ull;
     };
 
-    const u64 assertInfoSection = m_AssertInfo.NumRecordedFailedAsserts * sizeof(STF::HLSLAssertMetaData);
+    const u64 assertInfoSection = m_AssertInfo.NumFailedAsserts * sizeof(STF::HLSLAssertMetaData);
     const u64 assertDataSection = m_AssertInfo.NumBytesAssertData > 0 ? RoundUpToMultipleOf4(m_AssertInfo.NumBytesAssertData) : 0;
 
     const u64 requestedSize = assertInfoSection + assertDataSection;

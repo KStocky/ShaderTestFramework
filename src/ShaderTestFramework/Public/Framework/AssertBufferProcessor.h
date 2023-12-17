@@ -21,6 +21,12 @@ namespace STF
         u32 DataSize = 0;
     };
 
+    struct AssertBufferLayout
+    {
+        u32 NumFailedAsserts = 0;
+        u32 NumBytesAssertData = 0;
+    };
+
     using TypeConverter = std::function<std::string(std::span<const std::byte>)>;
 
     using TypeConverterMap = std::vector<TypeConverter>;

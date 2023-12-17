@@ -20,7 +20,7 @@ namespace
         return VirtualShaderDirectoryMapping{ "/Tests", std::move(shaderDir) };
     }
 
-    ShaderTestFixture::Desc CreateDescForHLSLFrameworkTest(fs::path&& InPath, ShaderTestFixture::FailedAssertParams InAssertParams = {})
+    ShaderTestFixture::Desc CreateDescForHLSLFrameworkTest(fs::path&& InPath, STF::AssertBufferLayout InAssertParams = {})
     {
         ShaderTestFixture::Desc desc{};
 
