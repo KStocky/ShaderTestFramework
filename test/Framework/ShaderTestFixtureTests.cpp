@@ -79,7 +79,7 @@ SCENARIO("BasicShaderTests")
         else
         {
             const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
+            REQUIRE_FALSE(result);
         }
         
     }
@@ -269,7 +269,7 @@ SCENARIO("HLSLFrameworkTests - Cast")
         else
         {
             const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
+            REQUIRE_FALSE(result);
         }
     }
 }
@@ -305,7 +305,7 @@ SCENARIO("HLSLFrameworkTests - Asserts - AreEqual")
         else
         {
             const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
+            REQUIRE_FALSE(result);
         }
     }
 }
@@ -341,7 +341,7 @@ SCENARIO("HLSLFrameworkTests - Asserts - NotEqual")
         else
         {
             const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
+            REQUIRE_FALSE(result);
         }
     }
 }
@@ -375,7 +375,7 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsTrue")
         else
         {
             const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
+            REQUIRE_FALSE(result);
         }
     }
 }
@@ -403,7 +403,7 @@ SCENARIO("HLSLFrameworkTests - Asserts - Fail")
         else
         {
             const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
+            REQUIRE_FALSE(result);
         }
     }
 }
@@ -437,7 +437,7 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsFalse")
         else
         {
             const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
+            REQUIRE_FALSE(result);
         }
     }
 }
@@ -472,7 +472,7 @@ SCENARIO("HLSLFrameworkTests - Macros - AssertMacro")
         else
         {
             const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
+            REQUIRE_FALSE(result);
         }
     }
 }
@@ -600,7 +600,7 @@ SCENARIO("HLSLFrameworkTests - Container")
         else
         {
             const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
+            REQUIRE_FALSE(result);
         }
     }
 }
@@ -805,7 +805,7 @@ SCENARIO("HLSLFrameworkTests - Bugs")
         else
         {
             const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
+            REQUIRE_FALSE(result);
         }
     }
 }

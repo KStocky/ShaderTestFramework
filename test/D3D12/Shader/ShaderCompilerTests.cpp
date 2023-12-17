@@ -145,7 +145,7 @@ SCENARIO("ShaderModelTests")
             {
                 THEN("Compilation Fails")
                 {
-                    REQUIRE(!errors.has_value());
+                    REQUIRE_FALSE(errors.has_value());
                 }
             }
         }
@@ -342,7 +342,7 @@ SCENARIO("HLSLTests")
             {
                 THEN("Compilation Fails")
                 {
-                    REQUIRE(!errors.has_value());
+                    REQUIRE_FALSE(errors.has_value());
                 }
             }
         }
