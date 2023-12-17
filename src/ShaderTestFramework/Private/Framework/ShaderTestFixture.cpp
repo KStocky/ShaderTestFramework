@@ -258,7 +258,7 @@ std::vector<std::string> ShaderTestFixture::ReadbackResults(const GPUResource& I
     const auto mappedAssertData = InAssertBuffer.Map();
     const auto assertData = mappedAssertData.Get();
 
-    return STF::ProcessAssertBuffer(success, fails, assertData, {});
+    return STF::ProcessAssertBuffer(success, fails, m_AssertInfo, assertData, {});
 }
 
 void ShaderTestFixture::PopulateDefaultTypeConverters()

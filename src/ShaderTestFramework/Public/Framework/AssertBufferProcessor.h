@@ -34,6 +34,7 @@ namespace STF
     std::vector<std::string> ProcessAssertBuffer(
         const u32 InNumSuccessful,
         const u32 InNumFailed,
+        const AssertBufferLayout InLayout,
         std::span<const std::byte> InAssertData,
         const TypeConverterMap& InTypeHandlerMap);
 

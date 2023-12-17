@@ -4,7 +4,8 @@
 
 std::vector<std::string> STF::ProcessAssertBuffer(
     const u32 InNumSuccessful, 
-    const u32 InNumFailed, 
+    const u32 InNumFailed,
+    const AssertBufferLayout,
     std::span<const std::byte>, 
     const TypeConverterMap&)
 {
