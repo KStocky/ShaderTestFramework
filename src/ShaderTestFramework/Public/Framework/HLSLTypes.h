@@ -57,6 +57,8 @@ struct HLSLVector<T, 2>
     constexpr HLSLVector& operator-=(const HLSLVector InA) { *this = *this - InA; return *this; }
     constexpr HLSLVector& operator/=(const HLSLVector InA) { *this = *this / InA; return *this; }
 
+    friend constexpr auto operator<=>(const HLSLVector&, const HLSLVector&) = default;
+
     T x = static_cast<T>(0);
     T y = static_cast<T>(0);
 };
@@ -114,6 +116,8 @@ struct HLSLVector<T, 3>
     constexpr HLSLVector& operator*=(const HLSLVector InA) { *this = *this * InA; return *this; }
     constexpr HLSLVector& operator-=(const HLSLVector InA) { *this = *this - InA; return *this; }
     constexpr HLSLVector& operator/=(const HLSLVector InA) { *this = *this / InA; return *this; }
+
+    friend constexpr auto operator<=>(const HLSLVector&, const HLSLVector&) = default;
 
     T x = static_cast<T>(0);
     T y = static_cast<T>(0);
@@ -178,6 +182,8 @@ struct HLSLVector<T, 4>
     constexpr HLSLVector& operator*=(const HLSLVector InA) { *this = *this * InA; return *this; }
     constexpr HLSLVector& operator-=(const HLSLVector InA) { *this = *this - InA; return *this; }
     constexpr HLSLVector& operator/=(const HLSLVector InA) { *this = *this / InA; return *this; }
+
+    friend constexpr auto operator<=>(const HLSLVector&, const HLSLVector&) = default;
 
     T x = static_cast<T>(0);
     T y = static_cast<T>(0);
