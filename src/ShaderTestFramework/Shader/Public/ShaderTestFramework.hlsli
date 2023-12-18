@@ -583,7 +583,7 @@ namespace ShaderTestPrivate
     void AddAssertMetaInfo(const uint InMetaIndex, const uint InId, const uint InTypeId, const uint2 InAddressAndSize)
     {
         RWByteAddressBuffer buffer = GetAssertBuffer();
-        const uint metaAddress = InMetaIndex * sizeof(uint);
+        const uint metaAddress = InMetaIndex * sizeof(HLSLAssertMetaData);
         buffer.Store4(metaAddress, uint4(InId, Scratch.ThreadID.Data, (uint)Scratch.ThreadID.Type, InTypeId));
         buffer.Store2(metaAddress + 16, InAddressAndSize);
     }

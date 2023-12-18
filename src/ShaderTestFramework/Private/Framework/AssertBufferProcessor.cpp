@@ -53,6 +53,18 @@ namespace STF
         return std::get_if<TestRunResults>(&m_Result);
     }
 
+    std::ostream& operator<<(std::ostream& InOs, const TestRunResults& In)
+    {
+        InOs << std::format("There were {} successful asserts and {} failed assertions\n", In.NumSucceeded, In.NumFailed);
+
+        for (const auto& [index, error] : std::views::enumerate(In.FailedAsserts))
+        {
+            InOs << std::format("{}: Line: {} {}\n", index, error.Info.LineNumber, STF::ThreadInfoToString(static_cast<STF::EThreadIdType>(error.Info.ThreadIdType), error.Info.ThreadId, In.DispatchDimensions));
+        }
+
+        return InOs;
+    }
+
     std::ostream& operator<<(std::ostream& InOs, const STF::Results& In)
     {
         std::visit(
@@ -64,12 +76,7 @@ namespace STF
                 },
                 [&InOs](const STF::TestRunResults& InTestResults)
                 {
-                    InOs << std::format("There were {} successful asserts and {} failed assertions\n", InTestResults.NumSucceeded, InTestResults.NumFailed);
-
-                    for (const auto& [index, error] : std::views::enumerate(InTestResults.FailedAsserts))
-                    {
-                        InOs << std::format("{}: Line: {} {}\n", index, error.Info.LineNumber, STF::ThreadInfoToString(static_cast<STF::EThreadIdType>(error.Info.ThreadIdType), error.Info.ThreadId, InTestResults.DispatchDimensions));
-                    }
+                    InOs << InTestResults;
                 },
                 [&InOs](const std::string& InCompilationError)
                 {

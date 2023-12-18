@@ -63,6 +63,7 @@ namespace STF
         uint3 DispatchDimensions;
 
         friend auto operator<=>(const TestRunResults&, const TestRunResults&) = default;
+        friend std::ostream& operator<<(std::ostream& InOs, const TestRunResults& In);
     };
 
     class Results
