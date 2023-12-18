@@ -38,7 +38,7 @@ namespace STF
         return "";
     }
 
-    Results::Results(std::string InError)
+    Results::Results(FailedShaderCompilationResult InError)
         : m_Result(std::move(InError))
     {
     }
@@ -65,7 +65,13 @@ namespace STF
         return InOs;
     }
 
-    std::ostream& operator<<(std::ostream& InOs, const STF::Results& In)
+    std::ostream& operator<<(std::ostream& InOs, const FailedShaderCompilationResult& In)
+    {
+        InOs << In.Error;
+        return InOs;
+    }
+
+    std::ostream& operator<<(std::ostream& InOs, const Results& In)
     {
         std::visit(
             OverloadSet
@@ -74,11 +80,11 @@ namespace STF
                 {
                     InOs << "Results not initialized";
                 },
-                [&InOs](const STF::TestRunResults& InTestResults)
+                [&InOs](const TestRunResults& InTestResults)
                 {
                     InOs << InTestResults;
                 },
-                [&InOs](const std::string& InCompilationError)
+                [&InOs](const FailedShaderCompilationResult& InCompilationError)
                 {
                     InOs << InCompilationError;
                 }

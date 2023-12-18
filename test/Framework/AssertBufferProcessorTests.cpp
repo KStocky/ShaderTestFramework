@@ -17,8 +17,8 @@ SCENARIO("AssertBufferProcessorTests - Results")
         (
             {
                 std::tuple{ "Default constructed", STF::Results{}, false },
-                std::tuple{ "Constructed from empty string", STF::Results{""}, false},
-                std::tuple{ "Constructed from non-empty string", STF::Results{"Hello"}, false },
+                std::tuple{ "Constructed from empty string", STF::Results{STF::FailedShaderCompilationResult{""}}, false},
+                std::tuple{ "Constructed from non-empty string", STF::Results{STF::FailedShaderCompilationResult{"Hello"}}, false },
                 std::tuple{ "Zero Failed test run", STF::Results{ STF::TestRunResults{} }, true },
                 std::tuple{ "Non-zero failed test run", STF::Results{ STF::TestRunResults{ {}, 0, 1, uint3{} } }, false }
             }

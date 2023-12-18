@@ -66,12 +66,19 @@ namespace STF
         friend std::ostream& operator<<(std::ostream& InOs, const TestRunResults& In);
     };
 
+    struct FailedShaderCompilationResult
+    {
+        std::string Error;
+        friend auto operator<=>(const FailedShaderCompilationResult&, const FailedShaderCompilationResult&) = default;
+        friend std::ostream& operator<<(std::ostream& InOs, const FailedShaderCompilationResult& In);
+    };
+
     class Results
     {
     public:
 
         Results() = default;
-        Results(std::string InError);
+        Results(FailedShaderCompilationResult InError);
         Results(TestRunResults InResults);
 
         template<typename ThisType>
@@ -86,7 +93,7 @@ namespace STF
             {
                 return InTestResults.NumFailed == 0;
             },
-            [](const std::string&)
+            [](const FailedShaderCompilationResult&)
             {
                 return false;
             } }, InThis.m_Result);
@@ -97,7 +104,7 @@ namespace STF
         friend std::ostream& operator<<(std::ostream& InOs, const Results& In);
 
     private:
-        std::variant<std::monostate, TestRunResults, std::string> m_Result;
+        std::variant<std::monostate, TestRunResults, FailedShaderCompilationResult> m_Result;
     };
 
     TestRunResults ProcessAssertBuffer(

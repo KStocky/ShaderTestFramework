@@ -206,12 +206,13 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing")
                 std::tuple{ "GIVEN_ZeroAssertBuffer_WHEN_NonZeroSuccessfulAndFailedAssertsMade_THEN_HasExpectedResults", STF::TestRunResults{ {}, 2, 2, uint3(1,1,1) }, 0, 0 },
                 std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_ZeroAssertsMade_THEN_HasExpectedResults", STF::TestRunResults{ {}, 0, 0, uint3(1,1,1) }, 10, 0 },
                 std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_NonZeroSuccessfulAssertsMade_THEN_HasExpectedResults", STF::TestRunResults{ {}, 2, 0, uint3(1,1,1) }, 10, 0 },
-                std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_FailedAssert_THEN_HasExpectedResults", STF::TestRunResults{ {STF::FailedAssert{{}, STF::HLSLAssertMetaData{42, 0, 0, 0, 0, 0}}}, 0, 1, uint3(1,1,1) }, 10, 0 },
+                std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_FailedAssertNoTypeId_THEN_HasExpectedResults", STF::TestRunResults{ {STF::FailedAssert{{}, STF::HLSLAssertMetaData{42, 0, 0, 0, 0, 0}}}, 0, 1, uint3(1,1,1) }, 10, 0 },
                 std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_TwoFailedAssert_THEN_HasExpectedResults", STF::TestRunResults{ {STF::FailedAssert{{}, STF::HLSLAssertMetaData{42, 0, 0, 0, 0, 0}}, STF::FailedAssert{{}, STF::HLSLAssertMetaData{32, 0, 0, 0, 0, 0}}}, 0, 2, uint3(1,1,1) }, 10, 0 },
-                std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_FailedAssertWithLineId_THEN_HasExpectedResults", STF::TestRunResults{ {STF::FailedAssert{{}, STF::HLSLAssertMetaData{88, 0, 0, 0, 0, 0}}}, 0, 1, uint3(1,1,1) }, 10, 0 },
+                std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_FailedAssertWithLineId_THEN_HasExpectedResults", STF::TestRunResults{ {STF::FailedAssert{{}, STF::HLSLAssertMetaData{101, 0, 0, 0, 0, 0}}}, 0, 1, uint3(1,1,1) }, 10, 0 },
                 std::tuple{ "GIVEN_AssertInfoCapacityWithFlatThreadId_WHEN_FailedAssert_THEN_HasExpectedResults", STF::TestRunResults{ {STF::FailedAssert{{}, STF::HLSLAssertMetaData{66, 12, 1, 0, 0, 0}}}, 0, 1, uint3(1,1,1) }, 10, 0 },
                 std::tuple{ "GIVEN_AssertInfoCapacityWithFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults", STF::TestRunResults{ {STF::FailedAssert{{}, STF::HLSLAssertMetaData{66, 12, 2, 0, 0, 0}}}, 0, 1, uint3(24,1,1) }, 10, 0 },
-                std::tuple{ "GIVEN_AssertInfoCapacityWithNonFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults", STF::TestRunResults{ {STF::FailedAssert{{}, STF::HLSLAssertMetaData{66, 4, 2, 0, 0, 0}}}, 0, 1, uint3(3,3,3) }, 10, 0 }
+                std::tuple{ "GIVEN_AssertInfoCapacityWithNonFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults", STF::TestRunResults{ {STF::FailedAssert{{}, STF::HLSLAssertMetaData{66, 4, 2, 0, 0, 0}}}, 0, 1, uint3(3,3,3) }, 10, 0 },
+                std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_FailedAssertWithTypeId_THEN_HasExpectedResults", STF::TestRunResults{ {STF::FailedAssert{{}, STF::HLSLAssertMetaData{42, 0, 0, 1024, 0, 0}}}, 0, 1, uint3(1,1,1) }, 10, 0 },
             }
         )
     );

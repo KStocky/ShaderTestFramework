@@ -5,6 +5,11 @@ struct TestType
     bool Value;
 };
 
+struct TestTypeWithTypeId
+{
+    bool Value;
+};
+
 namespace STF
 {
     template<>
@@ -12,6 +17,14 @@ namespace STF
     {
         return In.Value;
     }
+
+    template<>
+    bool Cast <bool, TestTypeWithTypeId>(TestTypeWithTypeId In)
+    {
+        return In.Value;
+    }
+
+    template<> struct type_id<TestTypeWithTypeId> : integral_constant<uint, 1024>{};
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -62,7 +75,7 @@ void GIVEN_AssertInfoCapacity_WHEN_NonZeroSuccessfulAssertsMade_THEN_HasExpected
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
-void GIVEN_AssertInfoCapacity_WHEN_FailedAssert_THEN_HasExpectedResults()
+void GIVEN_AssertInfoCapacity_WHEN_FailedAssertNoTypeId_THEN_HasExpectedResults()
 {
     TestType t;
     t.Value = false;
@@ -124,4 +137,13 @@ void GIVEN_AssertInfoCapacityWithNonFlat3DThreadId_WHEN_FailedAssert_THEN_HasExp
         t.Value = false;
         STF::IsTrue(t, 66);
     }
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void GIVEN_AssertInfoCapacity_WHEN_FailedAssertWithTypeId_THEN_HasExpectedResults()
+{
+    TestTypeWithTypeId t;
+    t.Value = false;
+    STF::IsTrue(t, 42);
 }
