@@ -265,9 +265,9 @@ void ShaderTestFixture::PopulateDefaultTypeConverters()
 {
     std::array typeIdDefines =
     {
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UNDEFINED", [](const std::span<const std::byte>) -> std::string 
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UNDEFINED", [](const std::span<const std::byte> InBytes) -> std::string 
         { 
-            return "Undefined Type"; 
+            return std::format("Undefined Type -> {}", STF::DefaultTypeConverter(InBytes)); 
         } },
         Tuple<std::string, STF::TypeConverter>{"TYPE_ID_BOOL", [](const std::span<const std::byte> InBytes) -> std::string
         { 

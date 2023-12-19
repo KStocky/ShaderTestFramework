@@ -4,6 +4,7 @@
 
 #include <format>
 #include <ranges>
+#include <sstream>
 
 namespace STF
 {
@@ -53,6 +54,42 @@ namespace STF
         return std::get_if<TestRunResults>(&m_Result);
     }
 
+    std::string DefaultTypeConverter(std::span<const std::byte> InBytes)
+    {
+        std::string ret;
+
+        if (InBytes.empty() || (InBytes.size() % 4 != 0))
+        {
+            return ret;
+        }
+
+        auto toUint = [](const auto InChunk)
+        {
+            u32 ret = 0;
+            std::memcpy(&ret, InChunk.data(), sizeof(u32));
+            return ret;
+        };
+
+        std::format_to(std::back_inserter(ret), "Bytes: {:#x}", toUint(InBytes) );
+
+        for (const auto& byte : InBytes | std::views::drop(4) | std::views::chunk(4))
+        {
+            std::format_to(std::back_inserter(ret), ", {}", toUint(byte));
+        }
+
+        return ret;
+    }
+
+    bool operator==(const FailedAssert& InA, const FailedAssert& InB)
+    {
+        return InA.Data == InB.Data && InA.Info == InB.Info;
+    }
+
+    bool operator!=(const FailedAssert& InA, const FailedAssert& InB)
+    {
+        return !(InA == InB);
+    }
+
     std::ostream& operator<<(std::ostream& InOs, const TestRunResults& In)
     {
         InOs << std::format("There were {} successful asserts and {} failed assertions\n", In.NumSucceeded, In.NumFailed);
@@ -60,6 +97,22 @@ namespace STF
         for (const auto& [index, error] : std::views::enumerate(In.FailedAsserts))
         {
             InOs << std::format("{}: Line: {} {}\n", index, error.Info.LineNumber, STF::ThreadInfoToString(static_cast<STF::EThreadIdType>(error.Info.ThreadIdType), error.Info.ThreadId, In.DispatchDimensions));
+
+            if (error.Data.size() > 0)
+            {
+                u32 byteIndex = 0;
+                const auto endIndex = error.Data.size();
+
+                while (byteIndex < endIndex)
+                {
+                    u32 sizeData;
+                    std::memcpy(&sizeData, error.Data.data(), sizeof(u32));
+                    byteIndex += sizeof(u32);
+
+                    InOs << std::format("Data: {}\n", error.DataToStringConverter(std::span{ error.Data.cbegin() + byteIndex, error.Data.cend() }));
+                    byteIndex += sizeData;
+                }
+            }
         }
 
         return InOs;
@@ -100,7 +153,7 @@ STF::TestRunResults STF::ProcessAssertBuffer(
     const uint3 InDispatchDimensions,
     const AssertBufferLayout InLayout,
     std::span<const std::byte> InAssertBuffer, 
-    const TypeConverterMap&)
+    const TypeConverterMap& InTypeConverterMap)
 {
     STF::TestRunResults ret{};
     ret.NumSucceeded = InNumSuccessful;
@@ -128,8 +181,26 @@ STF::TestRunResults STF::ProcessAssertBuffer(
     {
         HLSLAssertMetaData assertInfo;
         std::memcpy(&assertInfo, &InAssertBuffer[assertIndex * sizeof(HLSLAssertMetaData)], sizeof(HLSLAssertMetaData));
+        AssertMetaData info
+        {
+            .LineNumber = assertInfo.LineNumber,
+            .ThreadId = assertInfo.ThreadId,
+            .ThreadIdType = assertInfo.ThreadIdType
+        };
+
+        auto typeConverter = assertInfo.TypeId < InTypeConverterMap.size() ? InTypeConverterMap[assertInfo.TypeId] : DefaultTypeConverter;
+
+        auto getData = [InAssertBuffer, &assertInfo]()
+        {
+            if (assertInfo.DataSize == 0)
+            {
+                return std::vector<std::byte>{};
+            }
+            const auto begin = InAssertBuffer.cbegin() + assertInfo.DataAddress;
+            return std::vector<std::byte>{begin, begin + assertInfo.DataSize};
+        };
         
-        ret.FailedAsserts.push_back(FailedAssert{ .Data = {}, .Info = assertInfo });
+        ret.FailedAsserts.push_back(FailedAssert{ .Data = getData(), .DataToStringConverter = std::move(typeConverter), .Info = info});
     }
 
     return ret;

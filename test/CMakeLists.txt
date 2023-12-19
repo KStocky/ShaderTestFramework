@@ -50,7 +50,9 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/PixelShaderWithSamplerFeedback.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/PixelShaderWithSV_Barycentrics.hlsl
     Shader/Framework/ShaderTestFixtureTests/BasicShaderTests.hlsl
-    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/AssertBuffer/ResultsProcessing.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithData.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithNoData.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/NoAssertBuffer.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/AssertBuffer/SizeTests.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Asserts/AreEqual.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Asserts/Fail.hlsl

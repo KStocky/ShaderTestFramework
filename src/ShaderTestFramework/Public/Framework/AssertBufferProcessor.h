@@ -23,11 +23,17 @@ namespace STF
         Int3
     };
 
-    struct HLSLAssertMetaData
+    struct AssertMetaData
     {
         u32 LineNumber = 0;
         u32 ThreadId = 0;
         u32 ThreadIdType = 0;
+
+        friend auto operator<=>(const AssertMetaData&, const AssertMetaData&) = default;
+    };
+
+    struct HLSLAssertMetaData : AssertMetaData
+    {
         u32 TypeId = 0;
         u32 DataAddress = 0;
         u32 DataSize = 0;
@@ -45,14 +51,18 @@ namespace STF
 
     using TypeConverter = std::function<std::string(std::span<const std::byte>)>;
 
+    std::string DefaultTypeConverter(std::span<const std::byte> InBytes);
+
     using TypeConverterMap = std::vector<TypeConverter>;
 
     struct FailedAssert
     {
         std::vector<std::byte> Data;
-        HLSLAssertMetaData Info;
+        TypeConverter DataToStringConverter;
+        AssertMetaData Info;
 
-        friend auto operator<=>(const FailedAssert&, const FailedAssert&) = default;
+        friend bool operator==(const FailedAssert&, const FailedAssert&);
+        friend bool operator!=(const FailedAssert&, const FailedAssert&);
     };
 
     struct TestRunResults
@@ -121,13 +131,13 @@ namespace STF
         return 
             [](const std::span<const std::byte> InBytes) -> std::string
             {
-                if (InBytes.size_bytes() != sizeof(T))
+                if (InBytes.size_bytes() < sizeof(T))
                 {
                     return std::format("Unexpected num bytes: {} for type {}", InBytes.size_bytes(), TypeToString<T>());
                 }
 
                 T data;
-                std::memcpy(&data, InBytes.data(), InBytes.size_bytes());
+                std::memcpy(&data, InBytes.data(), sizeof(T));
 
                 return std::format("{}", data);
             };

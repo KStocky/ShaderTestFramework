@@ -572,6 +572,11 @@ namespace ShaderTestPrivate
         uint successIndex;
         GetAllocationBuffer().InterlockedAdd(0, 1, successIndex);
     }
+
+    uint StartAddressAssertData()
+    {
+        return sizeof(HLSLAssertMetaData) * MaxNumAsserts;
+    }
     
     uint AddAssert()
     {
@@ -594,16 +599,19 @@ namespace ShaderTestPrivate
         using Writer = STF::ByteWriter<T>;
         const uint size1 = Writer::BytesRequired(In1);
         const uint size2 = Writer::BytesRequired(In2);
-        const uint size = size1 + size2;
-        uint address = 0;
-        GetAllocationBuffer().InterlockedAdd(8, size, address);
+        const uint size = size1 + size2 + 8;
+        uint offset = 0;
+        GetAllocationBuffer().InterlockedAdd(8, size, offset);
 
+        const uint address = StartAddressAssertData() + offset;
         if (address + size < SizeInBytesOfAssertBuffer)
         {
             STF::container<RWByteAddressBuffer> buffer;
             buffer.Data = GetAssertBuffer();
-            Writer::Write(buffer, address, In1);
-            Writer::Write(buffer, address + size1, In2);
+            buffer.store(address, size1);
+            Writer::Write(buffer, address + 4, In1);
+            buffer.store(address + 4 + size1, size2);
+            Writer::Write(buffer, address + 8 + size2, In2);
             return uint2(address, size);
         }
 
@@ -621,15 +629,17 @@ namespace ShaderTestPrivate
     {
         using Writer = STF::ByteWriter<T>;
         const uint size1 = Writer::BytesRequired(In);
-        const uint size = size1;
-        uint address = 0;
-        GetAllocationBuffer().InterlockedAdd(8, size, address);
+        const uint size = size1 + 4;
+        uint offset = 0;
+        GetAllocationBuffer().InterlockedAdd(8, size, offset);
 
+        const uint address = StartAddressAssertData() + offset;
         if (address + size < SizeInBytesOfAssertBuffer)
         {
             STF::container<RWByteAddressBuffer> buffer;
             buffer.Data = GetAssertBuffer();
-            Writer::Write(buffer, address, In);
+            buffer.store(address, size1);
+            Writer::Write(buffer, address + 4, In);
             return uint2(address, size);
         }
 
