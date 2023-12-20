@@ -135,3 +135,68 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - Throwing")
         }
     }
 }
+
+SCENARIO("AssertBufferProcessorTests - FailedAssert - Equality")
+{
+
+    auto [given, left, right, expectedIsEqual] = GENERATE
+    (
+        table<std::string, STF::FailedAssert, STF::FailedAssert, bool>
+        (
+            {
+                std::tuple
+                {
+                    "Both sides are default constructed",
+                    STF::FailedAssert{},
+                    STF::FailedAssert{},
+                    true
+                },
+                std::tuple
+                {
+                    "Differing data",
+                    STF::FailedAssert{std::vector{std::byte{1}, std::byte{2}}, {}, {}},
+                    STF::FailedAssert{},
+                    false
+                },
+                std::tuple
+                {
+                    "Differing TypeConverter",
+                    STF::FailedAssert{{}, [](const std::span<const std::byte>) { return std::string{}; }, {}},
+                    STF::FailedAssert{},
+                    true
+                },
+                std::tuple
+                {
+                    "Differing Meta data",
+                    STF::FailedAssert{{}, {}, {1, 0, 0}},
+                    STF::FailedAssert{},
+                    false
+                }
+            }
+        )
+    );
+
+    const auto then = expectedIsEqual ? std::string_view{ "is true" } : std::string_view{ "is false" };
+
+    GIVEN(given)
+    {
+        WHEN("Equals called")
+        {
+            const auto result = left == right;
+            THEN(then)
+            {
+                REQUIRE(result == expectedIsEqual);
+            }
+            
+        }
+
+        WHEN("Not equals called")
+        {
+            const auto result = left != right;
+            THEN(then)
+            {
+                REQUIRE(result != expectedIsEqual);
+            }
+        }
+    }
+}
