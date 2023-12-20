@@ -109,7 +109,7 @@ namespace STF
                     std::memcpy(&sizeData, error.Data.data(), sizeof(u32));
                     byteIndex += sizeof(u32);
 
-                    InOs << std::format("Data: {}\n", error.DataToStringConverter(std::span{ error.Data.cbegin() + byteIndex, error.Data.cend() }));
+                    InOs << std::format("Data: {}\n", error.DataToStringConverter(std::span{ error.Data.cbegin() + byteIndex, sizeData }));
                     byteIndex += sizeData;
                 }
             }
