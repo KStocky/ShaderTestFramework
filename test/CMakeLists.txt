@@ -53,6 +53,7 @@ set(SHADER_SOURCES
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithData.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithNoData.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/NoAssertBuffer.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/TypeConverter.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/AssertBuffer/SizeTests.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Asserts/AreEqual.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Asserts/Fail.hlsl
