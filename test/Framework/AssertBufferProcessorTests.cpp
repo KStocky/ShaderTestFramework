@@ -274,8 +274,8 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - Type Converter")
                     "One failing assert with no type converter",
                     1, STF::AssertBufferLayout{1, 100},
                     std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 2, sizeof(STF::HLSLAssertMetaData) * 1, 8 } },
-                    std::vector{4u},
-                    std::vector<std::string>{"Bytes"}
+                    std::vector{42u},
+                    std::vector<std::string>{"Bytes", "0x2A"}
                 },
                 std::tuple
                 {
