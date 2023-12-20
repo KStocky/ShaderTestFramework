@@ -451,3 +451,92 @@ SCENARIO("AssertBufferProcessorTests - FailedAssert - Equality")
         }
     }
 }
+
+SCENARIO("AssertBufferProcessorTests - ThreadInfoToString")
+{
+    using Catch::Matchers::ContainsSubstring;
+
+    auto [given, numFailed, expectedNumAsserts, dims, layout, buffer, expectedSubstrings] = GENERATE
+    (
+        table<std::string, u32, u64, uint3, STF::AssertBufferLayout, std::vector<STF::HLSLAssertMetaData>, std::vector<std::string>>
+        (
+            {
+                std::tuple
+                {
+                    "No thread id type and zero id",
+                    1, 1, uint3(10, 10, 10),
+                    STF::AssertBufferLayout{1, 0},
+                    std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0 } },
+                    std::vector<std::string>{"initialized"}
+                },
+                std::tuple
+                {
+                    "No thread id type and non zero id",
+                    1, 1, uint3(10, 10, 10),
+                    STF::AssertBufferLayout{1, 0},
+                    std::vector{ STF::HLSLAssertMetaData{ 42, 34, 0 } },
+                    std::vector<std::string>{"initialized"}
+                },
+                std::tuple
+                {
+                    "int thread id type and zero id",
+                    1, 1, uint3(10, 10, 10),
+                    STF::AssertBufferLayout{1, 0},
+                    std::vector{ STF::HLSLAssertMetaData{ 42, 0, 1 } },
+                    std::vector<std::string>{"0"}
+                },
+                std::tuple
+                {
+                    "int thread id type and non zero id",
+                    1, 1, uint3(10, 10, 10),
+                    STF::AssertBufferLayout{1, 0},
+                    std::vector{ STF::HLSLAssertMetaData{ 42, 34, 1 } },
+                    std::vector<std::string>{"34"}
+                },
+                std::tuple
+                {
+                    "int3 thread id type and zero id",
+                    1, 1, uint3(10, 10, 10),
+                    STF::AssertBufferLayout{1, 0},
+                    std::vector{ STF::HLSLAssertMetaData{ 42, 0, 2 } },
+                    std::vector<std::string>{"0"}
+                },
+                std::tuple
+                {
+                    "int3 thread id type and non zero id",
+                    1, 1, uint3(10, 10, 10),
+                    STF::AssertBufferLayout{1, 0},
+                    std::vector{ STF::HLSLAssertMetaData{ 42, 34, 2 } },
+                    std::vector<std::string>{"4, 3, 0"}
+                },
+                std::tuple
+                {
+                    "int3 thread id type and different non zero id",
+                    1, 1, uint3(10, 10, 10),
+                    STF::AssertBufferLayout{1, 0},
+                    std::vector{ STF::HLSLAssertMetaData{ 42, 342, 2 } },
+                    std::vector<std::string>{"2, 4, 3"}
+                }
+            }
+        )
+    );
+
+    GIVEN(given)
+    {
+        WHEN("Processed")
+        {
+            const auto results = STF::ProcessAssertBuffer(0, numFailed, dims, layout, std::as_bytes(std::span{ buffer }), STF::TypeConverterMap{});
+
+            THEN("Results has expected sub strings")
+            {
+                std::stringstream stream;
+                stream << results;
+
+                for (const auto expectedString : expectedSubstrings)
+                {
+                    REQUIRE_THAT(stream.str(), ContainsSubstring(expectedString, Catch::CaseSensitive::No));
+                }
+            }
+        }
+    }
+}
