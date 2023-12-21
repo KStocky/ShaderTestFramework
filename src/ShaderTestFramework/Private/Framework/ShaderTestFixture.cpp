@@ -1,5 +1,7 @@
 #include "Framework/ShaderTestFixture.h"
 
+#include "Framework/AssertBufferProcessor.h"
+#include "Framework/HLSLTypes.h"
 #include "Framework/PIXCapturer.h"
 #include "Utility/EnumReflection.h"
 
@@ -16,12 +18,16 @@ ShaderTestFixture::ShaderTestFixture(Desc InParams)
 	, m_Compiler(std::move(InParams.Mappings))
 	, m_Source(std::move(InParams.Source))
 	, m_CompilationFlags(std::move(InParams.CompilationFlags))
+    , m_Defines()
 	, m_ShaderModel(InParams.ShaderModel)
     , m_HLSLVersion(InParams.HLSLVersion)
+    , m_AssertInfo(InParams.AssertInfo)
 	, m_IsWarp(InParams.GPUDeviceParams.DeviceType == GPUDevice::EDeviceType::Software)
 {
     m_PIXAvailable = PIXLoadLatestWinPixGpuCapturerLibrary() != nullptr;
     m_Device = GPUDevice{ InParams.GPUDeviceParams };
+
+    PopulateDefaultTypeConverters();
 }
 
 void ShaderTestFixture::TakeCapture()
@@ -29,13 +35,13 @@ void ShaderTestFixture::TakeCapture()
     m_CaptureRequested = true;
 }
 
-ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ)
+STF::Results ShaderTestFixture::RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ)
 {
 	const auto compileResult = CompileShader(InName);
 
 	if (!compileResult.has_value())
 	{
-		return Results{ {compileResult.error()} };
+		return STF::Results{ {compileResult.error()} };
 	}
 
     auto engine = CreateCommandEngine();
@@ -43,11 +49,28 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
 	auto rootSignature = CreateRootSignature(compileResult.value());
     auto pipelineState = CreatePipelineState(rootSignature, compileResult->GetCompiledShader());
 
-	static constexpr u64 bufferSizeInBytes = 8ull;
-    auto assertBuffer = CreateAssertBuffer(bufferSizeInBytes);
-    auto readBackBuffer = CreateReadbackBuffer(bufferSizeInBytes);
+    const auto [dimX, dimY, dimZ] = [&compileResult, InX, InY, InZ]()
+        {
+            u32 threadX = 0;
+            u32 threadY = 0;
+            u32 threadZ = 0;
+            compileResult->GetReflection()->GetThreadGroupSize(&threadX, &threadY, &threadZ);
 
-    const auto assertUAV = CreateAssertBufferUAV(assertBuffer, resourceHeap);
+            const u32 dimX = threadX * InX;
+            const u32 dimY = threadY * InY;
+            const u32 dimZ = threadZ * InZ;
+
+            return Tuple{ dimX, dimY, dimZ };
+        }();
+
+	const u64 bufferSizeInBytes = CalculateAssertBufferSize();
+    auto assertBuffer = CreateAssertBuffer(bufferSizeInBytes);
+    auto allocationBuffer = CreateAssertBuffer(12ull);
+    auto readBackBuffer = CreateReadbackBuffer(bufferSizeInBytes);
+    auto readBackAllocationBuffer = CreateReadbackBuffer(12ull);
+
+    const auto assertUAV = CreateAssertBufferUAV(assertBuffer, resourceHeap, 0);
+    const auto allocationUAV = CreateAssertBufferUAV(allocationBuffer, resourceHeap, 1);
 
     const auto capturer = PIXCapturer(InName, ShouldTakeCapture());
 
@@ -56,18 +79,28 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
         &pipelineState,
         &rootSignature,
         &assertBuffer,
+        &allocationBuffer,
         &readBackBuffer,
-        InX, InY, InZ]
+        &readBackAllocationBuffer,
+        InX, InY, InZ,
+        dimX, dimY, dimZ,
+        bufferSizeInBytes,
+        this]
         (ScopedCommandContext& InContext)
         {
             InContext.Section("Test Setup",
                 [&](ScopedCommandContext& InContext)
                 {
                     InContext->SetPipelineState(pipelineState);
-                    InContext->SetComputeRootSignature(rootSignature);
                     InContext->SetDescriptorHeaps(resourceHeap);
+                    InContext->SetComputeRootSignature(rootSignature);
                     InContext->SetBufferUAV(assertBuffer);
-                    std::array params{ 0u };
+                    InContext->SetBufferUAV(allocationBuffer);
+                    std::array params
+                    { 
+                        0u, dimX, dimY, dimZ, 
+                        m_AssertInfo.NumFailedAsserts, m_AssertInfo.NumBytesAssertData, static_cast<u32>(bufferSizeInBytes), 1u
+                    };
                     InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
                 }
             );
@@ -83,6 +116,7 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
                 [&](ScopedCommandContext& InContext)
                 {
                     InContext->CopyBufferResource(readBackBuffer, assertBuffer);
+                    InContext->CopyBufferResource(readBackAllocationBuffer, allocationBuffer);
                 }
             );
         }
@@ -90,14 +124,7 @@ ShaderTestFixture::Results ShaderTestFixture::RunTest(const std::string_view InN
 
 	engine.Flush();
 
-    const auto [numSuccessAsserts, numFailedAsserts] = ReadbackResults(readBackBuffer);
-
-	if (numFailedAsserts != 0)
-	{
-		return Results({ std::format("There were {} successful asserts and {} failed assertions", numSuccessAsserts, numFailedAsserts) });
-	}
-
-	return Results({});
+    return ReadbackResults(readBackAllocationBuffer, readBackBuffer, uint3(dimX, dimY, dimZ));
 }
 
 bool ShaderTestFixture::IsValid() const
@@ -124,6 +151,7 @@ CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName
     job.ShaderType = EShaderType::Compute;
     job.Source = m_Source;
     job.HLSLVersion = m_HLSLVersion;
+    job.Defines = m_Defines;
 
     if (ShouldTakeCapture())
     {
@@ -147,6 +175,14 @@ CommandEngine ShaderTestFixture::CreateCommandEngine() const
     auto commandQueue = m_Device.CreateCommandQueue(queueDesc);
 
     return CommandEngine(CommandEngine::CreationParams{ std::move(commandList), std::move(commandQueue), m_Device });
+}
+
+void ShaderTestFixture::RegisterTypeConverter(std::string InTypeIDName, STF::TypeConverter InConverter)
+{
+    const u32 typeId = m_NextTypeID++;
+    ThrowIfFalse(typeId == static_cast<u32>(m_TypeConverterMap.size()));
+    m_Defines.push_back(ShaderMacro{ std::move(InTypeIDName), std::format("{}", typeId) });
+    m_TypeConverterMap.push_back(std::move(InConverter));
 }
 
 DescriptorHeap ShaderTestFixture::CreateDescriptorHeap() const
@@ -192,9 +228,9 @@ GPUResource ShaderTestFixture::CreateReadbackBuffer(const u64 InSizeInBytes) con
     return m_Device.CreateCommittedResource(heapProps, D3D12_HEAP_FLAG_NONE, resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED);
 }
 
-DescriptorHandle ShaderTestFixture::CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap) const
+DescriptorHandle ShaderTestFixture::CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap, const u32 InIndex) const
 {
-    const auto uav = ThrowIfUnexpected(InHeap.CreateDescriptorHandle(0));
+    const auto uav = ThrowIfUnexpected(InHeap.CreateDescriptorHandle(InIndex));
     D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc;
     uavDesc.Buffer.CounterOffsetInBytes = 0;
     uavDesc.Buffer.FirstElement = 0;
@@ -207,18 +243,65 @@ DescriptorHandle ShaderTestFixture::CreateAssertBufferUAV(const GPUResource& InA
     return uav;
 }
 
-Tuple<u32, u32> ShaderTestFixture::ReadbackResults(const GPUResource& InReadbackBuffer) const
+STF::Results ShaderTestFixture::ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer, const uint3 InDispatchDimensions) const
 {
-    const auto mappedReadbackData = InReadbackBuffer.Map();
-    const auto assertData = mappedReadbackData.Get();
+    const auto mappedAllocationData = InAllocationBuffer.Map();
+    const auto allocationData = mappedAllocationData.Get();
 
     u32 success = 0;
     u32 fails = 0;
 
-    std::memcpy(&success, assertData.data(), sizeof(u32));
-    std::memcpy(&fails, assertData.data() + sizeof(u32), sizeof(u32));
+    std::memcpy(&success, allocationData.data(), sizeof(u32));
+    std::memcpy(&fails, allocationData.data() + sizeof(u32), sizeof(u32));
 
-    return Tuple{ success, fails };
+
+    const auto mappedAssertData = InAssertBuffer.Map();
+    const auto assertData = mappedAssertData.Get();
+
+    return STF::ProcessAssertBuffer(success, fails, InDispatchDimensions, m_AssertInfo, assertData, m_TypeConverterMap);
+}
+
+void ShaderTestFixture::PopulateDefaultTypeConverters()
+{
+    std::array typeIdDefines =
+    {
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UNDEFINED", [](const std::span<const std::byte> InBytes) -> std::string 
+        { 
+            return std::format("Undefined Type -> {}", STF::DefaultTypeConverter(InBytes)); 
+        } },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_BOOL", [](const std::span<const std::byte> InBytes) -> std::string
+        { 
+            if (InBytes.size_bytes() != 4)
+            {
+                return std::format("Unexpected num bytes: {} for type bool", InBytes.size_bytes());
+            }
+
+            u32 data;
+            std::memcpy(&data, InBytes.data(), InBytes.size_bytes());
+
+            return std::format("{}", data != 0 ? "true" : "false");
+        } },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT", STF::CreateDefaultTypeConverter<i32>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT2", STF::CreateDefaultTypeConverter<int2>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT3", STF::CreateDefaultTypeConverter<int3>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT4", STF::CreateDefaultTypeConverter<int4>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT", STF::CreateDefaultTypeConverter<u32>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT2", STF::CreateDefaultTypeConverter<uint2>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT3", STF::CreateDefaultTypeConverter<uint3>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT4", STF::CreateDefaultTypeConverter<uint4>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT", STF::CreateDefaultTypeConverter<float>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT2", STF::CreateDefaultTypeConverter<float2>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT3", STF::CreateDefaultTypeConverter<float3>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT4", STF::CreateDefaultTypeConverter<float4>() },
+    };
+    
+    m_Defines.reserve(typeIdDefines.size());
+    m_TypeConverterMap.reserve(typeIdDefines.size());
+
+    for (auto&& [define, converter] : typeIdDefines)
+    {
+        RegisterTypeConverter(std::move(define), std::move(converter));
+    }
 }
 
 bool ShaderTestFixture::ShouldTakeCapture() const
@@ -226,16 +309,17 @@ bool ShaderTestFixture::ShouldTakeCapture() const
     return m_PIXAvailable && m_CaptureRequested;
 }
 
-ShaderTestFixture::Results::Results(std::vector<std::string> InErrors)
-	: m_Errors(std::move(InErrors))
-{
-}
+u64 ShaderTestFixture::CalculateAssertBufferSize() const
+{    
+    auto RoundUpToMultipleOf4 = [](const u64 In)
+    {
+        return (In + 3ull) & ~3ull;
+    };
 
-std::ostream& operator<<(std::ostream& InOs, const ShaderTestFixture::Results& In)
-{
-	for (const auto& [index, error] : std::views::enumerate(In.m_Errors))
-	{
-		InOs << std::format("{}. {}\n", index, error);
-	}
-	return InOs;
+    const u64 assertInfoSection = m_AssertInfo.NumFailedAsserts * sizeof(STF::HLSLAssertMetaData);
+    const u64 assertDataSection = m_AssertInfo.NumBytesAssertData > 0 ? RoundUpToMultipleOf4(m_AssertInfo.NumBytesAssertData) : 0;
+
+    const u64 requestedSize = assertInfoSection + assertDataSection;
+
+    return requestedSize > 0 ? requestedSize : 4ull;
 }

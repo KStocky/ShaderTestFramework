@@ -2,11 +2,13 @@
 #include "Framework/ShaderTestFixture.h"
 #include "D3D12/Shader/ShaderEnums.h"
 
+#include <sstream>
 #include <string>
 #include <vector>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
+#include <catch2/matchers/catch_matchers_string.hpp>
 
 namespace
 {
@@ -20,7 +22,7 @@ namespace
         return VirtualShaderDirectoryMapping{ "/Tests", std::move(shaderDir) };
     }
 
-    ShaderTestFixture::Desc CreateDescForHLSLFrameworkTest(fs::path&& InPath)
+    ShaderTestFixture::Desc CreateDescForHLSLFrameworkTest(fs::path&& InPath, STF::AssertBufferLayout InAssertParams = {10, 1024})
     {
         ShaderTestFixture::Desc desc{};
 
@@ -28,7 +30,7 @@ namespace
         desc.HLSLVersion = EHLSLVersion::v2021;
         desc.Source = std::move(InPath);
         desc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
-
+        desc.AssertInfo = InAssertParams;
         return desc;
     }
 }
@@ -70,7 +72,6 @@ SCENARIO("BasicShaderTests")
         )
     );
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/BasicShaderTests.hlsl")));
-    fixture.TakeCapture();
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
@@ -80,27 +81,9 @@ SCENARIO("BasicShaderTests")
         else
         {
             const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
+            REQUIRE_FALSE(result);
         }
         
-    }
-}
-
-SCENARIO("ShaderFrameworkHLSLProofOfConceptTests")
-{
-    auto testName = GENERATE
-    (
-        "GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent",
-        "GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed",
-        "GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported",
-        "SectionTest"
-    );
-
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/ShaderFrameworkHLSLProofOfConceptTests.hlsl")));
-    fixture.TakeCapture();
-    DYNAMIC_SECTION(testName)
-    {
-        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
     }
 }
 
@@ -212,6 +195,355 @@ namespace ProofOfConcept
     }
 }
 
+SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - NoAssertBuffer")
+{
+    auto [testName, numSucceeded, numFailed] = GENERATE
+    (
+        table<std::string, u32, u32>
+        (
+            {
+                std::tuple{ "GIVEN_ZeroAssertBuffer_WHEN_ZeroAssertsMade_THEN_HasExpectedResults", 0, 0},
+                std::tuple{ "GIVEN_ZeroAssertBuffer_WHEN_NonZeroSuccessfulAssertsMade_THEN_HasExpectedResults", 2, 0 },
+                std::tuple{ "GIVEN_ZeroAssertBuffer_WHEN_NonZeroFailedAssertsMade_THEN_HasExpectedResults", 0, 2 },
+                std::tuple{ "GIVEN_ZeroAssertBuffer_WHEN_NonZeroSuccessfulAndFailedAssertsMade_THEN_HasExpectedResults", 2, 2 },
+            }
+        )
+    );
+
+    const STF::TestRunResults expected
+    {
+        .FailedAsserts = {},
+        .NumSucceeded = numSucceeded,
+        .NumFailed = numFailed,
+        .DispatchDimensions = uint3(1,1,1)
+    };
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/NoAssertBuffer.hlsl"), { 0, 0 }));
+    DYNAMIC_SECTION(testName)
+    {
+        const auto results = fixture.RunTest(testName, 1, 1, 1);
+        CAPTURE(results);
+        const auto actual = results.GetTestResults();
+        REQUIRE(actual);
+        REQUIRE(*actual == expected);
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - AssertInfoWithNoData")
+{
+    auto [testName, numRecordedAsserts, failedAsserts, numSucceeded, numFailed, dims] = GENERATE
+    (
+        table<std::string, u32, std::vector<STF::FailedAssert>, u32 , u32, uint3>
+        (
+            {
+                std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_ZeroAssertsMade_THEN_HasExpectedResults", 10,
+                std::vector<STF::FailedAssert>{}, 0, 0, uint3(1,1,1) },
+                std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_NonZeroSuccessfulAssertsMade_THEN_HasExpectedResults", 10,
+                std::vector<STF::FailedAssert>{}, 2, 0, uint3(1,1,1) },
+                std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_FailedAssertNoTypeId_THEN_HasExpectedResults", 10,
+                std::vector{STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0 }}}, 0, 1, uint3(1,1,1) },
+                std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_TwoFailedAssert_THEN_HasExpectedResults", 10,
+                std::vector{STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0}},
+                STF::FailedAssert{{}, {}, STF::AssertMetaData{32, 0, 0}}}, 0, 2, uint3(1,1,1) },
+                std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_FailedAssertWithLineId_THEN_HasExpectedResults", 10,
+                std::vector{STF::FailedAssert{{}, {}, STF::AssertMetaData{61, 0, 0}}}, 0, 1, uint3(1,1,1) },
+                std::tuple{ "GIVEN_AssertInfoCapacityWithFlatThreadId_WHEN_FailedAssert_THEN_HasExpectedResults", 10,
+                std::vector{STF::FailedAssert{{}, {}, STF::AssertMetaData{66, 12, 1}}}, 0, 1, uint3(1,1,1) },
+                std::tuple{ "GIVEN_AssertInfoCapacityWithFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults", 10,
+                std::vector{STF::FailedAssert{{}, {}, STF::AssertMetaData{66, 12, 2}}}, 0, 1, uint3(24,1,1) },
+                std::tuple{ "GIVEN_AssertInfoCapacityWithNonFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults", 10,
+                std::vector{STF::FailedAssert{{}, {}, STF::AssertMetaData{66, 4, 2}}}, 0, 1, uint3(3,3,3) },
+                std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_MoreFailedAssertsThanCapacity_THEN_HasExpectedResults", 1,
+                std::vector{STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0 }}}, 0, 2, uint3(1,1,1) },
+            }
+        )
+    );
+
+    const STF::TestRunResults expected
+    {
+        .FailedAsserts = std::move(failedAsserts),
+        .NumSucceeded = numSucceeded,
+        .NumFailed = numFailed,
+        .DispatchDimensions = dims
+    };
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithNoData.hlsl"), { numRecordedAsserts, 0 }));
+    fixture.TakeCapture();
+    DYNAMIC_SECTION(testName)
+    {
+        const auto results = fixture.RunTest(testName, 1, 1, 1);
+        CAPTURE(results);
+        const auto actual = results.GetTestResults();
+        REQUIRE(actual);
+        REQUIRE(*actual == expected);
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - AssertInfoWithData")
+{
+
+    auto serializeImpl = []<typename T>(const T& InVal, std::vector<std::byte>& InOutBytes)
+    {
+        static constexpr u32 size = sizeof(T);
+        const auto oldSize = InOutBytes.size();
+        InOutBytes.resize(InOutBytes.size() + sizeof(u32) + sizeof(T));
+        std::memcpy(InOutBytes.data() + oldSize, &size, sizeof(u32));
+        std::memcpy(InOutBytes.data() + oldSize + sizeof(u32), &InVal, size);
+    };
+
+    auto serialize = [&serializeImpl]<typename... T>(const T&... InVals)
+    {
+        std::vector<std::byte> ret;
+        (serializeImpl(InVals, ret), ...);
+        return ret;
+    };
+
+    auto test = serialize(32u, 1024u);
+
+    static constexpr u32 expectedValueLeft = 34u;
+    static constexpr u32 expectedValueRight = 12345678u;
+
+    auto [testName, expected, numRecordedAsserts, numBytesData] = GENERATE_COPY
+    (
+        table<std::string, STF::TestRunResults, u32, u32>
+        (
+            {
+                std::tuple
+                { 
+                    "GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdOrWriter_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0}}}, 0, 1, uint3(1,1,1)},
+                    10, 400
+                },
+                std::tuple
+                {
+                    "GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(expectedValueLeft), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 1, uint3(1,1,1)},
+                    10, 400
+                },
+                std::tuple
+                {
+                    "GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithTypeIdNoWriter_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0}}}, 0, 1, uint3(1,1,1)},
+                    10, 400
+                },
+                std::tuple
+                {
+                    "GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithTypeIdWithWriter_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(expectedValueLeft), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 1, uint3(1,1,1)},
+                    10, 400
+                },
+                std::tuple
+                {
+                    "GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithoutTypeIdOrWriter_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0}}}, 0, 1, uint3(1,1,1)},
+                    10, 400
+                },
+                std::tuple
+                {
+                    "GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(expectedValueLeft, expectedValueRight), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 1, uint3(1,1,1)},
+                    10, 400
+                },
+                std::tuple
+                {
+                    "GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithTypeIdNoWriter_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0}}}, 0, 1, uint3(1,1,1)},
+                    10, 400
+                },
+                std::tuple
+                {
+                    "GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithTypeIdWithWriter_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(expectedValueLeft, expectedValueRight), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 1, uint3(1,1,1)},
+                    10, 400
+                },
+                std::tuple
+                {
+                    "GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdOrWriter_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0}}}, 0, 1, uint3(1,1,1)},
+                    10, 4
+                },
+                std::tuple
+                {
+                    "GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0}}}, 0, 1, uint3(1,1,1)},
+                    10, 4
+                },
+                std::tuple
+                {
+                    "GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithTypeIdNoWriter_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0}}}, 0, 1, uint3(1,1,1)},
+                    10, 4
+                },
+                std::tuple
+                {
+                    "GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithTypeIdWithWriter_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0}}}, 0, 1, uint3(1,1,1)},
+                    10, 4
+                },
+                std::tuple
+                {
+                    "GIVEN_AssertInfoAndDataCapacity_WHEN_LargeFailFirstThenSmallFailSingleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0}}, STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0}}}, 0, 2, uint3(1,1,1)},
+                    10, 12
+                },
+                std::tuple
+                {
+                    "GIVEN_AssertInfoAndDataCapacity_WHEN_LargeFailFirstThenSmallFailSingleAssertWithTypeIdWithWriter_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0}}, STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0}}}, 0, 2, uint3(1,1,1)},
+                    10, 12
+                },
+                std::tuple
+                {
+                    "GIVEN_AssertInfoAndDataCapacity_WHEN_SmallFailFirstThenLargeFailSingleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(expectedValueRight), {}, STF::AssertMetaData{42, 0, 0}}, STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0}}}, 0, 2, uint3(1,1,1)},
+                    10, 12
+                },
+                std::tuple
+                {
+                    "GIVEN_AssertInfoAndDataCapacity_WHEN_SmallFailFirstThenLargeFailSingleAssertWithTypeIdWithWriter_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(expectedValueRight), {}, STF::AssertMetaData{42, 0, 0}}, STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0}}}, 0, 2, uint3(1,1,1)},
+                    10, 12
+                }
+            }
+        )
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithData.hlsl"), { numRecordedAsserts, numBytesData }));
+    fixture.RegisterTypeConverter("TEST_TYPE_WITH_WRITER", [](const std::span<const std::byte>) { return ""; });
+    fixture.TakeCapture();
+    DYNAMIC_SECTION(testName)
+    {
+        const auto results = fixture.RunTest(testName, 1, 1, 1);
+        CAPTURE(results);
+        const auto actual = results.GetTestResults();
+        REQUIRE(actual);
+        REQUIRE(*actual == expected);
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - TypeConverter")
+{
+    using Catch::Matchers::ContainsSubstring;
+
+    auto [testName, expectedSubstrings] = GENERATE
+    (
+        table<std::string, std::vector<const char*>>
+        (
+            {
+                std::tuple
+                {
+                    "GIVEN_FailedSingleAssert_WHEN_NoTypeId_THEN_HasExpectedResults",
+                    std::vector{"Undefined"}
+                },
+                std::tuple
+                {
+                    "GIVEN_FailedSingleAssert_WHEN_TypeId_THEN_HasExpectedResults",
+                    std::vector{"TYPE 1", "12345678"}
+                },
+                std::tuple
+                {
+                    "GIVEN_FailedTwoSingleAsserts_WHEN_FirstNoTypeIdSecondHasTypeId_THEN_HasExpectedResults",
+                    std::vector{"TYPE 1", "12345678", "Undefined"}
+                },
+                std::tuple
+                {
+                    "GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveSameTypeId_THEN_HasExpectedResults",
+                    std::vector{"TYPE 1", "12345678", "1234"}
+                },
+                std::tuple
+                {
+                    "GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveDifferentTypeId_THEN_HasExpectedResults",
+                    std::vector{"TYPE 1", "12345678", "TYPE 2", "87654321"}
+                }
+            }
+        )
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/TypeConverter.hlsl"), { 10, 400 }));
+    fixture.RegisterTypeConverter("TEST_TYPE_1", 
+        [](const std::span<const std::byte> InBytes) 
+        {
+            u32 value;
+            std::memcpy(&value, InBytes.data(), sizeof(u32));
+            return std::format("TYPE 1: {}", value); 
+        });
+    fixture.RegisterTypeConverter("TEST_TYPE_2",
+        [](const std::span<const std::byte> InBytes)
+        {
+            u32 value;
+            std::memcpy(&value, InBytes.data(), sizeof(u32));
+            return std::format("TYPE 2: {}", value);
+        });
+    fixture.TakeCapture();
+    DYNAMIC_SECTION(testName)
+    {
+        const auto results = fixture.RunTest(testName, 1, 1, 1);
+        CAPTURE(results);
+        const auto actual = results.GetTestResults();
+        REQUIRE(actual);
+
+        std::stringstream stream;
+        stream << *actual;
+
+        for (const auto expectedString : expectedSubstrings)
+        {
+            REQUIRE_THAT(stream.str(), ContainsSubstring(expectedString, Catch::CaseSensitive::No));
+        }
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - AssertBuffer - SizeTests")
+{
+    auto [testName, numRecordedFailedAsserts, numBytesAssertData] = GENERATE
+    (
+        table<std::string, u32, u32>
+        (
+            {
+                std::tuple{"GIVEN_ZeroAssertsRecorded_WHEN_Ran_THEN_AssertBufferInfoAsExpected", 0, 0},
+                std::tuple{"GIVEN_FiveAssertsRecordedAndNoData_WHEN_Ran_THEN_AssertBufferInfoAsExpected", 5, 0},
+                std::tuple{"GIVEN_FiveAssertsRecordedAnd100BytesOfData_WHEN_Ran_THEN_AssertBufferInfoAsExpected", 5, 100},
+                std::tuple{"GIVEN_FiveAssertsRecordedAndNonMultipleOf4BytesOfData_WHEN_Ran_THEN_AssertBufferInfoAsExpected", 5, 97}
+            }
+        )
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/AssertBuffer/SizeTests.hlsl"), {numRecordedFailedAsserts, numBytesAssertData}));
+    DYNAMIC_SECTION(testName)
+    {
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - ByteWriter")
+{
+    auto testName = GENERATE
+    (
+        "GIVEN_FundamentalType_WHEN_HasWriterQueried_THEN_True",
+        "GIVEN_NonFundamentalTypeWithNoWriter_WHEN_HasWriterQueried_THEN_False",
+        "GIVEN_NonFundamentalTypeWithWriter_WHEN_HasWriterQueried_THEN_True",
+        "GIVEN_FundamentalType_WHEN_BytesRequiredQueried_THEN_ExpectedNumberReturned",
+        "GIVEN_UIntBufferAndBool_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
+        "GIVEN_UIntBufferAndInt_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
+        "GIVEN_UIntBufferAndInt2_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
+        "GIVEN_UIntBufferAndInt3_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
+        "GIVEN_UIntBufferAndInt4_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
+        "GIVEN_UIntBufferAndUInt_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
+        "GIVEN_UIntBufferAndUInt2_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
+        "GIVEN_UIntBufferAndUInt3_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
+        "GIVEN_UIntBufferAndUInt4_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
+        "GIVEN_UIntBufferAndFloat_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
+        "GIVEN_UIntBufferAndFloat2_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
+        "GIVEN_UIntBufferAndFloat3_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
+        "GIVEN_UIntBufferAndFloat4_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten"
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/ByteWriter/ByteWriterTests.hlsl")));
+    DYNAMIC_SECTION(testName)
+    {
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+    }
+}
+
 SCENARIO("HLSLFrameworkTests - Cast")
 {
     auto [testName, shouldSucceed] = GENERATE
@@ -236,7 +568,7 @@ SCENARIO("HLSLFrameworkTests - Cast")
         else
         {
             const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
+            REQUIRE_FALSE(result);
         }
     }
 }
@@ -272,7 +604,7 @@ SCENARIO("HLSLFrameworkTests - Asserts - AreEqual")
         else
         {
             const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
+            REQUIRE_FALSE(result);
         }
     }
 }
@@ -308,7 +640,7 @@ SCENARIO("HLSLFrameworkTests - Asserts - NotEqual")
         else
         {
             const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
+            REQUIRE_FALSE(result);
         }
     }
 }
@@ -342,7 +674,7 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsTrue")
         else
         {
             const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
+            REQUIRE_FALSE(result);
         }
     }
 }
@@ -370,7 +702,7 @@ SCENARIO("HLSLFrameworkTests - Asserts - Fail")
         else
         {
             const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
+            REQUIRE_FALSE(result);
         }
     }
 }
@@ -404,8 +736,59 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsFalse")
         else
         {
             const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
+            REQUIRE_FALSE(result);
         }
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - Macros - AssertMacro")
+{
+    auto [testName, shouldSucceed] = GENERATE
+    (
+        table<std::string, bool>
+        (
+            {
+                std::tuple{"GIVEN_TwoEqualInts_WHEN_AreEqualCalled_THEN_Succeeds", true},
+                std::tuple{"GIVEN_TwoNotEqualInts_WHEN_AreEqualCalled_THEN_Fails", false},
+                std::tuple{"GIVEN_TwoEqualInts_WHEN_NotEqualCalled_THEN_Fails", false},
+                std::tuple{"GIVEN_TwoNotEqualInts_WHEN_NotEqualCalled_THEN_Succeeds", true},
+                std::tuple{"GIVEN_TrueLiteral_WHEN_IsTrueCalled_THEN_Succeeds", true},
+                std::tuple{"GIVEN_FalseLiteral_WHEN_IsTrueCalled_THEN_Fails", false},
+                std::tuple{"GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails", false},
+                std::tuple{"GIVEN_FalseLiteral_WHEN_IsFalseCalled_THEN_Succeeds", true},
+                std::tuple{"GIVEN_TestWithFailAssert_WHEN_Ran_THEN_Fails", false}
+            }
+        )
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Macros/AssertMacro.hlsl")));
+    DYNAMIC_SECTION(testName)
+    {
+        if (shouldSucceed)
+        {
+            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+        }
+        else
+        {
+            const auto result = fixture.RunTest(testName, 1, 1, 1);
+            REQUIRE_FALSE(result);
+        }
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - Macros - NumArgs")
+{
+    auto testName = GENERATE
+    (
+        "GIVEN_ZeroArgs_WHEN_Counted_THEN_ReturnsZero",
+        "GIVEN_OneArg_WHEN_Counted_THEN_ReturnsOne",
+        "GIVEN_TenArgs_WHEN_Counted_THEN_ReturnsTen"
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Macros/NumArgs.hlsl")));
+    DYNAMIC_SECTION(testName)
+    {
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
     }
 }
 
@@ -434,7 +817,10 @@ SCENARIO("HLSLFrameworkTests - Macros - SCENARIO")
         "GIVEN_ScenarioWithNoSections_WHEN_Ran_THEN_FunctionOnlyEnteredOnce",
         "GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce",
         "GIVEN_TwoSections_WHEN_Ran_THEN_EachSectionIsEnteredOnce",
-        "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce"
+        "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce",
+        "GIVEN_ScenarioWithoutId_WHEN_Ran_THEN_IdIsNone",
+        "GIVEN_ScenarioWithDispatchThreadId_WHEN_Ran_THEN_IdIsInt3",
+        "GIVEN_ScenarioWithIntId_WHEN_Ran_THEN_IdIsInt"
     );
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Macros/Scenario.hlsl")));
@@ -451,10 +837,199 @@ SCENARIO("HLSLFrameworkTests - Macros - SECTIONS")
         "GIVEN_EmptySection_WHEN_Ran_THEN_NoAssertMade",
         "GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce",
         "GIVEN_TwoSections_WHEN_Ran_THEN_EachSectionIsEnteredOnce",
-        "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce"
+        "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce",
+        "GIVEN_TwoSubSectionsWithTwoNestedSubsections_WHEN_Ran_THEN_ExpectedSubsectionEntryOccurs",
+        "GIVEN_ThreeLevelsDeepSections_WHEN_Ran_THEN_ExpectedSubsectionEntryOccurs"
     );
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Macros/Sections.hlsl")));
+    DYNAMIC_SECTION(testName)
+    {
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - ProofOfConcept")
+{
+    auto testName = GENERATE
+    (
+        "GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent",
+        "GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed",
+        "SectionTest",
+        "GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported",
+        "GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned",
+        "VariadicMacroOverloading"
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/HLSLFrameworkTests/ProofOfConcept/{}.hlsl", testName))));
+    DYNAMIC_SECTION(testName)
+    {
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - Container")
+{
+    auto [testName, shouldSucceed] = GENERATE
+    (
+        table<std::string, bool>
+        (
+            {
+                std::tuple{"GIVEN_IntArray_WHEN_PropertiesQueried_THEN_AsExpected", true},
+                std::tuple{"GIVEN_IntArray_WHEN_LoadCalled_THEN_ReturnsExpectedValue", true},
+                std::tuple{"GIVEN_IntArray_WHEN_StoreCalled_THEN_Succeeds", true},
+                std::tuple{"GIVEN_IntArray_WHEN_StoreCalledWithDifferentType_THEN_Fails", false },
+                std::tuple{"GIVEN_IntArray_WHEN_Store2Called_THEN_Succeeds", true},
+                std::tuple{"GIVEN_IntArray_WHEN_Store2CalledWithDifferentType_THEN_Fails", false },
+                std::tuple{"GIVEN_IntArray_WHEN_Store3Called_THEN_Succeeds", true},
+                std::tuple{"GIVEN_IntArray_WHEN_Store3CalledWithDifferentType_THEN_Fails", false },
+                std::tuple{"GIVEN_IntArray_WHEN_Store4Called_THEN_Succeeds", true},
+                std::tuple{"GIVEN_IntArray_WHEN_Store4CalledWithDifferentType_THEN_Fails", false }
+            }
+        )
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/HLSLFrameworkTests/Container/ArrayTests/{}.hlsl", testName))));
+    DYNAMIC_SECTION(testName)
+    {
+        if (shouldSucceed)
+        {
+            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+        }
+        else
+        {
+            const auto result = fixture.RunTest(testName, 1, 1, 1);
+            REQUIRE_FALSE(result);
+        }
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - ThreadDimensionTests")
+{
+    auto [testName, dimX, dimY, dimZ] = GENERATE
+    (
+        table<std::string, u32, u32, u32>
+        (
+            {
+                std::tuple{"GIVEN_SingleThreadDispatched_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected", 1, 1, 1},
+                std::tuple{"GIVEN_SingleThreadPerGroupAnd10Groups_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected", 10, 10, 10},
+                std::tuple{"GIVEN_SingleGroupWithGroupSizeOf10_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected", 1, 1, 1},
+                std::tuple{"GIVEN_GroupWithSide2WithGroupSizeOfSide2_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected", 2, 2, 2}
+            }
+        )
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/ThreadDimensionTests.hlsl")));
+    DYNAMIC_SECTION(testName)
+    {
+        REQUIRE(fixture.RunTest(testName, dimX, dimY, dimZ));
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - ThreadIdRegistrationTests")
+{
+    auto [testName, dimX, dimY, dimZ] = GENERATE
+    (
+        table<std::string, u32, u32, u32>
+        (
+            {
+                std::tuple{"GIVEN_SingleThreadDispatched_WHEN_DispatchThreadIdRegistered_THEN_RegisteredThreadIdIsCorrect", 1, 1, 1},
+                std::tuple{"GIVEN_SingleThreadPerGroupAnd10Groups_WHEN_DispatchThreadIdRegistered_THEN_RegisteredThreadIdIsCorrect", 10, 10, 10},
+                std::tuple{"GIVEN_SingleGroupWithGroupSizeOf10_WHEN_DispatchThreadIdRegistered_THEN_RegisteredThreadIdIsCorrect", 1, 1, 1},
+                std::tuple{"GIVEN_GroupWithSide2WithGroupSizeOfSide2_WHEN_DispatchThreadIdRegistered_THEN_RegisteredThreadIdIsCorrect", 2, 2, 2},
+                std::tuple{"GIVEN_ThreadIDGivenAsUint_WHEN_ThreadIDQueried_THEN_RegisteredThreadIdIsCorrect", 1, 1, 1},
+                std::tuple{"GIVEN_ThreadIdNotRegistered_WHEN_ThreadIDQueried_THEN_RegisteredThreadIdIsCorrect", 1, 1, 1}
+            }
+        )
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/ThreadIdRegistrationTests.hlsl")));
+    DYNAMIC_SECTION(testName)
+    {
+        REQUIRE(fixture.RunTest(testName, dimX, dimY, dimZ));
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - TypeTraits - ArrayTraits")
+{
+    auto testName = GENERATE
+    (
+        "GIVEN_BuiltInArray_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected",
+        "GIVEN_NonArray_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected",
+        "GIVEN_VectorType_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected",
+        "GIVEN_Buffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected",
+        "GIVEN_RWBuffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected",
+        "GIVEN_StructuredBuffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected",
+        "GIVEN_RWStructuredBuffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected",
+        "GIVEN_ByteAddressBuffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected",
+        "GIVEN_RWByteAddressBuffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected"
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/TypeTraits/ArrayTraitsTests.hlsl")));
+    DYNAMIC_SECTION(testName)
+    {
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - TypeTraits - ContainerTraits")
+{
+    auto testName = GENERATE
+    (
+        "GIVEN_BuiltInArray_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected",
+        "GIVEN_NonArray_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected",
+        "GIVEN_VectorType_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected",
+        "GIVEN_Buffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected",
+        "GIVEN_RWBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected",
+        "GIVEN_StructuredBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected",
+        "GIVEN_RWStructuredBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected",
+        "GIVEN_ByteAddressBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected",
+        "GIVEN_RWByteAddressBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected"
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/TypeTraits/ContainerTraitsTests.hlsl")));
+    DYNAMIC_SECTION(testName)
+    {
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - TypeTraits - FundamentalTypeTraits")
+{
+    auto testName = GENERATE
+    (
+        "AllShouldPass"
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/TypeTraits/FundamentalTypeTraitsTests.hlsl")));
+    DYNAMIC_SECTION(testName)
+    {
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - TypeTraits - FundamentalType")
+{
+    auto testName = GENERATE
+    (
+        "AllShouldPass"
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/TypeTraits/FundamentalTypeTests.hlsl")));
+    DYNAMIC_SECTION(testName)
+    {
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+    }
+}
+
+SCENARIO("HLSLFrameworkTests - TypeTraits - TypeID")
+{
+    auto testName = GENERATE
+    (
+        "NoDuplicateTypeIDs"
+    );
+
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/TypeTraits/TypeIDTests.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         REQUIRE(fixture.RunTest(testName, 1, 1, 1));
@@ -520,7 +1095,6 @@ SCENARIO("HLSLFrameworkTests - Bugs")
 
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/HLSLFrameworkTests/Bugs/{}.hlsl", testName))));
-    fixture.TakeCapture();
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
@@ -530,7 +1104,7 @@ SCENARIO("HLSLFrameworkTests - Bugs")
         else
         {
             const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE(!result);
+            REQUIRE_FALSE(result);
         }
     }
 }

@@ -2,9 +2,10 @@
 
 #include "D3D12/CommandEngine.h"
 #include "D3D12/GPUDevice.h"
+#include "D3D12/GPUResource.h"
 #include "D3D12/Shader/ShaderCompiler.h"
-
-#include <D3D12/GPUResource.h>
+#include "Framework/AssertBufferProcessor.h"
+#include "Framework/HLSLTypes.h"
 #include <vector>
 
 class ShaderTestFixture
@@ -22,31 +23,14 @@ public:
         std::vector<std::wstring> CompilationFlags;
         D3D_SHADER_MODEL ShaderModel = D3D_SHADER_MODEL_6_6;
         EHLSLVersion HLSLVersion = EHLSLVersion::Default;
-    };
-
-    class Results
-    {
-    public:
-
-        Results(std::vector<std::string> InErrors);
-
-        template<typename ThisType>
-        operator bool(this ThisType&& InThis)
-        {
-            return InThis.m_Errors.empty();
-        }
-
-        friend std::ostream& operator<<(std::ostream& InOs, const Results& In);
-
-    private:
-
-        std::vector<std::string> m_Errors;
+        STF::AssertBufferLayout AssertInfo{};
     };
 
     ShaderTestFixture(Desc InParams);
 
     void TakeCapture();
-    Results RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ);
+    STF::Results RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ);
+    void RegisterTypeConverter(std::string InTypeIDName, STF::TypeConverter InConverter);
 
     bool IsValid() const;
 
@@ -61,17 +45,25 @@ private:
     RootSignature CreateRootSignature(const CompiledShaderData& InShaderData) const;
     GPUResource CreateAssertBuffer(const u64 InSizeInBytes) const;
     GPUResource CreateReadbackBuffer(const u64 InSizeInBytes) const;
-    DescriptorHandle CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap) const;
-    Tuple<u32, u32> ReadbackResults(const GPUResource& InReadbackBuffer) const;
+    DescriptorHandle CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap, const u32 InIndex) const;
+    STF::Results ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer, const uint3 InDispatchDimensions) const;
+    void PopulateDefaultTypeConverters();
+
+    u64 CalculateAssertBufferSize() const;
 
     bool ShouldTakeCapture() const;
 
     GPUDevice m_Device;
     ShaderCompiler m_Compiler;
     ShaderCodeSource m_Source;
+    STF::TypeConverterMap m_TypeConverterMap;
     std::vector<std::wstring> m_CompilationFlags;
+    std::vector<ShaderMacro> m_Defines;
     D3D_SHADER_MODEL m_ShaderModel;
     EHLSLVersion m_HLSLVersion;
+    STF::AssertBufferLayout m_AssertInfo;
+    
+    u32 m_NextTypeID = 0u;
     bool m_IsWarp = false;
     bool m_CaptureRequested = false;
     bool m_PIXAvailable = false;

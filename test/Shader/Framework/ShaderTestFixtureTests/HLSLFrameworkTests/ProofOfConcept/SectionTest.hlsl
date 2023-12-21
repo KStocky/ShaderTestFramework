@@ -1,41 +1,5 @@
 #include "/Test/Public/ShaderTestFramework.hlsli"
 
-[RootSignature(SHADER_TEST_RS)]
-[numthreads(1,1,1)]
-void GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent(uint3 DispatchThreadId : SV_DispatchThreadID)
-{
-	int a = __COUNTER__;
-	int b = __COUNTER__;
-	if (a == 0 && b == 1)
-	{
-		ShaderTestPrivate::Success();
-	}
-	else
-	{
-		ShaderTestPrivate::AddError();
-	}
-}
-
-struct StaticArrayTest
-{
-	int Val;
-	bool Other;
-};
-
-static StaticArrayTest globalArray[100];
-
-[RootSignature(SHADER_TEST_RS)]
-[numthreads(1,1,1)]
-void GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed(uint3 DispatchThreadId : SV_DispatchThreadID)
-{
-	for (int i = 0; i < 100; ++i)
-	{
-		STF::AreEqual(globalArray[i].Val, 0);
-		STF::IsFalse(globalArray[i].Other);
-	}
-}
-
-
 static int CurrentTracker = 0;
 
 struct ScopedTracker
@@ -145,30 +109,6 @@ void SectionTest(uint3 DispatchThreadId : SV_DispatchThreadID)
 	}
 	else
 	{
-		ShaderTestPrivate::AddError();
+		STF::Fail();
 	}
-}
-
-namespace SizeOfTests
-{
-	struct A
-	{
-		int A;
-	};
-
-	struct B
-	{
-		int A;
-		int B;
-	};
-}
-
-[RootSignature(SHADER_TEST_RS)]
-[numthreads(1,1,1)]
-void GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported(uint3 DispatchThreadId : SV_DispatchThreadID)
-{
-	const uint expectedA = 4;
-	const uint expectedB = 8;
-	STF::AreEqual(expectedA, (uint)sizeof(SizeOfTests::A));
-	STF::AreEqual(expectedB, (uint)sizeof(SizeOfTests::B));
 }

@@ -1,5 +1,8 @@
 #include <Utility/Concepts.h>
 
+#include <array>
+#include <cstddef>
+
 namespace CallableTypeTests
 {
 	static auto LambdaFunc = [](float) {return 42; };
@@ -291,4 +294,66 @@ namespace ConstexprDefaultConstructableTypeTests
 	static_assert(ConstexprDefaultConstructableType<ConstexprDefaultConstructable>);
 	static_assert(!ConstexprDefaultConstructableType<NotConstexprDefaultConstructable>);
 	static_assert(!ConstexprDefaultConstructableType<ConstexprNonDefaultConstructable>);
+}
+
+namespace HLSLTypeTriviallyConvertibleTypeTests
+{
+    template<std::size_t InAlignment>
+    struct Trivial
+    {
+        std::array<std::byte, InAlignment> A;
+    };
+
+    template<std::size_t InAlignment>
+    struct NotTrivial
+    {
+        NotTrivial(const NotTrivial&){}
+        std::array<std::byte, InAlignment> A;
+    };
+
+    template<template<std::size_t> typename T, std::size_t InAlignment>
+    struct alignas(InAlignment) NotFormattable
+    {
+        T<InAlignment> A;
+    };
+
+    template<template<std::size_t> typename T, std::size_t InAlignment>
+    struct alignas(InAlignment) Formattable
+    {
+        T<InAlignment> A;
+    };
+
+    using TrivialNot4ByteAlignedNotFormattable = NotFormattable<Trivial, 8>;
+    using Trivial4ByteAlignedNotFormattable = NotFormattable<Trivial, 4>;
+    using NotTrivialNot4ByteAlignedNotFormattable = NotFormattable<NotTrivial, 8>;
+    using NotTrivial4ByteAlignedNotFormattable = NotFormattable<NotTrivial, 4>;
+
+    using TrivialNot4ByteAlignedFormattable = Formattable<Trivial, 8>;
+    using Trivial4ByteAlignedFormattable = Formattable<Trivial, 4>;
+    using NotTrivialNot4ByteAlignedFormattable = Formattable<NotTrivial, 8>;
+    using NotTrivial4ByteAlignedFormattable = Formattable<NotTrivial, 4>;
+}
+
+template <template<std::size_t> typename T, std::size_t InAlignment>
+struct std::formatter<HLSLTypeTriviallyConvertibleTypeTests::Formattable<T, InAlignment>> : std::formatter<int> {
+    auto format(const HLSLTypeTriviallyConvertibleTypeTests::Formattable<T, InAlignment>&, auto& ctx) const {
+        return std::formatter<int>::format(42, ctx);
+    }
+};
+
+namespace HLSLTypeTriviallyConvertibleTypeTests
+{
+    static_assert(!std::is_trivially_copyable_v<NotTrivial<4>>);
+    static_assert(std::is_trivially_copyable_v<Trivial<4>>);
+
+    static_assert(!HLSLTypeTriviallyConvertibleType<TrivialNot4ByteAlignedNotFormattable>);
+    static_assert(!HLSLTypeTriviallyConvertibleType<Trivial4ByteAlignedNotFormattable>);
+    static_assert(!HLSLTypeTriviallyConvertibleType<NotTrivialNot4ByteAlignedNotFormattable>);
+    static_assert(!HLSLTypeTriviallyConvertibleType<NotTrivial4ByteAlignedNotFormattable>);
+
+    static_assert(!HLSLTypeTriviallyConvertibleType<TrivialNot4ByteAlignedFormattable>);
+    static_assert(!HLSLTypeTriviallyConvertibleType<NotTrivialNot4ByteAlignedFormattable>);
+    static_assert(!HLSLTypeTriviallyConvertibleType<NotTrivial4ByteAlignedFormattable>);
+
+    static_assert(HLSLTypeTriviallyConvertibleType<Trivial4ByteAlignedFormattable>);
 }

@@ -145,7 +145,7 @@ SCENARIO("ShaderModelTests")
             {
                 THEN("Compilation Fails")
                 {
-                    REQUIRE(!errors.has_value());
+                    REQUIRE_FALSE(errors.has_value());
                 }
             }
         }
@@ -274,6 +274,41 @@ SCENARIO("HLSLTests")
                     {
                         "SizeofOperator",
                         [](const EHLSLVersion) { return true; }
+                    },
+                    std::tuple
+                    {
+                        "HasMemberCheck",
+                        [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "ArrayTemplateSpecialization",
+                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
+                    },
+                    std::tuple
+                    {
+                        "NestedStructTemplates",
+                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
+                    },
+                    std::tuple
+                    {
+                        "TernaryInTypeTrait",
+                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
+                    },
+                    std::tuple
+                    {
+                        "DeferSFINAE",
+                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
+                    },
+                    std::tuple
+                    {
+                        "GloballyCoherentInStruct",
+                        [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "GloballyCoherentTypeModifier",
+                        [](const EHLSLVersion) { return false; }
                     }
                 }
             )
@@ -307,7 +342,7 @@ SCENARIO("HLSLTests")
             {
                 THEN("Compilation Fails")
                 {
-                    REQUIRE(!errors.has_value());
+                    REQUIRE_FALSE(errors.has_value());
                 }
             }
         }
@@ -463,7 +498,7 @@ SCENARIO("ShaderIncludeHandlerTests")
         WHEN("compiled")
         {
             auto compiler = CreateCompiler();
-            const auto job = CreateCompilationJob(EShaderType::Compute, D3D_SHADER_MODEL_6_6, EHLSLVersion::v2021, {}, L"/Tests/ShaderIncludeHandlerTests/ShaderWithInclude.hlsl");
+            const auto job = CreateCompilationJob(EShaderType::Compute, D3D_SHADER_MODEL_6_0, EHLSLVersion::v2016, {}, L"/Tests/ShaderIncludeHandlerTests/ShaderWithInclude.hlsl");
             const auto result = compiler.CompileShader(job);
 
             THEN("Success")

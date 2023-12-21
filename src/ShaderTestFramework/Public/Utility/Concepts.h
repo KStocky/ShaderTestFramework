@@ -1,6 +1,8 @@
 #pragma once
 
+#include "Platform.h"
 #include <concepts>
+#include <format>
 #include <type_traits>
 
 namespace ConceptsPrivate
@@ -65,4 +67,52 @@ concept EmptyCallableType = std::is_empty_v<T> && CallableType<T, U...>;
 
 template<typename T, typename... U>
 concept ConstexprDefaultConstructableEmptyCallableType = ConstexprDefaultConstructableType<T> && EmptyCallableType<T, U...>;
+
+template<typename T>
+concept HLSLBaseType = std::same_as<T, i32> || std::same_as<T, u32> || std::same_as<T, float>;
+
+namespace Private
+{
+    template <class Ty, class Context, class Formatter = Context::template formatter_type<std::remove_const_t<Ty>>>
+    concept Formattable_with = std::semiregular<Formatter>
+        && requires(Formatter & f, const Formatter & cf, Ty && t, Context fc,
+            std::basic_format_parse_context<typename Context::char_type> pc) {
+                { f.parse(pc) } -> std::same_as<typename decltype(pc)::iterator>;
+                { cf.format(t, fc) } -> std::same_as<typename Context::iterator>;
+    };
+    template <class CharT>
+    struct FakeFormatIter {
+
+        using iterator_category = std::output_iterator_tag;
+        using value_type = CharT;
+        using difference_type = ptrdiff_t;
+        using pointer = CharT*;
+        using reference = CharT&;
+
+        reference operator*() const;
+        pointer operator->() const;
+
+        FakeFormatIter& operator++();
+        FakeFormatIter operator++(int);
+    };
+
+    template <class Ty, class CharT>
+    concept formattable =
+        Formattable_with<std::remove_reference_t<Ty>, std::basic_format_context<FakeFormatIter<CharT>, CharT>>;
+
+}
+
+template<typename T, typename CharT>
+concept Formattable =
+#if _MSC_VER > 1937
+std::formattable<T, CharT>;
+#else
+Private::formattable<T, CharT>;
+#endif
+
+template<typename T>
+concept HLSLTypeTriviallyConvertibleType =
+    std::is_trivially_copyable_v<T> &&
+    (alignof(T) == 4) &&
+    Formattable<T, char>;
 
