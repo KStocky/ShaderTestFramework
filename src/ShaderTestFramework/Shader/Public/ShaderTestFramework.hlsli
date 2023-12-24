@@ -853,8 +853,12 @@ while(ShaderTestPrivate::TryLoopScenario())
     {\
 
 #define BEGIN_SECTION STF_BEGIN_SECTION_IMPL(__LINE__)
-
 #define END_SECTION ShaderTestPrivate::OnLeave(); }
+
+#define STF_SECTION_IMPL(InID) STF_CREATE_SECTION_VAR_IMPL(InID); \
+    while (ShaderTestPrivate::TryEnterSection(STF_GET_SECTION_VAR_NAME(InID)))
+
+#define SECTION() STF_SECTION_IMPL(__LINE__)
 
 #define STF_ASSERT_IF_0(InName, InId) STF::InName(InId)
 #define STF_ASSERT_IF_1(InName, InId, InArg) STF::InName(InArg, InId)
