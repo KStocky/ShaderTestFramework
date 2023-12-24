@@ -26,15 +26,14 @@ namespace ShaderTestPrivate
     enum class ESectionRunState
     {
         NeedsRun,
-        RunningSection,
-        RunningScenario,
+        Running,
+        RunningEnteredSubsection,
         Completed
     };
 
     struct ScenarioSectionInfo
     {
         int ParentID;
-        bool HasSubsectionBeenEntered;
         bool HasUnenteredSubsections;
         ESectionRunState RunState; 
     };
@@ -71,7 +70,6 @@ namespace ShaderTestPrivate
         for (uint i = 0; i < NumSections; ++i)
         {
             Scratch.Sections[i].ParentID = i == 0 ? -1 : 0;
-            Scratch.Sections[i].HasSubsectionBeenEntered = false;
             Scratch.Sections[i].HasUnenteredSubsections = false;
             Scratch.Sections[i].RunState = ESectionRunState::NeedsRun;
         }
@@ -79,7 +77,6 @@ namespace ShaderTestPrivate
 
     void OnLeave(int InID = Scratch.CurrentSectionID)
     {
-        Scratch.Sections[InID].HasSubsectionBeenEntered = false;
         const bool hasUnenteredSubsections = Scratch.Sections[InID].HasUnenteredSubsections;
         Scratch.Sections[InID].RunState = hasUnenteredSubsections ? ESectionRunState::NeedsRun : ESectionRunState::Completed;
         Scratch.CurrentSectionID = Scratch.Sections[InID].ParentID;
@@ -87,23 +84,19 @@ namespace ShaderTestPrivate
     }
 
      bool ShouldEnter(int InID)
-    {
+    {   
         const ESectionRunState state = Scratch.Sections[InID].RunState;
-        
         switch (state)
         {
             case ESectionRunState::NeedsRun:
             {
                 return true;
             }
-            case ESectionRunState::RunningSection:
+            case ESectionRunState::RunningEnteredSubsection:
+            case ESectionRunState::Running:
             {
                 OnLeave(InID);
                 return false;
-            }
-            case ESectionRunState::RunningScenario:
-            {
-                return Scratch.Sections[0].HasUnenteredSubsections;
             }
             case ESectionRunState::Completed:
             {
@@ -116,11 +109,14 @@ namespace ShaderTestPrivate
 
     bool TryLoopScenario()
     {
-        if (ShouldEnter(0))
+        const bool shouldEnter = 
+            Scratch.Sections[0].RunState == ESectionRunState::NeedsRun || 
+            Scratch.Sections[0].HasUnenteredSubsections;
+
+        if (shouldEnter)
         {
             Scratch.CurrentSectionID = 0;
-            Scratch.Sections[0].HasSubsectionBeenEntered = false;
-            Scratch.Sections[0].RunState = ESectionRunState::RunningScenario;
+            Scratch.Sections[0].RunState = ESectionRunState::Running;
                 
             return true;
         }
@@ -135,13 +131,13 @@ namespace ShaderTestPrivate
             return false;
         }
 
-        const bool ourTurn = !Scratch.Sections[Scratch.CurrentSectionID].HasSubsectionBeenEntered;
+        const bool ourTurn = Scratch.Sections[Scratch.CurrentSectionID].RunState == ESectionRunState::Running;
         if (ourTurn)
         {
-            Scratch.Sections[Scratch.CurrentSectionID].HasSubsectionBeenEntered = true;
+            Scratch.Sections[Scratch.CurrentSectionID].RunState = ESectionRunState::RunningEnteredSubsection;
             Scratch.Sections[Scratch.CurrentSectionID].HasUnenteredSubsections = false;
             Scratch.Sections[InID].ParentID = Scratch.CurrentSectionID;
-            Scratch.Sections[InID].RunState = ESectionRunState::RunningSection;
+            Scratch.Sections[InID].RunState = ESectionRunState::Running;
             Scratch.CurrentSectionID = InID;
             return true;
         }
