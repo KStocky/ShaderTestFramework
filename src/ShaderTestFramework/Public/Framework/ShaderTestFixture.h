@@ -6,6 +6,7 @@
 #include "D3D12/Shader/ShaderCompiler.h"
 #include "Framework/AssertBufferProcessor.h"
 #include "Framework/HLSLTypes.h"
+#include <optional>
 #include <vector>
 
 class ShaderTestFixture
@@ -54,7 +55,7 @@ private:
     bool ShouldTakeCapture() const;
 
     GPUDevice m_Device;
-    ShaderCompiler m_Compiler;
+    std::optional<ShaderCompiler> m_Compiler;
     ShaderCodeSource m_Source;
     STF::TypeConverterMap m_TypeConverterMap;
     std::vector<std::wstring> m_CompilationFlags;

@@ -274,10 +274,6 @@ CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& 
 
 void ShaderCompiler::Init()
 {
-	fs::path shaderDir = std::filesystem::current_path();
-	shaderDir += "/";
-	shaderDir += SHADER_SRC;
-	m_DirectoryManager.AddMapping({ "/Test", std::move(shaderDir)});
 	DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&m_Utils));
 	DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&m_Compiler));
 	m_IncludeHandler = new IncludeHandler(m_DirectoryManager, m_Utils);
