@@ -15,26 +15,24 @@ struct TestTypeWithTypeId2
     uint Value;
 };
 
+namespace ttl
+{
+    template<typename From>
+    struct caster<bool, From, typename enable_if<
+        is_same<From, TestTypeWithoutId>::value ||
+        is_same<From, TestTypeWithTypeId1>::value ||
+        is_same<From, TestTypeWithTypeId2>::value
+        >::type>
+    {
+        static bool cast(From In)
+        {
+            return In.Value == 0;
+        }
+    };
+}
+
 namespace STF
 {
-    template<>
-    bool Cast <bool, TestTypeWithoutId>(TestTypeWithoutId In)
-    {
-        return In.Value == 0;
-    }
-
-    template<>
-    bool Cast <bool, TestTypeWithTypeId1>(TestTypeWithTypeId1 In)
-    {
-        return In.Value == 0;
-    }
-
-    template<>
-    bool Cast <bool, TestTypeWithTypeId2>(TestTypeWithTypeId2 In)
-    {
-        return In.Value == 0;
-    }
-
     template<> struct type_id<TestTypeWithTypeId1> : ttl::integral_constant<uint, TEST_TYPE_1>{};
     template<> struct type_id<TestTypeWithTypeId2> : ttl::integral_constant<uint, TEST_TYPE_2>{};
 

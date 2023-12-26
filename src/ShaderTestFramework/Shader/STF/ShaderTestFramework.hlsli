@@ -1,5 +1,6 @@
 #pragma once
 
+#include "/Test/TTL/caster.hlsli"
 #include "/Test/TTL/container.hlsli"
 #include "/Test/TTL/type_traits.hlsli"
 
@@ -156,15 +157,6 @@ namespace ShaderTestPrivate
 
 namespace STF
 {
-    template<typename To, typename From>
-    To Cast(From In);
-    
-    template<>
-    bool Cast<bool, bool>(bool In)
-    {
-        return In;
-    }
-
     uint FlattenIndex(const uint3 InIndex, const uint3 InDimensions)
     {
         return (InIndex.z * InDimensions.x * InDimensions.y) + (InIndex.y * InDimensions.x) + InIndex.x;
@@ -451,7 +443,7 @@ namespace STF
     template<typename T>
     void IsTrue(T In, int InId = -1)
     {
-        if (Cast<bool>(In))
+        if (ttl::cast<bool>(In))
         {
             ShaderTestPrivate::Success();
         }
@@ -464,7 +456,7 @@ namespace STF
     template<typename T>
     void IsFalse(T In, int InId = -1)
     {
-        if (!Cast<bool>(In))
+        if (!ttl::cast<bool>(In))
         {
             ShaderTestPrivate::Success();
         }

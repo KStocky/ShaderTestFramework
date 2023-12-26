@@ -5,13 +5,16 @@ struct TestStruct
     int Value;
 };
 
-namespace STF
+namespace ttl
 {
     template<>
-    bool Cast<bool, TestStruct>(TestStruct In)
+    struct caster<bool, TestStruct>
     {
-        return In.Value == 0;
-    }
+        static bool cast(TestStruct In)
+        {
+            return In.Value == 0;
+        }
+    };
 }
 
 [RootSignature(SHADER_TEST_RS)]

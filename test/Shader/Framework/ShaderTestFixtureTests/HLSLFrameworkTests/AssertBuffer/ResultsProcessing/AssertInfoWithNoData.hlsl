@@ -10,13 +10,16 @@ struct TestTypeWithTypeId
     bool Value;
 };
 
-namespace STF
+namespace ttl
 {
     template<>
-    bool Cast <bool, TestType>(TestType In)
+    struct caster<bool, TestType>
     {
-        return In.Value;
-    }
+        static bool cast(TestType In)
+        {
+            return In.Value;
+        }
+    };
 }
 
 [RootSignature(SHADER_TEST_RS)]

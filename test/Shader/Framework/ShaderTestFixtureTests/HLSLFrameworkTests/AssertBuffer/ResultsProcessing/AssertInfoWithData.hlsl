@@ -72,44 +72,27 @@ struct TestTypeLargeWithNoTypeIdAndWriter
     float4x4 A;
 };
 
+namespace ttl
+{
+    template<typename From>
+    struct caster<bool, From, typename enable_if<
+        is_same<From, TestType>::value ||
+        is_same<From, TestTypeWithTypeIdNoWriter>::value ||
+        is_same<From, TestTypeWithTypeIdAndWriter>::value ||
+        is_same<From, TestTypeWithNoTypeIdAndWriter>::value ||
+        is_same<From, TestTypeLargeWithTypeIdAndWriter>::value ||
+        is_same<From, TestTypeLargeWithNoTypeIdAndWriter>::value
+        >::type>
+    {
+        static bool cast(From In)
+        {
+            return In.Value == 0;
+        }
+    };
+}
+
 namespace STF
 {
-    template<>
-    bool Cast <bool, TestType>(TestType In)
-    {
-        return In.Value == 0;
-    }
-
-    template<>
-    bool Cast <bool, TestTypeWithTypeIdNoWriter>(TestTypeWithTypeIdNoWriter In)
-    {
-        return In.Value == 0;
-    }
-
-    template<>
-    bool Cast <bool, TestTypeWithTypeIdAndWriter>(TestTypeWithTypeIdAndWriter In)
-    {
-        return In.Value == 0;
-    }
-
-    template<>
-    bool Cast <bool, TestTypeWithNoTypeIdAndWriter>(TestTypeWithNoTypeIdAndWriter In)
-    {
-        return In.Value == 0;
-    }
-
-    template<>
-    bool Cast <bool, TestTypeLargeWithTypeIdAndWriter>(TestTypeLargeWithTypeIdAndWriter In)
-    {
-        return In.Value == 0;
-    }
-
-    template<>
-    bool Cast <bool, TestTypeLargeWithNoTypeIdAndWriter>(TestTypeLargeWithNoTypeIdAndWriter In)
-    {
-        return In.Value == 0;
-    }
-
     template<> struct type_id<TestTypeWithTypeIdNoWriter> : ttl::integral_constant<uint, TEST_TYPE_WITH_WRITER>{};
     template<> struct type_id<TestTypeWithTypeIdAndWriter> : ttl::integral_constant<uint, TEST_TYPE_WITH_WRITER>{};
     template<> struct type_id<TestTypeLargeWithTypeIdAndWriter> : ttl::integral_constant<uint, TEST_TYPE_WITH_WRITER>{};
