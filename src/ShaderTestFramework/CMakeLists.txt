@@ -83,6 +83,7 @@ set(SOURCES
 
 set(SHADER_SOURCES
     Shader/STF/ShaderTestFramework.hlsli
+    Shader/TTL/type_traits.hlsli
 )
 
 set(SHADER_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Shader)

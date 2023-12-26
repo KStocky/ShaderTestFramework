@@ -35,15 +35,15 @@ namespace STF
         return In.Value == 0;
     }
 
-    template<> struct type_id<TestTypeWithTypeId1> : integral_constant<uint, TEST_TYPE_1>{};
-    template<> struct type_id<TestTypeWithTypeId2> : integral_constant<uint, TEST_TYPE_2>{};
+    template<> struct type_id<TestTypeWithTypeId1> : ttl::integral_constant<uint, TEST_TYPE_1>{};
+    template<> struct type_id<TestTypeWithTypeId2> : ttl::integral_constant<uint, TEST_TYPE_2>{};
 
     template<typename T>
     struct ByteWriter
-    <T, typename enable_if<
-        is_same<T, TestTypeWithoutId>::value || 
-        is_same<T, TestTypeWithTypeId1>::value || 
-        is_same<T, TestTypeWithTypeId2>::value
+    <T, typename ttl::enable_if<
+        ttl::is_same<T, TestTypeWithoutId>::value || 
+        ttl::is_same<T, TestTypeWithTypeId1>::value || 
+        ttl::is_same<T, TestTypeWithTypeId2>::value
         >::type
     >
     {

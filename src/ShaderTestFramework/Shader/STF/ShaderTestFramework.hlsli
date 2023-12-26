@@ -1,5 +1,7 @@
 #pragma once
 
+#include "/Test/TTL/type_traits.hlsli"
+
 #define SHADER_TEST_RS \
 "RootFlags(" \
     "DENY_VERTEX_SHADER_ROOT_ACCESS |" \
@@ -153,38 +155,6 @@ namespace ShaderTestPrivate
 
 namespace STF
 {
-    template<typename T, T v>
-    struct integral_constant
-    {
-        static const T value = v;
-        using value_type = T;
-        using type = integral_constant;
-    };
-    
-    using true_type = integral_constant<bool, true>;
-    using false_type = integral_constant<bool, false>;
-    
-    template<typename T, typename U>
-    struct is_same : false_type
-    {
-    };
-    
-    template<typename T>
-    struct is_same<T, T> : true_type 
-    {
-    };
-    
-    template<bool InCond, typename T = void>
-    struct enable_if
-    {
-    };
-    
-    template<typename T>
-    struct enable_if<true, T>
-    {
-        using type = T;  
-    };
-    
     template<typename To, typename From>
     To Cast(From In);
     
@@ -199,130 +169,26 @@ namespace STF
         return (InIndex.z * InDimensions.x * InDimensions.y) + (InIndex.y * InDimensions.x) + InIndex.x;
     }
 
-    template<typename T>
-    struct array_traits
-    {
-        static const bool is_array = false;
-        static const uint size = 0;
-        using element_type = void;
-    };
-
-    template<typename T, uint Size>
-    struct array_traits<T[Size]>
-    {
-        static const bool is_array = true;
-        static const uint size = Size;
-        using element_type = T;
-    };
-
-    template<typename T>
-    struct container_traits
-    {
-        static const bool is_container = false;
-        static const bool is_writable = false;
-        static const bool is_byte_address = false;
-        static const bool is_structured = false;
-        static const bool is_resource = false;
-        using element_type = void;
-    };
-
-    template<typename T, uint Size>
-    struct container_traits<T[Size]>
-    {
-        static const bool is_container = true;
-        static const bool is_writable = true;
-        static const bool is_byte_address = false;
-        static const bool is_structured = false;
-        static const bool is_resource = false;
-        using element_type = T;
-    };
-
-    template<typename T>
-    struct container_traits<Buffer<T> >
-    {
-        static const bool is_container = true;
-        static const bool is_writable = false;
-        static const bool is_byte_address = false;
-        static const bool is_structured = false;
-        static const bool is_resource = true;
-        using element_type = T;
-    };
-
-    template<typename T>
-    struct container_traits<RWBuffer<T> >
-    {
-        static const bool is_container = true;
-        static const bool is_writable = true;
-        static const bool is_byte_address = false;
-        static const bool is_structured = false;
-        static const bool is_resource = true;
-        using element_type = T;
-    };
-
-    template<typename T>
-    struct container_traits<StructuredBuffer<T> >
-    {
-        static const bool is_container = true;
-        static const bool is_writable = false;
-        static const bool is_byte_address = false;
-        static const bool is_structured = true;
-        static const bool is_resource = true;
-        using element_type = T;
-    };
-
-    template<typename T>
-    struct container_traits<RWStructuredBuffer<T> >
-    {
-        static const bool is_container = true;
-        static const bool is_writable = true;
-        static const bool is_byte_address = false;
-        static const bool is_structured = true;
-        static const bool is_resource = true;
-        using element_type = T;
-    };
-
-    template<>
-    struct container_traits<ByteAddressBuffer>
-    {
-        static const bool is_container = true;
-        static const bool is_writable = false;
-        static const bool is_byte_address = true;
-        static const bool is_structured = false;
-        static const bool is_resource = true;
-        using element_type = uint;
-    };
-
-    template<>
-    struct container_traits<RWByteAddressBuffer>
-    {
-        static const bool is_container = true;
-        static const bool is_writable = true;
-        static const bool is_byte_address = true;
-        static const bool is_structured = false;
-        static const bool is_resource = true;
-        using element_type = uint;
-    };
-
     template<typename ContainerType, typename = void>
     struct container;
     
     template<typename T>
-    struct container<T, typename enable_if<container_traits<T>::is_container>::type>
+    struct container<T, typename ttl::enable_if<ttl::container_traits<T>::is_container>::type>
     {
         using underlying_type = T;
-        using element_type = typename container_traits<underlying_type>::element_type;
-        static const bool writable = container_traits<underlying_type>::is_writable;
+        using element_type = typename ttl::container_traits<underlying_type>::element_type;
+        static const bool writable = ttl::container_traits<underlying_type>::is_writable;
 
         underlying_type Data;
 
         template<typename U = T>
-        typename enable_if<is_same<U, T>::value && array_traits<U>::is_array, uint>::type size()
+        typename ttl::enable_if<ttl::is_same<U, T>::value && ttl::array_traits<U>::is_array, uint>::type size()
         {
-            return array_traits<U>::size;
+            return ttl::array_traits<U>::size;
         }
 
         template<typename U = T>
-        typename enable_if<is_same<U, T>::value && !array_traits<U>::is_array, uint>::type size()
+        typename ttl::enable_if<ttl::is_same<U, T>::value && !ttl::array_traits<U>::is_array, uint>::type size()
         {
             uint ret = 0;
             Data.GetDimensions(ret);
@@ -335,13 +201,13 @@ namespace STF
         }
 
         template<typename U = T>
-        typename enable_if<is_same<U, T>::value && !array_traits<U>::is_array, uint>::type load(const uint InIndex)
+        typename ttl::enable_if<ttl::is_same<U, T>::value && !ttl::array_traits<U>::is_array, uint>::type load(const uint InIndex)
         {
             return Data.Load(InIndex);
         }
 
         template<typename U = T>
-        typename enable_if<is_same<U, T>::value && array_traits<U>::is_array, uint>::type load(const uint InIndex)
+        typename ttl::enable_if<ttl::is_same<U, T>::value && ttl::array_traits<U>::is_array, uint>::type load(const uint InIndex)
         {
             return Data[InIndex];
         }
@@ -349,30 +215,30 @@ namespace STF
         template<typename U>
         struct BufferEnabler
         {
-            static const bool value = writable && is_same<element_type, U>::value && !container_traits<underlying_type>::is_byte_address;
+            static const bool value = writable && ttl::is_same<element_type, U>::value && !ttl::container_traits<underlying_type>::is_byte_address;
         };
 
         template<typename U>
         struct ByteAddressEnabler
         {
-            static const bool value = writable && is_same<element_type, U>::value && container_traits<underlying_type>::is_byte_address;
+            static const bool value = writable && ttl::is_same<element_type, U>::value && ttl::container_traits<underlying_type>::is_byte_address;
         };
 
         template<typename U>
-        typename enable_if<BufferEnabler<U>::value>::type store(const uint InIndex, const U InItem)
+        typename ttl::enable_if<BufferEnabler<U>::value>::type store(const uint InIndex, const U InItem)
         {
             Data[InIndex] = InItem;
         }
 
         template<typename U>
-        typename enable_if<BufferEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2)
+        typename ttl::enable_if<BufferEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2)
         {
             Data[InIndex] = InItem;
             Data[InIndex + 1] = InItem2;
         }
 
         template<typename U>
-        typename enable_if<BufferEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3)
+        typename ttl::enable_if<BufferEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3)
         {
             Data[InIndex] = InItem;
             Data[InIndex + 1] = InItem2;
@@ -380,7 +246,7 @@ namespace STF
         }
 
         template<typename U>
-        typename enable_if<BufferEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3, const U InItem4)
+        typename ttl::enable_if<BufferEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3, const U InItem4)
         {
             Data[InIndex] = InItem;
             Data[InIndex + 1] = InItem2;
@@ -389,39 +255,44 @@ namespace STF
         }
 
         template<typename U>
-        typename enable_if<ByteAddressEnabler<U>::value>::type store(const uint InIndex, const U InItem)
+        typename ttl::enable_if<ByteAddressEnabler<U>::value>::type store(const uint InIndex, const U InItem)
         {
             Data.Store(InIndex, InItem);
         }
 
         template<typename U>
-        typename enable_if<ByteAddressEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2)
+        typename ttl::enable_if<ByteAddressEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2)
         {
             Data.Store(InIndex, uint2(InItem, InItem2));
         }
 
         template<typename U>
-        typename enable_if<ByteAddressEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3)
+        typename ttl::enable_if<ByteAddressEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3)
         {
             Data.Store(InIndex, uint3(InItem, InItem2, InItem3));
         }
 
         template<typename U>
-        typename enable_if<ByteAddressEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3, const U InItem4)
+        typename ttl::enable_if<ByteAddressEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3, const U InItem4)
         {
             Data.Store(InIndex, uint4(InItem, InItem2, InItem3, InItem4));
         }
     };
 
+    
+}
+
+namespace ttl
+{
     template<typename T>
-    struct container_traits<container<T> >
+    struct container_traits<STF::container<T> >
     {
-        static const bool is_container = container_traits<T>::is_container;
-        static const bool is_writable = container_traits<T>::is_writable;
-        static const bool is_byte_address = container_traits<T>::is_byte_address;
-        static const bool is_structured = container_traits<T>::is_structured;
-        static const bool is_resource = container_traits<T>::is_resource;
-        using element_type = typename container_traits<T>::element_type;
+        static const bool is_container = ttl::container_traits<T>::is_container;
+        static const bool is_writable = ttl::container_traits<T>::is_writable;
+        static const bool is_byte_address = ttl::container_traits<T>::is_byte_address;
+        static const bool is_structured = ttl::container_traits<T>::is_structured;
+        static const bool is_resource = ttl::container_traits<T>::is_resource;
+        using element_type = typename ttl::container_traits<T>::element_type;
     };
 }
 
@@ -432,75 +303,25 @@ namespace STF
 namespace STF
 {
     template<typename T>
-    struct type_id : integral_constant<uint, 0>
+    struct type_id : ttl::integral_constant<uint, 0>
     {};
 
-    template<> struct type_id<bool> : integral_constant<uint, TYPE_ID_BOOL>{};
+    template<> struct type_id<bool> : ttl::integral_constant<uint, TYPE_ID_BOOL>{};
 
-    template<> struct type_id<int> : integral_constant<uint, TYPE_ID_INT>{};
-    template<> struct type_id<int2> : integral_constant<uint, TYPE_ID_INT2>{};
-    template<> struct type_id<int3> : integral_constant<uint, TYPE_ID_INT3>{};
-    template<> struct type_id<int4> : integral_constant<uint, TYPE_ID_INT4>{};
+    template<> struct type_id<int> : ttl::integral_constant<uint, TYPE_ID_INT>{};
+    template<> struct type_id<int2> : ttl::integral_constant<uint, TYPE_ID_INT2>{};
+    template<> struct type_id<int3> : ttl::integral_constant<uint, TYPE_ID_INT3>{};
+    template<> struct type_id<int4> : ttl::integral_constant<uint, TYPE_ID_INT4>{};
 
-    template<> struct type_id<uint> : integral_constant<uint, TYPE_ID_UINT>{};
-    template<> struct type_id<uint2> : integral_constant<uint, TYPE_ID_UINT2>{};
-    template<> struct type_id<uint3> : integral_constant<uint, TYPE_ID_UINT3>{};
-    template<> struct type_id<uint4> : integral_constant<uint, TYPE_ID_UINT4>{};
+    template<> struct type_id<uint> : ttl::integral_constant<uint, TYPE_ID_UINT>{};
+    template<> struct type_id<uint2> : ttl::integral_constant<uint, TYPE_ID_UINT2>{};
+    template<> struct type_id<uint3> : ttl::integral_constant<uint, TYPE_ID_UINT3>{};
+    template<> struct type_id<uint4> : ttl::integral_constant<uint, TYPE_ID_UINT4>{};
 
-    template<> struct type_id<float> : integral_constant<uint, TYPE_ID_FLOAT>{};
-    template<> struct type_id<float2> : integral_constant<uint, TYPE_ID_FLOAT2>{};
-    template<> struct type_id<float3> : integral_constant<uint, TYPE_ID_FLOAT3>{};
-    template<> struct type_id<float4> : integral_constant<uint, TYPE_ID_FLOAT4>{};
-}
-
-namespace STF
-{
-    template<typename T>
-    struct is_fundamental : false_type{};
-
-    template<> struct is_fundamental<bool> : true_type{};
-    template<> struct is_fundamental<int> : true_type{};
-    template<> struct is_fundamental<int2> : true_type{};
-    template<> struct is_fundamental<int3> : true_type{};
-    template<> struct is_fundamental<int4> : true_type{};
-    template<> struct is_fundamental<uint> : true_type{};
-    template<> struct is_fundamental<uint2> : true_type{};
-    template<> struct is_fundamental<uint3> : true_type{};
-    template<> struct is_fundamental<uint4> : true_type{};
-    template<> struct is_fundamental<float> : true_type{};
-    template<> struct is_fundamental<float2> : true_type{};
-    template<> struct is_fundamental<float3> : true_type{};
-    template<> struct is_fundamental<float4> : true_type{};
-}
-
-namespace STF
-{
-    template<typename T>
-    struct fundamental_type_traits;
-
-    template<typename T, uint InRank>
-    struct fundamental_type_traits_base
-    {
-        using base_type = T;
-        static const uint rank = InRank;
-    };
-
-    template<> struct fundamental_type_traits<bool> : fundamental_type_traits_base<bool, 1>{};
-
-    template<> struct fundamental_type_traits<uint> : fundamental_type_traits_base<uint, 1>{};
-    template<> struct fundamental_type_traits<uint2> : fundamental_type_traits_base<uint, 2>{};
-    template<> struct fundamental_type_traits<uint3> : fundamental_type_traits_base<uint, 3>{};
-    template<> struct fundamental_type_traits<uint4> : fundamental_type_traits_base<uint, 4>{};
-
-    template<> struct fundamental_type_traits<int> : fundamental_type_traits_base<int, 1>{};
-    template<> struct fundamental_type_traits<int2> : fundamental_type_traits_base<int, 2>{};
-    template<> struct fundamental_type_traits<int3> : fundamental_type_traits_base<int, 3>{};
-    template<> struct fundamental_type_traits<int4> : fundamental_type_traits_base<int, 4>{};
-
-    template<> struct fundamental_type_traits<float> : fundamental_type_traits_base<float, 1>{};
-    template<> struct fundamental_type_traits<float2> : fundamental_type_traits_base<float, 2>{};
-    template<> struct fundamental_type_traits<float3> : fundamental_type_traits_base<float, 3>{};
-    template<> struct fundamental_type_traits<float4> : fundamental_type_traits_base<float, 4>{};
+    template<> struct type_id<float> : ttl::integral_constant<uint, TYPE_ID_FLOAT>{};
+    template<> struct type_id<float2> : ttl::integral_constant<uint, TYPE_ID_FLOAT2>{};
+    template<> struct type_id<float3> : ttl::integral_constant<uint, TYPE_ID_FLOAT3>{};
+    template<> struct type_id<float4> : ttl::integral_constant<uint, TYPE_ID_FLOAT4>{};
 }
 
 namespace STF
@@ -512,10 +333,10 @@ namespace STF
     };
 
     template<typename T>
-    struct ByteWriter<T, typename enable_if<is_fundamental<T>::value>::type>
+    struct ByteWriter<T, typename ttl::enable_if<ttl::is_fundamental<T>::value>::type>
     {
         static const bool HasWriter = true;
-        static const bool IsBoolWriter = is_same<typename fundamental_type_traits<T>::base_type, bool>::value;
+        static const bool IsBoolWriter = ttl::is_same<typename ttl::fundamental_type_traits<T>::base_type, bool>::value;
 
         static uint BytesRequired(T)
         {
@@ -526,41 +347,41 @@ namespace STF
         struct WriteEnabler
         {
             static const bool cond_for_bools = 
-                is_same<typename ContainerType::element_type, uint>::value && 
+                ttl::is_same<typename ContainerType::element_type, uint>::value && 
                 ForBools;
             
             static const bool cond_for_non_bools = 
-                is_same<typename ContainerType::element_type, uint>::value && 
-                fundamental_type_traits<T>::rank == InRank;
+                ttl::is_same<typename ContainerType::element_type, uint>::value && 
+                ttl::fundamental_type_traits<T>::rank == InRank;
             static const bool value = IsBoolWriter ? cond_for_bools : cond_for_non_bools;
         };
 
         template<typename U>
-        static typename enable_if<WriteEnabler<container<U>, 1>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
+        static typename ttl::enable_if<WriteEnabler<container<U>, 1>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
         {
             InContainer.store(InIndex, asuint(In));
         }
 
         template<typename U>
-        static typename enable_if<WriteEnabler<container<U>, 2>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
+        static typename ttl::enable_if<WriteEnabler<container<U>, 2>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
         {
             InContainer.store(InIndex, asuint(In.x), asuint(In.y));
         }
 
         template<typename U>
-        static typename enable_if<WriteEnabler<container<U>, 3>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
+        static typename ttl::enable_if<WriteEnabler<container<U>, 3>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
         {
             InContainer.store(InIndex, asuint(In.x), asuint(In.y), asuint(In.z));
         }
 
         template<typename U>
-        static typename enable_if<WriteEnabler<container<U>, 4>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
+        static typename ttl::enable_if<WriteEnabler<container<U>, 4>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
         {
             InContainer.store(InIndex, asuint(In.x), asuint(In.y), asuint(In.z), asuint(In.w));
         }
         
         template<typename U>
-        static typename enable_if<WriteEnabler<container<U>, 0, true>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
+        static typename ttl::enable_if<WriteEnabler<container<U>, 0, true>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
         {
             ByteWriter<uint>::Write(InContainer, InIndex, In ? 1u : 0u);
         }
@@ -623,7 +444,7 @@ namespace ShaderTestPrivate
     }
 
     template<typename T>
-    typename STF::enable_if<STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(T In1, T In2)
+    typename ttl::enable_if<STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(T In1, T In2)
     {
         using Writer = STF::ByteWriter<T>;
         const uint size1 = Writer::BytesRequired(In1);
@@ -648,13 +469,13 @@ namespace ShaderTestPrivate
     }
 
     template<typename T>
-    typename STF::enable_if<!STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(T In1, T In2)
+    typename ttl::enable_if<!STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(T In1, T In2)
     {
         return uint2(0, 0);
     }
 
     template<typename T>
-    typename STF::enable_if<STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(T In)
+    typename ttl::enable_if<STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(T In)
     {
         using Writer = STF::ByteWriter<T>;
         const uint size1 = Writer::BytesRequired(In);
@@ -676,7 +497,7 @@ namespace ShaderTestPrivate
     }
 
     template<typename T>
-    typename STF::enable_if<!STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(T In)
+    typename ttl::enable_if<!STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(T In)
     {
         return uint2(0, 0);
     }
@@ -731,7 +552,7 @@ namespace STF
 namespace STF
 {
     template<typename T, typename U>
-    typename enable_if<is_same<T, U>::value>::type AreEqual(const T InA, const U InB, int InId = -1)
+    typename ttl::enable_if<ttl::is_same<T, U>::value>::type AreEqual(const T InA, const U InB, int InId = -1)
     {
         if (all(InA == InB))
         {
@@ -744,7 +565,7 @@ namespace STF
     }
     
     template<typename T, typename U>
-    typename enable_if<is_same<T, U>::value>::type NotEqual(const T InA, const U InB, int InId = -1)
+    typename ttl::enable_if<ttl::is_same<T, U>::value>::type NotEqual(const T InA, const U InB, int InId = -1)
     {
         if (any(InA != InB))
         {

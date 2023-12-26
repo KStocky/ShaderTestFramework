@@ -110,17 +110,17 @@ namespace STF
         return In.Value == 0;
     }
 
-    template<> struct type_id<TestTypeWithTypeIdNoWriter> : integral_constant<uint, TEST_TYPE_WITH_WRITER>{};
-    template<> struct type_id<TestTypeWithTypeIdAndWriter> : integral_constant<uint, TEST_TYPE_WITH_WRITER>{};
-    template<> struct type_id<TestTypeLargeWithTypeIdAndWriter> : integral_constant<uint, TEST_TYPE_WITH_WRITER>{};
+    template<> struct type_id<TestTypeWithTypeIdNoWriter> : ttl::integral_constant<uint, TEST_TYPE_WITH_WRITER>{};
+    template<> struct type_id<TestTypeWithTypeIdAndWriter> : ttl::integral_constant<uint, TEST_TYPE_WITH_WRITER>{};
+    template<> struct type_id<TestTypeLargeWithTypeIdAndWriter> : ttl::integral_constant<uint, TEST_TYPE_WITH_WRITER>{};
 
     template<typename T>
     struct ByteWriter
-    <T, typename enable_if<
-        is_same<T, TestTypeWithTypeIdAndWriter>::value || 
-        is_same<T, TestTypeWithNoTypeIdAndWriter>::value || 
-        is_same<T, TestTypeLargeWithTypeIdAndWriter>::value ||
-        is_same<T, TestTypeLargeWithNoTypeIdAndWriter>::value 
+    <T, typename ttl::enable_if<
+        ttl::is_same<T, TestTypeWithTypeIdAndWriter>::value || 
+        ttl::is_same<T, TestTypeWithNoTypeIdAndWriter>::value || 
+        ttl::is_same<T, TestTypeLargeWithTypeIdAndWriter>::value ||
+        ttl::is_same<T, TestTypeLargeWithNoTypeIdAndWriter>::value 
         >::type
     >
     {
