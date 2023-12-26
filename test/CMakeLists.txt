@@ -5,6 +5,7 @@ add_executable(ShaderTestFrameworkTests)
 
 set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/ArrayTemplateSpecialization.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CallOperator.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CleanupAttribute.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CounterMacro.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/DeferSFINAE.hlsl

@@ -309,6 +309,11 @@ SCENARIO("HLSLTests")
                     {
                         "GloballyCoherentTypeModifier",
                         [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "CallOperator",
+                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
                     }
                 }
             )
