@@ -82,7 +82,7 @@ set(SOURCES
 )
 
 set(SHADER_SOURCES
-    Shader/Public/ShaderTestFramework.hlsli
+    Shader/STF/ShaderTestFramework.hlsli
 )
 
 set(SHADER_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Shader)

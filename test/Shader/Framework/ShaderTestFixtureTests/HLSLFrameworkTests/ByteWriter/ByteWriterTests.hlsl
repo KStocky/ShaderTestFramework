@@ -1,4 +1,4 @@
-#include "/Test/Public/ShaderTestFramework.hlsli"
+#include "/Test/STF/ShaderTestFramework.hlsli"
 
 
 [RootSignature(SHADER_TEST_RS)]

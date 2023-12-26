@@ -1,4 +1,4 @@
-#include "/Test/Public/ShaderTestFramework.hlsli"
+#include "/Test/STF/ShaderTestFramework.hlsli"
 
 template<typename T1, typename T2>
 void ContainerAsserts()
