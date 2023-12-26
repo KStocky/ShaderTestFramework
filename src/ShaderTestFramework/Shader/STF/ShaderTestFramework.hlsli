@@ -1,5 +1,6 @@
 #pragma once
 
+#include "/Test/TTL/container.hlsli"
 #include "/Test/TTL/type_traits.hlsli"
 
 #define SHADER_TEST_RS \
@@ -168,137 +169,7 @@ namespace STF
     {
         return (InIndex.z * InDimensions.x * InDimensions.y) + (InIndex.y * InDimensions.x) + InIndex.x;
     }
-
-    template<typename ContainerType, typename = void>
-    struct container;
-    
-    template<typename T>
-    struct container<T, typename ttl::enable_if<ttl::container_traits<T>::is_container>::type>
-    {
-        using underlying_type = T;
-        using element_type = typename ttl::container_traits<underlying_type>::element_type;
-        static const bool writable = ttl::container_traits<underlying_type>::is_writable;
-
-        underlying_type Data;
-
-        template<typename U = T>
-        typename ttl::enable_if<ttl::is_same<U, T>::value && ttl::array_traits<U>::is_array, uint>::type size()
-        {
-            return ttl::array_traits<U>::size;
-        }
-
-        template<typename U = T>
-        typename ttl::enable_if<ttl::is_same<U, T>::value && !ttl::array_traits<U>::is_array, uint>::type size()
-        {
-            uint ret = 0;
-            Data.GetDimensions(ret);
-            return ret;
-        }
-
-        uint size_in_bytes()
-        {
-            return sizeof(element_type) * size();
-        }
-
-        template<typename U = T>
-        typename ttl::enable_if<ttl::is_same<U, T>::value && !ttl::array_traits<U>::is_array, uint>::type load(const uint InIndex)
-        {
-            return Data.Load(InIndex);
-        }
-
-        template<typename U = T>
-        typename ttl::enable_if<ttl::is_same<U, T>::value && ttl::array_traits<U>::is_array, uint>::type load(const uint InIndex)
-        {
-            return Data[InIndex];
-        }
-
-        template<typename U>
-        struct BufferEnabler
-        {
-            static const bool value = writable && ttl::is_same<element_type, U>::value && !ttl::container_traits<underlying_type>::is_byte_address;
-        };
-
-        template<typename U>
-        struct ByteAddressEnabler
-        {
-            static const bool value = writable && ttl::is_same<element_type, U>::value && ttl::container_traits<underlying_type>::is_byte_address;
-        };
-
-        template<typename U>
-        typename ttl::enable_if<BufferEnabler<U>::value>::type store(const uint InIndex, const U InItem)
-        {
-            Data[InIndex] = InItem;
-        }
-
-        template<typename U>
-        typename ttl::enable_if<BufferEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2)
-        {
-            Data[InIndex] = InItem;
-            Data[InIndex + 1] = InItem2;
-        }
-
-        template<typename U>
-        typename ttl::enable_if<BufferEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3)
-        {
-            Data[InIndex] = InItem;
-            Data[InIndex + 1] = InItem2;
-            Data[InIndex + 2] = InItem3;
-        }
-
-        template<typename U>
-        typename ttl::enable_if<BufferEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3, const U InItem4)
-        {
-            Data[InIndex] = InItem;
-            Data[InIndex + 1] = InItem2;
-            Data[InIndex + 2] = InItem3;
-            Data[InIndex + 3] = InItem4;
-        }
-
-        template<typename U>
-        typename ttl::enable_if<ByteAddressEnabler<U>::value>::type store(const uint InIndex, const U InItem)
-        {
-            Data.Store(InIndex, InItem);
-        }
-
-        template<typename U>
-        typename ttl::enable_if<ByteAddressEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2)
-        {
-            Data.Store(InIndex, uint2(InItem, InItem2));
-        }
-
-        template<typename U>
-        typename ttl::enable_if<ByteAddressEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3)
-        {
-            Data.Store(InIndex, uint3(InItem, InItem2, InItem3));
-        }
-
-        template<typename U>
-        typename ttl::enable_if<ByteAddressEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3, const U InItem4)
-        {
-            Data.Store(InIndex, uint4(InItem, InItem2, InItem3, InItem4));
-        }
-    };
-
-    
 }
-
-namespace ttl
-{
-    template<typename T>
-    struct container_traits<STF::container<T> >
-    {
-        static const bool is_container = ttl::container_traits<T>::is_container;
-        static const bool is_writable = ttl::container_traits<T>::is_writable;
-        static const bool is_byte_address = ttl::container_traits<T>::is_byte_address;
-        static const bool is_structured = ttl::container_traits<T>::is_structured;
-        static const bool is_resource = ttl::container_traits<T>::is_resource;
-        using element_type = typename ttl::container_traits<T>::element_type;
-    };
-}
-
-#ifndef TYPE_ID_BOOL
-#define TYPE_ID_BOOL 1
-#endif
 
 namespace STF
 {
@@ -357,31 +228,31 @@ namespace STF
         };
 
         template<typename U>
-        static typename ttl::enable_if<WriteEnabler<container<U>, 1>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
+        static typename ttl::enable_if<WriteEnabler<ttl::container<U>, 1>::value>::type Write(inout ttl::container<U> InContainer, const uint InIndex, const T In)
         {
             InContainer.store(InIndex, asuint(In));
         }
 
         template<typename U>
-        static typename ttl::enable_if<WriteEnabler<container<U>, 2>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
+        static typename ttl::enable_if<WriteEnabler<ttl::container<U>, 2>::value>::type Write(inout ttl::container<U> InContainer, const uint InIndex, const T In)
         {
             InContainer.store(InIndex, asuint(In.x), asuint(In.y));
         }
 
         template<typename U>
-        static typename ttl::enable_if<WriteEnabler<container<U>, 3>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
+        static typename ttl::enable_if<WriteEnabler<ttl::container<U>, 3>::value>::type Write(inout ttl::container<U> InContainer, const uint InIndex, const T In)
         {
             InContainer.store(InIndex, asuint(In.x), asuint(In.y), asuint(In.z));
         }
 
         template<typename U>
-        static typename ttl::enable_if<WriteEnabler<container<U>, 4>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
+        static typename ttl::enable_if<WriteEnabler<ttl::container<U>, 4>::value>::type Write(inout ttl::container<U> InContainer, const uint InIndex, const T In)
         {
             InContainer.store(InIndex, asuint(In.x), asuint(In.y), asuint(In.z), asuint(In.w));
         }
         
         template<typename U>
-        static typename ttl::enable_if<WriteEnabler<container<U>, 0, true>::value>::type Write(inout container<U> InContainer, const uint InIndex, const T In)
+        static typename ttl::enable_if<WriteEnabler<ttl::container<U>, 0, true>::value>::type Write(inout ttl::container<U> InContainer, const uint InIndex, const T In)
         {
             ByteWriter<uint>::Write(InContainer, InIndex, In ? 1u : 0u);
         }
@@ -456,7 +327,7 @@ namespace ShaderTestPrivate
         const uint address = StartAddressAssertData() + offset;
         if (address + size < SizeInBytesOfAssertBuffer)
         {
-            STF::container<RWByteAddressBuffer> buffer;
+            ttl::container<RWByteAddressBuffer> buffer;
             buffer.Data = GetAssertBuffer();
             buffer.store(address, size1);
             Writer::Write(buffer, address + 4, In1);
@@ -486,7 +357,7 @@ namespace ShaderTestPrivate
         const uint address = StartAddressAssertData() + offset;
         if (address + size < SizeInBytesOfAssertBuffer)
         {
-            STF::container<RWByteAddressBuffer> buffer;
+            ttl::container<RWByteAddressBuffer> buffer;
             buffer.Data = GetAssertBuffer();
             buffer.store(address, size1);
             Writer::Write(buffer, address + 4, In);

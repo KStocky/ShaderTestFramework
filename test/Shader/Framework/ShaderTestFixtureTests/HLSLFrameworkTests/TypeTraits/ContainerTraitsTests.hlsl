@@ -17,7 +17,7 @@ void GIVEN_BuiltInArray_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
 {
     using type = int[6];
     using traits = ttl::container_traits<type>;
-    using containerType = STF::container<type>;
+    using containerType = ttl::container<type>;
     using containerTypeTraits = ttl::container_traits<containerType>;
 
     STF::IsTrue(traits::is_container);
@@ -36,7 +36,7 @@ void GIVEN_NonArray_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
 {
     using type = int;
     using traits = ttl::container_traits<type>;
-    using containerType = STF::container<type>;
+    using containerType = ttl::container<type>;
     using containerTypeTraits = ttl::container_traits<containerType>;
 
     STF::IsFalse(traits::is_container);
@@ -55,7 +55,7 @@ void GIVEN_VectorType_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
 {
     using type = int2;
     using traits = ttl::container_traits<type>;
-    using containerType = STF::container<type>;
+    using containerType = ttl::container<type>;
     using containerTypeTraits = ttl::container_traits<containerType>;
 
     STF::IsFalse(traits::is_container);
@@ -74,7 +74,7 @@ void GIVEN_Buffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
 {
     using type = Buffer<int>;
     using traits = ttl::container_traits<type>;
-    using containerType = STF::container<type>;
+    using containerType = ttl::container<type>;
     using containerTypeTraits = ttl::container_traits<containerType>;
 
     STF::IsTrue(traits::is_container);
@@ -93,7 +93,7 @@ void GIVEN_RWBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
 {
     using type = RWBuffer<int>;
     using traits = ttl::container_traits<type>;
-    using containerType = STF::container<type>;
+    using containerType = ttl::container<type>;
     using containerTypeTraits = ttl::container_traits<containerType>;
 
     STF::IsTrue(traits::is_container);
@@ -118,7 +118,7 @@ void GIVEN_StructuredBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
 {
     using type = StructuredBuffer<MyStruct>;
     using traits = ttl::container_traits<type>;
-    using containerType = STF::container<type>;
+    using containerType = ttl::container<type>;
     using containerTypeTraits = ttl::container_traits<containerType>;
 
     STF::IsTrue(traits::is_container);
@@ -137,7 +137,7 @@ void GIVEN_RWStructuredBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected(
 {
     using type = RWStructuredBuffer<MyStruct>;
     using traits = ttl::container_traits<type>;
-    using containerType = STF::container<type>;
+    using containerType = ttl::container<type>;
     using containerTypeTraits = ttl::container_traits<containerType>;
 
     STF::IsTrue(traits::is_container);
@@ -156,7 +156,7 @@ void GIVEN_ByteAddressBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
 {
     using type = ByteAddressBuffer;
     using traits = ttl::container_traits<type>;
-    using containerType = STF::container<type>;
+    using containerType = ttl::container<type>;
     using containerTypeTraits = ttl::container_traits<containerType>;
 
     STF::IsTrue(traits::is_container);
@@ -175,7 +175,7 @@ void GIVEN_RWByteAddressBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
 {
     using type = RWByteAddressBuffer;
     using traits = ttl::container_traits<type>;
-    using containerType = STF::container<type>;
+    using containerType = ttl::container<type>;
     using containerTypeTraits = ttl::container_traits<containerType>;
 
     STF::IsTrue(traits::is_container);
