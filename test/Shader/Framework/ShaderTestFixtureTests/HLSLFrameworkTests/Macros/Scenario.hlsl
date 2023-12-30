@@ -154,7 +154,7 @@ void GIVEN_ScenarioWithDispatchThreadId_WHEN_Ran_THEN_IdIsInt3(uint3 DispatchThr
     SCENARIO(DispatchThreadId)
     {
     }
-    STF::AreEqual(STF::FlattenIndex(DispatchThreadId, ShaderTestPrivate::DispatchDimensions), ShaderTestPrivate::Scratch.ThreadID.Data);
+    STF::AreEqual(ShaderTestPrivate::FlattenIndex(DispatchThreadId, ShaderTestPrivate::DispatchDimensions), ShaderTestPrivate::Scratch.ThreadID.Data);
     STF::AreEqual(ShaderTestPrivate::EThreadIDType::Int3, ShaderTestPrivate::Scratch.ThreadID.Type);
 }
 
