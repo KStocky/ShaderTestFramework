@@ -1,24 +1,11 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
 
-template<typename T1, typename T2>
-void ContainerAsserts()
-{
-    STF::AreEqual(T1::is_container, T2::is_container);
-    STF::AreEqual(T1::is_writable, T2::is_writable);
-    STF::AreEqual(T1::is_byte_address, T2::is_byte_address);
-    STF::AreEqual(T1::is_structured, T2::is_structured);
-    STF::AreEqual(T1::is_resource, T2::is_resource);
-    STF::IsTrue(ttl::is_same<typename T1::element_type, typename T2::element_type>::value);
-}
-
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_BuiltInArray_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
 {
     using type = int[6];
     using traits = ttl::container_traits<type>;
-    using containerType = ttl::container<type>;
-    using containerTypeTraits = ttl::container_traits<containerType>;
 
     STF::IsTrue(traits::is_container);
     STF::IsTrue(traits::is_writable);
@@ -26,8 +13,7 @@ void GIVEN_BuiltInArray_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
     STF::IsFalse(traits::is_structured);
     STF::IsFalse(traits::is_resource);
     STF::IsTrue(ttl::is_same<traits::element_type, int>::value);
-
-    ContainerAsserts<traits, containerTypeTraits>();
+    STF::IsTrue(ttl::is_same<traits::type, type>::value);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -36,8 +22,6 @@ void GIVEN_NonArray_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
 {
     using type = int;
     using traits = ttl::container_traits<type>;
-    using containerType = ttl::container<type>;
-    using containerTypeTraits = ttl::container_traits<containerType>;
 
     STF::IsFalse(traits::is_container);
     STF::IsFalse(traits::is_writable);
@@ -45,8 +29,7 @@ void GIVEN_NonArray_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
     STF::IsFalse(traits::is_structured);
     STF::IsFalse(traits::is_resource);
     STF::IsTrue(ttl::is_same<traits::element_type, void>::value);
-
-    ContainerAsserts<traits, containerTypeTraits>();
+    STF::IsTrue(ttl::is_same<traits::type, void>::value);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -55,8 +38,6 @@ void GIVEN_VectorType_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
 {
     using type = int2;
     using traits = ttl::container_traits<type>;
-    using containerType = ttl::container<type>;
-    using containerTypeTraits = ttl::container_traits<containerType>;
 
     STF::IsFalse(traits::is_container);
     STF::IsFalse(traits::is_writable);
@@ -64,8 +45,7 @@ void GIVEN_VectorType_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
     STF::IsFalse(traits::is_structured);
     STF::IsFalse(traits::is_resource);
     STF::IsTrue(ttl::is_same<traits::element_type, void>::value);
-
-    ContainerAsserts<traits, containerTypeTraits>();
+    STF::IsTrue(ttl::is_same<traits::type, void>::value);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -74,8 +54,6 @@ void GIVEN_Buffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
 {
     using type = Buffer<int>;
     using traits = ttl::container_traits<type>;
-    using containerType = ttl::container<type>;
-    using containerTypeTraits = ttl::container_traits<containerType>;
 
     STF::IsTrue(traits::is_container);
     STF::IsFalse(traits::is_writable);
@@ -83,8 +61,7 @@ void GIVEN_Buffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
     STF::IsFalse(traits::is_structured);
     STF::IsTrue(traits::is_resource);
     STF::IsTrue(ttl::is_same<traits::element_type, int>::value);
-
-    ContainerAsserts<traits, containerTypeTraits>();
+    STF::IsTrue(ttl::is_same<traits::type, type>::value);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -93,17 +70,13 @@ void GIVEN_RWBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
 {
     using type = RWBuffer<int>;
     using traits = ttl::container_traits<type>;
-    using containerType = ttl::container<type>;
-    using containerTypeTraits = ttl::container_traits<containerType>;
-
     STF::IsTrue(traits::is_container);
     STF::IsTrue(traits::is_writable);
     STF::IsFalse(traits::is_byte_address);
     STF::IsFalse(traits::is_structured);
     STF::IsTrue(traits::is_resource);
     STF::IsTrue(ttl::is_same<traits::element_type, int>::value);
-
-    ContainerAsserts<traits, containerTypeTraits>();
+    STF::IsTrue(ttl::is_same<traits::type, type>::value);
 }
 
 struct MyStruct
@@ -118,8 +91,6 @@ void GIVEN_StructuredBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
 {
     using type = StructuredBuffer<MyStruct>;
     using traits = ttl::container_traits<type>;
-    using containerType = ttl::container<type>;
-    using containerTypeTraits = ttl::container_traits<containerType>;
 
     STF::IsTrue(traits::is_container);
     STF::IsFalse(traits::is_writable);
@@ -127,8 +98,7 @@ void GIVEN_StructuredBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
     STF::IsTrue(traits::is_structured);
     STF::IsTrue(traits::is_resource);
     STF::IsTrue(ttl::is_same<traits::element_type, MyStruct>::value);
-
-    ContainerAsserts<traits, containerTypeTraits>();
+    STF::IsTrue(ttl::is_same<traits::type, type>::value);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -137,8 +107,6 @@ void GIVEN_RWStructuredBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected(
 {
     using type = RWStructuredBuffer<MyStruct>;
     using traits = ttl::container_traits<type>;
-    using containerType = ttl::container<type>;
-    using containerTypeTraits = ttl::container_traits<containerType>;
 
     STF::IsTrue(traits::is_container);
     STF::IsTrue(traits::is_writable);
@@ -146,8 +114,7 @@ void GIVEN_RWStructuredBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected(
     STF::IsTrue(traits::is_structured);
     STF::IsTrue(traits::is_resource);
     STF::IsTrue(ttl::is_same<traits::element_type, MyStruct>::value);
-
-    ContainerAsserts<traits, containerTypeTraits>();
+    STF::IsTrue(ttl::is_same<traits::type, type>::value);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -156,8 +123,6 @@ void GIVEN_ByteAddressBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
 {
     using type = ByteAddressBuffer;
     using traits = ttl::container_traits<type>;
-    using containerType = ttl::container<type>;
-    using containerTypeTraits = ttl::container_traits<containerType>;
 
     STF::IsTrue(traits::is_container);
     STF::IsFalse(traits::is_writable);
@@ -165,8 +130,7 @@ void GIVEN_ByteAddressBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
     STF::IsFalse(traits::is_structured);
     STF::IsTrue(traits::is_resource);
     STF::IsTrue(ttl::is_same<traits::element_type, uint>::value);
-
-    ContainerAsserts<traits, containerTypeTraits>();
+    STF::IsTrue(ttl::is_same<traits::type, type>::value);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -175,8 +139,6 @@ void GIVEN_RWByteAddressBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
 {
     using type = RWByteAddressBuffer;
     using traits = ttl::container_traits<type>;
-    using containerType = ttl::container<type>;
-    using containerTypeTraits = ttl::container_traits<containerType>;
 
     STF::IsTrue(traits::is_container);
     STF::IsTrue(traits::is_writable);
@@ -184,6 +146,5 @@ void GIVEN_RWByteAddressBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
     STF::IsFalse(traits::is_structured);
     STF::IsTrue(traits::is_resource);
     STF::IsTrue(ttl::is_same<traits::element_type, uint>::value);
-
-    ContainerAsserts<traits, containerTypeTraits>();
+    STF::IsTrue(ttl::is_same<traits::type, type>::value);
 }

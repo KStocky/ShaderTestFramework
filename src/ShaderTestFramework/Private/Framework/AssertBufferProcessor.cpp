@@ -74,7 +74,7 @@ namespace STF
 
         for (const auto& byte : InBytes | std::views::drop(4) | std::views::chunk(4))
         {
-            std::format_to(std::back_inserter(ret), ", {}", toUint(byte));
+            std::format_to(std::back_inserter(ret), ", {:#x}", toUint(byte));
         }
 
         return ret;
@@ -98,20 +98,22 @@ namespace STF
         {
             InOs << std::format("{}: Line: {} {}\n", index, error.Info.LineNumber, STF::ThreadInfoToString(static_cast<STF::EThreadIdType>(error.Info.ThreadIdType), error.Info.ThreadId, In.DispatchDimensions));
 
-            if (error.Data.size() > 0)
+            if (error.Data.size() == 0 || !error.DataToStringConverter)
             {
-                u32 byteIndex = 0;
-                const auto endIndex = error.Data.size();
+                continue;
+            }
 
-                while (byteIndex < endIndex)
-                {
-                    u32 sizeData;
-                    std::memcpy(&sizeData, error.Data.data(), sizeof(u32));
-                    byteIndex += sizeof(u32);
+            u32 byteIndex = 0;
+            const auto endIndex = error.Data.size();
 
-                    InOs << std::format("Data: {}\n", error.DataToStringConverter(std::span{ error.Data.cbegin() + byteIndex, sizeData }));
-                    byteIndex += sizeData;
-                }
+            while (byteIndex < endIndex)
+            {
+                u32 sizeData;
+                std::memcpy(&sizeData, error.Data.data() + byteIndex, sizeof(u32));
+                byteIndex += sizeof(u32);
+
+                InOs << std::format("Data: {}\n", error.DataToStringConverter(std::span{ error.Data.cbegin() + byteIndex, sizeData }));
+                byteIndex += sizeData;
             }
         }
 

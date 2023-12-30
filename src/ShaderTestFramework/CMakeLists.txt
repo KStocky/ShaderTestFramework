@@ -83,8 +83,9 @@ set(SOURCES
 
 set(SHADER_SOURCES
     Shader/STF/ShaderTestFramework.hlsli
+    Shader/TTL/byte_writer.hlsli
     Shader/TTL/caster.hlsli
-    Shader/TTL/container.hlsli
+    Shader/TTL/container_wrapper.hlsli
     Shader/TTL/type_traits.hlsli
 )
 

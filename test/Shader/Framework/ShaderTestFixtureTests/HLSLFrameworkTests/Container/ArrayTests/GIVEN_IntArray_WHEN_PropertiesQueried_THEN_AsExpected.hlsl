@@ -9,7 +9,7 @@ void GIVEN_IntArray_WHEN_PropertiesQueried_THEN_AsExpected(uint3 DispatchThreadI
     using expectedType = expectedElementType[expectedSize];
 
     static const uint expectedSizeInBytes = expectedSize * sizeof(int);
-    using spanType = ttl::container<expectedType>;
+    using spanType = ttl::container_wrapper<expectedType>;
     spanType span;
 
     STF::AreEqual(expectedSize, span.size());

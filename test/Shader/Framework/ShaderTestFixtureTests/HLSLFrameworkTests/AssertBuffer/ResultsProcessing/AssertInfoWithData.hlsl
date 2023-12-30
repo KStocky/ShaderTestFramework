@@ -45,6 +45,38 @@ struct TestTypeWithTypeIdAndWriter
     }
 };
 
+struct TestTypeLargeWithTypeIdAndWriter
+{
+    uint Value;
+    uint2 A;
+
+    bool operator==(TestTypeLargeWithTypeIdAndWriter In)
+    {
+        return In.Value == Value;
+    }
+
+    bool operator!=(TestTypeLargeWithTypeIdAndWriter In)
+    {
+        return In.Value != Value;
+    }
+};
+
+struct TestTypeLargeWithNoTypeIdAndWriter
+{
+    uint Value;
+    uint2 A;
+
+    bool operator==(TestTypeLargeWithNoTypeIdAndWriter In)
+    {
+        return In.Value == Value;
+    }
+
+    bool operator!=(TestTypeLargeWithNoTypeIdAndWriter In)
+    {
+        return In.Value != Value;
+    }
+};
+
 struct TestTypeWithNoTypeIdAndWriter
 {
     uint Value;
@@ -60,16 +92,19 @@ struct TestTypeWithNoTypeIdAndWriter
     }
 };
 
-struct TestTypeLargeWithTypeIdAndWriter
+struct TestTypeWithVaryingSize
 {
     uint Value;
-    float4x4 A;
-};
 
-struct TestTypeLargeWithNoTypeIdAndWriter
-{
-    uint Value;
-    float4x4 A;
+    bool operator==(TestTypeWithVaryingSize In)
+    {
+        return In.Value == Value;
+    }
+
+    bool operator!=(TestTypeWithVaryingSize In)
+    {
+        return In.Value != Value;
+    }
 };
 
 namespace ttl
@@ -81,12 +116,70 @@ namespace ttl
         is_same<From, TestTypeWithTypeIdAndWriter>::value ||
         is_same<From, TestTypeWithNoTypeIdAndWriter>::value ||
         is_same<From, TestTypeLargeWithTypeIdAndWriter>::value ||
-        is_same<From, TestTypeLargeWithNoTypeIdAndWriter>::value
+        is_same<From, TestTypeLargeWithNoTypeIdAndWriter>::value ||
+        is_same<From, TestTypeWithVaryingSize>::value
         >::type>
     {
         static bool cast(From In)
         {
             return In.Value == 0;
+        }
+    };
+
+    template<>
+    struct byte_writer<TestTypeWithVaryingSize>
+    {
+        static const bool has_writer = true;
+
+        static uint bytes_required(TestTypeWithVaryingSize In)
+        {
+            return In.Value * 4;
+        }
+
+        template<typename U>
+        static void write(inout container_wrapper<U> InContainer, const uint InIndex, const TestTypeWithVaryingSize In)
+        {
+            for (uint i = 0; i < In.Value; ++i)
+            {
+                InContainer.store(InIndex + i * 4u, i + 1u);
+            }
+        }
+
+    };
+
+    template<typename T>
+    struct byte_writer<T, typename enable_if<
+        is_same<T, TestTypeWithTypeIdAndWriter>::value || 
+        is_same<T, TestTypeWithNoTypeIdAndWriter>::value || 
+        is_same<T, TestTypeLargeWithTypeIdAndWriter>::value ||
+        is_same<T, TestTypeLargeWithNoTypeIdAndWriter>::value 
+        >::type
+    >
+    {
+        static const bool has_writer = true;
+
+        static uint bytes_required(T)
+        {
+            return sizeof(T);
+        }
+
+        template<typename U, typename T1>
+        static typename enable_if<
+        is_same<T1, TestTypeWithTypeIdAndWriter>::value || 
+        is_same<T1, TestTypeWithNoTypeIdAndWriter>::value
+        >::type write(inout container_wrapper<U> InContainer, const uint InIndex, const T1 In)
+        {
+            InContainer.store(InIndex, In.Value);
+        }
+
+        template<typename U, typename T1>
+        static typename enable_if<
+        is_same<T1, TestTypeLargeWithTypeIdAndWriter>::value ||
+        is_same<T1, TestTypeLargeWithNoTypeIdAndWriter>::value
+        >::type write(inout container_wrapper<U> InContainer, const uint InIndex, const T1 In)
+        {
+            InContainer.store(InIndex, In.Value);
+            InContainer.store(InIndex + 4, In.A.x, In.A.y);
         }
     };
 }
@@ -96,30 +189,6 @@ namespace STF
     template<> struct type_id<TestTypeWithTypeIdNoWriter> : ttl::integral_constant<uint, TEST_TYPE_WITH_WRITER>{};
     template<> struct type_id<TestTypeWithTypeIdAndWriter> : ttl::integral_constant<uint, TEST_TYPE_WITH_WRITER>{};
     template<> struct type_id<TestTypeLargeWithTypeIdAndWriter> : ttl::integral_constant<uint, TEST_TYPE_WITH_WRITER>{};
-
-    template<typename T>
-    struct ByteWriter
-    <T, typename ttl::enable_if<
-        ttl::is_same<T, TestTypeWithTypeIdAndWriter>::value || 
-        ttl::is_same<T, TestTypeWithNoTypeIdAndWriter>::value || 
-        ttl::is_same<T, TestTypeLargeWithTypeIdAndWriter>::value ||
-        ttl::is_same<T, TestTypeLargeWithNoTypeIdAndWriter>::value 
-        >::type
-    >
-    {
-        static const bool HasWriter = true;
-
-        static uint BytesRequired(T)
-        {
-            return sizeof(T);
-        }
-
-        template<typename U>
-        static void Write(inout ttl::container<U> InContainer, const uint InIndex, const T In)
-        {
-            InContainer.store(InIndex, In.Value);
-        }
-    };
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -245,6 +314,7 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_LargeFailFirstThenSmallFailSingleAsser
     TestTypeLargeWithNoTypeIdAndWriter t;
     TestTypeWithNoTypeIdAndWriter u;
     t.Value = 34;
+    t.A = uint2(123, 42);
     u.Value = 12345678;
     STF::IsTrue(t, 42);
     STF::IsTrue(u, 42);
@@ -257,6 +327,7 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_LargeFailFirstThenSmallFailSingleAsser
     TestTypeLargeWithTypeIdAndWriter t;
     TestTypeWithTypeIdAndWriter u;
     t.Value = 34;
+    t.A = uint2(123, 42);
     u.Value = 12345678;
     STF::IsTrue(t, 42);
     STF::IsTrue(u, 42);
@@ -269,6 +340,7 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_SmallFailFirstThenLargeFailSingleAsser
     TestTypeLargeWithNoTypeIdAndWriter t;
     TestTypeWithNoTypeIdAndWriter u;
     t.Value = 34;
+    t.A = uint2(123, 42);
     u.Value = 12345678;
     STF::IsTrue(u, 42);
     STF::IsTrue(t, 42);
@@ -281,7 +353,57 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_SmallFailFirstThenLargeFailSingleAsser
     TestTypeLargeWithTypeIdAndWriter t;
     TestTypeWithTypeIdAndWriter u;
     t.Value = 34;
+    t.A = uint2(123, 42);
     u.Value = 12345678;
     STF::IsTrue(u, 42);
     STF::IsTrue(t, 42);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void GIVEN_AssertInfoAndDataCapacity_WHEN_SmallStructComparedWithLargerStructWithWriterAndEnoughCapacity_THEN_HasExpectedResults()
+{
+    TestTypeWithVaryingSize t;
+    TestTypeWithVaryingSize u;
+    t.Value = 1;
+    u.Value = 3;
+    STF::AreEqual(t, u, 42);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void GIVEN_AssertInfoAndDataCapacity_WHEN_LargeStructComparedWithSmallerStructWithWriterAndEnoughCapacity_THEN_HasExpectedResults()
+{
+    TestTypeWithVaryingSize t;
+    TestTypeWithVaryingSize u;
+    t.Value = 1;
+    u.Value = 3;
+    STF::AreEqual(u, t, 42);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void GIVEN_AssertInfoAndDataCapacity_WHEN_OneLargeFailDoubleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults()
+{
+    TestTypeLargeWithNoTypeIdAndWriter t;
+    TestTypeLargeWithNoTypeIdAndWriter u;
+    t.Value = 1000;
+    t.A = uint2(2000, 3000);
+    u.Value = 4000;
+    u.A = uint2(5000, 6000);
+    STF::AreEqual(t, u, 42);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void GIVEN_AssertInfoAndDataCapacity_WHEN_TwoLargeFailDoubleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults()
+{
+    TestTypeLargeWithNoTypeIdAndWriter t;
+    TestTypeLargeWithNoTypeIdAndWriter u;
+    t.Value = 1000;
+    t.A = uint2(2000, 3000);
+    u.Value = 4000;
+    u.A = uint2(5000, 6000);
+    STF::AreEqual(t, u, 42);
+    STF::AreEqual(t, u, 42);
 }

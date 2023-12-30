@@ -1,7 +1,8 @@
 #pragma once
 
+#include "/Test/TTL/byte_writer.hlsli"
 #include "/Test/TTL/caster.hlsli"
-#include "/Test/TTL/container.hlsli"
+#include "/Test/TTL/container_wrapper.hlsli"
 #include "/Test/TTL/type_traits.hlsli"
 
 #define SHADER_TEST_RS \
@@ -187,70 +188,6 @@ namespace STF
     template<> struct type_id<float4> : ttl::integral_constant<uint, TYPE_ID_FLOAT4>{};
 }
 
-namespace STF
-{
-    template<typename T, typename = void>
-    struct ByteWriter
-    {
-        static const bool HasWriter = false;
-    };
-
-    template<typename T>
-    struct ByteWriter<T, typename ttl::enable_if<ttl::is_fundamental<T>::value>::type>
-    {
-        static const bool HasWriter = true;
-        static const bool IsBoolWriter = ttl::is_same<typename ttl::fundamental_type_traits<T>::base_type, bool>::value;
-
-        static uint BytesRequired(T)
-        {
-            return sizeof(T);
-        }
-
-        template<typename ContainerType, uint InRank, bool ForBools = false>
-        struct WriteEnabler
-        {
-            static const bool cond_for_bools = 
-                ttl::is_same<typename ContainerType::element_type, uint>::value && 
-                ForBools;
-            
-            static const bool cond_for_non_bools = 
-                ttl::is_same<typename ContainerType::element_type, uint>::value && 
-                ttl::fundamental_type_traits<T>::rank == InRank;
-            static const bool value = IsBoolWriter ? cond_for_bools : cond_for_non_bools;
-        };
-
-        template<typename U>
-        static typename ttl::enable_if<WriteEnabler<ttl::container<U>, 1>::value>::type Write(inout ttl::container<U> InContainer, const uint InIndex, const T In)
-        {
-            InContainer.store(InIndex, asuint(In));
-        }
-
-        template<typename U>
-        static typename ttl::enable_if<WriteEnabler<ttl::container<U>, 2>::value>::type Write(inout ttl::container<U> InContainer, const uint InIndex, const T In)
-        {
-            InContainer.store(InIndex, asuint(In.x), asuint(In.y));
-        }
-
-        template<typename U>
-        static typename ttl::enable_if<WriteEnabler<ttl::container<U>, 3>::value>::type Write(inout ttl::container<U> InContainer, const uint InIndex, const T In)
-        {
-            InContainer.store(InIndex, asuint(In.x), asuint(In.y), asuint(In.z));
-        }
-
-        template<typename U>
-        static typename ttl::enable_if<WriteEnabler<ttl::container<U>, 4>::value>::type Write(inout ttl::container<U> InContainer, const uint InIndex, const T In)
-        {
-            InContainer.store(InIndex, asuint(In.x), asuint(In.y), asuint(In.z), asuint(In.w));
-        }
-        
-        template<typename U>
-        static typename ttl::enable_if<WriteEnabler<ttl::container<U>, 0, true>::value>::type Write(inout ttl::container<U> InContainer, const uint InIndex, const T In)
-        {
-            ByteWriter<uint>::Write(InContainer, InIndex, In ? 1u : 0u);
-        }
-    };
-}
-
 namespace ShaderTestPrivate
 {
     const uint AssertBufferIndex;
@@ -307,11 +244,10 @@ namespace ShaderTestPrivate
     }
 
     template<typename T>
-    typename ttl::enable_if<STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(T In1, T In2)
+    typename ttl::enable_if<ttl::byte_writer<T>::has_writer, uint2>::type AddAssertData(T In1, T In2)
     {
-        using Writer = STF::ByteWriter<T>;
-        const uint size1 = Writer::BytesRequired(In1);
-        const uint size2 = Writer::BytesRequired(In2);
+        const uint size1 = ttl::bytes_required(In1);
+        const uint size2 = ttl::bytes_required(In2);
         const uint size = size1 + size2 + 8;
         uint offset = 0;
         GetAllocationBuffer().InterlockedAdd(8, size, offset);
@@ -319,12 +255,12 @@ namespace ShaderTestPrivate
         const uint address = StartAddressAssertData() + offset;
         if (address + size < SizeInBytesOfAssertBuffer)
         {
-            ttl::container<RWByteAddressBuffer> buffer;
-            buffer.Data = GetAssertBuffer();
-            buffer.store(address, size1);
-            Writer::Write(buffer, address + 4, In1);
-            buffer.store(address + 4 + size1, size2);
-            Writer::Write(buffer, address + 8 + size2, In2);
+            RWByteAddressBuffer buff = GetAssertBuffer();
+            ttl::write_bytes(buff, address, size1);
+            ttl::write_bytes(buff, address + 4, In1);
+            ttl::write_bytes(buff, address + 4 + size1, size2);
+            ttl::write_bytes(buff, address + 8 + size1, In2);
+
             return uint2(address, size);
         }
 
@@ -332,16 +268,15 @@ namespace ShaderTestPrivate
     }
 
     template<typename T>
-    typename ttl::enable_if<!STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(T In1, T In2)
+    typename ttl::enable_if<!ttl::byte_writer<T>::has_writer, uint2>::type AddAssertData(T In1, T In2)
     {
         return uint2(0, 0);
     }
 
     template<typename T>
-    typename ttl::enable_if<STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(T In)
+    typename ttl::enable_if<ttl::byte_writer<T>::has_writer, uint2>::type AddAssertData(T In)
     {
-        using Writer = STF::ByteWriter<T>;
-        const uint size1 = Writer::BytesRequired(In);
+        const uint size1 = ttl::bytes_required(In);
         const uint size = size1 + 4;
         uint offset = 0;
         GetAllocationBuffer().InterlockedAdd(8, size, offset);
@@ -349,10 +284,10 @@ namespace ShaderTestPrivate
         const uint address = StartAddressAssertData() + offset;
         if (address + size < SizeInBytesOfAssertBuffer)
         {
-            ttl::container<RWByteAddressBuffer> buffer;
-            buffer.Data = GetAssertBuffer();
-            buffer.store(address, size1);
-            Writer::Write(buffer, address + 4, In);
+            RWByteAddressBuffer buff = GetAssertBuffer();
+            ttl::write_bytes(buff, address, size1);
+            ttl::write_bytes(buff, address + 4, In);
+
             return uint2(address, size);
         }
 
@@ -360,7 +295,7 @@ namespace ShaderTestPrivate
     }
 
     template<typename T>
-    typename ttl::enable_if<!STF::ByteWriter<T>::HasWriter, uint2>::type AddAssertData(T In)
+    typename ttl::enable_if<!ttl::byte_writer<T>::has_writer, uint2>::type AddAssertData(T In)
     {
         return uint2(0, 0);
     }

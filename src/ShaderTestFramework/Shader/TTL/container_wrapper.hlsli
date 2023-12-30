@@ -5,10 +5,10 @@
 namespace ttl
 {
     template<typename ContainerType, typename = void>
-    struct container;
+    struct container_wrapper;
     
     template<typename T>
-    struct container<T, typename enable_if<container_traits<T>::is_container>::type>
+    struct container_wrapper<T, typename enable_if<container_traits<T>::is_container>::type>
     {
         using underlying_type = T;
         using element_type = typename container_traits<underlying_type>::element_type;
@@ -112,16 +112,5 @@ namespace ttl
         {
             Data.Store(InIndex, uint4(InItem, InItem2, InItem3, InItem4));
         }
-    };
-
-    template<typename T>
-    struct container_traits<container<T> >
-    {
-        static const bool is_container = container_traits<T>::is_container;
-        static const bool is_writable = container_traits<T>::is_writable;
-        static const bool is_byte_address = container_traits<T>::is_byte_address;
-        static const bool is_structured = container_traits<T>::is_structured;
-        static const bool is_resource = container_traits<T>::is_resource;
-        using element_type = typename container_traits<T>::element_type;
     };
 }

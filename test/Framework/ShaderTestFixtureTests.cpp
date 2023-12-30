@@ -268,7 +268,7 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - AssertInfoWithN
     };
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithNoData.hlsl"), { numRecordedAsserts, 0 }));
-    fixture.TakeCapture();
+
     DYNAMIC_SECTION(testName)
     {
         const auto results = fixture.RunTest(testName, 1, 1, 1);
@@ -302,6 +302,7 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - AssertInfoWithD
 
     static constexpr u32 expectedValueLeft = 34u;
     static constexpr u32 expectedValueRight = 12345678u;
+    static constexpr uint2 expectedExtra{ 123u, 42u };
 
     auto [testName, expected, numRecordedAsserts, numBytesData] = GENERATE_COPY
     (
@@ -403,6 +404,30 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - AssertInfoWithD
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_SmallFailFirstThenLargeFailSingleAssertWithTypeIdWithWriter_THEN_HasExpectedResults",
                     STF::TestRunResults{ {STF::FailedAssert{serialize(expectedValueRight), {}, STF::AssertMetaData{42, 0, 0}}, STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0}}}, 0, 2, uint3(1,1,1)},
                     10, 12
+                },
+                std::tuple
+                {
+                    "GIVEN_AssertInfoAndDataCapacity_WHEN_SmallStructComparedWithLargerStructWithWriterAndEnoughCapacity_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(1u, uint3(1u, 2u, 3u)), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 1, uint3(1,1,1)},
+                    10, 100
+                },
+                    std::tuple
+                {
+                    "GIVEN_AssertInfoAndDataCapacity_WHEN_LargeStructComparedWithSmallerStructWithWriterAndEnoughCapacity_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(uint3(1u, 2u, 3u), 1u), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 1, uint3(1,1,1)},
+                    10, 100
+                },
+                std::tuple
+                {
+                    "GIVEN_AssertInfoAndDataCapacity_WHEN_OneLargeFailDoubleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(uint3(1000, 2000, 3000), uint3(4000, 5000, 6000)), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 1, uint3(1,1,1)},
+                    10, 100
+                },
+                std::tuple
+                {
+                    "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoLargeFailDoubleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults",
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(uint3(1000, 2000, 3000), uint3(4000, 5000, 6000)), {}, STF::AssertMetaData{42, 0, 0}}, STF::FailedAssert{serialize(uint3(1000, 2000, 3000), uint3(4000, 5000, 6000)), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 2, uint3(1,1,1)},
+                    10, 100
                 }
             }
         )
@@ -410,7 +435,7 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - AssertInfoWithD
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithData.hlsl"), { numRecordedAsserts, numBytesData }));
     fixture.RegisterTypeConverter("TEST_TYPE_WITH_WRITER", [](const std::span<const std::byte>) { return ""; });
-    fixture.TakeCapture();
+
     DYNAMIC_SECTION(testName)
     {
         const auto results = fixture.RunTest(testName, 1, 1, 1);
@@ -474,7 +499,7 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - TypeConverter")
             std::memcpy(&value, InBytes.data(), sizeof(u32));
             return std::format("TYPE 2: {}", value);
         });
-    fixture.TakeCapture();
+
     DYNAMIC_SECTION(testName)
     {
         const auto results = fixture.RunTest(testName, 1, 1, 1);
@@ -519,8 +544,6 @@ SCENARIO("HLSLFrameworkTests - ByteWriter")
     auto testName = GENERATE
     (
         "GIVEN_FundamentalType_WHEN_HasWriterQueried_THEN_True",
-        "GIVEN_NonFundamentalTypeWithNoWriter_WHEN_HasWriterQueried_THEN_False",
-        "GIVEN_NonFundamentalTypeWithWriter_WHEN_HasWriterQueried_THEN_True",
         "GIVEN_FundamentalType_WHEN_BytesRequiredQueried_THEN_ExpectedNumberReturned",
         "GIVEN_UIntBufferAndBool_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
         "GIVEN_UIntBufferAndInt_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
@@ -534,7 +557,11 @@ SCENARIO("HLSLFrameworkTests - ByteWriter")
         "GIVEN_UIntBufferAndFloat_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
         "GIVEN_UIntBufferAndFloat2_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
         "GIVEN_UIntBufferAndFloat3_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
-        "GIVEN_UIntBufferAndFloat4_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten"
+        "GIVEN_UIntBufferAndFloat4_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
+        "GIVEN_NonFundamentalTypeWithNoWriter_WHEN_HasWriterQueried_THEN_False",
+        "GIVEN_NonFundamentalTypeWithNoWriter_WHEN_BytesRequiredQueried_THEN_Zero",
+        "GIVEN_NonFundamentalTypeWithWriter_WHEN_HasWriterQueried_THEN_True",
+        "GIVEN_NonFundamentalTypeWithWriter_WHEN_BytesRequiredQueried_THEN_ExpectedNumberReturned"
     );
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/ByteWriter/ByteWriterTests.hlsl")));
@@ -874,7 +901,7 @@ SCENARIO("HLSLFrameworkTests - ProofOfConcept")
     }
 }
 
-SCENARIO("HLSLFrameworkTests - Container")
+SCENARIO("HLSLFrameworkTests - Container_wrapper")
 {
     auto [testName, shouldSucceed] = GENERATE
     (

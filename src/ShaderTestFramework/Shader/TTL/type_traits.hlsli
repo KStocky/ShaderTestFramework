@@ -59,6 +59,7 @@ namespace ttl
         static const bool is_structured = false;
         static const bool is_resource = false;
         using element_type = void;
+        using type = void;
     };
 
     template<typename T, uint Size>
@@ -70,6 +71,7 @@ namespace ttl
         static const bool is_structured = false;
         static const bool is_resource = false;
         using element_type = T;
+        using type = T[Size];
     };
 
     template<typename T>
@@ -81,6 +83,7 @@ namespace ttl
         static const bool is_structured = false;
         static const bool is_resource = true;
         using element_type = T;
+        using type = Buffer<T>;
     };
 
     template<typename T>
@@ -92,6 +95,7 @@ namespace ttl
         static const bool is_structured = false;
         static const bool is_resource = true;
         using element_type = T;
+        using type = RWBuffer<T>;
     };
 
     template<typename T>
@@ -103,6 +107,7 @@ namespace ttl
         static const bool is_structured = true;
         static const bool is_resource = true;
         using element_type = T;
+        using type = StructuredBuffer<T>;
     };
 
     template<typename T>
@@ -114,6 +119,7 @@ namespace ttl
         static const bool is_structured = true;
         static const bool is_resource = true;
         using element_type = T;
+        using type = RWStructuredBuffer<T>;
     };
 
     template<>
@@ -125,6 +131,7 @@ namespace ttl
         static const bool is_structured = false;
         static const bool is_resource = true;
         using element_type = uint;
+        using type = ByteAddressBuffer;
     };
 
     template<>
@@ -136,6 +143,7 @@ namespace ttl
         static const bool is_structured = false;
         static const bool is_resource = true;
         using element_type = uint;
+        using type = RWByteAddressBuffer;
     };
 
     template<typename T>

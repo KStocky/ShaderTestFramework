@@ -29,35 +29,34 @@ namespace ttl
             return In.Value == 0;
         }
     };
+
+    template<typename T>
+    struct byte_writer<T, typename enable_if<
+        is_same<T, TestTypeWithoutId>::value || 
+        is_same<T, TestTypeWithTypeId1>::value || 
+        is_same<T, TestTypeWithTypeId2>::value
+        >::type
+    >
+    {
+        static const bool has_writer = true;
+
+        static uint bytes_required(T)
+        {
+            return sizeof(T);
+        }
+
+        template<typename U>
+        static void write(inout container_wrapper<U> InContainer, const uint InIndex, const T In)
+        {
+            InContainer.store(InIndex, In.Value);
+        }
+    };
 }
 
 namespace STF
 {
     template<> struct type_id<TestTypeWithTypeId1> : ttl::integral_constant<uint, TEST_TYPE_1>{};
     template<> struct type_id<TestTypeWithTypeId2> : ttl::integral_constant<uint, TEST_TYPE_2>{};
-
-    template<typename T>
-    struct ByteWriter
-    <T, typename ttl::enable_if<
-        ttl::is_same<T, TestTypeWithoutId>::value || 
-        ttl::is_same<T, TestTypeWithTypeId1>::value || 
-        ttl::is_same<T, TestTypeWithTypeId2>::value
-        >::type
-    >
-    {
-        static const bool HasWriter = true;
-
-        static uint BytesRequired(T)
-        {
-            return sizeof(T);
-        }
-
-        template<typename U>
-        static void Write(inout ttl::container<U> InContainer, const uint InIndex, const T In)
-        {
-            InContainer.store(InIndex, In.Value);
-        }
-    };
 }
 
 [RootSignature(SHADER_TEST_RS)]
