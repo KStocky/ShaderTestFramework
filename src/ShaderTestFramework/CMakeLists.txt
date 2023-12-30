@@ -82,6 +82,7 @@ set(SOURCES
 )
 
 set(SHADER_SOURCES
+    Shader/STF/RootSignature.hlsli
     Shader/STF/ShaderTestFramework.hlsli
     Shader/TTL/byte_writer.hlsli
     Shader/TTL/caster.hlsli

@@ -1,25 +1,11 @@
 #pragma once
 
+#include "/Test/STF/RootSignature.hlsli"
+
 #include "/Test/TTL/byte_writer.hlsli"
 #include "/Test/TTL/caster.hlsli"
 #include "/Test/TTL/container_wrapper.hlsli"
 #include "/Test/TTL/type_traits.hlsli"
-
-#define SHADER_TEST_RS \
-"RootFlags(" \
-    "DENY_VERTEX_SHADER_ROOT_ACCESS |" \
-    "DENY_HULL_SHADER_ROOT_ACCESS |" \
-    "DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
-    "DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
-    "DENY_PIXEL_SHADER_ROOT_ACCESS |" \
-    "DENY_AMPLIFICATION_SHADER_ROOT_ACCESS |" \
-    "DENY_MESH_SHADER_ROOT_ACCESS |" \
-    "CBV_SRV_UAV_HEAP_DIRECTLY_INDEXED" \
-")," \
-"RootConstants(" \
-    "num32BitConstants=8," \
-    "b0" \
-")"
 
 namespace ShaderTestPrivate
 {
