@@ -85,6 +85,7 @@ set(SHADER_SOURCES
     Shader/STF/RootSignature.hlsli
     Shader/STF/SectionManagement.hlsli
     Shader/STF/ShaderTestFramework.hlsli
+    Shader/STF/TypeId.hlsli
     Shader/TTL/byte_writer.hlsli
     Shader/TTL/caster.hlsli
     Shader/TTL/container_wrapper.hlsli
