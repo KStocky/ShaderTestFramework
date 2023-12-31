@@ -115,6 +115,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/TypeConverterTests.cpp
     Private/Framework/HLSLFramework/AssertBuffer/SizeTests.cpp
     Private/Framework/HLSLFramework/BasicShaderTests.cpp
+    Private/Framework/HLSLFramework/ByteWriterTests.cpp
     Private/Framework/HLSLTypesTests.cpp
     Private/Framework/SectionsInHLSLProofOfConceptTests.cpp
     Private/Framework/ShaderTestFixtureTests.cpp
