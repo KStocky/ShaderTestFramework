@@ -112,6 +112,7 @@ set(SOURCES
     Framework/HLSLFramework/BasicShaderTests.cpp
     Framework/HLSLFramework/HLSLFrameworkTestsCommon.h
     Framework/HLSLTypesTests.cpp
+    Framework/SectionsInHLSLProofOfConceptTests.cpp
     Framework/ShaderTestFixtureTests.cpp
     Utility/ConceptsTests.cpp
     Utility/EnumReflectionTests.cpp
