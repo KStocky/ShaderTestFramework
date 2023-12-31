@@ -131,6 +131,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/TypeTraits/FundamentalTypeTraitsTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/TypeIdTests.cpp
     Private/Framework/HLSLFramework/BasicShaderTests.cpp
+    Private/Framework/HLSLFramework/Bugs.cpp
     Private/Framework/HLSLFramework/ByteWriterTests.cpp
     Private/Framework/HLSLFramework/CastTests.cpp
     Private/Framework/HLSLFramework/FlattenIndexTests.cpp
