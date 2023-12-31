@@ -122,6 +122,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/Macros/AssertMacroTests.cpp
     Private/Framework/HLSLFramework/Macros/NumArgsTests.cpp
     Private/Framework/HLSLFramework/Macros/ScenarioTests.cpp
+    Private/Framework/HLSLFramework/Macros/SectionsTests.cpp
     Private/Framework/HLSLFramework/Macros/SectionVarCreationTests.cpp
     Private/Framework/HLSLFramework/BasicShaderTests.cpp
     Private/Framework/HLSLFramework/ByteWriterTests.cpp
