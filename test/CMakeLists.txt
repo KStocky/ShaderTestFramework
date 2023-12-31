@@ -133,6 +133,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/BasicShaderTests.cpp
     Private/Framework/HLSLFramework/ByteWriterTests.cpp
     Private/Framework/HLSLFramework/CastTests.cpp
+    Private/Framework/HLSLFramework/FlattenIndexTests.cpp
     Private/Framework/HLSLFramework/ProofOfConceptTests.cpp
     Private/Framework/HLSLFramework/SectionManagementTests.cpp
     Private/Framework/HLSLFramework/ThreadDimensionsTests.cpp
