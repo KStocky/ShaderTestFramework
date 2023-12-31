@@ -119,6 +119,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/Asserts/IsFalseTests.cpp
     Private/Framework/HLSLFramework/Asserts/IsTrueTests.cpp
     Private/Framework/HLSLFramework/Asserts/NotEqualTests.cpp
+    Private/Framework/HLSLFramework/Container/ArrayTests.cpp
     Private/Framework/HLSLFramework/Macros/AssertMacroTests.cpp
     Private/Framework/HLSLFramework/Macros/NumArgsTests.cpp
     Private/Framework/HLSLFramework/Macros/ScenarioTests.cpp
