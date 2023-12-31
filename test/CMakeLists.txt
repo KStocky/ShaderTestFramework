@@ -116,8 +116,10 @@ set(SOURCES
     Private/Framework/HLSLFramework/AssertBuffer/SizeTests.cpp
     Private/Framework/HLSLFramework/Asserts/AreEqualTests.cpp
     Private/Framework/HLSLFramework/Asserts/FailTests.cpp
+    Private/Framework/HLSLFramework/Asserts/IsFalseTests.cpp
     Private/Framework/HLSLFramework/Asserts/IsTrueTests.cpp
     Private/Framework/HLSLFramework/Asserts/NotEqualTests.cpp
+    Private/Framework/HLSLFramework/Macros/AssertMacroTests.cpp
     Private/Framework/HLSLFramework/BasicShaderTests.cpp
     Private/Framework/HLSLFramework/ByteWriterTests.cpp
     Private/Framework/HLSLFramework/CastTests.cpp
