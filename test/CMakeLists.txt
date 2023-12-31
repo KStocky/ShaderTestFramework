@@ -121,6 +121,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/Asserts/NotEqualTests.cpp
     Private/Framework/HLSLFramework/Macros/AssertMacroTests.cpp
     Private/Framework/HLSLFramework/Macros/NumArgsTests.cpp
+    Private/Framework/HLSLFramework/Macros/SectionVarCreationTests.cpp
     Private/Framework/HLSLFramework/BasicShaderTests.cpp
     Private/Framework/HLSLFramework/ByteWriterTests.cpp
     Private/Framework/HLSLFramework/CastTests.cpp
