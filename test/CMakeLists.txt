@@ -109,6 +109,8 @@ set(SOURCES
     D3D12/Shader/ShaderCompilerTests.cpp
     D3D12/Shader/VirtualShaderDirectoryMappingManagerTests.cpp
     Framework/AssertBufferProcessorTests.cpp
+    Framework/HLSLFramework/BasicShaderTests.cpp
+    Framework/HLSLFramework/HLSLFrameworkTestsCommon.h
     Framework/HLSLTypesTests.cpp
     Framework/ShaderTestFixtureTests.cpp
     Utility/ConceptsTests.cpp

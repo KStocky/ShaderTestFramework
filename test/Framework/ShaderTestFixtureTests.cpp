@@ -1,6 +1,5 @@
 
-#include "Framework/ShaderTestFixture.h"
-#include "D3D12/Shader/ShaderEnums.h"
+#include "HLSLFramework/HLSLFrameworkTestsCommon.h"
 
 #include <sstream>
 #include <string>
@@ -9,31 +8,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
-
-namespace
-{
-    VirtualShaderDirectoryMapping GetTestVirtualDirectoryMapping()
-    {
-        fs::path shaderDir = fs::current_path();
-        shaderDir += "/";
-        shaderDir += SHADER_SRC;
-        shaderDir += "/Framework/ShaderTestFixtureTests";
-
-        return VirtualShaderDirectoryMapping{ "/Tests", std::move(shaderDir) };
-    }
-
-    ShaderTestFixture::Desc CreateDescForHLSLFrameworkTest(fs::path&& InPath, STF::AssertBufferLayout InAssertParams = {10, 1024})
-    {
-        ShaderTestFixture::Desc desc{};
-
-        desc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-        desc.HLSLVersion = EHLSLVersion::v2021;
-        desc.Source = std::move(InPath);
-        desc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
-        desc.AssertInfo = InAssertParams;
-        return desc;
-    }
-}
 
 SCENARIO("ShaderTestFixtureTests")
 {
@@ -55,35 +29,6 @@ SCENARIO("ShaderTestFixtureTests")
                 REQUIRE(test.IsUsingAgilitySDK());
             }
         }
-    }
-}
-
-SCENARIO("BasicShaderTests")
-{
-    auto [testName, shouldSucceed] = GENERATE
-    (
-        table<std::string, bool>
-        (
-            {
-                std::tuple{"ThisTestDoesNotExist", false},
-                std::tuple{"ThisTestShouldPass", true},
-                std::tuple{"ThisTestShouldFail", false},
-            }
-        )
-    );
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/BasicShaderTests.hlsl")));
-    DYNAMIC_SECTION(testName)
-    {
-        if (shouldSucceed)
-        {
-            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
-        }
-        else
-        {
-            const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE_FALSE(result);
-        }
-        
     }
 }
 
