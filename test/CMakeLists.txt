@@ -130,6 +130,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/CastTests.cpp
     Private/Framework/HLSLFramework/ProofOfConceptTests.cpp
     Private/Framework/HLSLFramework/ThreadDimensionsTests.cpp
+    Private/Framework/HLSLFramework/ThreadIdRegistrationTests.cpp
     Private/Framework/HLSLTypesTests.cpp
     Private/Framework/SectionsInHLSLProofOfConceptTests.cpp
     Private/Framework/ShaderTestFixtureTests.cpp
