@@ -1,4 +1,4 @@
-#include "HLSLFrameworkTestsCommon.h"
+#include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
 
 #include <string>
 

@@ -1,5 +1,5 @@
 
-#include "HLSLFramework/HLSLFrameworkTestsCommon.h"
+#include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
 
 #include <sstream>
 #include <string>
