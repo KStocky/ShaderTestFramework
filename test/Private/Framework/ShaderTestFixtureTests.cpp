@@ -32,20 +32,6 @@ SCENARIO("ShaderTestFixtureTests")
     }
 }
 
-SCENARIO("HLSLFrameworkTests - TypeTraits - FundamentalTypeTraits")
-{
-    auto testName = GENERATE
-    (
-        "AllShouldPass"
-    );
-
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/TypeTraits/FundamentalTypeTraitsTests.hlsl")));
-    DYNAMIC_SECTION(testName)
-    {
-        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
-    }
-}
-
 SCENARIO("HLSLFrameworkTests - TypeTraits - FundamentalType")
 {
     auto testName = GENERATE
