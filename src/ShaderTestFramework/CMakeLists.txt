@@ -82,7 +82,14 @@ set(SOURCES
 )
 
 set(SHADER_SOURCES
-    Shader/Public/ShaderTestFramework.hlsli
+    Shader/STF/RootSignature.hlsli
+    Shader/STF/SectionManagement.hlsli
+    Shader/STF/ShaderTestFramework.hlsli
+    Shader/STF/TypeId.hlsli
+    Shader/TTL/byte_writer.hlsli
+    Shader/TTL/caster.hlsli
+    Shader/TTL/container_wrapper.hlsli
+    Shader/TTL/type_traits.hlsli
 )
 
 set(SHADER_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Shader)

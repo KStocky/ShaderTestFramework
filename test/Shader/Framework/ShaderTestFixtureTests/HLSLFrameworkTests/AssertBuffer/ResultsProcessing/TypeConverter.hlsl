@@ -1,4 +1,4 @@
-#include "/Test/Public/ShaderTestFramework.hlsli"
+#include "/Test/STF/ShaderTestFramework.hlsli"
 
 struct TestTypeWithoutId
 {
@@ -15,51 +15,48 @@ struct TestTypeWithTypeId2
     uint Value;
 };
 
-namespace STF
+namespace ttl
 {
-    template<>
-    bool Cast <bool, TestTypeWithoutId>(TestTypeWithoutId In)
+    template<typename From>
+    struct caster<bool, From, typename enable_if<
+        is_same<From, TestTypeWithoutId>::value ||
+        is_same<From, TestTypeWithTypeId1>::value ||
+        is_same<From, TestTypeWithTypeId2>::value
+        >::type>
     {
-        return In.Value == 0;
-    }
-
-    template<>
-    bool Cast <bool, TestTypeWithTypeId1>(TestTypeWithTypeId1 In)
-    {
-        return In.Value == 0;
-    }
-
-    template<>
-    bool Cast <bool, TestTypeWithTypeId2>(TestTypeWithTypeId2 In)
-    {
-        return In.Value == 0;
-    }
-
-    template<> struct type_id<TestTypeWithTypeId1> : integral_constant<uint, TEST_TYPE_1>{};
-    template<> struct type_id<TestTypeWithTypeId2> : integral_constant<uint, TEST_TYPE_2>{};
+        static bool cast(From In)
+        {
+            return In.Value == 0;
+        }
+    };
 
     template<typename T>
-    struct ByteWriter
-    <T, typename enable_if<
+    struct byte_writer<T, typename enable_if<
         is_same<T, TestTypeWithoutId>::value || 
         is_same<T, TestTypeWithTypeId1>::value || 
         is_same<T, TestTypeWithTypeId2>::value
         >::type
     >
     {
-        static const bool HasWriter = true;
+        static const bool has_writer = true;
 
-        static uint BytesRequired(T)
+        static uint bytes_required(T)
         {
             return sizeof(T);
         }
 
         template<typename U>
-        static void Write(inout container<U> InContainer, const uint InIndex, const T In)
+        static void write(inout container_wrapper<U> InContainer, const uint InIndex, const T In)
         {
             InContainer.store(InIndex, In.Value);
         }
     };
+}
+
+namespace STF
+{
+    template<> struct type_id<TestTypeWithTypeId1> : ttl::integral_constant<uint, TEST_TYPE_1>{};
+    template<> struct type_id<TestTypeWithTypeId2> : ttl::integral_constant<uint, TEST_TYPE_2>{};
 }
 
 [RootSignature(SHADER_TEST_RS)]

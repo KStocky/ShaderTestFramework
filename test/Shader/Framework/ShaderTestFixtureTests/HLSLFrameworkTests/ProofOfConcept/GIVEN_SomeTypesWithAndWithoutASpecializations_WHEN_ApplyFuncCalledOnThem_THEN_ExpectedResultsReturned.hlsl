@@ -1,4 +1,4 @@
-#include "/Test/Public/ShaderTestFramework.hlsli"
+#include "/Test/STF/ShaderTestFramework.hlsli"
 
 namespace SFINAETemplateSpecialization
 {
@@ -29,13 +29,13 @@ namespace SFINAETemplateSpecialization
 	};
 
 	template<typename T>
-	static typename STF::enable_if<A<T>::value, uint>::type Apply()
+	static typename ttl::enable_if<A<T>::value, uint>::type Apply()
 	{
 		return A<T>::Func();
 	}
 
 	template<typename T>
-	static typename STF::enable_if<!A<T>::value, uint>::type Apply()
+	static typename ttl::enable_if<!A<T>::value, uint>::type Apply()
 	{
 		return 0;
 	}

@@ -1,17 +1,20 @@
-#include "/Test/Public/ShaderTestFramework.hlsli"
+#include "/Test/STF/ShaderTestFramework.hlsli"
 
 struct TestStruct
 {
     int Value;
 };
 
-namespace STF
+namespace ttl
 {
     template<>
-    int Cast<int, TestStruct>(TestStruct In)
+    struct caster<int, TestStruct>
     {
-        return In.Value;
-    }
+        static int cast(TestStruct In)
+        {
+            return In.Value;
+        }
+    };
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -20,6 +23,6 @@ void GIVEN_StructDoesHaveOverloadOfCast_WHEN_CastCalled_THEN_Succeeds(uint3 Disp
 {
     TestStruct test;
     test.Value = 42;
-    int result = STF::Cast<int>(test);
+    int result = ttl::cast<int>(test);
     STF::AreEqual(result, 42);
 }

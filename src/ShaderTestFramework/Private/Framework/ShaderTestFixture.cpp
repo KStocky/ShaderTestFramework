@@ -15,7 +15,7 @@
 
 ShaderTestFixture::ShaderTestFixture(Desc InParams)
 	: m_Device()
-	, m_Compiler(std::move(InParams.Mappings))
+	, m_Compiler()
 	, m_Source(std::move(InParams.Source))
 	, m_CompilationFlags(std::move(InParams.CompilationFlags))
     , m_Defines()
@@ -24,6 +24,11 @@ ShaderTestFixture::ShaderTestFixture(Desc InParams)
     , m_AssertInfo(InParams.AssertInfo)
 	, m_IsWarp(InParams.GPUDeviceParams.DeviceType == GPUDevice::EDeviceType::Software)
 {
+    fs::path shaderDir = std::filesystem::current_path();
+    shaderDir += "/";
+    shaderDir += SHADER_SRC;
+    InParams.Mappings.push_back({ "/Test", std::move(shaderDir) });
+    m_Compiler.emplace(std::move(InParams.Mappings));
     m_PIXAvailable = PIXLoadLatestWinPixGpuCapturerLibrary() != nullptr;
     m_Device = GPUDevice{ InParams.GPUDeviceParams };
 
@@ -161,7 +166,7 @@ CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName
         job.Flags = Enum::MakeFlags(EShaderCompileFlags::SkipOptimization, EShaderCompileFlags::O0);
     }
 
-    return m_Compiler.CompileShader(job);
+    return m_Compiler->CompileShader(job);
 }
 
 CommandEngine ShaderTestFixture::CreateCommandEngine() const

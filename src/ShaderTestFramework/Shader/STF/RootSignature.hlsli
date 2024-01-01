@@ -1,0 +1,17 @@
+#pragma once
+
+#define SHADER_TEST_RS \
+"RootFlags(" \
+    "DENY_VERTEX_SHADER_ROOT_ACCESS |" \
+    "DENY_HULL_SHADER_ROOT_ACCESS |" \
+    "DENY_DOMAIN_SHADER_ROOT_ACCESS |" \
+    "DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
+    "DENY_PIXEL_SHADER_ROOT_ACCESS |" \
+    "DENY_AMPLIFICATION_SHADER_ROOT_ACCESS |" \
+    "DENY_MESH_SHADER_ROOT_ACCESS |" \
+    "CBV_SRV_UAV_HEAP_DIRECTLY_INDEXED" \
+")," \
+"RootConstants(" \
+    "num32BitConstants=8," \
+    "b0" \
+")"

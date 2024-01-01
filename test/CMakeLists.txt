@@ -5,6 +5,7 @@ add_executable(ShaderTestFrameworkTests)
 
 set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/ArrayTemplateSpecialization.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CallOperator.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CleanupAttribute.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CounterMacro.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/DeferSFINAE.hlsl
@@ -99,23 +100,60 @@ set(SHADER_SOURCES
 )
 
 set(SOURCES
-    Container/RingBufferTests.cpp
-    D3D12/CommandEngineTests.cpp
-    D3D12/CommandListTests.cpp
-    D3D12/DescriptorFreeListAllocatorTests.cpp
-    D3D12/DescriptorRingAllocatorTests.cpp
-    D3D12/DescriptorTests.cpp
-    D3D12/Shader/ShaderCompilerTests.cpp
-    D3D12/Shader/VirtualShaderDirectoryMappingManagerTests.cpp
-    Framework/AssertBufferProcessorTests.cpp
-    Framework/HLSLTypesTests.cpp
-    Framework/ShaderTestFixtureTests.cpp
-    Utility/ConceptsTests.cpp
-    Utility/EnumReflectionTests.cpp
-    Utility/FunctionTraitsTests.cpp
-    Utility/LambdaTests.cpp
-    Utility/TypeListTests.cpp
-    Utility/TypeTraitsTests.cpp
+    Private/Container/RingBufferTests.cpp
+    Private/D3D12/CommandEngineTests.cpp
+    Private/D3D12/CommandListTests.cpp
+    Private/D3D12/DescriptorFreeListAllocatorTests.cpp
+    Private/D3D12/DescriptorRingAllocatorTests.cpp
+    Private/D3D12/DescriptorTests.cpp
+    Private/D3D12/Shader/HLSLTests.cpp
+    Private/D3D12/Shader/ResourceBindingTests.cpp
+    Private/D3D12/Shader/ShaderIncludeHandlerTests.cpp
+    Private/D3D12/Shader/ShaderHashTests.cpp
+    Private/D3D12/Shader/ShaderModelTests.cpp
+    Private/D3D12/Shader/VirtualShaderDirectoryMappingManagerTests.cpp
+    Private/Framework/AssertBufferProcessorTests.cpp
+    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/AssertInfoWithDataTests.cpp
+    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/AssertInfoWithNoDataTests.cpp
+    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/NoAssertBufferTests.cpp
+    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/TypeConverterTests.cpp
+    Private/Framework/HLSLFramework/AssertBuffer/SizeTests.cpp
+    Private/Framework/HLSLFramework/Asserts/AreEqualTests.cpp
+    Private/Framework/HLSLFramework/Asserts/FailTests.cpp
+    Private/Framework/HLSLFramework/Asserts/IsFalseTests.cpp
+    Private/Framework/HLSLFramework/Asserts/IsTrueTests.cpp
+    Private/Framework/HLSLFramework/Asserts/NotEqualTests.cpp
+    Private/Framework/HLSLFramework/Container/ArrayTests.cpp
+    Private/Framework/HLSLFramework/Macros/AssertMacroTests.cpp
+    Private/Framework/HLSLFramework/Macros/NumArgsTests.cpp
+    Private/Framework/HLSLFramework/Macros/ScenarioTests.cpp
+    Private/Framework/HLSLFramework/Macros/SectionsTests.cpp
+    Private/Framework/HLSLFramework/Macros/SectionVarCreationTests.cpp
+    Private/Framework/HLSLFramework/TypeTraits/ArrayTraitsTests.cpp
+    Private/Framework/HLSLFramework/TypeTraits/ContainerTraitsTests.cpp
+    Private/Framework/HLSLFramework/TypeTraits/FundamentalTypeTests.cpp
+    Private/Framework/HLSLFramework/TypeTraits/FundamentalTypeTraitsTests.cpp
+    Private/Framework/HLSLFramework/TypeTraits/TypeIdTests.cpp
+    Private/Framework/HLSLFramework/BasicShaderTests.cpp
+    Private/Framework/HLSLFramework/Bugs.cpp
+    Private/Framework/HLSLFramework/ByteWriterTests.cpp
+    Private/Framework/HLSLFramework/CastTests.cpp
+    Private/Framework/HLSLFramework/FlattenIndexTests.cpp
+    Private/Framework/HLSLFramework/ProofOfConceptTests.cpp
+    Private/Framework/HLSLFramework/SectionManagementTests.cpp
+    Private/Framework/HLSLFramework/ThreadDimensionsTests.cpp
+    Private/Framework/HLSLFramework/ThreadIdRegistrationTests.cpp
+    Private/Framework/HLSLTypesTests.cpp
+    Private/Framework/SectionsInHLSLProofOfConceptTests.cpp
+    Private/Framework/ShaderTestFixtureTests.cpp
+    Private/Utility/ConceptsTests.cpp
+    Private/Utility/EnumReflectionTests.cpp
+    Private/Utility/FunctionTraitsTests.cpp
+    Private/Utility/LambdaTests.cpp
+    Private/Utility/TypeListTests.cpp
+    Private/Utility/TypeTraitsTests.cpp
+    Public/D3D12/Shader/ShaderCompilerTestsCommon.h
+    Public/Framework/HLSLFramework/HLSLFrameworkTestsCommon.h
 )
 
 set(SHADER_SOURCE_REL_DIR "ShaderTests")
@@ -132,6 +170,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})
 
 target_compile_definitions(ShaderTestFrameworkTests PRIVATE SHADER_SRC="${SHADER_SOURCE_REL_DIR}" USE_PIX)
 target_compile_options(ShaderTestFrameworkTests PRIVATE ${GLOBAL_COMPILE_FLAGS})
+target_include_directories(ShaderTestFrameworkTests PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Public/)
 target_link_libraries(ShaderTestFrameworkTests PRIVATE ShaderTestFramework)
 
 target_add_asset_directory(ShaderTestFrameworkTests ${SHADER_SOURCE_DIR} "/${SHADER_SOURCE_REL_DIR}")

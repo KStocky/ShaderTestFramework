@@ -1,4 +1,4 @@
-#include "/Test/Public/ShaderTestFramework.hlsli"
+#include "/Test/STF/ShaderTestFramework.hlsli"
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
@@ -16,7 +16,7 @@ void GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce(uint3 DispatchThreadI
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
-void GIVEN_SingleSubsection_WHEN_Ran_THEN_SectionsEntered2Times(uint3 DispatchThreadId : SV_DispatchThreadID)
+void GIVEN_SingleSubsection_WHEN_RanUsingIf_THEN_SectionsEntered2Times(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
     ShaderTestPrivate::InitScratch();
     int num = 0;
@@ -37,7 +37,26 @@ void GIVEN_SingleSubsection_WHEN_Ran_THEN_SectionsEntered2Times(uint3 DispatchTh
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
-void GIVEN_TwoSubsections_WHEN_Ran_THEN_SectionsEntered4Times(uint3 DispatchThreadId : SV_DispatchThreadID)
+void GIVEN_SingleSubsection_WHEN_RanUsingWhile_THEN_SectionsEntered2Times(uint3 DispatchThreadId : SV_DispatchThreadID)
+{
+    ShaderTestPrivate::InitScratch();
+    int num = 0;
+    while (ShaderTestPrivate::TryLoopScenario())
+    {
+        ++num;
+        static const int Section_1Num = 1;
+        while (ShaderTestPrivate::TryEnterSection(Section_1Num))
+        {
+            ++num;
+        }
+    }  
+    
+    STF::AreEqual(2, num);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_TwoSubsections_WHEN_RanUsingIf_THEN_SectionsEntered4Times(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
     ShaderTestPrivate::InitScratch();
     int num = 0;
@@ -64,7 +83,32 @@ void GIVEN_TwoSubsections_WHEN_Ran_THEN_SectionsEntered4Times(uint3 DispatchThre
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
-void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_SectionsEntered5Times(uint3 DispatchThreadId : SV_DispatchThreadID)
+void GIVEN_TwoSubsections_WHEN_RanUsingWhile_THEN_SectionsEntered4Times(uint3 DispatchThreadId : SV_DispatchThreadID)
+{
+    ShaderTestPrivate::InitScratch();
+    int num = 0;
+    while (ShaderTestPrivate::TryLoopScenario())
+    {
+        ++num;
+        static const int Section_1Num = 1;
+        while (ShaderTestPrivate::TryEnterSection(Section_1Num))
+        {
+            ++num;
+        }
+        
+        static const int Section_2Num = 2;
+        while (ShaderTestPrivate::TryEnterSection(Section_2Num))
+        {
+            ++num;
+        }
+    }  
+    
+    STF::AreEqual(4, num);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_RanUsingIf_THEN_SectionsEntered5Times(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
     ShaderTestPrivate::InitScratch();
     int num = 0;
@@ -76,7 +120,6 @@ void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_SectionsEntered5T
         if (ShaderTestPrivate::TryEnterSection(Section_1Num))
         {
             ++num;
-
             ShaderTestPrivate::OnLeave();
         }
 
@@ -92,6 +135,38 @@ void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_SectionsEntered5T
                 ShaderTestPrivate::OnLeave();
             }
             ShaderTestPrivate::OnLeave();
+        }
+    }  
+    
+    STF::AreEqual(5, num);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_RanUsingWhile_THEN_SectionsEntered5Times(uint3 DispatchThreadId : SV_DispatchThreadID)
+{
+    ShaderTestPrivate::InitScratch();
+    int num = 0;
+    while (ShaderTestPrivate::TryLoopScenario())
+    {
+        ++num;
+
+        static const int Section_1Num = 1;
+        while (ShaderTestPrivate::TryEnterSection(Section_1Num))
+        {
+            ++num;
+        }
+
+        static const int Section_2Num = 2;
+        while (ShaderTestPrivate::TryEnterSection(Section_2Num))
+        {
+            ++num;
+
+            static const int Section_3Num = 3;
+            while (ShaderTestPrivate::TryEnterSection(Section_3Num))
+            {
+                ++num;
+            }
         }
     }  
     
