@@ -108,7 +108,7 @@ set(SOURCES
     Private/D3D12/DescriptorTests.cpp
     Private/D3D12/Shader/HLSLTests.cpp
     Private/D3D12/Shader/ResourceBindingTests.cpp
-    Private/D3D12/Shader/ShaderCompilerTests.cpp
+    Private/D3D12/Shader/ShaderIncludeHandlerTests.cpp
     Private/D3D12/Shader/ShaderHashTests.cpp
     Private/D3D12/Shader/ShaderModelTests.cpp
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManagerTests.cpp
