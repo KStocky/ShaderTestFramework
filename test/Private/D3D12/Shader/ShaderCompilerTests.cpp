@@ -1,4 +1,4 @@
-#include <D3D12/Shader/ShaderCompiler.h>
+#include "D3D12/Shader/ShaderCompilerTestsCommon.h"
 #include <Utility/EnumReflection.h>
 
 #include <format>
@@ -6,32 +6,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-namespace
-{
-    ShaderCompiler CreateCompiler()
-    {
-        fs::path shaderDir = fs::current_path();
-        shaderDir += "/";
-        shaderDir += SHADER_SRC;
-        shaderDir += "/D3D12/Shader/ShaderCompilerTests";
-
-        return ShaderCompiler{ std::vector{ VirtualShaderDirectoryMapping{ "/Tests", std::move(shaderDir) } } };
-    }
-
-    ShaderCompilationJobDesc CreateCompilationJob(const EShaderType InType, const D3D_SHADER_MODEL InModel, const EHLSLVersion InVersion, std::vector<std::wstring>&& InFlags, fs::path&& InPath)
-    {
-        ShaderCompilationJobDesc job;
-        job.Name = "Test";
-        job.EntryPoint = "Main";
-        job.ShaderModel = InModel;
-        job.ShaderType = InType;
-        job.AdditionalFlags = std::move(InFlags);
-        job.Source = std::move(InPath);
-        job.HLSLVersion = InVersion;
-
-        return job;
-    }
-}
+using namespace ShaderCompilerTestsCommon;
 
 SCENARIO("ShaderModelTests")
 {

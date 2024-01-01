@@ -148,6 +148,7 @@ set(SOURCES
     Private/Utility/LambdaTests.cpp
     Private/Utility/TypeListTests.cpp
     Private/Utility/TypeTraitsTests.cpp
+    Public/D3D12/Shader/ShaderCompilerTestsCommon.h
     Public/Framework/HLSLFramework/HLSLFrameworkTestsCommon.h
 )
 
