@@ -108,6 +108,7 @@ set(SOURCES
     Private/D3D12/DescriptorTests.cpp
     Private/D3D12/Shader/ShaderCompilerTests.cpp
     Private/D3D12/Shader/ShaderHashTests.cpp
+    Private/D3D12/Shader/ShaderModelTests.cpp
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManagerTests.cpp
     Private/Framework/AssertBufferProcessorTests.cpp
     Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/AssertInfoWithDataTests.cpp
