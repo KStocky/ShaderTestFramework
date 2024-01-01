@@ -3,7 +3,7 @@
 
 namespace ShaderCompilerTestsCommon
 {
-    ShaderCompiler CreateCompiler()
+    inline ShaderCompiler CreateCompiler()
     {
         fs::path shaderDir = fs::current_path();
         shaderDir += "/";
@@ -13,7 +13,7 @@ namespace ShaderCompilerTestsCommon
         return ShaderCompiler{ std::vector{ VirtualShaderDirectoryMapping{ "/Tests", std::move(shaderDir) } } };
     }
 
-    ShaderCompilationJobDesc CreateCompilationJob(const EShaderType InType, const D3D_SHADER_MODEL InModel, const EHLSLVersion InVersion, std::vector<std::wstring>&& InFlags, fs::path&& InPath)
+    inline ShaderCompilationJobDesc CreateCompilationJob(const EShaderType InType, const D3D_SHADER_MODEL InModel, const EHLSLVersion InVersion, std::vector<std::wstring>&& InFlags, fs::path&& InPath)
     {
         ShaderCompilationJobDesc job;
         job.Name = "Test";
