@@ -1,12 +1,12 @@
 include_guard(GLOBAL)
 
-function(nuget_initialize IN_ROOT_DIR)
-    set(NUGET_ROOT_DIR ${IN_ROOT_DIR} CACHE INTERNAL "Directory where nuget packages are installed")
+function(nuget_initialize IN_TARGET)
+    set(NUGET_ROOT_DIR_${IN_TARGET} ${CMAKE_CURRENT_SOURCE_DIR}/nuget CACHE INTERNAL "Directory where nuget packages are installed")
 endfunction()
 
-function(nuget_get_pkg_ver IN_PKG_NAME OUT_VERSION)
+function(nuget_get_pkg_ver IN_TARGET IN_PKG_NAME OUT_VERSION)
     
-    set(PKG_DIR "${NUGET_ROOT_DIR}/${IN_PKG_NAME}")
+    set(PKG_DIR "${NUGET_ROOT_DIR_${IN_TARGET}}/${IN_PKG_NAME}")
     file(GLOB CHILDREN RELATIVE "${PKGDIR}" "${PKG_DIR}/*")
     set(${OUT_VERSION} "")
     foreach(CHILD IN LISTS CHILDREN)
@@ -20,18 +20,18 @@ function(nuget_get_pkg_ver IN_PKG_NAME OUT_VERSION)
     return(PROPAGATE ${OUT_VERSION})
 endfunction()
 
-function(nuget_pkg_already_installed IN_PKG_NAME OUT_RESULT OUT_VERSION)
+function(nuget_pkg_already_installed IN_TARGET IN_PKG_NAME OUT_RESULT OUT_VERSION)
     
-    if (NOT DEFINED CACHE{NUGET_ROOT_DIR})
+    if (NOT DEFINED CACHE{NUGET_ROOT_DIR_${IN_TARGET}})
         set(${OUT_RESULT} FALSE)
         return(PROPAGATE ${OUT_RESULT})
     endif()
 
-    set(PKG_DIR "${NUGET_ROOT_DIR}/${IN_PKG_NAME}")
+    set(PKG_DIR "${NUGET_ROOT_DIR_${IN_TARGET}}/${IN_PKG_NAME}")
     
     if (EXISTS ${PKG_DIR})
         set(${OUT_RESULT} TRUE)
-        nuget_get_pkg_ver(${IN_PKG_NAME} ${OUT_VERSION})
+        nuget_get_pkg_ver(${IN_TARGET} ${IN_PKG_NAME} ${OUT_VERSION})
 
         return(PROPAGATE ${OUT_RESULT} ${OUT_VERSION})
     else()
@@ -42,11 +42,11 @@ function(nuget_pkg_already_installed IN_PKG_NAME OUT_RESULT OUT_VERSION)
 
 endfunction()
 
-function(nuget_pkg_get IN_PKG_NAME IN_VERSION OUT_SUCCEEDED OUT_PKG_PATH)
+function(nuget_pkg_get IN_TARGET IN_PKG_NAME IN_VERSION OUT_SUCCEEDED OUT_PKG_PATH)
 
-    set(PKG_DIR "${NUGET_ROOT_DIR}/${IN_PKG_NAME}")
+    set(PKG_DIR "${NUGET_ROOT_DIR_${IN_TARGET}}/${IN_PKG_NAME}")
 
-    nuget_pkg_already_installed(${IN_PKG_NAME} PKG_EXISTS CURRENT_VERSION)
+    nuget_pkg_already_installed(${IN_TARGET} ${IN_PKG_NAME} PKG_EXISTS CURRENT_VERSION)
 
     if (${PKG_EXISTS})
         if(CURRENT_VERSION STRGREATER_EQUAL IN_VERSION)

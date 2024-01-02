@@ -2,10 +2,13 @@ include("${CMAKE_HOME_DIRECTORY}/cmake/AssetDependencyManagement.cmake")
 include("${CMAKE_HOME_DIRECTORY}/cmake/ExternalProjects.cmake")
 include("${CMAKE_HOME_DIRECTORY}/cmake/NugetPackages.cmake")
 
-nuget_get_agility_sdk(AGILITY_FOUND AGILITY_INCLUDE AGILITY_DLL SDK_VER)
-nuget_get_dxc(DXC_FOUND DXC_INCLUDE DXC_DLL DXC_LIB)
-nuget_get_warp(WARP_FOUND WARP_DLL)
-nuget_get_WinPixEventRuntime(WINPIX_FOUND WINPIX_INCLUDE WINPIX_BIN)
+add_library(ShaderTestFramework)
+
+nuget_initialize(ShaderTestFramework)
+nuget_get_agility_sdk(ShaderTestFramework AGILITY_FOUND AGILITY_INCLUDE AGILITY_DLL SDK_VER)
+nuget_get_dxc(ShaderTestFramework DXC_FOUND DXC_INCLUDE DXC_DLL DXC_LIB)
+nuget_get_warp(ShaderTestFramework WARP_FOUND WARP_DLL)
+nuget_get_WinPixEventRuntime(ShaderTestFramework WINPIX_FOUND WINPIX_INCLUDE WINPIX_BIN)
 
 add_library(DXC SHARED IMPORTED)
 set_target_properties(DXC PROPERTIES
@@ -15,8 +18,6 @@ set_target_properties(DXC PROPERTIES
 add_library(WINPIX SHARED IMPORTED)
 set_target_properties(WINPIX PROPERTIES
     IMPORTED_IMPLIB "${WINPIX_BIN}/WinPixEventRuntime.lib")
-
-add_library(ShaderTestFramework)
 
 asset_dependency_init(ShaderTestFramework)
 

@@ -21,7 +21,7 @@ endfunction()
 
 function(add_tl_expected IN_TARGET)
 
-    set(EXPECTED_DIR ${CMAKE_HOME_DIRECTORY}/extern/tl-expected/)
+    set(EXPECTED_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/tl-expected/)
     file(DOWNLOAD
         https://raw.githubusercontent.com/TartanLlama/expected/master/include/tl/expected.hpp
         ${EXPECTED_DIR}/include/tl/expected.hpp
