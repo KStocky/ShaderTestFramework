@@ -2,6 +2,7 @@ include("${CMAKE_HOME_DIRECTORY}/cmake/AssetDependencyManagement.cmake")
 include("${CMAKE_HOME_DIRECTORY}/cmake/ExternalProjects.cmake")
 
 add_executable(ShaderTestFrameworkTests)
+asset_dependency_init(ShaderTestFrameworkTests)
 
 set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/ArrayTemplateSpecialization.hlsl

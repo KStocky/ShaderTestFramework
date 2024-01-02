@@ -18,6 +18,8 @@ set_target_properties(WINPIX PROPERTIES
 
 add_library(ShaderTestFramework)
 
+asset_dependency_init(ShaderTestFramework)
+
 set(SOURCES
     Public/Container/RingBuffer.h
     Public/D3D12/AgilityDefinitions.h

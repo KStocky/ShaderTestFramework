@@ -15,7 +15,6 @@ set(CMAKE_CXX_STANDARD 23)
 
 set(DEV_MODE CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 
-asset_dependency_init()
 nuget_initialize("${CMAKE_HOME_DIRECTORY}/extern")
 
 if (${DEV_MODE})
