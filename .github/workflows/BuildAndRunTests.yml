@@ -1,6 +1,15 @@
 name: Build-And-Run-Tests
 run-name: "${{github.actor}}: ${{github.event.head_commit.message}}"
-on: [push]
+on:
+  push:
+    paths:
+      - '**.cpp'
+      - '**.h'
+      - '**.hlsli'
+      - '**.hlsl'
+      - '**CMakeLists.txt'
+      - '**.cmake'
+      - '.github/workflows/**'
 jobs:
     Build-And-Test:
         runs-on: windows-latest
