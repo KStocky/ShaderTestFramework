@@ -29,6 +29,7 @@ add_subdirectory(src)
 
 if (${DEV_MODE})
     enable_testing()
+    add_subdirectory(examples)
     add_subdirectory(test)
 endif()
 

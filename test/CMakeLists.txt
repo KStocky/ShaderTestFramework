@@ -62,8 +62,8 @@ set(SHADER_SOURCES
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Asserts/IsFalse.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Asserts/IsTrue.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Asserts/NotEqual.hlsl
-    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Bugs/GIVEN_Object_WHEN_ConversionOperatorCalled_THEN_Fails.hlsl
-    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Bugs/GIVEN_WarpAndNoOptimizations_WHEN_ThisIsRun_THEN_ItWillSomeTimesFail.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Bugs/ConversionOperator.hlsl
+    Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Bugs/Intermittent.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/ByteWriter/ByteWriterTests.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Cast/GIVEN_StructDoesHasDifferentOverloadOfCast_WHEN_CastCalled_THEN_Fails.hlsl
     Shader/Framework/ShaderTestFixtureTests/HLSLFrameworkTests/Cast/GIVEN_StructDoesHaveOverloadOfCast_WHEN_CastCalled_THEN_Succeeds.hlsl
