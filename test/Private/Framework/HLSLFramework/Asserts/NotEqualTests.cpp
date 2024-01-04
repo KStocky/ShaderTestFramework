@@ -24,7 +24,7 @@ SCENARIO("HLSLFrameworkTests - Asserts - NotEqual")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Asserts/NotEqual.hlsl")));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Asserts/NotEqual.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)

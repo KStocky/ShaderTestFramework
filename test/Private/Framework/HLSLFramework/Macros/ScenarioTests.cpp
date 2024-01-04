@@ -17,7 +17,7 @@ SCENARIO("HLSLFrameworkTests - Macros - SCENARIO")
         "GIVEN_ScenarioWithIntId_WHEN_Ran_THEN_IdIsInt"
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Macros/Scenario.hlsl")));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Macros/Scenario.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         REQUIRE(fixture.RunTest(testName, 1, 1, 1));

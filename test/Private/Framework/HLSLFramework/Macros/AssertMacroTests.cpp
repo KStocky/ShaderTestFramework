@@ -23,7 +23,7 @@ SCENARIO("HLSLFrameworkTests - Macros - AssertMacro")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Macros/AssertMacro.hlsl")));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Macros/AssertMacro.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)

@@ -27,7 +27,7 @@ SCENARIO("HLSLFrameworkTests - Bugs")
     );
 
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/HLSLFrameworkTests/Bugs/{}.hlsl", testFile))));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/Bugs/{}.hlsl", testFile))));
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)

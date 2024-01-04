@@ -22,7 +22,7 @@ SCENARIO("HLSLFrameworkTests - Asserts - IsTrue")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Asserts/IsTrue.hlsl")));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Asserts/IsTrue.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)

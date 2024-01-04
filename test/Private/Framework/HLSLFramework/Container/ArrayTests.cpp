@@ -24,7 +24,7 @@ SCENARIO("HLSLFrameworkTests - Container_wrapper")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/HLSLFrameworkTests/Container/ArrayTests/{}.hlsl", testName))));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/Container/ArrayTests/{}.hlsl", testName))));
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)

@@ -42,7 +42,7 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - TypeConverter")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/TypeConverter.hlsl"), { 10, 400 }));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/AssertBuffer/ResultsProcessing/TypeConverter.hlsl"), { 10, 400 }));
     fixture.RegisterTypeConverter("TEST_TYPE_1", 
         [](const std::span<const std::byte> InBytes) 
         {
