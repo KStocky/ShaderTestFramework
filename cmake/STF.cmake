@@ -9,4 +9,5 @@ function(add_stf_with_catch2 IN_TARGET)
 
     copy_all_dependent_assets(${IN_TARGET})
     add_catch2(${IN_TARGET})
+    return()
 endfunction()
