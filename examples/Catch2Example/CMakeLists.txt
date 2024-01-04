@@ -33,4 +33,4 @@ target_link_libraries(${TARGET_NAME} PRIVATE ShaderTestFramework)
 target_add_asset_directory(${TARGET_NAME} ${SHADER_SOURCE_DIR} "/${SHADER_SOURCE_REL_DIR}")
 copy_all_dependent_assets(${TARGET_NAME})
 
-#add_catch2(${TARGET_NAME})
+add_catch2(${TARGET_NAME})

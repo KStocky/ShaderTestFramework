@@ -23,7 +23,7 @@ static ShaderTestFixture::Desc CreateDescForHLSLFrameworkTest(fs::path&& InPath,
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("BasicShaderTests")
+SCENARIO("Catch2ShaderTests")
 {
     auto [testName, shouldSucceed] = GENERATE
     (
