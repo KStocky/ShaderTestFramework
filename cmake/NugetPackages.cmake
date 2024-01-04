@@ -1,6 +1,6 @@
 include_guard(GLOBAL)
 
-include("${CMAKE_HOME_DIRECTORY}/cmake/Nuget.cmake")
+include(Nuget)
 
 function(nuget_get_agility_sdk IN_TARGET OUT_SUCCEEDED OUT_INCLUDE_PATH OUT_BINARY_PATH OUT_SDK_VER)
 
