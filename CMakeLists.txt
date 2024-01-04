@@ -1,6 +1,4 @@
 cmake_minimum_required(VERSION 3.26)
-include("${CMAKE_HOME_DIRECTORY}/cmake/AssetDependencyManagement.cmake")
-include("${CMAKE_HOME_DIRECTORY}/cmake/Nuget.cmake")
 
 project(
     ShaderTestingFramework 
@@ -8,7 +6,10 @@ project(
     DESCRIPTION "A testing framework for shader code"
     LANGUAGES CXX )
 
-list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/modules")
+list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+
+include(AssetDependencyManagement)
+include(Nuget)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 23)

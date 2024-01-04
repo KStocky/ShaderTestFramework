@@ -1,6 +1,6 @@
-include("${CMAKE_HOME_DIRECTORY}/cmake/AssetDependencyManagement.cmake")
-include("${CMAKE_HOME_DIRECTORY}/cmake/ExternalProjects.cmake")
-include("${CMAKE_HOME_DIRECTORY}/cmake/NugetPackages.cmake")
+include(AssetDependencyManagement)
+include(ExternalProjects)
+include(NugetPackages)
 
 add_library(ShaderTestFramework)
 

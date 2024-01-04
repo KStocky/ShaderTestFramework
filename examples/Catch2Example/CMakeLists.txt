@@ -1,5 +1,5 @@
-include("${CMAKE_HOME_DIRECTORY}/cmake/AssetDependencyManagement.cmake")
-include("${CMAKE_HOME_DIRECTORY}/cmake/ExternalProjects.cmake")
+include(AssetDependencyManagement)
+include(ExternalProjects)
 
 set(TARGET_NAME Catch2Example)
 

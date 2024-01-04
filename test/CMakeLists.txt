@@ -1,5 +1,5 @@
-include("${CMAKE_HOME_DIRECTORY}/cmake/AssetDependencyManagement.cmake")
-include("${CMAKE_HOME_DIRECTORY}/cmake/ExternalProjects.cmake")
+include(AssetDependencyManagement)
+include(ExternalProjects)
 
 add_executable(ShaderTestFrameworkTests)
 asset_dependency_init(ShaderTestFrameworkTests)
