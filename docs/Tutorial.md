@@ -20,17 +20,7 @@
 
 ## Getting Shader Test Framework
 
-Ideally you should be using Shader Test Framework through its [CMake integration](cmake-integration.md#top).
-Otherwise following these steps should work:
-
-1. Grab the repo through any method
-2. Create a new directory in the root of the project and name it something like `build`
-3. Open a new command prompt in this directory
-4. run `cmake ..` - This will generate the visual studio solution for Shader Test Framework. At this point if you do not wish to continue using CMake you do not have to. You can just open the Visual Studio solution and work as normal from there. However, CMake is recommended.
-5. run `cmake --build .` - This will build everything and produce a static library called ShaderTestFramework in `ShaderTestFramework\build\src\ShaderTestFramework\Debug`. If you want a release build run `cmake --build . -C Release`
-6. Link your project with the produced lib
-
-But again. CMake is recommended.
+The installation guide can be found [here](InstallationGuide.md)
 
 ## Writing tests
 
