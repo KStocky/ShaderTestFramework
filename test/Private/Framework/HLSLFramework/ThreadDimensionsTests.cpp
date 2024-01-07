@@ -18,7 +18,7 @@ SCENARIO("HLSLFrameworkTests - ThreadDimensionTests")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/ThreadDimensionTests.hlsl")));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/ThreadDimensionTests.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         REQUIRE(fixture.RunTest(testName, dimX, dimY, dimZ));

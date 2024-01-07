@@ -15,7 +15,7 @@ SCENARIO("HLSLFrameworkTests - ProofOfConcept")
         "VariadicMacroOverloading"
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/HLSLFrameworkTests/ProofOfConcept/{}.hlsl", testName))));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/ProofOfConcept/{}.hlsl", testName))));
     DYNAMIC_SECTION(testName)
     {
         REQUIRE(fixture.RunTest(testName, 1, 1, 1));

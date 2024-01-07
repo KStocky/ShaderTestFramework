@@ -23,8 +23,8 @@ public:
         ShaderCodeSource Source;
         std::vector<std::wstring> CompilationFlags;
         D3D_SHADER_MODEL ShaderModel = D3D_SHADER_MODEL_6_6;
-        EHLSLVersion HLSLVersion = EHLSLVersion::Default;
-        STF::AssertBufferLayout AssertInfo{};
+        EHLSLVersion HLSLVersion = EHLSLVersion::v2021;
+        STF::AssertBufferLayout AssertInfo{100u, 1000u};
     };
 
     ShaderTestFixture(Desc InParams);

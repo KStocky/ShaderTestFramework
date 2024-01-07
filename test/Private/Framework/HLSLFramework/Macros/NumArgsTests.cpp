@@ -13,7 +13,7 @@ SCENARIO("HLSLFrameworkTests - Macros - NumArgs")
         "GIVEN_TenArgs_WHEN_Counted_THEN_ReturnsTen"
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/Macros/NumArgs.hlsl")));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Macros/NumArgs.hlsl")));
     DYNAMIC_SECTION(testName)
     {
         REQUIRE(fixture.RunTest(testName, 1, 1, 1));

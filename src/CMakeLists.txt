@@ -1,2 +1,1 @@
 add_subdirectory(ShaderTestFramework)
-add_subdirectory(Sandbox)

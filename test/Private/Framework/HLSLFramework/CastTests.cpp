@@ -17,7 +17,7 @@ SCENARIO("HLSLFrameworkTests - Cast")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/HLSLFrameworkTests/Cast/{}.hlsl", testName))));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/Cast/{}.hlsl", testName))));
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)

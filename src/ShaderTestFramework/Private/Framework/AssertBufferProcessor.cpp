@@ -94,9 +94,16 @@ namespace STF
     {
         InOs << std::format("There were {} successful asserts and {} failed assertions\n", In.NumSucceeded, In.NumFailed);
 
+        if (In.FailedAsserts.empty())
+        {
+            return InOs;
+        }
+
         for (const auto& [index, error] : std::views::enumerate(In.FailedAsserts))
         {
-            InOs << std::format("{}: Line: {} {}\n", index, error.Info.LineNumber, STF::ThreadInfoToString(static_cast<STF::EThreadIdType>(error.Info.ThreadIdType), error.Info.ThreadId, In.DispatchDimensions));
+            const std::string lineInfo = error.Info.LineNumber == u32(-1) ? std::string{ "" } : std::format("Line: {}", error.Info.LineNumber);
+            const std::string threadInfo = error.Info.ThreadIdType == 0 ? std::string{ "" } : STF::ThreadInfoToString(static_cast<STF::EThreadIdType>(error.Info.ThreadIdType), error.Info.ThreadId, In.DispatchDimensions);
+            InOs << std::format("Assert {}: {} {}\n", index, lineInfo, threadInfo);
 
             if (error.Data.size() == 0 || !error.DataToStringConverter)
             {
@@ -106,13 +113,13 @@ namespace STF
             u32 byteIndex = 0;
             const auto endIndex = error.Data.size();
 
-            while (byteIndex < endIndex)
+            for (u32 i = 0; byteIndex < endIndex; ++i)
             {
                 u32 sizeData;
                 std::memcpy(&sizeData, error.Data.data() + byteIndex, sizeof(u32));
                 byteIndex += sizeof(u32);
 
-                InOs << std::format("Data: {}\n", error.DataToStringConverter(std::span{ error.Data.cbegin() + byteIndex, sizeData }));
+                InOs << std::format("Data {}: {}\n", i + 1u, error.DataToStringConverter(std::span{ error.Data.cbegin() + byteIndex, sizeData }));
                 byteIndex += sizeData;
             }
         }

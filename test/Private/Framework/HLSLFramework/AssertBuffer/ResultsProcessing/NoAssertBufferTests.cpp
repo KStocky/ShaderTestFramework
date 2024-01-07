@@ -26,7 +26,7 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - NoAssertBuffer"
         .DispatchDimensions = uint3(1,1,1)
     };
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/NoAssertBuffer.hlsl"), { 0, 0 }));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/AssertBuffer/ResultsProcessing/NoAssertBuffer.hlsl"), { 0, 0 }));
     DYNAMIC_SECTION(testName)
     {
         const auto results = fixture.RunTest(testName, 1, 1, 1);

@@ -8,7 +8,7 @@ inline VirtualShaderDirectoryMapping GetTestVirtualDirectoryMapping()
     fs::path shaderDir = fs::current_path();
     shaderDir += "/";
     shaderDir += SHADER_SRC;
-    shaderDir += "/Framework/ShaderTestFixtureTests";
+    shaderDir += "/HLSLFrameworkTests/";
 
     return VirtualShaderDirectoryMapping{ "/Tests", std::move(shaderDir) };
 }
