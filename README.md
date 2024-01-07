@@ -53,23 +53,25 @@ void Catch2StyleHLSLTest(uint3 DispatchThreadId : SV_DispatchThreadID)
     
     SCENARIO()
     {
-        BEGIN_SECTION
+        SECTION()
+        {
             ++num1;
-        END_SECTION
+        }
 
-        BEGIN_SECTION
-
+        SECTION()
+        {
             ++num2;
 
-            BEGIN_SECTION
+            SECTION()
+            {
                 ++num3;
-            END_SECTION
+            }
         
-            BEGIN_SECTION
+            SECTION()
+            {
                 ++num4;
-            END_SECTION
-        END_SECTION
-
+            }
+        }
     }
     
     STF::AreEqual(1, num1);
