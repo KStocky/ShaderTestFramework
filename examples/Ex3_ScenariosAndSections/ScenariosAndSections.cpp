@@ -5,7 +5,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-SCENARIO("Example2Tests")
+SCENARIO("Example3Tests")
 {
     ShaderTestFixture::Desc desc{};
 
@@ -18,11 +18,11 @@ SCENARIO("Example2Tests")
 
     // Instead of just giving a string that has HLSL code in it we provide a path to our HLSL source file
     // Here we use our virtual shader directory mapping rather than the relative path
-    desc.Source = std::filesystem::path{ "/Shader/MyShaderTests.hlsl" };
+    desc.Source = std::filesystem::path{ "/Shader/MyArrayTests.hlsl" };
 
     ShaderTestFixture fixture(std::move(desc));
     
     // RunTest takes the entry function of the shader to run and also the dispatch config.
     // In this case we are launching a single threadgroup
-    REQUIRE(fixture.RunTest("Example2Test", 1, 1, 1));
+    REQUIRE(fixture.RunTest("Example3Tests", 1, 1, 1));
 }
