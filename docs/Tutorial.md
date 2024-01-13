@@ -226,3 +226,15 @@ int MyPow(int num, int power)
 
 And now we can run our tests again and see them passing
 
+### What did we do here?
+
+This was a fairly simple exercise in:
+- Writing a simple test for some HLSL code
+- Determining which assert failed using the test results output
+- Taking a PIX capture of the failing test.
+- Using shader debugging in PIX to step through the shader to figure out what went wrong
+- Fixing the bug
+
+## Working with Shader Files using Virtual Shader Directories
+
+Up until now we have been writing HLSL code directly in our C++ in strings. However, this does not scale and is not practical. We do not want to have to recompile our test suite whenever we are simply iterating on our HLSL code. Therefore it is recommended that users of STF write their HLSL code in HLSL files, and make use of STFs asset dependency and virtual shader directories facilities. An example of how this can be done is in ([Ex2_VirtualShaderDirectories](../examples/Ex2_VirtualShaderPaths)) and a much more in depth tutorial on this part of the framework can be found in [VirtualShaderDirectories](./VirtualShaderDirectories.md).
