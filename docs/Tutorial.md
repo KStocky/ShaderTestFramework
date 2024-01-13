@@ -2,10 +2,13 @@
 # Tutorial
 
 **Contents**<br>
-[Requirements](#requirements)<br>
-[Optional Requirements](#optional-requirements)<br>
-[Getting ShaderTestFramework](#getting-shader-test-framework)<br>
-[Writing tests](#writing-tests)<br>
+1. [Requirements](#requirements)<br>
+2. [Optional Requirements](#optional-requirements)<br>
+3. [Getting ShaderTestFramework](#getting-shader-test-framework)<br>
+4. [Writing tests](#writing-tests)<br>
+ a. [A Minimal Example](#a-minimal-example)<br>
+ b. [A Worked Example](#a-worked-example)<br>
+5. [Working with Shader Files using Virtual Shader Directories](#working-with-shader-files-using-virtual-shader-directories)<br>
 
 ## Requirements
 
@@ -238,3 +241,7 @@ This was a fairly simple exercise in:
 ## Working with Shader Files using Virtual Shader Directories
 
 Up until now we have been writing HLSL code directly in our C++ in strings. However, this does not scale and is not practical. We do not want to have to recompile our test suite whenever we are simply iterating on our HLSL code. Therefore it is recommended that users of STF write their HLSL code in HLSL files, and make use of STFs asset dependency and virtual shader directories facilities. An example of how this can be done is in ([Ex2_VirtualShaderDirectories](../examples/Ex2_VirtualShaderPaths)) and a much more in depth tutorial on this part of the framework can be found in [VirtualShaderDirectories](./VirtualShaderDirectories.md).
+
+[Top](#tutorial)
+
+[Home](../README.md)

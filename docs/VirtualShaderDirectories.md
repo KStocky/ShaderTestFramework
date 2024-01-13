@@ -1,5 +1,16 @@
 # Virtual Shader Directories
 
+**Contents**<br>
+1. [An Introduction to Virtual Shader Directories](#an-introduction-to-virtual-shader-directories)<br>
+2. [Dealing with Shader Directories using CMake](#dealing-with-shader-directories-using-cmake)<br>
+    a. [Asset Dependency Management Library](#asset-dependency-management-library)<br>
+    b. [The Working Directory](#the-working-directory)<br>
+    c. [Passing Directory Mappings from CMake to C++](#passing-directory-mappings-from-cmake-to-c)<br>
+3. [Setting up Virtual Shader Directory Mappings in C++](#setting-up-virtual-shader-directory-mappings-in-c)<br>
+4. [Using Virtual Shader Directories in HLSL](#using-virtual-shader-directories-in-hlsl)<br>
+
+## An Introduction to Virtual Shader Directories
+
 It can be useful to have virtual mappings to directories for asset like files. This decouples the actual location of the asset files themselves on disk, from the directory structure of the assets. A good example of the use of Virtual Paths is [Unreal Engine](https://docs.unrealengine.com/4.26/en-US/Basics/AssetsAndPackages/). In Unreal Engine, a game's Content folder will be mapped to the virtual path, "/Game". Similarly, plugins can provide their own virtual path mappings for shaders of that plugin.
 
 Shader Test Framework provides a very similar system for handling a test suite's shader files. An example project of this has been provided with ([Ex2_VirtualShaderDirectories](../examples/Ex2_VirtualShaderPaths))
@@ -90,4 +101,8 @@ Here we are telling the fixture that our shader that we want to compile is in th
 The `ShaderTestFixture` compiles its HLSL code using a custom `IDxcIncludeHandler` which simply does the virtual mapping substitution so that shader `#include`s can also make use of the virtual directories. An example of this can be found in [MyShaderTests.hlsl](../examples/Ex2_VirtualShaderPaths/ShaderCode/MyShaderTests.hlsl):
 
 `#include "/Shader/MyCoolHLSLFunction.hlsli"`
+
+---
+
+[Top](#virtual-shader-directories)
 
