@@ -242,6 +242,8 @@ This was a fairly simple exercise in:
 
 Up until now we have been writing HLSL code directly in our C++ in strings. However, this does not scale and is not practical. We do not want to have to recompile our test suite whenever we are simply iterating on our HLSL code. Therefore it is recommended that users of STF write their HLSL code in HLSL files, and make use of STFs asset dependency and virtual shader directories facilities. An example of how this can be done is in ([Ex2_VirtualShaderDirectories](../examples/Ex2_VirtualShaderPaths)) and a much more in depth tutorial on this part of the framework can be found in [VirtualShaderDirectories](./VirtualShaderDirectories.md).
 
+---
+
 [Top](#tutorial)
 
 [Home](../README.md)
