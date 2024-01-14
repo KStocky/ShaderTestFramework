@@ -242,6 +242,52 @@ This was a fairly simple exercise in:
 
 Up until now we have been writing HLSL code directly in our C++ in strings. However, this does not scale and is not practical. We do not want to have to recompile our test suite whenever we are simply iterating on our HLSL code. Therefore it is recommended that users of STF write their HLSL code in HLSL files, and make use of STFs asset dependency and virtual shader directories facilities. An example of how this can be done is in ([Ex2_VirtualShaderDirectories](../examples/Ex2_VirtualShaderPaths)) and a much more in depth tutorial on this part of the framework can be found in [VirtualShaderDirectories](./VirtualShaderDirectories.md).
 
+## SCENARIOs and SECTIONs
+
+Shader Test Framework provides a mechanism to help test writers, write tests that both minimise code repitition, and also ensure that their tests are easy to reason about and follow. They are very similar to [Catch2](https://github.com/catchorg/Catch2/)s TEST_CASEs and SECTIONs, and look like the following:
+```c++
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void OptionalTestsWithScenariosAndSections()
+{
+    SCENARIO(/*GIVEN An Optional that is reset*/)
+    {
+        Optional<int> opt;
+        opt.Reset();
+
+        SECTION(/*THEN IsValid returns false*/)
+        {
+            STF::IsFalse(opt.IsValid);
+        }
+
+        SECTION(/*THEN GetOrDefault returns default value*/)
+        {
+            const int expectedValue = 42;
+            STF::AreEqual(expectedValue, opt.GetOrDefault(expectedValue));
+        }
+
+        SECTION(/*WHEN value is set*/)
+        {
+            const int expectedValue = 42;
+            opt.Set(expectedValue);
+
+            SECTION(/*THEN IsValid returns true*/)
+            {
+                STF::IsTrue(opt.IsValid);
+            }
+
+            SECTION(/*THEN GetOrDefault returns set value*/)
+            {
+                const int defaultValue = 24;
+                STF::AreEqual( expectedValue, opt.GetOrDefault(defaultValue));
+            }
+        }
+    }
+}
+```
+
+Please refer to [Scenarios and Sections](./ScenariosAndSections.md) for more details on how they work, and the rationale behind them.
+
 ---
 
 [Top](#tutorial)

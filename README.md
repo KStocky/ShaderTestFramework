@@ -40,46 +40,44 @@ SCENARIO("MinimalShaderTestExample")
 ## Example Catch2 Style HLSL Test
 
 ```c++
-#include "/Test/STF/ShaderTestFramework.hlsli"
-
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
-void Catch2StyleHLSLTest(uint3 DispatchThreadId : SV_DispatchThreadID)
+void OptionalTestsWithScenariosAndSections()
 {
-    int num1 = 0;
-    int num2 = 0;
-    int num3 = 0;
-    int num4 = 0;
-    
-    SCENARIO()
+    SCENARIO(/*GIVEN An Optional that is reset*/)
     {
-        SECTION()
+        Optional<int> opt;
+        opt.Reset();
+
+        SECTION(/*THEN IsValid returns false*/)
         {
-            ++num1;
+            STF::IsFalse(opt.IsValid);
         }
 
-        SECTION()
+        SECTION(/*THEN GetOrDefault returns default value*/)
         {
-            ++num2;
+            const int expectedValue = 42;
+            STF::AreEqual(expectedValue, opt.GetOrDefault(expectedValue));
+        }
 
-            SECTION()
+        SECTION(/*WHEN value is set*/)
+        {
+            const int expectedValue = 42;
+            opt.Set(expectedValue);
+
+            SECTION(/*THEN IsValid returns true*/)
             {
-                ++num3;
+                STF::IsTrue(opt.IsValid);
             }
-        
-            SECTION()
+
+            SECTION(/*THEN GetOrDefault returns set value*/)
             {
-                ++num4;
+                const int defaultValue = 24;
+                STF::AreEqual( expectedValue, opt.GetOrDefault(defaultValue));
             }
         }
     }
-    
-    STF::AreEqual(1, num1);
-    STF::AreEqual(2, num2);
-    STF::AreEqual(1, num3);
-    STF::AreEqual(1, num4);
 }
-
 ```
 
 ## How to use it
