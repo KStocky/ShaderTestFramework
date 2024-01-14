@@ -6,58 +6,51 @@
 // This is defined by the framework itself.
 #include "/Test/STF/ShaderTestFramework.hlsli"
 
-[RootSignature(SHADER_TEST_RS)]
-[numthreads(1, 1, 1)]
-void GIVEN_InvalidOptional_WHEN_ValidityQueried_THEN_NotValid()
+void GIVEN_InvalidOptional_WHEN_ValidityQueried_THEN_NotValid(const Optional<int> InOpt)
 {
-    Optional<int> opt;
-    opt.Reset();
-
-    STF::IsFalse(opt.IsValid);
+    STF::IsFalse(InOpt.IsValid);
 }
 
-[RootSignature(SHADER_TEST_RS)]
-[numthreads(1, 1, 1)]
-void GIVEN_InvalidOptional_WHEN_GetOrDefaultCalled_THEN_DefaultReturned()
+void GIVEN_InvalidOptional_WHEN_GetOrDefaultCalled_THEN_DefaultReturned(const Optional<int> InOpt)
 {
-    Optional<int> opt;
-    opt.Reset();
-
     const int expectedValue = 42;
 
-    STF::AreEqual(expectedValue, opt.GetOrDefault(expectedValue));
+    STF::AreEqual(expectedValue, InOpt.GetOrDefault(expectedValue));
 }
 
-[RootSignature(SHADER_TEST_RS)]
-[numthreads(1, 1, 1)]
-void GIVEN_InvalidOptional_WHEN_ValueSet_THEN_IsValid()
+void GIVEN_InvalidOptional_WHEN_ValueSet_THEN_IsValid(Optional<int> InOpt)
 {
-    Optional<int> opt;
-    opt.Reset();
-
     const int expectedValue = 42;
 
-    opt.Set(expectedValue);
-    STF::IsTrue(opt.IsValid);
+    InOpt.Set(expectedValue);
+    STF::IsTrue(InOpt.IsValid);
 }
 
-[RootSignature(SHADER_TEST_RS)]
-[numthreads(1, 1, 1)]
-void GIVEN_InvalidOptional_WHEN_ValueSet_THEN_GetReturnsValue()
+void GIVEN_InvalidOptional_WHEN_ValueSet_THEN_GetReturnsValue(Optional<int> InOpt)
 {
-    Optional<int> opt;
-    opt.Reset();
-
     const int expectedValue = 42;
     const int defaultValue = 24;
 
-    opt.Set(expectedValue);
-    STF::AreEqual( expectedValue, opt.GetOrDefault(defaultValue));
+    InOpt.Set(expectedValue);
+    STF::AreEqual( expectedValue, InOpt.GetOrDefault(defaultValue));
 }
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
-void OptionalTests()
+void OptionalTestsWithoutScenariosAndSections()
+{
+    Optional<int> opt;
+    opt.Reset();
+
+    GIVEN_InvalidOptional_WHEN_ValidityQueried_THEN_NotValid(opt);
+    GIVEN_InvalidOptional_WHEN_GetOrDefaultCalled_THEN_DefaultReturned(opt);
+    GIVEN_InvalidOptional_WHEN_ValueSet_THEN_IsValid(opt);
+    GIVEN_InvalidOptional_WHEN_ValueSet_THEN_GetReturnsValue(opt);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void OptionalTestsWithScenariosAndSections()
 {
     SCENARIO(/*GIVEN An Optional that is reset*/)
     {
