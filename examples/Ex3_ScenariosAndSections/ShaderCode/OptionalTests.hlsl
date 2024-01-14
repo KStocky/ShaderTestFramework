@@ -86,3 +86,49 @@ void OptionalTestsWithScenariosAndSections()
         }
     }
 }
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(32, 1, 1)]
+void OptionalTestsWithScenariosAndSectionsAndThreadIds(uint3 DTid : SV_DispatchThreadID)
+{
+    SCENARIO(DTid/*GIVEN An Optional that is reset*/)
+    {
+        Optional<int> opt;
+        opt.Reset();
+
+        SECTION(/*THEN IsValid returns false*/)
+        {
+            //if (DTid.x == 16)
+            //{
+            //    STF::IsTrue(opt.IsValid);
+            //}
+            //else
+            {
+                STF::IsFalse(opt.IsValid);
+            }
+        }
+
+        SECTION(/*THEN GetOrDefault returns default value*/)
+        {
+            const int expectedValue = 42;
+            STF::AreEqual(expectedValue, opt.GetOrDefault(expectedValue));
+        }
+
+        SECTION(/*WHEN value is set*/)
+        {
+            const int expectedValue = 42;
+            opt.Set(expectedValue);
+
+            SECTION(/*THEN IsValid returns true*/)
+            {
+                STF::IsTrue(opt.IsValid);
+            }
+
+            SECTION(/*THEN GetOrDefault returns set value*/)
+            {
+                const int defaultValue = 24;
+                STF::AreEqual( expectedValue, opt.GetOrDefault(defaultValue));
+            }
+        }
+    }
+}
