@@ -9,6 +9,7 @@
  a. [A Minimal Example](#a-minimal-example)<br>
  b. [A Worked Example](#a-worked-example)<br>
 5. [Working with Shader Files using Virtual Shader Directories](#working-with-shader-files-using-virtual-shader-directories)<br>
+6. [Assertions](#assertions)
 
 ## Requirements
 
@@ -287,6 +288,10 @@ void OptionalTestsWithScenariosAndSections()
 ```
 
 Please refer to [Scenarios and Sections](./ScenariosAndSections.md) for more details on how they work, and the rationale behind them.
+
+## Assertions
+
+Shader Test Framework provides the standard assertions that one might expect from a testing framework, `STF::IsTrue`, `STF::IsFalse`, `STF::AreEqual`, and `STF::NotEqual`. To read more about the other assertion features that Shader Test Framework provides, the [Asserts](./Asserts.md) documentation is the place to go.
 
 ---
 
