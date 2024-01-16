@@ -2,10 +2,14 @@
 # Tutorial
 
 **Contents**<br>
-[Requirements](#requirements)<br>
-[Optional Requirements](#optional-requirements)<br>
-[Getting ShaderTestFramework](#getting-shader-test-framework)<br>
-[Writing tests](#writing-tests)<br>
+1. [Requirements](#requirements)<br>
+2. [Optional Requirements](#optional-requirements)<br>
+3. [Getting ShaderTestFramework](#getting-shader-test-framework)<br>
+4. [Writing tests](#writing-tests)<br>
+ a. [A Minimal Example](#a-minimal-example)<br>
+ b. [A Worked Example](#a-worked-example)<br>
+5. [Working with Shader Files using Virtual Shader Directories](#working-with-shader-files-using-virtual-shader-directories)<br>
+6. [Assertions](#assertions)
 
 ## Requirements
 
@@ -226,3 +230,71 @@ int MyPow(int num, int power)
 
 And now we can run our tests again and see them passing
 
+### What did we do here?
+
+This was a fairly simple exercise in:
+- Writing a simple test for some HLSL code
+- Determining which assert failed using the test results output
+- Taking a PIX capture of the failing test.
+- Using shader debugging in PIX to step through the shader to figure out what went wrong
+- Fixing the bug
+
+## Working with Shader Files using Virtual Shader Directories
+
+Up until now we have been writing HLSL code directly in our C++ in strings. However, this does not scale and is not practical. We do not want to have to recompile our test suite whenever we are simply iterating on our HLSL code. Therefore it is recommended that users of STF write their HLSL code in HLSL files, and make use of STFs asset dependency and virtual shader directories facilities. An example of how this can be done is in ([Ex2_VirtualShaderDirectories](../examples/Ex2_VirtualShaderPaths)) and a much more in depth tutorial on this part of the framework can be found in [VirtualShaderDirectories](./VirtualShaderDirectories.md).
+
+## SCENARIOs and SECTIONs
+
+Shader Test Framework provides a mechanism to help test writers, write tests that both minimise code repitition, and also ensure that their tests are easy to reason about and follow. They are very similar to [Catch2](https://github.com/catchorg/Catch2/)s TEST_CASEs and SECTIONs, and look like the following:
+```c++
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void OptionalTestsWithScenariosAndSections()
+{
+    SCENARIO(/*GIVEN An Optional that is reset*/)
+    {
+        Optional<int> opt;
+        opt.Reset();
+
+        SECTION(/*THEN IsValid returns false*/)
+        {
+            STF::IsFalse(opt.IsValid);
+        }
+
+        SECTION(/*THEN GetOrDefault returns default value*/)
+        {
+            const int expectedValue = 42;
+            STF::AreEqual(expectedValue, opt.GetOrDefault(expectedValue));
+        }
+
+        SECTION(/*WHEN value is set*/)
+        {
+            const int expectedValue = 42;
+            opt.Set(expectedValue);
+
+            SECTION(/*THEN IsValid returns true*/)
+            {
+                STF::IsTrue(opt.IsValid);
+            }
+
+            SECTION(/*THEN GetOrDefault returns set value*/)
+            {
+                const int defaultValue = 24;
+                STF::AreEqual( expectedValue, opt.GetOrDefault(defaultValue));
+            }
+        }
+    }
+}
+```
+
+Please refer to [Scenarios and Sections](./ScenariosAndSections.md) for more details on how they work, and the rationale behind them.
+
+## Assertions
+
+Shader Test Framework provides the standard assertions that one might expect from a testing framework, `STF::IsTrue`, `STF::IsFalse`, `STF::AreEqual`, and `STF::NotEqual`. To read more about the other assertion features that Shader Test Framework provides, the [Asserts](./Asserts.md) documentation is the place to go.
+
+---
+
+[Top](#tutorial)
+
+[Home](../README.md)
