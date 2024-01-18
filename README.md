@@ -2,6 +2,8 @@
 
 ![Tests](https://github.com/KStocky/ShaderTestFramework/actions/workflows/BuildAndRunTests.yml/badge.svg)
 
+**Shader code is code. We should test it**
+
 ## What is Shader Test Framework
 
 An automation testing framework for testing shader code. Based on Catch2. It uses D3D12 and requires HLSL 2021
