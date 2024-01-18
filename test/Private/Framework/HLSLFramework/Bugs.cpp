@@ -10,12 +10,6 @@ SCENARIO("HLSLFrameworkTests - Bugs")
         table<std::string, std::string, bool>
         (
             {
-                //std::tuple
-                //{
-                //    "GIVEN_WarpAndNoOptimizations_WHEN_ThisIsRun_THEN_ItWillSomeTimesFail",
-                //    "Intermittent",
-                //    true
-                //},
                 std::tuple
                 {
                     "GIVEN_Object_WHEN_ConversionOperatorCalled_THEN_Fails",
