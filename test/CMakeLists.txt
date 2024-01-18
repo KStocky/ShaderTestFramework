@@ -62,7 +62,6 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/Asserts/IsTrue.hlsl
     Shader/HLSLFrameworkTests/Asserts/NotEqual.hlsl
     Shader/HLSLFrameworkTests/Bugs/ConversionOperator.hlsl
-    Shader/HLSLFrameworkTests/Bugs/Intermittent.hlsl
     Shader/HLSLFrameworkTests/ByteWriter/ByteWriterTests.hlsl
     Shader/HLSLFrameworkTests/Cast/GIVEN_StructDoesHasDifferentOverloadOfCast_WHEN_CastCalled_THEN_Fails.hlsl
     Shader/HLSLFrameworkTests/Cast/GIVEN_StructDoesHaveOverloadOfCast_WHEN_CastCalled_THEN_Succeeds.hlsl

@@ -41,18 +41,11 @@ namespace ShaderTestPrivate
     };
     
     static PerThreadScratchData Scratch;
-    
+
     void InitScratch()
     {
-        Scratch.CurrentSectionID = 0;
         Scratch.NextSectionID = 1;
-        Scratch.ThreadID.Data = 0;
-        Scratch.ThreadID.Type = EThreadIDType::None;
-        for (uint i = 0; i < NumSections; ++i)
-        {
-            Scratch.Sections[i].ParentID = i == 0 ? -1 : 0;
-            Scratch.Sections[i].RunState = ESectionRunState::NeedsRun;
-        }
+        Scratch.Sections[0].ParentID = -1;
     }
 
     void OnLeave(int InID = Scratch.CurrentSectionID)

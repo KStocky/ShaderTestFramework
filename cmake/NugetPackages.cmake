@@ -34,7 +34,7 @@ endfunction()
 
 function(nuget_get_warp IN_TARGET OUT_SUCCEEDED OUT_BINARY_PATH)
 
-    nuget_pkg_get(${IN_TARGET} "Microsoft.Direct3D.WARP" "1.0.8" ${OUT_SUCCEEDED} PKG_PATH)
+    nuget_pkg_get(${IN_TARGET} "Microsoft.Direct3D.WARP" "1.0.9" ${OUT_SUCCEEDED} PKG_PATH)
 
     if (${${OUT_SUCCEEDED}})
         set(${OUT_BINARY_PATH} "${PKG_PATH}/build/native/amd64")
