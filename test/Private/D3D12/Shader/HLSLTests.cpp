@@ -170,6 +170,11 @@ SCENARIO("HLSLTests")
                     {
                         "CallOperator",
                         [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
+                    },
+                    std::tuple
+                    {
+                        "Alignof",
+                        [](const EHLSLVersion) { return false; }
                     }
                 }
             )

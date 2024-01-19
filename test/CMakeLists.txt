@@ -5,6 +5,7 @@ add_executable(ShaderTestFrameworkTests)
 asset_dependency_init(ShaderTestFrameworkTests)
 
 set(SHADER_SOURCES
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/Alignof.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/ArrayTemplateSpecialization.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CallOperator.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CleanupAttribute.hlsl
