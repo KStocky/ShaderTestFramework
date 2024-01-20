@@ -180,6 +180,11 @@ SCENARIO("HLSLTests")
                     {
                         "DeducingPackingOrder",
                         [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "UserDefinedVector",
+                        [](const EHLSLVersion) { return false; }
                     }
                 }
             )
