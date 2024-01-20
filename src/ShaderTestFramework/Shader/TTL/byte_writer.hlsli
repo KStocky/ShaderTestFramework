@@ -12,7 +12,7 @@ namespace ttl
     };
 
     template<typename T>
-    struct byte_writer<T, typename enable_if<is_fundamental<T>::value>::type>
+    struct byte_writer<T, typename enable_if <fundamental_type_traits<T>::is_fundamental>::type>
     {
         static const bool has_writer = true;
         static const bool is_bool_writer = is_same<typename fundamental_type_traits<T>::base_type, bool>::value;

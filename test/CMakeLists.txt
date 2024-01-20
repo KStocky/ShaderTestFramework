@@ -90,7 +90,6 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/ProofOfConcept/VariadicMacroOverloading.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/ArrayTraitsTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/ContainerTraitsTests.hlsl
-    Shader/HLSLFrameworkTests/TypeTraits/FundamentalTypeTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/FundamentalTypeTraitsTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/TypeIDTests.hlsl
     Shader/HLSLFrameworkTests/BasicShaderTests.hlsl
@@ -132,7 +131,6 @@ set(SOURCES
     Private/Framework/HLSLFramework/Macros/SectionVarCreationTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/ArrayTraitsTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/ContainerTraitsTests.cpp
-    Private/Framework/HLSLFramework/TypeTraits/FundamentalTypeTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/FundamentalTypeTraitsTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/TypeIdTests.cpp
     Private/Framework/HLSLFramework/BasicShaderTests.cpp

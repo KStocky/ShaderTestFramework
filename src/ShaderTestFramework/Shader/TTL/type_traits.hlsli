@@ -147,29 +147,18 @@ namespace ttl
     };
 
     template<typename T>
-    struct is_fundamental : false_type{};
-
-    template<> struct is_fundamental<bool> : true_type{};
-    template<> struct is_fundamental<int> : true_type{};
-    template<> struct is_fundamental<int2> : true_type{};
-    template<> struct is_fundamental<int3> : true_type{};
-    template<> struct is_fundamental<int4> : true_type{};
-    template<> struct is_fundamental<uint> : true_type{};
-    template<> struct is_fundamental<uint2> : true_type{};
-    template<> struct is_fundamental<uint3> : true_type{};
-    template<> struct is_fundamental<uint4> : true_type{};
-    template<> struct is_fundamental<float> : true_type{};
-    template<> struct is_fundamental<float2> : true_type{};
-    template<> struct is_fundamental<float3> : true_type{};
-    template<> struct is_fundamental<float4> : true_type{};
-
-    template<typename T>
-    struct fundamental_type_traits;
+    struct fundamental_type_traits
+    {
+        using base_type = void;
+        static const bool is_fundamental = false;
+        static const uint rank = 0;
+    };
 
     template<typename T, uint InRank>
     struct fundamental_type_traits_base
     {
         using base_type = T;
+        static const bool is_fundamental = true;
         static const uint rank = InRank;
     };
 
