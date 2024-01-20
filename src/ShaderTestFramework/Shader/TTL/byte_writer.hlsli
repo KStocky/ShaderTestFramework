@@ -31,7 +31,7 @@ namespace ttl
             
             static const bool cond_for_non_bools = 
                 is_same<typename container_traits<ContainerType>::element_type, uint>::value && 
-                fundamental_type_traits<T>::rank == InRank;
+                fundamental_type_traits<T>::dim0 == InRank;
             static const bool value = is_bool_writer ? cond_for_bools : cond_for_non_bools;
         };
 

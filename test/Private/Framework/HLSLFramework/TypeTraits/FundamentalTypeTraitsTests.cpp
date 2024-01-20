@@ -7,7 +7,12 @@ SCENARIO("HLSLFrameworkTests - TypeTraits - FundamentalTypeTraits")
 {
     auto testName = GENERATE
     (
-        "AllShouldPass"
+        "RunScalarTests",
+        "RunVectorTests",
+        "RunMatrix1Tests",
+        "RunMatrix2Tests",
+        "RunMatrix3Tests",
+        "RunMatrix4Tests"
     );
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/TypeTraits/FundamentalTypeTraitsTests.hlsl")));
