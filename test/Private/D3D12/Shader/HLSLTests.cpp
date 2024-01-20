@@ -175,6 +175,11 @@ SCENARIO("HLSLTests")
                     {
                         "Alignof",
                         [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "DeducingPackingOrder",
+                        [](const EHLSLVersion) { return false; }
                     }
                 }
             )
