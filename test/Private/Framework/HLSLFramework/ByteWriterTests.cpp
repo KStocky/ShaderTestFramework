@@ -23,7 +23,7 @@ SCENARIO("HLSLFrameworkTests - ByteWriter")
         "GIVEN_UIntBufferAndFloat3_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
         "GIVEN_UIntBufferAndFloat4_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten",
         "GIVEN_NonFundamentalTypeWithNoWriter_WHEN_HasWriterQueried_THEN_False",
-        "GIVEN_NonFundamentalTypeWithNoWriter_WHEN_BytesRequiredQueried_THEN_Zero",
+        "GIVEN_NonFundamentalTypeWithNoWriter_WHEN_BytesRequiredQueried_THEN_ReturnsSizeOfStruct",
         "GIVEN_NonFundamentalTypeWithWriter_WHEN_HasWriterQueried_THEN_True",
         "GIVEN_NonFundamentalTypeWithWriter_WHEN_BytesRequiredQueried_THEN_ExpectedNumberReturned"
     );

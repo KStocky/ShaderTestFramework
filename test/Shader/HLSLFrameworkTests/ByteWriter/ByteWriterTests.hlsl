@@ -190,6 +190,8 @@ void GIVEN_UIntBufferAndFloat4_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten()
 struct NoWriter
 {
     int a;
+    int64_t b;
+    float16_t c;
 };
 
 [RootSignature(SHADER_TEST_RS)]
@@ -201,10 +203,10 @@ void GIVEN_NonFundamentalTypeWithNoWriter_WHEN_HasWriterQueried_THEN_False()
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
-void GIVEN_NonFundamentalTypeWithNoWriter_WHEN_BytesRequiredQueried_THEN_Zero()
+void GIVEN_NonFundamentalTypeWithNoWriter_WHEN_BytesRequiredQueried_THEN_ReturnsSizeOfStruct()
 {
     NoWriter test;
-    STF::AreEqual(0u, ttl::bytes_required(test));
+    STF::AreEqual((uint)sizeof(NoWriter), ttl::bytes_required(test));
 }
 
 struct StructWithWriter
