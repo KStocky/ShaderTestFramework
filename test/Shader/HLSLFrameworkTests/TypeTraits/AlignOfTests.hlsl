@@ -1,8 +1,15 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
 
-struct UnknownAlignment
+struct UnknownAlignmentLessThan8
 {
     int A;
+};
+
+struct UnknownAlignmentGreaterThan8
+{
+    int A;
+    int B;
+    int C;
 };
 
 struct ReportedAlignment
@@ -24,6 +31,7 @@ void AllHaveExpectedAlignment()
     ASSERT(AreEqual, 8u, ttl::align_of<int64_t>::value);
     ASSERT(AreEqual, 4u, ttl::align_of<bool>::value);
 
-    ASSERT(AreEqual, 8u, ttl::align_of<UnknownAlignment>::value);
+    ASSERT(AreEqual, (uint)sizeof(UnknownAlignmentLessThan8), ttl::align_of<UnknownAlignmentLessThan8>::value);
+    ASSERT(AreEqual, 8u, ttl::align_of<UnknownAlignmentGreaterThan8>::value);
     ASSERT(AreEqual, 4u, ttl::align_of<ReportedAlignment>::value);
 }

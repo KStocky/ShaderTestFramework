@@ -181,7 +181,7 @@ namespace ttl
     template<typename T, uint InDim0, uint InDim1> struct fundamental_type_traits<matrix<T, InDim0, InDim1> > : fundamental_type_traits_base<T, InDim0, InDim1>{};
 
     template<typename T, typename = void>
-    struct align_of : integral_constant<uint, 8>{};
+    struct align_of : integral_constant<uint, ((uint)sizeof(T) < 8u) ? (uint)sizeof(T) : 8 >{};
 
     template<typename T>
     struct align_of<T, typename enable_if<fundamental_type_traits<T>::is_fundamental>::type> 
