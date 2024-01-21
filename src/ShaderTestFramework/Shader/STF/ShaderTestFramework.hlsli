@@ -7,6 +7,7 @@
 #include "/Test/TTL/byte_writer.hlsli"
 #include "/Test/TTL/caster.hlsli"
 #include "/Test/TTL/container_wrapper.hlsli"
+#include "/Test/TTL/memory.hlsli"
 #include "/Test/TTL/type_traits.hlsli"
 
 namespace ShaderTestPrivate

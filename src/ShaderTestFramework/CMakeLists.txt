@@ -92,6 +92,7 @@ set(SHADER_SOURCES
     Shader/TTL/byte_writer.hlsli
     Shader/TTL/caster.hlsli
     Shader/TTL/container_wrapper.hlsli
+    Shader/TTL/memory.hlsli
     Shader/TTL/type_traits.hlsli
 )
 
