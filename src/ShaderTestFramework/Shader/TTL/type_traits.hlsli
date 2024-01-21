@@ -186,4 +186,17 @@ namespace ttl
     template<typename T>
     struct align_of<T, typename enable_if<fundamental_type_traits<T>::is_fundamental>::type> 
         : integral_constant<uint, sizeof(typename fundamental_type_traits<T>::base_type)>{};
+
+    // Depends on https://github.com/microsoft/DirectXShaderCompiler/issues/5553
+    template<typename T, typename = void>
+    struct is_enum
+    {
+        static const bool value = true;
+    };
+
+    template<typename T>
+    struct is_enum<T, typename enable_if<sizeof(T) != 0>::type>
+    {
+        static const bool value = false;
+    };
 }

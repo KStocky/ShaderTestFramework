@@ -98,6 +98,7 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/TypeTraits/ArrayTraitsTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/ContainerTraitsTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/FundamentalTypeTraitsTests.hlsl
+    Shader/HLSLFrameworkTests/TypeTraits/IsEnumTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/TypeIDTests.hlsl
     Shader/HLSLFrameworkTests/BasicShaderTests.hlsl
     Shader/HLSLFrameworkTests/FlattenIndex.hlsl
@@ -141,6 +142,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/TypeTraits/ArrayTraitsTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/ContainerTraitsTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/FundamentalTypeTraitsTests.cpp
+    Private/Framework/HLSLFramework/TypeTraits/IsEnumTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/TypeIdTests.cpp
     Private/Framework/HLSLFramework/BasicShaderTests.cpp
     Private/Framework/HLSLFramework/Bugs.cpp
