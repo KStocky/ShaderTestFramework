@@ -135,6 +135,11 @@ GPUDevice::GPUDevice(const CreationParams InDesc)
 	if (InDesc.DebugLevel != EDebugLevel::Off)
 	{
 		ThrowIfFailed(m_Device->QueryInterface(m_DebugDevice.GetAddressOf()));
+        ThrowIfFailed(m_Device->QueryInterface(m_InfoQueue.GetAddressOf()));
+
+        m_InfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, TRUE);
+        m_InfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, TRUE);
+        m_InfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, TRUE);
 	}
 
 	m_CBVDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
