@@ -4,6 +4,7 @@
 #include "Framework/HLSLTypes.h"
 #include "Framework/PIXCapturer.h"
 #include "Utility/EnumReflection.h"
+#include "Utility/Math.h"
 
 #include "D3D12/CommandEngine.h"
 #include "D3D12/GPUDevice.h"
@@ -317,13 +318,8 @@ bool ShaderTestFixture::ShouldTakeCapture() const
 
 u64 ShaderTestFixture::CalculateAssertBufferSize() const
 {    
-    auto RoundUpToMultipleOf4 = [](const u64 In)
-    {
-        return (In + 3ull) & ~3ull;
-    };
-
-    const u64 assertInfoSection = m_AssertInfo.NumFailedAsserts * sizeof(STF::HLSLAssertMetaData);
-    const u64 assertDataSection = m_AssertInfo.NumBytesAssertData > 0 ? RoundUpToMultipleOf4(m_AssertInfo.NumBytesAssertData) : 0;
+    const u64 assertInfoSection = AlignedOffset(m_AssertInfo.NumFailedAsserts * sizeof(STF::HLSLAssertMetaData), 8ull);
+    const u64 assertDataSection = m_AssertInfo.NumBytesAssertData > 0 ? AlignedOffset(m_AssertInfo.NumBytesAssertData, 8ull) : 0;
 
     const u64 requestedSize = assertInfoSection + assertDataSection;
 
