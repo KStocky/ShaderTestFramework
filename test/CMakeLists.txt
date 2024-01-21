@@ -22,6 +22,7 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/GloballyCoherentTypeModifier.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/GlobalString.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/HasMemberCheck.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/IsEnum.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/LineMacro.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/LocalString.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/LocalStringAssignedToAUintArray.hlsl

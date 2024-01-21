@@ -190,6 +190,11 @@ SCENARIO("HLSLTests")
                     {
                         "SizeofEnumType",
                         [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "IsEnum",
+                        [](const EHLSLVersion) { return false; }
                     }
                 }
             )
