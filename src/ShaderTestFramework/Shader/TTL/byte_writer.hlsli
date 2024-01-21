@@ -22,6 +22,11 @@ namespace ttl
             return sizeof(T);
         }
 
+        static uint alignment_required(T)
+        {
+            return align_of<T>::value;
+        }
+
         template<typename ContainerType, uint InRank, bool ForBools = false>
         struct WriteEnabler
         {
@@ -73,9 +78,21 @@ namespace ttl
     }
 
     template<typename T>
-    typename enable_if<!byte_writer<T>::has_writer, uint>::type bytes_required(T In)
+    typename enable_if<!byte_writer<T>::has_writer, uint>::type bytes_required(T)
     {
         return sizeof(T);
+    }
+
+    template<typename T>
+    typename enable_if<byte_writer<T>::has_writer, uint>::type alignment_required(T In)
+    {
+        return byte_writer<T>::alignment_required(In);
+    }
+
+    template<typename T>
+    typename enable_if<!byte_writer<T>::has_writer, uint>::type alignment_required(T)
+    {
+        return align_of<T>::value;
     }
 
     template<typename T, typename U>
@@ -92,7 +109,18 @@ namespace ttl
 
     template<typename T, typename U>
     typename enable_if<
-        byte_writer<T>::has_writer &&
+        !byte_writer<T>::has_writer &&
+        container_traits<U>::is_container &&
+        container_traits<U>::is_writable &&
+        container_traits<U>::is_byte_address
+    >::type 
+    write_bytes(inout container_wrapper<U> InContainer, const uint InIndex, const T In)
+    {
+        InContainer.store(InIndex, In);
+    }
+
+    template<typename T, typename U>
+    typename enable_if<
         container_traits<U>::is_container &&
         container_traits<U>::is_writable &&
         is_same<uint, typename container_traits<U>::element_type>::value

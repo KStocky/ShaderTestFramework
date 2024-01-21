@@ -54,6 +54,43 @@ void GIVEN_FundamentalType_WHEN_BytesRequiredQueried_THEN_ExpectedNumberReturned
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
+void GIVEN_FundamentalType_WHEN_AlignmentRequiredQueried_THEN_ExpectedNumberReturned()
+{
+    STF::AreEqual(4u, ttl::byte_writer<bool>::alignment_required(false));
+    STF::AreEqual(4u, ttl::byte_writer<uint>::alignment_required(uint(3)));
+    STF::AreEqual(4u, ttl::byte_writer<uint2>::alignment_required(uint2(3, 5)));
+    STF::AreEqual(4u, ttl::byte_writer<uint3>::alignment_required(uint3(1,2,3)));
+    STF::AreEqual(4u, ttl::byte_writer<uint4>::alignment_required(uint4(1,2,3,4)));
+    STF::AreEqual(4u, ttl::byte_writer<int>::alignment_required(int(3)));
+    STF::AreEqual(4u, ttl::byte_writer<int2>::alignment_required(int2(1,2)));
+    STF::AreEqual(4u, ttl::byte_writer<int3>::alignment_required(int3(1,2,3)));
+    STF::AreEqual(4u, ttl::byte_writer<int4>::alignment_required(int4(1,2,3,4)));
+    STF::AreEqual(4u, ttl::byte_writer<float>::alignment_required(3.4f));
+    STF::AreEqual(4u, ttl::byte_writer<float2>::alignment_required(float2(1.0f, 2.0f)));
+    STF::AreEqual(4u, ttl::byte_writer<float3>::alignment_required(float3(1.0f, 2.0f, 3.0f)));
+    STF::AreEqual(4u, ttl::byte_writer<float4>::alignment_required(float4(1.0f, 2.0f, 3.0f, 4.0f)));
+    STF::AreEqual(2u, ttl::byte_writer<float16_t4>::alignment_required(float16_t4(1.0f, 2.0f, 3.0f, 4.0f)));
+    STF::AreEqual(8u, ttl::byte_writer<float64_t4>::alignment_required(float64_t4(1.0f, 2.0f, 3.0f, 4.0f)));
+
+    STF::AreEqual(4u, ttl::alignment_required(false));
+    STF::AreEqual(4u, ttl::alignment_required(uint(3)));
+    STF::AreEqual(4u, ttl::alignment_required(uint2(3, 5)));
+    STF::AreEqual(4u, ttl::alignment_required(uint3(1,2,3)));
+    STF::AreEqual(4u, ttl::alignment_required(uint4(1,2,3,4)));
+    STF::AreEqual(4u, ttl::alignment_required(int(3)));
+    STF::AreEqual(4u, ttl::alignment_required(int2(1,2)));
+    STF::AreEqual(4u, ttl::alignment_required(int3(1,2,3)));
+    STF::AreEqual(4u, ttl::alignment_required(int4(1,2,3,4)));
+    STF::AreEqual(4u, ttl::alignment_required(3.4f));
+    STF::AreEqual(4u, ttl::alignment_required(float2(1.0f, 2.0f)));
+    STF::AreEqual(4u, ttl::alignment_required(float3(1.0f, 2.0f, 3.0f)));
+    STF::AreEqual(4u, ttl::alignment_required(float4(1.0f, 2.0f, 3.0f, 4.0f)));
+    STF::AreEqual(2u, ttl::alignment_required(float16_t4(1.0f, 2.0f, 3.0f, 4.0f)));
+    STF::AreEqual(8u, ttl::alignment_required(float64_t4(1.0f, 2.0f, 3.0f, 4.0f)));
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
 void GIVEN_UIntBufferAndBool_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten()
 {
     ttl::container_wrapper<uint[4]> buffer;
@@ -196,17 +233,25 @@ struct NoWriter
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
-void GIVEN_NonFundamentalTypeWithNoWriter_WHEN_HasWriterQueried_THEN_False()
+void GIVEN_TypeWithNoWriter_WHEN_HasWriterQueried_THEN_False()
 {
     STF::IsFalse(ttl::byte_writer<NoWriter>::has_writer);
 }
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
-void GIVEN_NonFundamentalTypeWithNoWriter_WHEN_BytesRequiredQueried_THEN_ReturnsSizeOfStruct()
+void GIVEN_TypeWithNoWriter_WHEN_BytesRequiredQueried_THEN_ReturnsSizeOfStruct()
 {
     NoWriter test;
     STF::AreEqual((uint)sizeof(NoWriter), ttl::bytes_required(test));
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_TypeWithNoWriter_WHEN_AlignmentRequiredQueried_THEN_ExpectedNumberReturned()
+{
+    NoWriter test;
+    STF::AreEqual(8u, ttl::alignment_required(test));
 }
 
 struct StructWithWriter
@@ -225,6 +270,11 @@ namespace ttl
             return sizeof(StructWithWriter);
         }
 
+        static uint alignment_required(StructWithWriter)
+        {
+            return 16u;
+        }
+
         template<typename T>
         void write(container_wrapper<T> InContainer, const uint InIndex, const StructWithWriter In)
         {
@@ -235,16 +285,25 @@ namespace ttl
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
-void GIVEN_NonFundamentalTypeWithWriter_WHEN_HasWriterQueried_THEN_True()
+void GIVEN_TypeWithWriter_WHEN_HasWriterQueried_THEN_True()
 {
     STF::IsTrue(ttl::byte_writer<StructWithWriter>::has_writer);
 }
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
-void GIVEN_NonFundamentalTypeWithWriter_WHEN_BytesRequiredQueried_THEN_ExpectedNumberReturned()
+void GIVEN_TypeWithWriter_WHEN_BytesRequiredQueried_THEN_ExpectedNumberReturned()
 {
     StructWithWriter test;
     test.a = 42;
-    STF::AreEqual(4u, ttl::byte_writer<StructWithWriter>::bytes_required(test));
+    STF::AreEqual(4u, ttl::bytes_required(test));
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_TypeWithWriter_WHEN_AlignmentRequiredQueried_THEN_ExpectedNumberReturned()
+{
+    StructWithWriter test;
+    test.a = 42;
+    STF::AreEqual(16u, ttl::alignment_required(test));
 }
