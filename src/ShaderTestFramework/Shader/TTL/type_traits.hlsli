@@ -189,14 +189,14 @@ namespace ttl
 
     // Depends on https://github.com/microsoft/DirectXShaderCompiler/issues/5553
     template<typename T, typename = void>
-    struct is_enum
-    {
-        static const bool value = true;
-    };
+    struct is_enum : true_type{};
 
     template<typename T>
-    struct is_enum<T, typename enable_if<sizeof(T) != 0>::type>
-    {
-        static const bool value = false;
-    };
+    struct is_enum<T, typename enable_if<sizeof(T) != 0>::type> : false_type{};
+
+    template<typename T, typename = void>
+    struct size_of : integral_constant<uint, sizeof(T)>{};
+
+    template<typename T>
+    struct size_of<T, typename enable_if<is_enum<T>::value>::type> : integral_constant<uint, 4>{};
 }
