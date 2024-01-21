@@ -185,6 +185,11 @@ SCENARIO("HLSLTests")
                     {
                         "UserDefinedVector",
                         [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "SizeofEnumType",
+                        [](const EHLSLVersion) { return false; }
                     }
                 }
             )
