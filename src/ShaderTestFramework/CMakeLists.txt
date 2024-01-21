@@ -57,6 +57,7 @@ set(SOURCES
     Public/Utility/FixedString.h
     Public/Utility/FunctionTraits.h
     Public/Utility/Lambda.h
+    Public/Utility/Math.h
     Public/Utility/MoveOnly.h
     Public/Utility/OverloadSet.h
     Public/Utility/Pointer.h
