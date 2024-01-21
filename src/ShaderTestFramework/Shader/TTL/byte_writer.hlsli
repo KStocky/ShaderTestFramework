@@ -19,7 +19,7 @@ namespace ttl
 
         static uint bytes_required(T)
         {
-            return sizeof(T);
+            return size_of<T>::value;
         }
 
         static uint alignment_required(T)
@@ -80,7 +80,7 @@ namespace ttl
     template<typename T>
     typename enable_if<!byte_writer<T>::has_writer, uint>::type bytes_required(T)
     {
-        return sizeof(T);
+        return size_of<T>::value;
     }
 
     template<typename T>

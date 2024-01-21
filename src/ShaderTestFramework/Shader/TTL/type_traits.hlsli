@@ -180,13 +180,6 @@ namespace ttl
     template<typename T, uint InDim> struct fundamental_type_traits<vector<T, InDim> > : fundamental_type_traits_base<T, InDim, 1>{};
     template<typename T, uint InDim0, uint InDim1> struct fundamental_type_traits<matrix<T, InDim0, InDim1> > : fundamental_type_traits_base<T, InDim0, InDim1>{};
 
-    template<typename T, typename = void>
-    struct align_of : integral_constant<uint, ((uint)sizeof(T) < 8u) ? (uint)sizeof(T) : 8 >{};
-
-    template<typename T>
-    struct align_of<T, typename enable_if<fundamental_type_traits<T>::is_fundamental>::type> 
-        : integral_constant<uint, sizeof(typename fundamental_type_traits<T>::base_type)>{};
-
     // Depends on https://github.com/microsoft/DirectXShaderCompiler/issues/5553
     template<typename T, typename = void>
     struct is_enum : true_type{};
@@ -199,4 +192,11 @@ namespace ttl
 
     template<typename T>
     struct size_of<T, typename enable_if<is_enum<T>::value>::type> : integral_constant<uint, 4>{};
+
+    template<typename T, typename = void>
+    struct align_of : integral_constant<uint, (size_of<T>::value < 8u) ? size_of<T>::value : 8u >{};
+
+    template<typename T>
+    struct align_of<T, typename enable_if<fundamental_type_traits<T>::is_fundamental>::type> 
+        : integral_constant<uint, size_of<typename fundamental_type_traits<T>::base_type>::value>{};
 }
