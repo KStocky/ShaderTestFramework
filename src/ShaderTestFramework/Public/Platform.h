@@ -1,5 +1,6 @@
 #pragma once
 #include "Utility/Expected.h"
+#include "Utility/Float.h"
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <cstdint>
@@ -15,6 +16,7 @@ using i16 = std::int16_t;
 using i32 = std::int32_t;
 using i64 = std::int64_t;
 
+using f16 = float16_t;
 using f32 = float;
 using f64 = double;
 

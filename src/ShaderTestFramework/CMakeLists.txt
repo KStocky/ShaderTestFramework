@@ -55,6 +55,7 @@ set(SOURCES
     Public/Utility/Exception.h
     Public/Utility/Expected.h
     Public/Utility/FixedString.h
+    Public/Utility/Float.h
     Public/Utility/FunctionTraits.h
     Public/Utility/Lambda.h
     Public/Utility/Math.h
@@ -125,6 +126,7 @@ target_include_directories(ShaderTestFramework PUBLIC ${CMAKE_CURRENT_LIST_DIR}/
 target_link_libraries(ShaderTestFramework PRIVATE d3d12.lib dxgi.lib DXC dxguid.lib WINPIX)
 add_tl_expected(ShaderTestFramework)
 add_tuplet(ShaderTestFramework)
+add_float16(ShaderTestFramework)
 
 target_add_asset_directory(ShaderTestFramework ${AGILITY_DLL} "/D3D12")
 target_add_asset_directory(ShaderTestFramework ${WARP_DLL} "/")

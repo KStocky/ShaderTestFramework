@@ -48,3 +48,20 @@ function(add_tuplet IN_TARGET)
     target_link_libraries(${IN_TARGET} PUBLIC tuplet::tuplet)
     return()
 endfunction()
+
+function(add_float16 IN_TARGET)
+
+    set(EXPECTED_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/float16/)
+    file(DOWNLOAD
+        https://raw.githubusercontent.com/fengwang/float16_t/master/float16_t.hpp
+        ${EXPECTED_DIR}/include/float16/float16_t.hpp
+    )
+
+    target_include_directories(${IN_TARGET} PUBLIC ${EXPECTED_DIR}/include)
+
+    file(GLOB_RECURSE EXPECTED_HEADERS "${EXPECTED_DIR}/include/*.h*" )
+    target_sources(ShaderTestFramework PRIVATE 
+        ${EXPECTED_HEADERS})
+    source_group(TREE ${EXPECTED_DIR}/include PREFIX "ThirdParty/float16" FILES ${EXPECTED_HEADERS})
+    return()
+endfunction()
