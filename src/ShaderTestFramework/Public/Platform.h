@@ -1,8 +1,7 @@
 #pragma once
+#define WIN32_LEAN_AND_MEAN
 #include "Utility/Expected.h"
 #include "Utility/Float.h"
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
 #include <cstdint>
 #include <Windows.h>
 

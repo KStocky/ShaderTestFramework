@@ -121,6 +121,10 @@ source_group(TREE ${WINPIX_INCLUDE} PREFIX "ThirdParty/WinPix" FILES ${WINPIX_HE
 source_group(TREE ${SHADER_SOURCE_DIR} PREFIX "ShaderSources" FILES ${SHADER_SOURCES})
 
 target_compile_definitions(ShaderTestFramework PRIVATE D3D12_SDK_VERSION_ID=${SDK_VER} SHADER_SRC="${SHADER_SOURCE_REL_DIR}" USE_PIX)
+
+# Silencing this while we are using a float16 library.
+# We can remove this when we start using std::float16_t whenever that is implemented...
+target_compile_definitions(ShaderTestFramework PUBLIC _SILENCE_CXX23_DENORM_DEPRECATION_WARNING NOMINMAX)
 target_compile_options(ShaderTestFramework PRIVATE ${GLOBAL_COMPILE_FLAGS})
 target_include_directories(ShaderTestFramework PUBLIC ${CMAKE_CURRENT_LIST_DIR}/Public/ ${AGILITY_INCLUDE} ${DXC_INCLUDE} ${WINPIX_INCLUDE})
 target_link_libraries(ShaderTestFramework PRIVATE d3d12.lib dxgi.lib DXC dxguid.lib WINPIX)
