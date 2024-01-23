@@ -64,6 +64,7 @@ set(SOURCES
     Public/Utility/Tuple.h
     Public/Utility/Type.h
     Public/Utility/TypeList.h
+    Public/Utility/TypeTraits.h
     Private/D3D12/CommandAllocator.cpp
     Private/D3D12/CommandEngine.cpp
     Private/D3D12/CommandList.cpp

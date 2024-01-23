@@ -12,66 +12,6 @@ namespace ttl
     };
 
     template<typename T>
-    struct byte_writer<T, typename enable_if <fundamental_type_traits<T>::is_fundamental>::type>
-    {
-        static const bool has_writer = true;
-        static const bool is_bool_writer = is_same<typename fundamental_type_traits<T>::base_type, bool>::value;
-
-        static uint bytes_required(T)
-        {
-            return size_of<T>::value;
-        }
-
-        static uint alignment_required(T)
-        {
-            return align_of<T>::value;
-        }
-
-        template<typename ContainerType, uint InRank, bool ForBools = false>
-        struct WriteEnabler
-        {
-            static const bool cond_for_bools = 
-                is_same<typename container_traits<ContainerType>::element_type, uint>::value && 
-                ForBools;
-            
-            static const bool cond_for_non_bools = 
-                is_same<typename container_traits<ContainerType>::element_type, uint>::value && 
-                fundamental_type_traits<T>::dim0 == InRank;
-            static const bool value = is_bool_writer ? cond_for_bools : cond_for_non_bools;
-        };
-
-        template<typename U>
-        static typename enable_if<WriteEnabler<U, 1>::value>::type write(inout container_wrapper<U> InContainer, const uint InIndex, const T In)
-        {
-            InContainer.store(InIndex, asuint(In));
-        }
-
-        template<typename U>
-        static typename enable_if<WriteEnabler<U, 2>::value>::type write(inout container_wrapper<U> InContainer, const uint InIndex, const T In)
-        {
-            InContainer.store(InIndex, asuint(In.x), asuint(In.y));
-        }
-
-        template<typename U>
-        static typename enable_if<WriteEnabler<U, 3>::value>::type write(inout container_wrapper<U> InContainer, const uint InIndex, const T In)
-        {
-            InContainer.store(InIndex, asuint(In.x), asuint(In.y), asuint(In.z));
-        }
-
-        template<typename U>
-        static typename enable_if<WriteEnabler<U, 4>::value>::type write(inout container_wrapper<U> InContainer, const uint InIndex, const T In)
-        {
-            InContainer.store(InIndex, asuint(In.x), asuint(In.y), asuint(In.z), asuint(In.w));
-        }
-        
-        template<typename U>
-        static typename enable_if<WriteEnabler<U, 0, true>::value>::type write(inout container_wrapper<U> InContainer, const uint InIndex, const T In)
-        {
-            byte_writer<uint>::write(InContainer, InIndex, In ? 1u : 0u);
-        }
-    };
-
-    template<typename T>
     typename enable_if<byte_writer<T>::has_writer, uint>::type bytes_required(T In)
     {
         return byte_writer<T>::bytes_required(In);

@@ -2,6 +2,10 @@
 
 #include "Framework/AssertBufferProcessor.h"
 
+#include <Utility/Math.h>
+#include <Utility/Tuple.h>
+#include <Utility/TypeTraits.h>
+
 #include <string>
 #include <vector>
 
@@ -114,18 +118,50 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - No AssertData")
 
 SCENARIO("AssertBufferProcessorTests - AssertInfo - AssertData")
 {
-    auto serialize = []<typename T>(const std::span<T> InVals)
+    auto serializeImpl = OverloadSet{
+        [] <typename T>(const T & InVal, std::vector<std::byte>&InOutBytes) -> std::enable_if_t<!TIsInstantiationOf<Tuple, T>::Value>
+        {
+            static constexpr u32 size = sizeof(T);
+            static constexpr u32 align = alignof(T);
+            static constexpr u32 sizeAndAlign = (size << 16) | align;
+            static constexpr u64 sizeOfAllocation = AlignedOffset(size + 4, 8);
+
+            const auto oldSize = InOutBytes.size();
+
+            InOutBytes.resize(InOutBytes.size() + sizeOfAllocation);
+            auto address = InOutBytes.data() + oldSize;
+            std::memcpy(address, &sizeAndAlign, sizeof(u32));
+            address += AlignedOffset(sizeof(u32), align);
+            std::memcpy(address, &InVal, size);
+        },
+        [] <typename T>(const Tuple<T, T>&InVal, std::vector<std::byte>&InOutBytes)
+        {
+            static constexpr u32 size = sizeof(T);
+            static constexpr u32 align = alignof(T);
+            static constexpr u32 sizeAndAlign = (size << 16) | align;
+            static constexpr u64 sizeSingle = AlignedOffset(size + 4, align);
+            static constexpr u64 sizeOfAllocation = AlignedOffset(sizeSingle * 2, 8);
+
+            const auto oldSize = InOutBytes.size();
+
+            InOutBytes.resize(InOutBytes.size() + sizeOfAllocation);
+            auto address = InOutBytes.data() + oldSize;
+            std::memcpy(address, &sizeAndAlign, sizeof(u32));
+            address += AlignedOffset(sizeof(u32), align);
+            std::memcpy(address, &Get<0>(InVal), size);
+            address += AlignedOffset(size, 4);
+            std::memcpy(address, &sizeAndAlign, sizeof(u32));
+            address += AlignedOffset(sizeof(u32), align);
+            std::memcpy(address, &Get<1>(InVal), size);
+        }
+    };
+
+    auto serialize = [&serializeImpl]<typename T>(const std::span<T> InVals)
     {
         std::vector<std::byte> ret;
-        ret.resize(InVals.size_bytes() + InVals.size() * sizeof(u32));
-        const u64 sizeData = sizeof(T);
-        for (u64 writeIndex = 0; const auto& val : InVals)
+        for (const auto val : InVals)
         {
-            std::memcpy(ret.data() + writeIndex, &sizeData, sizeof(u32));
-            writeIndex += sizeof(u32);
-
-            std::memcpy(ret.data() + writeIndex, &val, sizeData);
-            writeIndex += sizeData;
+            serializeImpl(val, ret);
         }
 
         return ret;
@@ -232,18 +268,50 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - AssertData")
 SCENARIO("AssertBufferProcessorTests - AssertInfo - Type Converter")
 {
     using Catch::Matchers::ContainsSubstring;
-    auto serialize = []<typename T>(const std::span<T> InVals)
+    auto serializeImpl = OverloadSet{
+        [] <typename T>(const T & InVal, std::vector<std::byte>&InOutBytes) -> std::enable_if_t<!TIsInstantiationOf<Tuple, T>::Value>
+        {
+            static constexpr u32 size = sizeof(T);
+            static constexpr u32 align = alignof(T);
+            static constexpr u32 sizeAndAlign = (size << 16) | align;
+            static constexpr u64 sizeOfAllocation = AlignedOffset(size + 4, 8);
+
+            const auto oldSize = InOutBytes.size();
+
+            InOutBytes.resize(InOutBytes.size() + sizeOfAllocation);
+            auto address = InOutBytes.data() + oldSize;
+            std::memcpy(address, &sizeAndAlign, sizeof(u32));
+            address += AlignedOffset(sizeof(u32), align);
+            std::memcpy(address, &InVal, size);
+        },
+        [] <typename T>(const Tuple<T, T>&InVal, std::vector<std::byte>&InOutBytes)
+        {
+            static constexpr u32 size = sizeof(T);
+            static constexpr u32 align = alignof(T);
+            static constexpr u32 sizeAndAlign = (size << 16) | align;
+            static constexpr u64 sizeSingle = AlignedOffset(size + 4, align);
+            static constexpr u64 sizeOfAllocation = AlignedOffset(sizeSingle * 2, 8);
+
+            const auto oldSize = InOutBytes.size();
+
+            InOutBytes.resize(InOutBytes.size() + sizeOfAllocation);
+            auto address = InOutBytes.data() + oldSize;
+            std::memcpy(address, &sizeAndAlign, sizeof(u32));
+            address += AlignedOffset(sizeof(u32), align);
+            std::memcpy(address, &Get<0>(InVal), size);
+            address += AlignedOffset(size, 4);
+            std::memcpy(address, &sizeAndAlign, sizeof(u32));
+            address += AlignedOffset(sizeof(u32), align);
+            std::memcpy(address, &Get<1>(InVal), size);
+        }
+    };
+
+    auto serialize = [&serializeImpl]<typename T>(const std::span<T> InVals)
     {
         std::vector<std::byte> ret;
-        ret.resize(InVals.size_bytes() + InVals.size() * sizeof(u32));
-        const u64 sizeData = sizeof(T);
-        for (u64 writeIndex = 0; const auto & val : InVals)
+        for (const auto val : InVals)
         {
-            std::memcpy(ret.data() + writeIndex, &sizeData, sizeof(u32));
-            writeIndex += sizeof(u32);
-
-            std::memcpy(ret.data() + writeIndex, &val, sizeData);
-            writeIndex += sizeData;
+            serializeImpl(val, ret);
         }
 
         return ret;
