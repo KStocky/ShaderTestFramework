@@ -195,6 +195,11 @@ SCENARIO("HLSLTests")
                     {
                         "IsEnum",
                         [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "ExpressionSFINAE",
+                        [](const EHLSLVersion InVer) { return InVer >= EHLSLVersion::v2021; }
                     }
                 }
             )
