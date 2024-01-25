@@ -323,14 +323,14 @@ namespace HLSLTypeTriviallyConvertibleTypeTests
         T<InAlignment> A;
     };
 
-    using TrivialNot4ByteAlignedNotFormattable = NotFormattable<Trivial, 8>;
+    using TrivialNotValidAlignmentNotFormattable = NotFormattable<Trivial, 1>;
     using Trivial4ByteAlignedNotFormattable = NotFormattable<Trivial, 4>;
-    using NotTrivialNot4ByteAlignedNotFormattable = NotFormattable<NotTrivial, 8>;
+    using NotTrivialNotValidAlignmentNotFormattable = NotFormattable<NotTrivial, 1>;
     using NotTrivial4ByteAlignedNotFormattable = NotFormattable<NotTrivial, 4>;
 
-    using TrivialNot4ByteAlignedFormattable = Formattable<Trivial, 8>;
+    using TrivialNotValidAlignmentFormattable = Formattable<Trivial, 1>;
     using Trivial4ByteAlignedFormattable = Formattable<Trivial, 4>;
-    using NotTrivialNot4ByteAlignedFormattable = Formattable<NotTrivial, 8>;
+    using NotTrivialNotValidAlignmentFormattable = Formattable<NotTrivial, 1>;
     using NotTrivial4ByteAlignedFormattable = Formattable<NotTrivial, 4>;
 }
 
@@ -346,13 +346,13 @@ namespace HLSLTypeTriviallyConvertibleTypeTests
     static_assert(!std::is_trivially_copyable_v<NotTrivial<4>>);
     static_assert(std::is_trivially_copyable_v<Trivial<4>>);
 
-    static_assert(!HLSLTypeTriviallyConvertibleType<TrivialNot4ByteAlignedNotFormattable>);
+    static_assert(!HLSLTypeTriviallyConvertibleType<TrivialNotValidAlignmentNotFormattable>);
     static_assert(!HLSLTypeTriviallyConvertibleType<Trivial4ByteAlignedNotFormattable>);
-    static_assert(!HLSLTypeTriviallyConvertibleType<NotTrivialNot4ByteAlignedNotFormattable>);
+    static_assert(!HLSLTypeTriviallyConvertibleType<NotTrivialNotValidAlignmentNotFormattable>);
     static_assert(!HLSLTypeTriviallyConvertibleType<NotTrivial4ByteAlignedNotFormattable>);
 
-    static_assert(!HLSLTypeTriviallyConvertibleType<TrivialNot4ByteAlignedFormattable>);
-    static_assert(!HLSLTypeTriviallyConvertibleType<NotTrivialNot4ByteAlignedFormattable>);
+    static_assert(!HLSLTypeTriviallyConvertibleType<TrivialNotValidAlignmentFormattable>);
+    static_assert(!HLSLTypeTriviallyConvertibleType<NotTrivialNotValidAlignmentFormattable>);
     static_assert(!HLSLTypeTriviallyConvertibleType<NotTrivial4ByteAlignedFormattable>);
 
     static_assert(HLSLTypeTriviallyConvertibleType<Trivial4ByteAlignedFormattable>);

@@ -63,6 +63,11 @@ struct HLSLVector<T, 2>
     T y = static_cast<T>(0);
 };
 
+template<>
+struct HLSLVector<bool, 2> : HLSLVector<u32, 2>
+{
+};
+
 template<HLSLBaseType T>
 struct HLSLVector<T, 3>
 {
@@ -122,6 +127,11 @@ struct HLSLVector<T, 3>
     T x = static_cast<T>(0);
     T y = static_cast<T>(0);
     T z = static_cast<T>(0);
+};
+
+template<>
+struct HLSLVector<bool, 3> : HLSLVector<u32, 3>
+{
 };
 
 template<HLSLBaseType T>
@@ -191,24 +201,57 @@ struct HLSLVector<T, 4>
     T w = static_cast<T>(0);
 };
 
-using float2 = HLSLVector<float, 2>;
-using float3 = HLSLVector<float, 3>;
-using float4 = HLSLVector<float, 4>;
+template<>
+struct HLSLVector<bool, 4> : HLSLVector<u32, 4>
+{
+};
+
+using bool2 = HLSLVector<bool, 2>;
+using bool3 = HLSLVector<bool, 3>;
+using bool4 = HLSLVector<bool, 4>;
+
+using float16_t2 = HLSLVector<f16, 2>;
+using float16_t3 = HLSLVector<f16, 3>;
+using float16_t4 = HLSLVector<f16, 4>;
+
+using float2 = HLSLVector<f32, 2>;
+using float3 = HLSLVector<f32, 3>;
+using float4 = HLSLVector<f32, 4>;
+
+using float64_t2 = HLSLVector<f64, 2>;
+using float64_t3 = HLSLVector<f64, 3>;
+using float64_t4 = HLSLVector<f64, 4>;
+
+using int16_t2 = HLSLVector<i16, 2>;
+using int16_t3 = HLSLVector<i16, 3>;
+using int16_t4 = HLSLVector<i16, 4>;
 
 using int2 = HLSLVector<i32, 2>;
 using int3 = HLSLVector<i32, 3>;
 using int4 = HLSLVector<i32, 4>;
 
+using int64_t2 = HLSLVector<i64, 2>;
+using int64_t3 = HLSLVector<i64, 3>;
+using int64_t4 = HLSLVector<i64, 4>;
+
+using uint16_t2 = HLSLVector<u16, 2>;
+using uint16_t3 = HLSLVector<u16, 3>;
+using uint16_t4 = HLSLVector<u16, 4>;
+
 using uint2 = HLSLVector<u32, 2>;
 using uint3 = HLSLVector<u32, 3>;
 using uint4 = HLSLVector<u32, 4>;
+
+using uint64_t2 = HLSLVector<u64, 2>;
+using uint64_t3 = HLSLVector<u64, 3>;
+using uint64_t4 = HLSLVector<u64, 4>;
 
 template <typename T>
 struct std::formatter<HLSLVector<T, 2>> : std::formatter<string_view> {
     auto format(const HLSLVector<T, 2>& In, auto& ctx) const {
         std::string temp;
         std::format_to(std::back_inserter(temp), "({}, {})",
-            In.x, In.y);
+            static_cast<T>(In.x), static_cast<T>(In.y));
         return std::formatter<string_view>::format(temp, ctx);
     }
 };
@@ -218,7 +261,7 @@ struct std::formatter<HLSLVector<T, 3>> : std::formatter<string_view> {
     auto format(const HLSLVector<T, 3>& In, auto& ctx) const {
         std::string temp;
         std::format_to(std::back_inserter(temp), "({}, {}, {})",
-            In.x, In.y, In.z);
+            static_cast<T>(In.x), static_cast<T>(In.y), static_cast<T>(In.z));
         return std::formatter<string_view>::format(temp, ctx);
     }
 };
@@ -228,7 +271,8 @@ struct std::formatter<HLSLVector<T, 4>> : std::formatter<string_view> {
     auto format(const HLSLVector<T, 4>& In, auto& ctx) const {
         std::string temp;
         std::format_to(std::back_inserter(temp), "({}, {}, {}, {})",
-            In.x, In.y, In.z, In.w);
+            static_cast<T>(In.x), static_cast<T>(In.y), static_cast<T>(In.z), static_cast<T>(In.w));
         return std::formatter<string_view>::format(temp, ctx);
     }
 };
+
