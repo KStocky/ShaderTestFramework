@@ -7,7 +7,7 @@ namespace ttl
     struct caster;
 
     template<typename From>
-    struct caster<bool, From, typename enable_if<is_fundamental<From>::value>::type>
+    struct caster<bool, From, typename enable_if<fundamental_type_traits<From>::is_fundamental>::type>
     {
         static bool cast(From In)
         {

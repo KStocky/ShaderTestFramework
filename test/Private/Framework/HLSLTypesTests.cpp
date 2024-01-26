@@ -23,6 +23,12 @@ struct HLSLTypeOpTestFixture
     };
 
     template<>
+    struct DistTraits<f16> : DistTraits<float> {};
+
+    template<>
+    struct DistTraits<f64> : DistTraits<float> {};
+
+    template<>
     struct DistTraits<u32>
     {
         using Type = std::uniform_int_distribution<u32>;
@@ -31,12 +37,24 @@ struct HLSLTypeOpTestFixture
     };
 
     template<>
+    struct DistTraits<u16> : DistTraits<u32> {};
+
+    template<>
+    struct DistTraits<u64> : DistTraits<u32> {};
+
+    template<>
     struct DistTraits<i32>
     {
         using Type = std::uniform_int_distribution<i32>;
         static constexpr i32 Min = -100;
         static constexpr i32 Max = 100;
     };
+
+    template<>
+    struct DistTraits<i16> : DistTraits<i32> {};
+
+    template<>
+    struct DistTraits<i64> : DistTraits<i32> {};
 
     enum class EOp
     {
@@ -143,9 +161,9 @@ struct HLSLTypeOpTestFixture
         std::mt19937 gen(rd());
         typename DistTraits<T>::Type dis(DistTraits<T>::Min, DistTraits<T>::Max);
 
-        auto GenNum = [&]()
+        auto GenNum = [&]() -> T
         {
-            auto num = dis(gen);
+            T num = static_cast<T>(dis(gen));
             if (num == static_cast<T>(0))
             {
                 return static_cast<T>(1);
@@ -191,9 +209,16 @@ struct HLSLTypeOpTestFixture
 };
 
 TEMPLATE_TEST_CASE_SIG("HLSL Type operation Tests", "[template][nttp]", ((typename T, u32 S), T, S), 
+    (i16, 2), (i16, 3), (i16, 4),
     (i32, 2), (i32, 3), (i32, 4),
+    (i64, 2), (i64, 3), (i64, 4),
+    (u16, 2), (u16, 3), (u16, 4),
     (u32, 2), (u32, 3), (u32, 4),
-    (float, 2), (float, 3), (float, 4))
+    (u64, 2), (u64, 3), (u64, 4),
+    (f16, 2), (f16, 3), (f16, 4),
+    (f32, 2), (f32, 3), (f32, 4),
+    (f64, 2), (f64, 3), (f64, 4)
+)
 {
     HLSLTypeOpTestFixture<T, S> fixture;
     REQUIRE(fixture);
@@ -201,13 +226,34 @@ TEMPLATE_TEST_CASE_SIG("HLSL Type operation Tests", "[template][nttp]", ((typena
 
 namespace HLSLTypesConceptsTests
 {
+    static_assert(HLSLTypeTriviallyConvertibleType<bool2>);
+    static_assert(HLSLTypeTriviallyConvertibleType<bool3>);
+    static_assert(HLSLTypeTriviallyConvertibleType<bool4>);
+    static_assert(HLSLTypeTriviallyConvertibleType<int16_t2>);
+    static_assert(HLSLTypeTriviallyConvertibleType<int16_t3>);
+    static_assert(HLSLTypeTriviallyConvertibleType<int16_t4>);
     static_assert(HLSLTypeTriviallyConvertibleType<int2>);
     static_assert(HLSLTypeTriviallyConvertibleType<int3>);
     static_assert(HLSLTypeTriviallyConvertibleType<int4>);
+    static_assert(HLSLTypeTriviallyConvertibleType<int64_t2>);
+    static_assert(HLSLTypeTriviallyConvertibleType<int64_t3>);
+    static_assert(HLSLTypeTriviallyConvertibleType<int64_t4>);
+    static_assert(HLSLTypeTriviallyConvertibleType<uint16_t2>);
+    static_assert(HLSLTypeTriviallyConvertibleType<uint16_t3>);
+    static_assert(HLSLTypeTriviallyConvertibleType<uint16_t4>);
     static_assert(HLSLTypeTriviallyConvertibleType<uint2>);
     static_assert(HLSLTypeTriviallyConvertibleType<uint3>);
     static_assert(HLSLTypeTriviallyConvertibleType<uint4>);
+    static_assert(HLSLTypeTriviallyConvertibleType<uint64_t2>);
+    static_assert(HLSLTypeTriviallyConvertibleType<uint64_t3>);
+    static_assert(HLSLTypeTriviallyConvertibleType<uint64_t4>);
+    static_assert(HLSLTypeTriviallyConvertibleType<float16_t2>);
+    static_assert(HLSLTypeTriviallyConvertibleType<float16_t3>);
+    static_assert(HLSLTypeTriviallyConvertibleType<float16_t4>);
     static_assert(HLSLTypeTriviallyConvertibleType<float2>);
     static_assert(HLSLTypeTriviallyConvertibleType<float3>);
     static_assert(HLSLTypeTriviallyConvertibleType<float4>);
+    static_assert(HLSLTypeTriviallyConvertibleType<float64_t2>);
+    static_assert(HLSLTypeTriviallyConvertibleType<float64_t3>);
+    static_assert(HLSLTypeTriviallyConvertibleType<float64_t4>);
 }

@@ -135,6 +135,11 @@ namespace ttl
         {
             return In.Value * 4;
         }
+        
+        static uint alignment_required(TestTypeWithVaryingSize)
+        {
+            return 4;
+        }
 
         template<typename U>
         static void write(inout container_wrapper<U> InContainer, const uint InIndex, const TestTypeWithVaryingSize In)
@@ -161,6 +166,11 @@ namespace ttl
         static uint bytes_required(T)
         {
             return sizeof(T);
+        }
+        
+        static uint alignment_required(T)
+        {
+            return 4;
         }
 
         template<typename U, typename T1>
@@ -406,4 +416,96 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_TwoLargeFailDoubleAssertWithoutTypeIdW
     u.A = uint2(5000, 6000);
     STF::AreEqual(t, u, 42);
     STF::AreEqual(t, u, 42);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment2_THEN_HasExpectedResults()
+{
+    STF::AreEqual(uint16_t(24u), uint16_t(42u), 42);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment2_THEN_HasExpectedResults()
+{
+    STF::AreEqual(uint16_t(24u), uint16_t(42u), 42);
+    STF::AreEqual(uint16_t(1024), uint16_t(4), 42);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment8_THEN_HasExpectedResults()
+{
+    STF::AreEqual(uint64_t(24u), uint64_t(42u), 42);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment8_THEN_HasExpectedResults()
+{
+    STF::AreEqual(uint64_t(24u), uint64_t(42u), 42);
+    STF::AreEqual(uint64_t(1024), uint64_t(4), 42);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign2SecondAlign8_THEN_HasExpectedResults()
+{
+    STF::AreEqual(uint16_t(24u), uint16_t(42u), 42);
+    STF::AreEqual(uint64_t(1024), uint64_t(4), 42);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign8SecondAlign2_THEN_HasExpectedResults()
+{
+    STF::AreEqual(uint64_t(24u), uint64_t(42u), 42);
+    STF::AreEqual(uint16_t(1024), uint16_t(4), 42);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment2_THEN_HasExpectedResults()
+{
+    STF::IsFalse(uint16_t(24u), 42);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertOfTypesWithAlignment2_THEN_HasExpectedResults()
+{
+    STF::IsFalse(uint16_t(24u), 42);
+    STF::IsFalse(uint16_t(1024), 42);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment8_THEN_HasExpectedResults()
+{
+    STF::IsFalse(uint64_t(24u), 42);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertOfTypesWithAlignment8_THEN_HasExpectedResults()
+{
+    STF::IsFalse(uint64_t(24u), 42);
+    STF::IsFalse(uint64_t(1024), 42);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertFirstAlign2SecondAlign8_THEN_HasExpectedResults()
+{
+    STF::IsFalse(uint16_t(24u), 42);
+    STF::IsFalse(uint64_t(1024), 42);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1, 1, 1)]
+void GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertFirstAlign8SecondAlign2_THEN_HasExpectedResults()
+{
+    STF::IsFalse(uint64_t(24u), 42);
+    STF::IsFalse(uint16_t(1024), 42);
 }

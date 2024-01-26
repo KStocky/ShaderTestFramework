@@ -5,13 +5,16 @@ add_executable(ShaderTestFrameworkTests)
 asset_dependency_init(ShaderTestFrameworkTests)
 
 set(SHADER_SOURCES
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/Alignof.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/ArrayTemplateSpecialization.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CallOperator.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CleanupAttribute.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CounterMacro.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/DeducingPackingOrder.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/DeferSFINAE.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/DefineStructMemberFunctionInFunction.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/DefineStructMemberFunctionLater.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/ExpressionSFINAE.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/ForwardDeclareFunction.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/ForwardDeclareFunctionInOtherFunction.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/ForwardDeclareFunctionInOtherFunctionAndDefineIt.hlsl
@@ -20,6 +23,7 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/GloballyCoherentTypeModifier.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/GlobalString.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/HasMemberCheck.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/IsEnum.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/LineMacro.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/LocalString.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/LocalStringAssignedToAUintArray.hlsl
@@ -29,12 +33,14 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/OperatorBoolWithAnEmptyStruct.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/OperatorInt.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/OperatorIntWithAnEmptyStruct.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/SizeofEnumType.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/SizeofOperator.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/StaticConstStructMemberInTemplatedStruct.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/StaticStructMemberInNonTemplatedStruct.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/StaticStructMemberInTemplatedStruct.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/StaticVariableInTemplatedFunction.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/TernaryInTypeTrait.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/UserDefinedVector.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/VariadicMacro.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ResourceBinding/ArrayOfBuffers.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ResourceBinding/SingleInputBuffer.hlsl
@@ -51,6 +57,7 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/PixelShaderWithQuadAny.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/PixelShaderWithSamplerFeedback.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/PixelShaderWithSV_Barycentrics.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/TemplatedByteAddressBuffer.hlsl
     Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithData.hlsl
     Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithNoData.hlsl
     Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/NoAssertBuffer.hlsl
@@ -81,16 +88,19 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/Macros/Scenario.hlsl
     Shader/HLSLFrameworkTests/Macros/Sections.hlsl
     Shader/HLSLFrameworkTests/Macros/SectionVarCreation.hlsl
+    Shader/HLSLFrameworkTests/Memory/AlignedOffsetTests.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/SectionTest.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/VariadicMacroOverloading.hlsl
+    Shader/HLSLFrameworkTests/TypeTraits/AlignOfTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/ArrayTraitsTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/ContainerTraitsTests.hlsl
-    Shader/HLSLFrameworkTests/TypeTraits/FundamentalTypeTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/FundamentalTypeTraitsTests.hlsl
+    Shader/HLSLFrameworkTests/TypeTraits/IsEnumTests.hlsl
+    Shader/HLSLFrameworkTests/TypeTraits/SizeOfTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/TypeIDTests.hlsl
     Shader/HLSLFrameworkTests/BasicShaderTests.hlsl
     Shader/HLSLFrameworkTests/FlattenIndex.hlsl
@@ -129,10 +139,13 @@ set(SOURCES
     Private/Framework/HLSLFramework/Macros/ScenarioTests.cpp
     Private/Framework/HLSLFramework/Macros/SectionsTests.cpp
     Private/Framework/HLSLFramework/Macros/SectionVarCreationTests.cpp
+    Private/Framework/HLSLFramework/Memory/AlignedOffsetTests.cpp
+    Private/Framework/HLSLFramework/TypeTraits/AlignOfTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/ArrayTraitsTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/ContainerTraitsTests.cpp
-    Private/Framework/HLSLFramework/TypeTraits/FundamentalTypeTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/FundamentalTypeTraitsTests.cpp
+    Private/Framework/HLSLFramework/TypeTraits/IsEnumTests.cpp
+    Private/Framework/HLSLFramework/TypeTraits/SizeOfTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/TypeIdTests.cpp
     Private/Framework/HLSLFramework/BasicShaderTests.cpp
     Private/Framework/HLSLFramework/Bugs.cpp
@@ -146,6 +159,7 @@ set(SOURCES
     Private/Framework/HLSLTypesTests.cpp
     Private/Framework/SectionsInHLSLProofOfConceptTests.cpp
     Private/Framework/ShaderTestFixtureTests.cpp
+    Private/Utility/AlignedOffsetTests.cpp
     Private/Utility/ConceptsTests.cpp
     Private/Utility/EnumReflectionTests.cpp
     Private/Utility/FunctionTraitsTests.cpp

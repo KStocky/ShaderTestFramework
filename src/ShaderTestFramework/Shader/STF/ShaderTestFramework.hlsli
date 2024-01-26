@@ -7,6 +7,7 @@
 #include "/Test/TTL/byte_writer.hlsli"
 #include "/Test/TTL/caster.hlsli"
 #include "/Test/TTL/container_wrapper.hlsli"
+#include "/Test/TTL/memory.hlsli"
 #include "/Test/TTL/type_traits.hlsli"
 
 namespace ShaderTestPrivate
@@ -65,59 +66,64 @@ namespace ShaderTestPrivate
     }
 
     template<typename T>
-    typename ttl::enable_if<ttl::byte_writer<T>::has_writer, uint2>::type AddAssertData(T In1, T In2)
+    uint2 AddAssertData(T In1, T In2)
     {
         const uint size1 = ttl::bytes_required(In1);
         const uint size2 = ttl::bytes_required(In2);
-        const uint size = size1 + size2 + 8;
+        const uint align1 = ttl::alignment_required(In1);
+        const uint align2 = ttl::alignment_required(In2);
+        const uint sizeAndAlign1 = (size1 << 16) | align1;
+        const uint sizeAndAlign2 = (size2 << 16) | align2;
+
+        const uint alignedSize1 = ttl::aligned_offset(size1 + 4, align1);
+        const uint alignedSize2 = ttl::aligned_offset(size2 + 4, align2);
+        const uint size = ttl::aligned_offset(alignedSize1 + alignedSize2, 8);
         uint offset = 0;
         GetAllocationBuffer().InterlockedAdd(8, size, offset);
 
-        const uint address = StartAddressAssertData() + offset;
+        const uint startAddress = StartAddressAssertData() + offset;
+        uint address = startAddress;
         if (address + size < SizeInBytesOfAssertBuffer)
         {
             RWByteAddressBuffer buff = GetAssertBuffer();
-            ttl::write_bytes(buff, address, size1);
-            ttl::write_bytes(buff, address + 4, In1);
-            ttl::write_bytes(buff, address + 4 + size1, size2);
-            ttl::write_bytes(buff, address + 8 + size1, In2);
+            ttl::write_bytes(buff, address, sizeAndAlign1);
+            address = ttl::aligned_offset(address + 4, align1);
+            ttl::write_bytes(buff, address, In1);
+            address = ttl::aligned_offset(address + size1, 4);
+            ttl::write_bytes(buff, address, sizeAndAlign2);
+            address = ttl::aligned_offset(address + 4, align2);
+            ttl::write_bytes(buff, address, In2);
 
-            return uint2(address, size);
+            return uint2(startAddress, size);
         }
 
         return uint2(0, 0);
     }
 
     template<typename T>
-    typename ttl::enable_if<!ttl::byte_writer<T>::has_writer, uint2>::type AddAssertData(T In1, T In2)
-    {
-        return uint2(0, 0);
-    }
-
-    template<typename T>
-    typename ttl::enable_if<ttl::byte_writer<T>::has_writer, uint2>::type AddAssertData(T In)
+    uint2 AddAssertData(T In)
     {
         const uint size1 = ttl::bytes_required(In);
-        const uint size = size1 + 4;
+        const uint align1 = ttl::alignment_required(In);
+        const uint sizeAndAlign1 = (size1 << 16) | align1;
+
+        const uint alignedSize1 = ttl::aligned_offset(size1 + 4, align1);
+        const uint size = ttl::aligned_offset(alignedSize1, 8);
         uint offset = 0;
         GetAllocationBuffer().InterlockedAdd(8, size, offset);
 
-        const uint address = StartAddressAssertData() + offset;
+        const uint startAddress = StartAddressAssertData() + offset;
+        uint address = startAddress;
         if (address + size < SizeInBytesOfAssertBuffer)
         {
             RWByteAddressBuffer buff = GetAssertBuffer();
-            ttl::write_bytes(buff, address, size1);
-            ttl::write_bytes(buff, address + 4, In);
+            ttl::write_bytes(buff, address, sizeAndAlign1);
+            address = ttl::aligned_offset(address + 4, align1);
+            ttl::write_bytes(buff, address, In);
 
-            return uint2(address, size);
+            return uint2(startAddress, size);
         }
 
-        return uint2(0, 0);
-    }
-
-    template<typename T>
-    typename ttl::enable_if<!ttl::byte_writer<T>::has_writer, uint2>::type AddAssertData(T In)
-    {
         return uint2(0, 0);
     }
     

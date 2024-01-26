@@ -182,6 +182,7 @@ private:
 	ComPtr<ID3D12Device12> m_Device = nullptr;
 	ComPtr<ID3D12Debug6> m_Debug = nullptr;
 	ComPtr<ID3D12DebugDevice2> m_DebugDevice = nullptr;
+    ComPtr<ID3D12InfoQueue> m_InfoQueue = nullptr;
 	ComPtr<IDXGIFactory7> m_Factory = nullptr;
 	ComPtr<IDXGIAdapter4> m_Adapter = nullptr;
 

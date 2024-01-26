@@ -56,7 +56,7 @@ namespace ttl
         template<typename U>
         struct ByteAddressEnabler
         {
-            static const bool value = writable && is_same<element_type, U>::value && container_traits<underlying_type>::is_byte_address;
+            static const bool value = writable && container_traits<underlying_type>::is_byte_address;
         };
 
         template<typename U>
@@ -96,19 +96,19 @@ namespace ttl
         }
 
         template<typename U>
-        typename enable_if<ByteAddressEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2)
+        typename enable_if<ByteAddressEnabler<U>::value && is_same<uint, U>::value>::type store(const uint InIndex, const U InItem, const U InItem2)
         {
             Data.Store(InIndex, uint2(InItem, InItem2));
         }
 
         template<typename U>
-        typename enable_if<ByteAddressEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3)
+        typename enable_if<ByteAddressEnabler<U>::value && is_same<uint, U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3)
         {
             Data.Store(InIndex, uint3(InItem, InItem2, InItem3));
         }
 
         template<typename U>
-        typename enable_if<ByteAddressEnabler<U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3, const U InItem4)
+        typename enable_if<ByteAddressEnabler<U>::value && is_same<uint, U>::value>::type store(const uint InIndex, const U InItem, const U InItem2, const U InItem3, const U InItem4)
         {
             Data.Store(InIndex, uint4(InItem, InItem2, InItem3, InItem4));
         }

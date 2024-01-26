@@ -131,7 +131,7 @@ namespace STF
         return 
             [](const std::span<const std::byte> InBytes) -> std::string
             {
-                if (InBytes.size_bytes() < sizeof(T))
+                if (InBytes.size_bytes() != sizeof(T))
                 {
                     return std::format("Unexpected num bytes: {} for type {}", InBytes.size_bytes(), TypeToString<T>());
                 }

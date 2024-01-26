@@ -85,6 +85,13 @@ SCENARIO("ShaderModelTests")
                         EShaderType::Compute,
                         std::vector<std::wstring>{},
                         [](const D3D_SHADER_MODEL In) { return In >= D3D_SHADER_MODEL_6_7; }
+                    },
+                    std::tuple
+                    {
+                        "TemplatedByteAddressBuffer",
+                        EShaderType::Compute,
+                        std::vector<std::wstring>{},
+                        [](const D3D_SHADER_MODEL) { return true; }
                     }
                 }
             )

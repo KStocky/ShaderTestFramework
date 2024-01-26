@@ -69,7 +69,17 @@ template<typename T, typename... U>
 concept ConstexprDefaultConstructableEmptyCallableType = ConstexprDefaultConstructableType<T> && EmptyCallableType<T, U...>;
 
 template<typename T>
-concept HLSLBaseType = std::same_as<T, i32> || std::same_as<T, u32> || std::same_as<T, float>;
+concept HLSLBaseType = 
+    std::same_as<T, bool> ||
+    std::same_as<T, i16> ||
+    std::same_as<T, i32> ||
+    std::same_as<T, i64> ||
+    std::same_as<T, u16> ||
+    std::same_as<T, u32> ||
+    std::same_as<T, u64> ||
+    std::same_as<T, f16> ||
+    std::same_as<T, f32> ||
+    std::same_as<T, f64>;
 
 namespace Private
 {
@@ -113,6 +123,6 @@ Private::formattable<T, CharT>;
 template<typename T>
 concept HLSLTypeTriviallyConvertibleType =
     std::is_trivially_copyable_v<T> &&
-    (alignof(T) == 4) &&
+    (alignof(T) == 4 || alignof(T) == 2 || alignof(T) == 8) &&
     Formattable<T, char>;
 

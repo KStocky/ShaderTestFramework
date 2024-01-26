@@ -55,14 +55,17 @@ set(SOURCES
     Public/Utility/Exception.h
     Public/Utility/Expected.h
     Public/Utility/FixedString.h
+    Public/Utility/Float.h
     Public/Utility/FunctionTraits.h
     Public/Utility/Lambda.h
+    Public/Utility/Math.h
     Public/Utility/MoveOnly.h
     Public/Utility/OverloadSet.h
     Public/Utility/Pointer.h
     Public/Utility/Tuple.h
     Public/Utility/Type.h
     Public/Utility/TypeList.h
+    Public/Utility/TypeTraits.h
     Private/D3D12/CommandAllocator.cpp
     Private/D3D12/CommandEngine.cpp
     Private/D3D12/CommandList.cpp
@@ -92,6 +95,7 @@ set(SHADER_SOURCES
     Shader/TTL/byte_writer.hlsli
     Shader/TTL/caster.hlsli
     Shader/TTL/container_wrapper.hlsli
+    Shader/TTL/memory.hlsli
     Shader/TTL/type_traits.hlsli
 )
 
@@ -117,11 +121,16 @@ source_group(TREE ${WINPIX_INCLUDE} PREFIX "ThirdParty/WinPix" FILES ${WINPIX_HE
 source_group(TREE ${SHADER_SOURCE_DIR} PREFIX "ShaderSources" FILES ${SHADER_SOURCES})
 
 target_compile_definitions(ShaderTestFramework PRIVATE D3D12_SDK_VERSION_ID=${SDK_VER} SHADER_SRC="${SHADER_SOURCE_REL_DIR}" USE_PIX)
+
+# Silencing this while we are using a float16 library.
+# We can remove this when we start using std::float16_t whenever that is implemented...
+target_compile_definitions(ShaderTestFramework PUBLIC _SILENCE_CXX23_DENORM_DEPRECATION_WARNING NOMINMAX)
 target_compile_options(ShaderTestFramework PRIVATE ${GLOBAL_COMPILE_FLAGS})
 target_include_directories(ShaderTestFramework PUBLIC ${CMAKE_CURRENT_LIST_DIR}/Public/ ${AGILITY_INCLUDE} ${DXC_INCLUDE} ${WINPIX_INCLUDE})
 target_link_libraries(ShaderTestFramework PRIVATE d3d12.lib dxgi.lib DXC dxguid.lib WINPIX)
 add_tl_expected(ShaderTestFramework)
 add_tuplet(ShaderTestFramework)
+add_float16(ShaderTestFramework)
 
 target_add_asset_directory(ShaderTestFramework ${AGILITY_DLL} "/D3D12")
 target_add_asset_directory(ShaderTestFramework ${WARP_DLL} "/")

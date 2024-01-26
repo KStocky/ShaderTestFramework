@@ -170,6 +170,36 @@ SCENARIO("HLSLTests")
                     {
                         "CallOperator",
                         [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; }
+                    },
+                    std::tuple
+                    {
+                        "Alignof",
+                        [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "DeducingPackingOrder",
+                        [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "UserDefinedVector",
+                        [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "SizeofEnumType",
+                        [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "IsEnum",
+                        [](const EHLSLVersion) { return false; }
+                    },
+                    std::tuple
+                    {
+                        "ExpressionSFINAE",
+                        [](const EHLSLVersion InVer) { return InVer >= EHLSLVersion::v2021; }
                     }
                 }
             )

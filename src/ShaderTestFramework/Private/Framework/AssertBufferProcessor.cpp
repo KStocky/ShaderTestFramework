@@ -1,6 +1,7 @@
 #include "Framework/AssertBufferProcessor.h"
 
 #include "Utility/Exception.h"
+#include "Utility/Math.h"
 
 #include <format>
 #include <ranges>
@@ -110,17 +111,19 @@ namespace STF
                 continue;
             }
 
-            u32 byteIndex = 0;
+            u64 byteIndex = 0;
             const auto endIndex = error.Data.size();
 
             for (u32 i = 0; byteIndex < endIndex; ++i)
             {
-                u32 sizeData;
-                std::memcpy(&sizeData, error.Data.data() + byteIndex, sizeof(u32));
-                byteIndex += sizeof(u32);
+                u32 sizeAndAlignData;
+                std::memcpy(&sizeAndAlignData, error.Data.data() + byteIndex, sizeof(u32));
+                const u32 size = sizeAndAlignData >> 16;
+                const u32 align = sizeAndAlignData & 0xffff;
+                byteIndex = AlignedOffset(byteIndex + sizeof(4), align);
 
-                InOs << std::format("Data {}: {}\n", i + 1u, error.DataToStringConverter(std::span{ error.Data.cbegin() + byteIndex, sizeData }));
-                byteIndex += sizeData;
+                InOs << std::format("Data {}: {}\n", i + 1u, error.DataToStringConverter(std::span{ error.Data.cbegin() + byteIndex, size }));
+                byteIndex = AlignedOffset(byteIndex + size, 4);
             }
         }
 

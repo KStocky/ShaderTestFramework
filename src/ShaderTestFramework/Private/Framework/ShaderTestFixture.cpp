@@ -4,6 +4,7 @@
 #include "Framework/HLSLTypes.h"
 #include "Framework/PIXCapturer.h"
 #include "Utility/EnumReflection.h"
+#include "Utility/Math.h"
 
 #include "D3D12/CommandEngine.h"
 #include "D3D12/GPUDevice.h"
@@ -151,6 +152,7 @@ CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName
 {
     ShaderCompilationJobDesc job;
     job.AdditionalFlags = m_CompilationFlags;
+    job.AdditionalFlags.emplace_back(L"-enable-16bit-types");
     job.EntryPoint = InName;
     job.ShaderModel = m_ShaderModel;
     job.ShaderType = EShaderType::Compute;
@@ -286,18 +288,45 @@ void ShaderTestFixture::PopulateDefaultTypeConverters()
 
             return std::format("{}", data != 0 ? "true" : "false");
         } },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_BOOL2", STF::CreateDefaultTypeConverter<bool2>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_BOOL3", STF::CreateDefaultTypeConverter<bool3>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_BOOL4", STF::CreateDefaultTypeConverter<bool4>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT16", STF::CreateDefaultTypeConverter<i16>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT16_2", STF::CreateDefaultTypeConverter<int16_t2>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT16_3", STF::CreateDefaultTypeConverter<int16_t3>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT16_4", STF::CreateDefaultTypeConverter<int16_t4>() },
         Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT", STF::CreateDefaultTypeConverter<i32>() },
         Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT2", STF::CreateDefaultTypeConverter<int2>() },
         Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT3", STF::CreateDefaultTypeConverter<int3>() },
         Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT4", STF::CreateDefaultTypeConverter<int4>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT64", STF::CreateDefaultTypeConverter<i64>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT64_2", STF::CreateDefaultTypeConverter<int64_t2>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT64_3", STF::CreateDefaultTypeConverter<int64_t3>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT64_4", STF::CreateDefaultTypeConverter<int64_t4>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT16", STF::CreateDefaultTypeConverter<u16>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT16_2", STF::CreateDefaultTypeConverter<uint16_t2>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT16_3", STF::CreateDefaultTypeConverter<uint16_t3>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT16_4", STF::CreateDefaultTypeConverter<uint16_t4>() },
         Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT", STF::CreateDefaultTypeConverter<u32>() },
         Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT2", STF::CreateDefaultTypeConverter<uint2>() },
         Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT3", STF::CreateDefaultTypeConverter<uint3>() },
         Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT4", STF::CreateDefaultTypeConverter<uint4>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT64", STF::CreateDefaultTypeConverter<u64>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT64_2", STF::CreateDefaultTypeConverter<uint64_t2>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT64_3", STF::CreateDefaultTypeConverter<uint64_t3>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT64_4", STF::CreateDefaultTypeConverter<uint64_t4>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT16", STF::CreateDefaultTypeConverter<f16>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT16_2", STF::CreateDefaultTypeConverter<float16_t2>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT16_3", STF::CreateDefaultTypeConverter<float16_t3>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT16_4", STF::CreateDefaultTypeConverter<float16_t4>() },
         Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT", STF::CreateDefaultTypeConverter<float>() },
         Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT2", STF::CreateDefaultTypeConverter<float2>() },
         Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT3", STF::CreateDefaultTypeConverter<float3>() },
         Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT4", STF::CreateDefaultTypeConverter<float4>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT64", STF::CreateDefaultTypeConverter<f64>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT64_2", STF::CreateDefaultTypeConverter<float64_t2>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT64_3", STF::CreateDefaultTypeConverter<float64_t3>() },
+        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT64_4", STF::CreateDefaultTypeConverter<float64_t4>() },
     };
     
     m_Defines.reserve(typeIdDefines.size());
@@ -316,13 +345,8 @@ bool ShaderTestFixture::ShouldTakeCapture() const
 
 u64 ShaderTestFixture::CalculateAssertBufferSize() const
 {    
-    auto RoundUpToMultipleOf4 = [](const u64 In)
-    {
-        return (In + 3ull) & ~3ull;
-    };
-
-    const u64 assertInfoSection = m_AssertInfo.NumFailedAsserts * sizeof(STF::HLSLAssertMetaData);
-    const u64 assertDataSection = m_AssertInfo.NumBytesAssertData > 0 ? RoundUpToMultipleOf4(m_AssertInfo.NumBytesAssertData) : 0;
+    const u64 assertInfoSection = AlignedOffset(m_AssertInfo.NumFailedAsserts * sizeof(STF::HLSLAssertMetaData), 8ull);
+    const u64 assertDataSection = m_AssertInfo.NumBytesAssertData > 0 ? AlignedOffset(m_AssertInfo.NumBytesAssertData, 8ull) : 0;
 
     const u64 requestedSize = assertInfoSection + assertDataSection;
 

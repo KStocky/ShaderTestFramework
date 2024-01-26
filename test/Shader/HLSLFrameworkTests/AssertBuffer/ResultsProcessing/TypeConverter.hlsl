@@ -29,28 +29,6 @@ namespace ttl
             return In.Value == 0;
         }
     };
-
-    template<typename T>
-    struct byte_writer<T, typename enable_if<
-        is_same<T, TestTypeWithoutId>::value || 
-        is_same<T, TestTypeWithTypeId1>::value || 
-        is_same<T, TestTypeWithTypeId2>::value
-        >::type
-    >
-    {
-        static const bool has_writer = true;
-
-        static uint bytes_required(T)
-        {
-            return sizeof(T);
-        }
-
-        template<typename U>
-        static void write(inout container_wrapper<U> InContainer, const uint InIndex, const T In)
-        {
-            InContainer.store(InIndex, In.Value);
-        }
-    };
 }
 
 namespace STF
