@@ -24,7 +24,7 @@ SCENARIO("HLSLFrameworkTests - StaticAssert")
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/StaticAssert/{}.hlsl", testName))));
     DYNAMIC_SECTION(testName)
     {
-        const auto result = fixture.RunTest("Main", 1, 1, 1);
+        const auto result = fixture.RunCompileTimeTest("Main");
         if (shouldSucceed)
         {
             REQUIRE(result);
