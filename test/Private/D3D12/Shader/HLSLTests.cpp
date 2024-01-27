@@ -200,6 +200,11 @@ SCENARIO("HLSLTests")
                     {
                         "ExpressionSFINAE",
                         [](const EHLSLVersion InVer) { return InVer >= EHLSLVersion::v2021; }
+                    },
+                    std::tuple
+                    {
+                        "StaticAssert",
+                        [](const EHLSLVersion InVer) { return InVer >= EHLSLVersion::v2021; }
                     }
                 }
             )
