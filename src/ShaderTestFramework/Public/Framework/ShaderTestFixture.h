@@ -31,6 +31,7 @@ public:
 
     void TakeCapture();
     STF::Results RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ);
+    STF::Results RunCompileTimeTest(const std::string_view InName);
     void RegisterTypeConverter(std::string InTypeIDName, STF::TypeConverter InConverter);
 
     bool IsValid() const;

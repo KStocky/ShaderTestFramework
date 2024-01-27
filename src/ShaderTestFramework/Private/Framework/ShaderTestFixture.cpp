@@ -133,6 +133,18 @@ STF::Results ShaderTestFixture::RunTest(const std::string_view InName, u32 InX, 
     return ReadbackResults(readBackAllocationBuffer, readBackBuffer, uint3(dimX, dimY, dimZ));
 }
 
+STF::Results ShaderTestFixture::RunCompileTimeTest(const std::string_view InName)
+{
+    const auto compileResult = CompileShader(InName);
+
+    if (!compileResult.has_value())
+    {
+        return STF::Results{ {compileResult.error()} };
+    }
+
+    return STF::Results{ STF::TestRunResults{} };
+}
+
 bool ShaderTestFixture::IsValid() const
 {
     return m_Device.IsValid();
