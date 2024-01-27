@@ -96,6 +96,12 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/ProofOfConcept/GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/SectionTest.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/VariadicMacroOverloading.hlsl
+    Shader/HLSLFrameworkTests/StaticAssert/ConditionIsTrue.hlsl
+    Shader/HLSLFrameworkTests/StaticAssert/ConditionIsTrueExpression.hlsl
+    Shader/HLSLFrameworkTests/StaticAssert/ConditionIsTrueWithMessage.hlsl
+    Shader/HLSLFrameworkTests/StaticAssert/ConditionIsFalse.hlsl
+    Shader/HLSLFrameworkTests/StaticAssert/ConditionIsFalseExpression.hlsl
+    Shader/HLSLFrameworkTests/StaticAssert/ConditionIsFalseWithMessage.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/AlignOfTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/ArrayTraitsTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/ContainerTraitsTests.hlsl
@@ -155,6 +161,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/FlattenIndexTests.cpp
     Private/Framework/HLSLFramework/ProofOfConceptTests.cpp
     Private/Framework/HLSLFramework/SectionManagementTests.cpp
+    Private/Framework/HLSLFramework/StaticAssertTests.cpp
     Private/Framework/HLSLFramework/ThreadDimensionsTests.cpp
     Private/Framework/HLSLFramework/ThreadIdRegistrationTests.cpp
     Private/Framework/HLSLTypesTests.cpp
