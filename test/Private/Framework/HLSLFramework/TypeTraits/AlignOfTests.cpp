@@ -13,6 +13,6 @@ SCENARIO("HLSLFrameworkTests - TypeTraits - AlignOf")
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/TypeTraits/AlignOfTests.hlsl")));
     DYNAMIC_SECTION(testName)
     {
-        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+        REQUIRE(fixture.RunCompileTimeTest(testName));
     }
 }
