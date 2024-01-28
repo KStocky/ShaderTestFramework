@@ -3,5 +3,5 @@
 [numthreads(1,1,1)]
 void Main()
 {
-    STATIC_ASSERT(42 != 42 && 1 < 3);
+    STATIC_ASSERT(TEST_CONDITION, "This should succeed");
 }

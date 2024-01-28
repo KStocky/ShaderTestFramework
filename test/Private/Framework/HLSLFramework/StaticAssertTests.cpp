@@ -7,22 +7,34 @@
 
 SCENARIO("HLSLFrameworkTests - StaticAssert")
 {
-    auto [testName, shouldSucceed] = GENERATE
+    auto [fileName, condition, shouldSucceed] = GENERATE
     (
-        table<std::string, bool>
+        table<std::string, std::string, bool>
         (
             {
-                std::tuple{"ConditionIsTrue", true},
-                std::tuple{"ConditionIsTrueWithMessage", true},
-                std::tuple{"ConditionIsTrueExpression", true},
-                std::tuple{"ConditionIsFalse", false},
-                std::tuple{"ConditionIsFalseWithMessage", false},
-                std::tuple{"ConditionIsFalseExpression", false}
+                std::tuple{"ConditionNoMessage", "true", true},
+                std::tuple{"ConditionNoMessage", "false", false},
+                std::tuple{"ConditionNoMessage", "42 == 42", true},
+                std::tuple{"ConditionNoMessage", "42 != 42", false},
+                std::tuple{"ConditionWithMessage", "true", true},
+                std::tuple{"ConditionWithMessage", "false", false},
+                std::tuple{"Global", "true", true},
+                std::tuple{"Global", "false", false},
+                std::tuple{"NonTemplatedStructMember", "true", true},
+                std::tuple{"NonTemplatedStructMember", "false", false},
+                std::tuple{"TemplatedStructMember", "true", true},
+                std::tuple{"TemplatedStructMember", "false", false},
+                std::tuple{"TemplatedStructMember", "ttl::is_same<T, uint>::value", true},
+                std::tuple{"TemplatedStructMember", "ttl::is_same<T, T>::value", true},
+                std::tuple{"TemplatedStructMemberInstantiated", "ttl::is_same<T, T>::value", true},
+                std::tuple{"TemplatedStructMemberInstantiated", "ttl::is_same<T, uint>::value", false},
             }
         )
     );
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/StaticAssert/{}.hlsl", testName))));
-    DYNAMIC_SECTION(testName)
+    auto desc = CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/StaticAssert/{}.hlsl", fileName)));
+    desc.Defines.emplace_back("TEST_CONDITION", condition);
+    ShaderTestFixture fixture(std::move(desc));
+    DYNAMIC_SECTION(std::format("{} with condition: {}", fileName, condition))
     {
         const auto result = fixture.RunCompileTimeTest("Main");
         if (shouldSucceed)
