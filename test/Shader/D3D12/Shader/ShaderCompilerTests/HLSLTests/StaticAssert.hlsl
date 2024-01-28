@@ -13,6 +13,18 @@ struct StaticAssert<true>{};
 // This is much better since there is much less macro expansion.
 #define STATIC_ASSERT2(Expression, ...) ((int1)42)[!Expression]
 
+// This version does not work at all
+#define STATIC_ASSERT3(Expression, ...) struct { static const int Val = ((int1)42)[!Expression]; }
+
+
+// This provides a similar error message to STATIC_ASSERT2 but it works anywhere.
+#define CONCAT_IMPL(x, y) x##y
+#define CONCAT(x, y) CONCAT_IMPL(x, y)
+#define STATIC_ASSERT4(Expression, ...) static const int CONCAT(ASSERT_VAR_, __COUNTER__) = ((int1)42)[!Expression];
+
+STATIC_ASSERT4(true);
+STATIC_ASSERT4(true);
+
 [numthreads(1,1,1)]
 void Main()
 {
