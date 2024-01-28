@@ -1,5 +1,4 @@
-#include "/Test/TTL/static_assert.hlsli"
-#include "/Test/TTL/type_traits.hlsli"
+#include "/Test/STF/ShaderTestFramework.hlsli"
 
 enum A
 {
@@ -16,15 +15,16 @@ struct C
     int D;
 };
 
+[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void AllSucceed()
 {
-    STATIC_ASSERT((4u == ttl::size_of<A>::value));
-    STATIC_ASSERT((4u == ttl::size_of<B>::value));
-    STATIC_ASSERT((4u == ttl::size_of<C>::value));
-    STATIC_ASSERT((4u == ttl::size_of<uint>::value));
-    STATIC_ASSERT((8u == ttl::size_of<uint64_t>::value));
-    STATIC_ASSERT((2u == ttl::size_of<uint16_t>::value));
-    STATIC_ASSERT((24u == ttl::size_of<uint64_t3>::value));
-    STATIC_ASSERT((8u == ttl::size_of<uint16_t4>::value));
+    ASSERT(AreEqual, 4u, ttl::size_of<A>::value);
+    ASSERT(AreEqual, 4u, ttl::size_of<B>::value);
+    ASSERT(AreEqual, 4u, ttl::size_of<C>::value);
+    ASSERT(AreEqual, 4u, ttl::size_of<uint>::value);
+    ASSERT(AreEqual, 8u, ttl::size_of<uint64_t>::value);
+    ASSERT(AreEqual, 2u, ttl::size_of<uint16_t>::value);
+    ASSERT(AreEqual, 24u, ttl::size_of<uint64_t3>::value);
+    ASSERT(AreEqual, 8u, ttl::size_of<uint16_t4>::value);
 }

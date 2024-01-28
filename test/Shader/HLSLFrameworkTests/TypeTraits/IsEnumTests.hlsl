@@ -1,5 +1,4 @@
-#include "/Test/TTL/static_assert.hlsli"
-#include "/Test/TTL/type_traits.hlsli"
+#include "/Test/STF/ShaderTestFramework.hlsli"
 
 enum A
 {
@@ -16,11 +15,12 @@ struct C
     int D;
 };
 
+[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void AllSucceed()
 {
-    STATIC_ASSERT((ttl::is_enum<A>::value));
-    STATIC_ASSERT((ttl::is_enum<B>::value));
-    STATIC_ASSERT((!ttl::is_enum<C>::value));
-    STATIC_ASSERT((!ttl::is_enum<uint>::value));
+    ASSERT(IsTrue, ttl::is_enum<A>::value);
+    ASSERT(IsTrue, ttl::is_enum<B>::value);
+    ASSERT(IsFalse, ttl::is_enum<C>::value);
+    ASSERT(IsFalse, ttl::is_enum<uint>::value);
 }
