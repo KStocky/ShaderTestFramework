@@ -13,6 +13,6 @@ SCENARIO("HLSLFrameworkTests - TypeTraits - SizeOf")
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/TypeTraits/SizeOfTests.hlsl")));
     DYNAMIC_SECTION(testName)
     {
-        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+        REQUIRE(fixture.RunCompileTimeTest(testName));
     }
 }
