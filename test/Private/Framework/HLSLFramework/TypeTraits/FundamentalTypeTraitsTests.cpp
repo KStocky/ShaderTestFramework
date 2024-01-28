@@ -7,12 +7,17 @@ SCENARIO("HLSLFrameworkTests - TypeTraits - FundamentalTypeTraits")
 {
     auto testName = GENERATE
     (
-        "AllCompile"
+        "RunScalarTests",
+        "RunVectorTests",
+        "RunMatrix1Tests",
+        "RunMatrix2Tests",
+        "RunMatrix3Tests",
+        "RunMatrix4Tests"
     );
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/TypeTraits/FundamentalTypeTraitsTests.hlsl")));
     DYNAMIC_SECTION(testName)
     {
-        REQUIRE(fixture.RunCompileTimeTest(testName));
+        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
     }
 }
