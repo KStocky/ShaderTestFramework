@@ -24,6 +24,7 @@ SCENARIO("HLSLFrameworkTests - StaticAssert")
                 std::tuple{"NonTemplatedStructMember", "false", false},
                 std::tuple{"TemplatedStructMember", "true", true},
                 std::tuple{"TemplatedStructMember", "false", false},
+                std::tuple{"TemplatedStructMember", "(ttl::always_false<T>::value)", true},
                 std::tuple{"TemplatedStructMember", "ttl::is_same<T, uint>::value", true},
                 std::tuple{"TemplatedStructMember", "ttl::is_same<T, T>::value", true},
                 std::tuple{"TemplatedStructMemberInstantiated", "ttl::is_same<T, T>::value", true},
