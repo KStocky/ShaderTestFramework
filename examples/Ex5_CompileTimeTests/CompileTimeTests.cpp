@@ -1,7 +1,5 @@
 #include <Framework/ShaderTestFixture.h>
 
-#include <string>
-
 #include <catch2/catch_test_macros.hpp>
 
 SCENARIO("Example5Tests")
