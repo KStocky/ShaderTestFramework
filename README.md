@@ -8,7 +8,23 @@
 
 An automation testing framework for testing shader code. Based on Catch2. It uses D3D12 and requires HLSL 2021
 
-It is a framework that is intended to be used with another testing framework such as [Catch2](https://github.com/catchorg/Catch2/tree/devel) to add shader testing capabilities to your already existing test suite. It is currently very experimental, meaning that every merge to main will likely break all old code. The purpose of this project is to explore how unit tests can look like when written in HLSL.
+It is a framework that is intended to be used with another testing framework such as [Catch2](https://github.com/catchorg/Catch2/tree/devel) to add shader testing capabilities to your already existing test suite. It is currently very experimental, meaning that every merge to main will likely break all old code. The purpose of this project is to explore how we can write unit tests in HLSL.
+
+## Getting Started
+
+This should be enough to grab the repo and build everything provided you have a recent install of Visual Studio 2022 and CMake.
+```
+$ git clone https://github.com/KStocky/ShaderTestFramework
+$ cd ShaderTestFramework
+$ mkdir build
+$ cd build
+$ cmake ..
+$ cmake --build .
+```
+
+From there you can have a play with the examples. 
+
+There is also a much more in depth [tutorial](docs/Tutorial.md). This describes the requirements in detail, then takes you through how to include the framework in your project, and then how to write tests for your shader code.
 
 ## Example test
 
@@ -81,7 +97,3 @@ void OptionalTestsWithScenariosAndSections()
     }
 }
 ```
-
-## How to use it
-
-A tutorial to get started can be found [here](docs/Tutorial.md)
