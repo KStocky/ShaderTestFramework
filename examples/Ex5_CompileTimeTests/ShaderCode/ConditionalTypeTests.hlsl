@@ -13,6 +13,7 @@
 STATIC_ASSERT((ttl::is_same<int, ConditionalType<true, int, float>::Type>::value));
 STATIC_ASSERT((ttl::is_same<float, ConditionalType<false, int, float>::Type>::value));
 
+// With a message
 STATIC_ASSERT((ttl::is_same<int, ConditionalType<true, int, float>::Type>::value), "Expected the first type to be returned when the condition is true");
 STATIC_ASSERT((ttl::is_same<float, ConditionalType<false, int, float>::Type>::value), "Expected the second type to be returned when the condition is false");
 
