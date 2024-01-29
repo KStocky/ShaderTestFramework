@@ -114,7 +114,7 @@ struct OnlyValidForFloat
 };
 
 template<>
-struct OnlyValidForFloat
+struct OnlyValidForFloat<float>
 {
 
 };
