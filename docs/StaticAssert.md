@@ -31,7 +31,7 @@ Shader Test Framework provides a static assert facility that attempts to emulate
 
 ### 2. Conditions with commas
 
-Since `STATIC_ASSERT` is implemented as a macro, every comma is interpretted as a macro argument delimiter. A comma occurance of having a comma in your condition is if the condtion is using a type trait like `ttl::is_same<T, U>`. To avoid compilation errors due to this surround the condition with parentheses.
+Since `STATIC_ASSERT` is implemented as a macro, every comma is interpretted as a macro argument delimiter. A common occurance of having a comma in your condition is if the condtion is using a type trait like `ttl::is_same<T, U>`. To avoid compilation errors due to this surround the condition with parentheses.
 
 ### 3. ttl::always_false<T>
 
