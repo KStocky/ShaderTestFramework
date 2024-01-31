@@ -21,5 +21,5 @@ SCENARIO("Example5Tests")
     
     // RunCompileTimeTest takes the entry function of the shader. If the shader compiles, the test passes, if it doesn't compile, the shader fails
     // Unlike RunTest, it will not attempt to actually dispatch the shader.
-    REQUIRE(fixture.RunCompileTimeTest("AllCompile"));
+    REQUIRE(fixture.RunCompileTimeTest());
 }

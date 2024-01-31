@@ -18,8 +18,6 @@ SCENARIO("HLSLFrameworkTests - StaticAssert")
                 std::tuple{"ConditionNoMessage", "42 != 42", false},
                 std::tuple{"ConditionWithMessage", "true", true},
                 std::tuple{"ConditionWithMessage", "false", false},
-                std::tuple{"Global", "true", true},
-                std::tuple{"Global", "false", false},
                 std::tuple{"NonTemplatedStructMember", "true", true},
                 std::tuple{"NonTemplatedStructMember", "false", false},
                 std::tuple{"TemplatedStructMember", "true", true},
@@ -37,7 +35,7 @@ SCENARIO("HLSLFrameworkTests - StaticAssert")
     ShaderTestFixture fixture(std::move(desc));
     DYNAMIC_SECTION(std::format("{} with condition: {}", fileName, condition))
     {
-        const auto result = fixture.RunCompileTimeTest("Main");
+        const auto result = fixture.RunCompileTimeTest();
         if (shouldSucceed)
         {
             REQUIRE(result);

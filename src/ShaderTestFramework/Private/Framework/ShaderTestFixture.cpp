@@ -43,7 +43,7 @@ void ShaderTestFixture::TakeCapture()
 
 STF::Results ShaderTestFixture::RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ)
 {
-	const auto compileResult = CompileShader(InName);
+	const auto compileResult = CompileShader(InName, EShaderType::Compute);
 
 	if (!compileResult.has_value())
 	{
@@ -133,9 +133,9 @@ STF::Results ShaderTestFixture::RunTest(const std::string_view InName, u32 InX, 
     return ReadbackResults(readBackAllocationBuffer, readBackBuffer, uint3(dimX, dimY, dimZ));
 }
 
-STF::Results ShaderTestFixture::RunCompileTimeTest(const std::string_view InName)
+STF::Results ShaderTestFixture::RunCompileTimeTest()
 {
-    const auto compileResult = CompileShader(InName);
+    const auto compileResult = CompileShader("", EShaderType::Lib);
 
     if (!compileResult.has_value())
     {
@@ -160,14 +160,14 @@ bool ShaderTestFixture::IsUsingAgilitySDK() const
 	return m_Device.GetHardwareInfo().FeatureInfo.EnhancedBarriersSupport;
 }
 
-CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName) const
+CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName, const EShaderType InType) const
 {
     ShaderCompilationJobDesc job;
     job.AdditionalFlags = m_CompilationFlags;
     job.AdditionalFlags.emplace_back(L"-enable-16bit-types");
     job.EntryPoint = InName;
     job.ShaderModel = m_ShaderModel;
-    job.ShaderType = EShaderType::Compute;
+    job.ShaderType = InType;
     job.Source = m_Source;
     job.HLSLVersion = m_HLSLVersion;
     job.Defines = m_Defines;

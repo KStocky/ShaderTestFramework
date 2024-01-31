@@ -98,7 +98,6 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/ProofOfConcept/VariadicMacroOverloading.hlsl
     Shader/HLSLFrameworkTests/StaticAssert/ConditionNoMessage.hlsl
     Shader/HLSLFrameworkTests/StaticAssert/ConditionWithMessage.hlsl
-    Shader/HLSLFrameworkTests/StaticAssert/Global.hlsl
     Shader/HLSLFrameworkTests/StaticAssert/NonTemplatedStructMember.hlsl
     Shader/HLSLFrameworkTests/StaticAssert/TemplatedStructMember.hlsl
     Shader/HLSLFrameworkTests/StaticAssert/TemplatedStructMemberInstantiated.hlsl

@@ -1,7 +1,7 @@
 #include "/Test/TTL/static_assert.hlsli"
 #include "/Test/TTL/type_traits.hlsli"
 
-void GIVEN_BuiltInArray_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
+namespace GIVEN_BuiltInArray_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
 {
     using type = int[6];
     using traits = ttl::container_traits<type>;
@@ -15,7 +15,7 @@ void GIVEN_BuiltInArray_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
     STATIC_ASSERT((ttl::is_same<traits::type, type>::value));
 }
 
-void GIVEN_NonArray_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
+namespace GIVEN_NonArray_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
 {
     using type = int;
     using traits = ttl::container_traits<type>;
@@ -29,7 +29,7 @@ void GIVEN_NonArray_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
     STATIC_ASSERT((ttl::is_same<traits::type, void>::value));
 }
 
-void GIVEN_VectorType_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
+namespace GIVEN_VectorType_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
 {
     using type = int2;
     using traits = ttl::container_traits<type>;
@@ -43,7 +43,7 @@ void GIVEN_VectorType_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
     STATIC_ASSERT((ttl::is_same<traits::type, void>::value));
 }
 
-void GIVEN_Buffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
+namespace GIVEN_Buffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
 {
     using type = Buffer<int>;
     using traits = ttl::container_traits<type>;
@@ -57,7 +57,7 @@ void GIVEN_Buffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
     STATIC_ASSERT((ttl::is_same<traits::type, type>::value));
 }
 
-void GIVEN_RWBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
+namespace GIVEN_RWBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
 {
     using type = RWBuffer<int>;
     using traits = ttl::container_traits<type>;
@@ -76,7 +76,7 @@ struct MyStruct
     float b;
 };
 
-void GIVEN_StructuredBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
+namespace GIVEN_StructuredBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
 {
     using type = StructuredBuffer<MyStruct>;
     using traits = ttl::container_traits<type>;
@@ -90,7 +90,7 @@ void GIVEN_StructuredBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
     STATIC_ASSERT((ttl::is_same<traits::type, type>::value));
 }
 
-void GIVEN_RWStructuredBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
+namespace GIVEN_RWStructuredBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
 {
     using type = RWStructuredBuffer<MyStruct>;
     using traits = ttl::container_traits<type>;
@@ -104,7 +104,7 @@ void GIVEN_RWStructuredBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected(
     STATIC_ASSERT((ttl::is_same<traits::type, type>::value));
 }
 
-void GIVEN_ByteAddressBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
+namespace GIVEN_ByteAddressBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
 {
     using type = ByteAddressBuffer;
     using traits = ttl::container_traits<type>;
@@ -118,7 +118,7 @@ void GIVEN_ByteAddressBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
     STATIC_ASSERT((ttl::is_same<traits::type, type>::value));
 }
 
-void GIVEN_RWByteAddressBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected()
+namespace GIVEN_RWByteAddressBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
 {
     using type = RWByteAddressBuffer;
     using traits = ttl::container_traits<type>;
@@ -130,9 +130,4 @@ void GIVEN_RWByteAddressBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
     STATIC_ASSERT(traits::is_resource);
     STATIC_ASSERT((ttl::is_same<traits::element_type, uint>::value));
     STATIC_ASSERT((ttl::is_same<traits::type, type>::value));
-}
-
-[numthreads(1,1,1)]
-void AllCompile()
-{
 }

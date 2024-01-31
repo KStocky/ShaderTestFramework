@@ -197,8 +197,3 @@ void RunMatrix4Tests()
     MatrixTests<3, 4>();
     MatrixTests<4, 4>();
 }
-
-[numthreads(1,1,1)]
-void AllCompile()
-{
-}

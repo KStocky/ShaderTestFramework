@@ -40,7 +40,6 @@ SCENARIO("ShaderTestFixtureTests - Run Compile Time Tests")
                 {
                     "InvalidShader",
                     R"(
-                        [numthreads(1,1,1)]
                         void Main()
                         {
                             asdfasdf
@@ -48,11 +47,10 @@ SCENARIO("ShaderTestFixtureTests - Run Compile Time Tests")
                     )",
                     false
                 },
-                std::tuple
+                std::tuplen
                 {
                     "ValidShader",
                     R"(
-                        [numthreads(1,1,1)]
                         void Main()
                         {
                         }
@@ -66,7 +64,7 @@ SCENARIO("ShaderTestFixtureTests - Run Compile Time Tests")
     ShaderTestFixture fixture(ShaderTestFixture::Desc{.Source = std::move(source)});
     GIVEN(testName)
     {
-        const auto result = fixture.RunCompileTimeTest("Main");
+        const auto result = fixture.RunCompileTimeTest();
         if (shouldSucceed)
         {
             THEN("It should succeed")

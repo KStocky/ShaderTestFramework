@@ -4,7 +4,6 @@
 
 SCENARIO("HLSLFrameworkTests - TypeTraits - TypeID")
 {
-    static constexpr std::string_view testName = "NoDuplicateTypeIDs";
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/TypeTraits/TypeIDTests.hlsl")));
-    REQUIRE(fixture.RunCompileTimeTest(testName));
+    REQUIRE(fixture.RunCompileTimeTest());
 }

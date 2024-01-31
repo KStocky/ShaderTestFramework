@@ -16,11 +16,7 @@ struct C
     int D;
 };
 
-[numthreads(1,1,1)]
-void AllSucceed()
-{
-    STATIC_ASSERT((ttl::is_enum<A>::value));
-    STATIC_ASSERT((ttl::is_enum<B>::value));
-    STATIC_ASSERT((!ttl::is_enum<C>::value));
-    STATIC_ASSERT((!ttl::is_enum<uint>::value));
-}
+STATIC_ASSERT((ttl::is_enum<A>::value));
+STATIC_ASSERT((ttl::is_enum<B>::value));
+STATIC_ASSERT((!ttl::is_enum<C>::value));
+STATIC_ASSERT((!ttl::is_enum<uint>::value));

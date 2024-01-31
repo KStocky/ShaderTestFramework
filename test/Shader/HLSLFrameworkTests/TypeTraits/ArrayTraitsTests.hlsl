@@ -2,7 +2,7 @@
 #include "/Test/TTL/type_traits.hlsli"
 
 
-void GIVEN_BuiltInArray_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected()
+namespace GIVEN_BuiltInArray_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected
 {
     static const uint size = 6;
     using type = int[size];
@@ -14,7 +14,7 @@ void GIVEN_BuiltInArray_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected()
 }
 
 
-void GIVEN_NonArray_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected()
+namespace GIVEN_NonArray_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected
 {
     using type = int;
     using traits = ttl::array_traits<type>;
@@ -25,7 +25,7 @@ void GIVEN_NonArray_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected()
 }
 
 
-void GIVEN_VectorType_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected()
+namespace GIVEN_VectorType_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected
 {
     using type = int2;
     using traits = ttl::array_traits<type>;
@@ -36,7 +36,7 @@ void GIVEN_VectorType_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected()
 }
 
 
-void GIVEN_Buffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected()
+namespace GIVEN_Buffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected
 {
     using type = Buffer<int>;
     using traits = ttl::array_traits<type>;
@@ -47,7 +47,7 @@ void GIVEN_Buffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected()
 }
 
 
-void GIVEN_RWBuffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected()
+namespace GIVEN_RWBuffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected
 {
     using type = RWBuffer<int>;
     using traits = ttl::array_traits<type>;
@@ -64,7 +64,7 @@ struct MyStruct
 };
 
 
-void GIVEN_StructuredBuffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected()
+namespace GIVEN_StructuredBuffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected
 {
     using type = StructuredBuffer<MyStruct>;
     using traits = ttl::array_traits<type>;
@@ -75,7 +75,7 @@ void GIVEN_StructuredBuffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected()
 }
 
 
-void GIVEN_RWStructuredBuffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected()
+namespace GIVEN_RWStructuredBuffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected
 {
     using type = RWStructuredBuffer<MyStruct>;
     using traits = ttl::array_traits<type>;
@@ -86,7 +86,7 @@ void GIVEN_RWStructuredBuffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected()
 }
 
 
-void GIVEN_ByteAddressBuffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected()
+namespace GIVEN_ByteAddressBuffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected
 {
     using type = ByteAddressBuffer;
     using traits = ttl::array_traits<type>;
@@ -97,7 +97,7 @@ void GIVEN_ByteAddressBuffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected()
 }
 
 
-void GIVEN_RWByteAddressBuffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected()
+namespace GIVEN_RWByteAddressBuffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected
 {
     using type = RWByteAddressBuffer;
     using traits = ttl::array_traits<type>;
@@ -105,10 +105,4 @@ void GIVEN_RWByteAddressBuffer_WHEN_ArrayTraitsQueried_THEN_TraitsAsExpected()
     STATIC_ASSERT(!traits::is_array);
     STATIC_ASSERT(traits::size == 0u);
     STATIC_ASSERT((ttl::is_same<traits::element_type, void>::value));
-}
-
-[numthreads(1,1,1)]
-void AllCompile()
-{
-    
 }

@@ -4,7 +4,6 @@
 
 SCENARIO("HLSLFrameworkTests - TypeTraits - SizeOf")
 {
-    static constexpr std::string_view testName = "AllSucceed";
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/TypeTraits/SizeOfTests.hlsl")));
-    REQUIRE(fixture.RunCompileTimeTest(testName));
+    REQUIRE(fixture.RunCompileTimeTest());
 }

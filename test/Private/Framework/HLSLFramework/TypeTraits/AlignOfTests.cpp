@@ -4,8 +4,6 @@
 
 SCENARIO("HLSLFrameworkTests - TypeTraits - AlignOf")
 {
-    static constexpr std::string_view testName = "AllHaveExpectedAlignment";
-
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/TypeTraits/AlignOfTests.hlsl")));
-    REQUIRE(fixture.RunCompileTimeTest(testName));
+    REQUIRE(fixture.RunCompileTimeTest());
 }
