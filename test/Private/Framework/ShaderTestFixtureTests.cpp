@@ -47,7 +47,7 @@ SCENARIO("ShaderTestFixtureTests - Run Compile Time Tests")
                     )",
                     false
                 },
-                std::tuplen
+                std::tuple
                 {
                     "ValidShader",
                     R"(
