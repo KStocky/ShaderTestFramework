@@ -2,14 +2,17 @@
 # Tutorial
 
 **Contents**<br>
-1. [Requirements](#requirements)<br>
-2. [Optional Requirements](#optional-requirements)<br>
-3. [Getting ShaderTestFramework](#getting-shader-test-framework)<br>
-4. [Writing tests](#writing-tests)<br>
+1. [Requirements](#requirements)
+2. [Optional Requirements](#optional-requirements)
+3. [Getting ShaderTestFramework](#getting-shader-test-framework)
+4. [Writing tests](#writing-tests)
  a. [A Minimal Example](#a-minimal-example)<br>
  b. [A Worked Example](#a-worked-example)<br>
-5. [Working with Shader Files using Virtual Shader Directories](#working-with-shader-files-using-virtual-shader-directories)<br>
-6. [Assertions](#assertions)
+ c. [What did we do here](#what-did-we-do-here)
+5. [Working with Shader Files using Virtual Shader Directories](#working-with-shader-files-using-virtual-shader-directories)
+6. [SCENARIOs and SECTIONs](#scenarios-and-sections)
+7. [Assertions](#assertions)
+8. [Compile Time Tests](#compile-time-tests)
 
 ## Requirements
 
@@ -21,7 +24,7 @@
 ## Optional Requirements
 
 1. [PIX on Windows](https://devblogs.microsoft.com/pix/download/) - This is not required. However, it is recommended. The framework is able to take pix captures of your test runs. This will allow you to be able to debug your shader code. Very useful for tracking down the cause of a failing test.
-2. A testing framework - [Catch2](https://github.com/catchorg/Catch2) is the recommended framework and all examples will use it. However, most other frameworks should be ok. NOTE: [MS Unit Testing Framework](https://learn.microsoft.com/en-us/visualstudio/test/writing-unit-tests-for-c-cpp?view=vs-2022) is not likely to work. Shader Test Framework depends on being able to copy dlls (e.g the DirectX Agility SDK dlls) to the location of the executable being run. Microsofts testing framework does not produce an exe. It produces a dll which is picked up by the testing framework's exe which is located in the installation of Visual Studio. 
+2. A testing framework - [Catch2](https://github.com/catchorg/Catch2) is the recommended framework and all examples will use it. However, most other frameworks should be ok. NOTE: [MS Unit Testing Framework](https://learn.microsoft.com/en-us/visualstudio/test/writing-unit-tests-for-c-cpp?view=vs-2022) is not likely to work. Shader Test Framework depends on being able to copy dlls (e.g the DirectX Agility SDK dlls) to the location of the executable being run. Microsoft's testing framework does not produce an exe. It produces a dll which is picked up by the testing framework's exe which is located in the installation of Visual Studio. 
 
 ## Getting Shader Test Framework
 
@@ -161,7 +164,7 @@ assertions: 1 | 1 failed
 ```
 
 We have 5 asserts. 4 of which passed. 1 failed. And the one that failed was the one that had 1 as the left argument and 3 as the right argument. This is the first assert. The fix for this is fairly trivial however, let's pretend that it is not. We can debug this with [PIX on Windows](https://devblogs.microsoft.com/pix/download/).
-To take a capture of a test that is run we can call `ShaderTestFixture::TakeCapture` prior to running a test. So we can amend the example to look like this
+To take a capture of a test that is run we can call `ShaderTestFixture::TakeCapture` prior to running a test. So, we can amend the example to look like this
 
 ```c++
 SCENARIO("PowTests")
@@ -198,7 +201,7 @@ SCENARIO("PowTests")
     REQUIRE(fixture.RunTest("RunPowTests", 1, 1, 1));
 ```
 
-And then run it. There will now be a `Captures` directory in the same directory that your executable lives. Inside it there will be a `.wpix` file that we can open with PIX. From here we can click Analyze at the top and we will have a view like this 
+And then run it. There will now be a `Captures` directory in the same directory that your executable lives. Inside it there will be a `.wpix` file that we can open with PIX. From here we can click "Analyze" at the top and we will have a view like this 
 
 ![PIX analysis](images/PowTestPIXStart.png)
 
@@ -292,6 +295,12 @@ Please refer to [Scenarios and Sections](./ScenariosAndSections.md) for more det
 ## Assertions
 
 Shader Test Framework provides the standard assertions that one might expect from a testing framework, `STF::IsTrue`, `STF::IsFalse`, `STF::AreEqual`, and `STF::NotEqual`. To read more about the other assertion features that Shader Test Framework provides, the [Asserts](./Asserts.md) documentation is the place to go.
+
+## Compile Time Tests
+
+With HLSL2021, we might find ourselves writing template meta functions that we want to test. Since templates are evaluated at compile time, then it would be a waste to write run time tests for these functions. Instead, Shader Test Framework provides a way to write Compile Time Tests. The following docs should help to better understand how to write these types of tests:
+1. [Compile Time Tests](./CompileTimeTests.md)
+2. [`STATIC_ASSERT`](./StaticAssert.md)
 
 ---
 

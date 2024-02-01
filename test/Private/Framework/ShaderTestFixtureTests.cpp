@@ -28,3 +28,56 @@ SCENARIO("ShaderTestFixtureTests")
         }
     }
 }
+
+SCENARIO("ShaderTestFixtureTests - Run Compile Time Tests")
+{
+    auto [testName, source, shouldSucceed] = GENERATE
+    (
+        table<std::string, std::string, bool>
+        (
+            {
+                std::tuple
+                {
+                    "InvalidShader",
+                    R"(
+                        void Main()
+                        {
+                            asdfasdf
+                        }
+                    )",
+                    false
+                },
+                std::tuple
+                {
+                    "ValidShader",
+                    R"(
+                        void Main()
+                        {
+                        }
+                    )",
+                    true
+                }
+            }
+        )
+    );
+    
+    ShaderTestFixture fixture(ShaderTestFixture::Desc{.Source = std::move(source)});
+    GIVEN(testName)
+    {
+        const auto result = fixture.RunCompileTimeTest();
+        if (shouldSucceed)
+        {
+            THEN("It should succeed")
+            {
+                REQUIRE(result);
+            }
+        }
+        else
+        {
+            THEN("It should fail")
+            {
+                REQUIRE_FALSE(result);
+            }
+        }
+    }
+}

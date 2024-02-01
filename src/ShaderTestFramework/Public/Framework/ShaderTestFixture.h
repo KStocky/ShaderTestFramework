@@ -25,12 +25,14 @@ public:
         D3D_SHADER_MODEL ShaderModel = D3D_SHADER_MODEL_6_6;
         EHLSLVersion HLSLVersion = EHLSLVersion::v2021;
         STF::AssertBufferLayout AssertInfo{100u, 1000u};
+        std::vector<ShaderMacro> Defines;
     };
 
     ShaderTestFixture(Desc InParams);
 
     void TakeCapture();
     STF::Results RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ);
+    STF::Results RunCompileTimeTest();
     void RegisterTypeConverter(std::string InTypeIDName, STF::TypeConverter InConverter);
 
     bool IsValid() const;
@@ -39,7 +41,7 @@ public:
 
 private:
 
-    CompilationResult CompileShader(const std::string_view InName) const;
+    CompilationResult CompileShader(const std::string_view InName,  const EShaderType InType) const;
     CommandEngine CreateCommandEngine() const;
     DescriptorHeap CreateDescriptorHeap() const;
     PipelineState CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const;

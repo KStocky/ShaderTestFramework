@@ -35,6 +35,7 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/OperatorIntWithAnEmptyStruct.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/SizeofEnumType.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/SizeofOperator.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/StaticAssert.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/StaticConstStructMemberInTemplatedStruct.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/StaticStructMemberInNonTemplatedStruct.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/StaticStructMemberInTemplatedStruct.hlsl
@@ -95,6 +96,11 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/ProofOfConcept/GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/SectionTest.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/VariadicMacroOverloading.hlsl
+    Shader/HLSLFrameworkTests/StaticAssert/ConditionNoMessage.hlsl
+    Shader/HLSLFrameworkTests/StaticAssert/ConditionWithMessage.hlsl
+    Shader/HLSLFrameworkTests/StaticAssert/NonTemplatedStructMember.hlsl
+    Shader/HLSLFrameworkTests/StaticAssert/TemplatedStructMember.hlsl
+    Shader/HLSLFrameworkTests/StaticAssert/TemplatedStructMemberInstantiated.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/AlignOfTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/ArrayTraitsTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/ContainerTraitsTests.hlsl
@@ -154,6 +160,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/FlattenIndexTests.cpp
     Private/Framework/HLSLFramework/ProofOfConceptTests.cpp
     Private/Framework/HLSLFramework/SectionManagementTests.cpp
+    Private/Framework/HLSLFramework/StaticAssertTests.cpp
     Private/Framework/HLSLFramework/ThreadDimensionsTests.cpp
     Private/Framework/HLSLFramework/ThreadIdRegistrationTests.cpp
     Private/Framework/HLSLTypesTests.cpp

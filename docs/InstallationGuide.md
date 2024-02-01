@@ -47,6 +47,7 @@ $ git clone https://github.com/KStocky/ShaderTestFramework
 $ cd ShaderTestFramework
 $ mkdir build
 $ cd build
+$ cmake ..
 $ cmake --build .
 ```
 
