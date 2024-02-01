@@ -2,10 +2,10 @@
 # Tutorial
 
 **Contents**<br>
-1. [Requirements](#requirements)<br>
-2. [Optional Requirements](#optional-requirements)<br>
-3. [Getting ShaderTestFramework](#getting-shader-test-framework)<br>
-4. [Writing tests](#writing-tests)<br>
+1. [Requirements](#requirements)
+2. [Optional Requirements](#optional-requirements)
+3. [Getting ShaderTestFramework](#getting-shader-test-framework)
+4. [Writing tests](#writing-tests)
  a. [A Minimal Example](#a-minimal-example)<br>
  b. [A Worked Example](#a-worked-example)<br>
  c. [What did we do here](#what-did-we-do-here)
