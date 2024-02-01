@@ -18,13 +18,13 @@
 
 1. Windows 10 Version 1909 (OS build 18363.1350) or greater - This is due to a dependency on the [DirectX Agility SDK](https://devblogs.microsoft.com/directx/gettingstarted-dx12agility/)
 2. Visual Studio 2022 17.2 - This is due to the project making use of several C++23 features e.g. [Deducing This](https://devblogs.microsoft.com/cppblog/cpp23-deducing-this/)
-3. [CMake 3.25](https://cmake.org/download/) - Shader Test Framework's cmake scripts make use of [PROPAGATE](https://cmake.org/cmake/help/latest/command/return.html) which came in 3.25 
-4. A working internet connection on first build - This is due to the cmake scripts downloading all of the dependencies of the project.
+3. [CMake 3.25](https://cmake.org/download/) - Shader Test Framework's CMake scripts make use of [PROPAGATE](https://cmake.org/cmake/help/latest/command/return.html) which came in 3.25 
+4. A working internet connection on the first build - This is due to the CMake scripts downloading all of the dependencies of the project.
 
 ## Optional Requirements
 
-1. [PIX on Windows](https://devblogs.microsoft.com/pix/download/) - This is not required. However, it is recommended. The framework is able to take pix captures of your test runs. This will allow you to be able to debug your shader code. Very useful for tracking down the cause of a failing test.
-2. A testing framework - [Catch2](https://github.com/catchorg/Catch2) is the recommended framework and all examples will use it. However, most other frameworks should be ok. NOTE: [MS Unit Testing Framework](https://learn.microsoft.com/en-us/visualstudio/test/writing-unit-tests-for-c-cpp?view=vs-2022) is not likely to work. Shader Test Framework depends on being able to copy dlls (e.g the DirectX Agility SDK dlls) to the location of the executable being run. Microsoft's testing framework does not produce an exe. It produces a dll which is picked up by the testing framework's exe which is located in the installation of Visual Studio. 
+1. [PIX on Windows](https://devblogs.microsoft.com/pix/download/) - This is not required. However, it is recommended. The framework can take pix captures of your test runs. This will allow you to be able to debug your shader code. Very useful for tracking down the cause of a failing test.
+2. A testing framework - [Catch2](https://github.com/catchorg/Catch2) is the recommended framework and all examples will use it. However, most other frameworks should be ok. NOTE: [MS Unit Testing Framework](https://learn.microsoft.com/en-us/visualstudio/test/writing-unit-tests-for-c-cpp?view=vs-2022) is not likely to work. Shader Test Framework depends on being able to copy DLLs (e.g. the DirectX Agility SDK DLLs) to the location of the executable being run. Microsoft's testing framework does not produce an exe. It produces a DLL which is picked up by the testing framework's exe which is located in the installation of Visual Studio. 
 
 ## Getting Shader Test Framework
 
@@ -64,9 +64,9 @@ And you will get an output like
 All tests passed (1 assertion in 1 test case)
 ```
 
-This demonstrates how we can run a shader test from C++ by creating a `ShaderTestFixture` and then calling `ShaderTestFixture::RunTest`. The HLSL code under test can be provided as a `std::string` or it can be provided by providing a `std::filesystem::path`. `ShaderTestFixture::RunTest` takes the name of the entry function to run and the dispatch configuration. So this test will dispatch a single thread group.
+This demonstrates how we can run a shader test from C++ by creating a `ShaderTestFixture` and then calling `ShaderTestFixture::RunTest`. The HLSL code under test can be provided as a `std::string` or, it can be provided by providing a `std::filesystem::path`. `ShaderTestFixture::RunTest` takes the name of the entry function to run and the dispatch configuration. So, this test will dispatch a single thread group.
 
-If we change the assert to be `STF::NotEqual` then our test will fail and will have an output like the following
+If we change the assert to be `STF::NotEqual` then our test will fail and will have an output like the following:
 ```
 MinimalShaderTest.cpp(34): FAILED:
   REQUIRE( fixture.RunTest("MinimalTestEntryFunction", 1, 1, 1) )
@@ -81,7 +81,7 @@ test cases: 1 | 1 failed
 assertions: 1 | 1 failed
 ```
 
-ShaderTestFramework provides assert failure formatting for all native types provided by HLSL. Above, we can see that the framework provides the left and right arguments to the assert. If we change the asserts to be comparing two float2s like so:
+ShaderTestFramework provides assert failure formatting for all native types provided by HLSL. Above, we can see that the framework provides the left and right arguments to the assert. If we change the asserts to compare two float2s like so:
 
 ```c++
 #include "/Test/STF/ShaderTestFramework.hlsli"
@@ -163,8 +163,8 @@ test cases: 1 | 1 failed
 assertions: 1 | 1 failed
 ```
 
-We have 5 asserts. 4 of which passed. 1 failed. And the one that failed was the one that had 1 as the left argument and 3 as the right argument. This is the first assert. The fix for this is fairly trivial however, let's pretend that it is not. We can debug this with [PIX on Windows](https://devblogs.microsoft.com/pix/download/).
-To take a capture of a test that is run we can call `ShaderTestFixture::TakeCapture` prior to running a test. So, we can amend the example to look like this
+We have 5 asserts. 4 of which passed. 1 failed. And the one that failed was the one that had 1 as the left argument and 3 as the right argument. This is the first assertion. The fix for this is fairly trivial however, let's pretend it is not. We can debug this with [PIX on Windows](https://devblogs.microsoft.com/pix/download/).
+To take a capture of a test that is run we can call `ShaderTestFixture::TakeCapture` before running a test. So, we can amend the example to look like this
 
 ```c++
 SCENARIO("PowTests")
@@ -201,7 +201,7 @@ SCENARIO("PowTests")
     REQUIRE(fixture.RunTest("RunPowTests", 1, 1, 1));
 ```
 
-And then run it. There will now be a `Captures` directory in the same directory that your executable lives. Inside it there will be a `.wpix` file that we can open with PIX. From here we can click "Analyze" at the top and we will have a view like this 
+And then run it. There will now be a `Captures` directory in the same directory that your executable lives. Inside it, there will be a `.wpix` file that we can open with PIX. From here we can click "Analyze" at the top and we will have a view like this 
 
 ![PIX analysis](images/PowTestPIXStart.png)
 
@@ -209,7 +209,7 @@ Look down and we will be able to select the shader to debug
 
 ![Open in debugger](images/PowTestPipelineView.png)
 
-Click on the green debugger symbol as shown above. This will open the debugger and we can start stepping through our code and we can see that the issue is that our loop doesn't execute
+Click on the green debugger symbol as shown above. This will open the debugger and we can start stepping through our code. We can now see that the issue is that our loop doesn't execute
 
 ![Found problem](images/PowTestFoundIssue.png)
 
@@ -217,7 +217,7 @@ If we keep stepping into the code we will find that due to this we end up adding
 
 ![Assert Failed](images/PowTestAssertFailed.png)
 
-This is what we would expect. Now we now how to fix the problem. We can go back to our project and make the change
+This is what we would expect. Now we know how to fix the problem. We can go back to our project and make the change
 
 ```c++
 int MyPow(int num, int power)
@@ -231,11 +231,11 @@ int MyPow(int num, int power)
 }
 ```
 
-And now we can run our tests again and see them passing
+Now we can rerun our tests and see them passing!
 
 ### What did we do here?
 
-This was a fairly simple exercise in:
+This was a fairly simple exercise in the following:
 - Writing a simple test for some HLSL code
 - Determining which assert failed using the test results output
 - Taking a PIX capture of the failing test.
@@ -244,11 +244,11 @@ This was a fairly simple exercise in:
 
 ## Working with Shader Files using Virtual Shader Directories
 
-Up until now we have been writing HLSL code directly in our C++ in strings. However, this does not scale and is not practical. We do not want to have to recompile our test suite whenever we are simply iterating on our HLSL code. Therefore it is recommended that users of STF write their HLSL code in HLSL files, and make use of STFs asset dependency and virtual shader directories facilities. An example of how this can be done is in ([Ex2_VirtualShaderDirectories](../examples/Ex2_VirtualShaderPaths)) and a much more in depth tutorial on this part of the framework can be found in [VirtualShaderDirectories](./VirtualShaderDirectories.md).
+Up until now, we have been writing HLSL code directly in our C++ in strings. However, this does not scale and is not practical. We do not want to have to recompile our test suite whenever we are simply iterating on our HLSL code. Therefore it is recommended that users of STF write their HLSL code in HLSL files, and use STF's asset dependency and virtual shader directories facilities. An example of how this can be done is in ([Ex2_VirtualShaderDirectories](../examples/Ex2_VirtualShaderPaths)) and a much more in-depth tutorial on this part of the framework can be found in [VirtualShaderDirectories](./VirtualShaderDirectories.md).
 
 ## SCENARIOs and SECTIONs
 
-Shader Test Framework provides a mechanism to help test writers, write tests that both minimise code repitition, and also ensure that their tests are easy to reason about and follow. They are very similar to [Catch2](https://github.com/catchorg/Catch2/)s TEST_CASEs and SECTIONs, and look like the following:
+Shader Test Framework provides a mechanism to help test writers, write tests that both minimise code repetition and also ensure that their tests are easy to reason about and follow. They are very similar to [Catch2](https://github.com/catchorg/Catch2/)s TEST_CASEs and SECTIONs, and look like the following:
 ```c++
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
@@ -298,7 +298,7 @@ Shader Test Framework provides the standard assertions that one might expect fro
 
 ## Compile Time Tests
 
-With HLSL2021, we might find ourselves writing template meta functions that we want to test. Since templates are evaluated at compile time, then it would be a waste to write run time tests for these functions. Instead, Shader Test Framework provides a way to write Compile Time Tests. The following docs should help to better understand how to write these types of tests:
+With HLSL2021, we might find ourselves writing template metafunctions that we want to test. Since templates are evaluated at compile time, then it would be a waste to write run-time tests for these functions. Instead, Shader Test Framework provides a way to write Compile Time Tests. The following docs should help to better understand how to write these types of tests:
 1. [Compile Time Tests](./CompileTimeTests.md)
 2. [`STATIC_ASSERT`](./StaticAssert.md)
 
