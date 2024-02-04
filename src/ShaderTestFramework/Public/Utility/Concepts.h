@@ -114,7 +114,7 @@ namespace Private
 
 template<typename T, typename CharT>
 concept Formattable =
-#if _MSC_VER > 1937
+#if _MSC_VER > 1938
 std::formattable<T, CharT>;
 #else
 Private::formattable<T, CharT>;
