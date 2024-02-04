@@ -196,9 +196,9 @@ namespace ttl
 
 namespace STF
 {
-    template<> struct type_id<TestTypeWithTypeIdNoWriter> : ttl::integral_constant<uint, TEST_TYPE_WITH_WRITER>{};
-    template<> struct type_id<TestTypeWithTypeIdAndWriter> : ttl::integral_constant<uint, TEST_TYPE_WITH_WRITER>{};
-    template<> struct type_id<TestTypeLargeWithTypeIdAndWriter> : ttl::integral_constant<uint, TEST_TYPE_WITH_WRITER>{};
+    template<> struct ByteReaderTraits<TestTypeWithTypeIdNoWriter> : ByteReaderTraitsBase<TEST_TYPE_WITH_WRITER>{};
+    template<> struct ByteReaderTraits<TestTypeWithTypeIdAndWriter> : ByteReaderTraitsBase<TEST_TYPE_WITH_WRITER>{};
+    template<> struct ByteReaderTraits<TestTypeLargeWithTypeIdAndWriter> : ByteReaderTraitsBase<TEST_TYPE_WITH_WRITER>{};
 }
 
 [RootSignature(SHADER_TEST_RS)]

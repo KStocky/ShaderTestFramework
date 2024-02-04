@@ -33,8 +33,8 @@ namespace ttl
 
 namespace STF
 {
-    template<> struct type_id<TestTypeWithTypeId1> : ttl::integral_constant<uint, TEST_TYPE_1>{};
-    template<> struct type_id<TestTypeWithTypeId2> : ttl::integral_constant<uint, TEST_TYPE_2>{};
+    template<> struct ByteReaderTraits<TestTypeWithTypeId1> : ByteReaderTraitsBase<TEST_TYPE_1>{};
+    template<> struct ByteReaderTraits<TestTypeWithTypeId2> : ByteReaderTraitsBase<TEST_TYPE_2>{};
 }
 
 [RootSignature(SHADER_TEST_RS)]

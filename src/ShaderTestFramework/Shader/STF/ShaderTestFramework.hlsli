@@ -1,8 +1,8 @@
 #pragma once
 
+#include "/Test/STF/ByteReaderTraits.hlsli"
 #include "/Test/STF/RootSignature.hlsli"
 #include "/Test/STF/SectionManagement.hlsli"
-#include "/Test/STF/TypeId.hlsli"
 
 #include "/Test/TTL/byte_writer.hlsli"
 #include "/Test/TTL/caster.hlsli"
@@ -138,7 +138,7 @@ namespace ShaderTestPrivate
             {
                 addressAndSize = AddAssertData(In1, In2);
             }
-            AddAssertMetaInfo(metaIndex, InId, STF::type_id<T>::value, addressAndSize);
+            AddAssertMetaInfo(metaIndex, InId, STF::ByteReaderTraits<T>::ReaderId, addressAndSize);
         }
     }
 
@@ -154,7 +154,7 @@ namespace ShaderTestPrivate
                 addressAndSize = AddAssertData(In);
             }
             
-            AddAssertMetaInfo(metaIndex, InId, STF::type_id<T>::value, addressAndSize);
+            AddAssertMetaInfo(metaIndex, InId, STF::ByteReaderTraits<T>::ReaderId, addressAndSize);
         }
     }
 }

@@ -5,11 +5,6 @@ struct TestType
     bool Value;
 };
 
-struct TestTypeWithTypeId
-{
-    bool Value;
-};
-
 namespace ttl
 {
     template<>
