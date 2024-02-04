@@ -3,7 +3,7 @@ include(FetchContent)
 
 function(add_catch2 IN_TARGET)
     FetchContent_Declare(
-        Catch2
+        catch2
         GIT_REPOSITORY https://github.com/catchorg/Catch2.git
         GIT_TAG v3.4.0
     )
@@ -21,18 +21,20 @@ endfunction()
 
 function(add_tl_expected IN_TARGET)
 
-    set(EXPECTED_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/tl-expected/)
-    file(DOWNLOAD
-        https://raw.githubusercontent.com/TartanLlama/expected/master/include/tl/expected.hpp
-        ${EXPECTED_DIR}/include/tl/expected.hpp
-    )
+    FetchContent_Declare(tl_expected
+        GIT_REPOSITORY https://github.com/TartanLlama/expected.git
+        GIT_TAG master
+        )
+    
+    FetchContent_GetProperties(tl_expected)
+    if (NOT tl_expected_POPULATED)
+        FetchContent_Populate(tl_expected)
+    endif()
 
-    target_include_directories(${IN_TARGET} PUBLIC ${EXPECTED_DIR}/include)
-
-    file(GLOB_RECURSE EXPECTED_HEADERS "${EXPECTED_DIR}/include/*.h*" )
-    target_sources(ShaderTestFramework PRIVATE 
-        ${EXPECTED_HEADERS})
-    source_group(TREE ${EXPECTED_DIR}/include PREFIX "ThirdParty/tl-expected" FILES ${EXPECTED_HEADERS})
+    file(GLOB_RECURSE EXPECTED_HEADERS "${tl_expected_SOURCE_DIR}/include/*.h*" )
+    target_include_directories(${IN_TARGET} PUBLIC ${tl_expected_SOURCE_DIR}/include)
+    target_sources(${IN_TARGET} PRIVATE ${EXPECTED_HEADERS})
+    source_group(TREE ${tl_expected_SOURCE_DIR}/include PREFIX "ThirdParty/tl-expected" FILES ${EXPECTED_HEADERS})
     return()
 endfunction()
 
