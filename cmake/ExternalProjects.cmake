@@ -50,18 +50,18 @@ function(add_tuplet IN_TARGET)
 endfunction()
 
 function(add_float16 IN_TARGET)
+    FetchContent_Declare(float16_fetch
+        GIT_REPOSITORY https://github.com/KStocky/float16_t.git
+        GIT_TAG master
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        )
+    
+    FetchContent_MakeAvailable(float16_fetch)
 
-    set(EXPECTED_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extern/float16/)
-    file(DOWNLOAD
-        https://raw.githubusercontent.com/fengwang/float16_t/master/float16_t.hpp
-        ${EXPECTED_DIR}/include/float16/float16_t.hpp
-    )
-
-    target_include_directories(${IN_TARGET} PUBLIC ${EXPECTED_DIR}/include)
-
-    file(GLOB_RECURSE EXPECTED_HEADERS "${EXPECTED_DIR}/include/*.h*" )
-    target_sources(ShaderTestFramework PRIVATE 
-        ${EXPECTED_HEADERS})
-    source_group(TREE ${EXPECTED_DIR}/include PREFIX "ThirdParty/float16" FILES ${EXPECTED_HEADERS})
+    file(GLOB_RECURSE FLOAT16_HEADERS "${float16_fetch_SOURCE_DIR}/include/*.h*" )
+    target_include_directories(${IN_TARGET} PUBLIC ${float16_fetch_SOURCE_DIR}/include)
+    target_sources(${IN_TARGET} PRIVATE ${FLOAT16_HEADERS})
+    source_group(TREE ${float16_fetch_SOURCE_DIR}/include PREFIX "ThirdParty/float16" FILES ${FLOAT16_HEADERS})
     return()
 endfunction()
