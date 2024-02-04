@@ -2,7 +2,7 @@
 
 namespace STF
 {
-    template<uint16_t InReaderId, uint16_t InTypeId>
+    template<uint16_t InReaderId, uint16_t InTypeId = 0>
     struct ByteReaderTraitsBase
     {
         static const uint16_t ReaderId = InReaderId;

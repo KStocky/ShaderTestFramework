@@ -70,6 +70,7 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/Asserts/IsTrue.hlsl
     Shader/HLSLFrameworkTests/Asserts/NotEqual.hlsl
     Shader/HLSLFrameworkTests/Bugs/ConversionOperator.hlsl
+    Shader/HLSLFrameworkTests/ByteReaderTraits/ByteReaderTraitsTests.hlsl
     Shader/HLSLFrameworkTests/ByteWriter/ByteWriterTests.hlsl
     Shader/HLSLFrameworkTests/Cast/GIVEN_StructDoesHasDifferentOverloadOfCast_WHEN_CastCalled_THEN_Fails.hlsl
     Shader/HLSLFrameworkTests/Cast/GIVEN_StructDoesHaveOverloadOfCast_WHEN_CastCalled_THEN_Succeeds.hlsl
@@ -155,6 +156,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/TypeTraits/TypeIdTests.cpp
     Private/Framework/HLSLFramework/BasicShaderTests.cpp
     Private/Framework/HLSLFramework/Bugs.cpp
+    Private/Framework/HLSLFramework/ByteReaderTraitsTests.cpp
     Private/Framework/HLSLFramework/ByteWriterTests.cpp
     Private/Framework/HLSLFramework/CastTests.cpp
     Private/Framework/HLSLFramework/FlattenIndexTests.cpp
