@@ -55,8 +55,6 @@ function(add_float16 IN_TARGET)
     FetchContent_Declare(float16_fetch
         GIT_REPOSITORY https://github.com/KStocky/float16_t.git
         GIT_TAG master
-        CONFIGURE_COMMAND ""
-        BUILD_COMMAND ""
         )
     
     FetchContent_MakeAvailable(float16_fetch)
