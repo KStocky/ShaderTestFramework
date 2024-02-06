@@ -268,7 +268,7 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - AssertInfoWithD
     );
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/AssertBuffer/ResultsProcessing/AssertInfoWithData.hlsl"), { numRecordedAsserts, numBytesData }));
-    fixture.RegisterTypeConverter("TEST_TYPE_WITH_WRITER", [](const std::span<const std::byte>) { return ""; });
+    fixture.RegisterByteReader("TEST_TYPE_WITH_WRITER", [](const u16, const std::span<const std::byte>) { return ""; });
 
     DYNAMIC_SECTION(testName)
     {

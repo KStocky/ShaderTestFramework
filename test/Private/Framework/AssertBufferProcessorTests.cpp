@@ -63,7 +63,7 @@ SCENARIO("AssertBufferProcessorTests - No Assert Buffer")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessAssertBuffer(numSuccess, numFailed, uint3(1,1,1), STF::AssertBufferLayout{ 0,0 }, std::vector<std::byte>{}, STF::TypeConverterMap{});
+            const auto results = STF::ProcessAssertBuffer(numSuccess, numFailed, uint3(1,1,1), STF::AssertBufferLayout{ 0,0 }, std::vector<std::byte>{}, STF::MultiTypeByteReaderMap{});
 
             THEN("Results has expected errors")
             {
@@ -93,7 +93,7 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - No AssertData")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::TypeConverterMap{});
+            const auto results = STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{});
 
             THEN("Results has expected errors")
             {
@@ -230,7 +230,7 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - AssertData")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::TypeConverterMap{});
+            const auto results = STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{});
 
             THEN("Results has expected errors")
             {
@@ -318,7 +318,7 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - Type Converter")
     };
 
     auto conv1 =
-        [](const std::span<const std::byte> InBytes)
+        [](const u16, const std::span<const std::byte> InBytes)
         {
             u32 val;
             std::memcpy(&val, InBytes.data(), sizeof(u32));
@@ -326,7 +326,7 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - Type Converter")
         };
 
     auto conv2 =
-        [](const std::span<const std::byte> InBytes)
+        [](const u16, const std::span<const std::byte> InBytes)
         {
             u32 val;
             std::memcpy(&val, InBytes.data(), sizeof(u32));
@@ -414,7 +414,7 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - Type Converter")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::TypeConverterMap{conv1, conv2});
+            const auto results = STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{conv1, conv2});
 
             THEN("Results has expected sub strings")
             {
@@ -450,7 +450,7 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - Throwing")
         {
             THEN("throws")
             {
-                REQUIRE_THROWS(STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::TypeConverterMap{}));
+                REQUIRE_THROWS(STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{}));
             }
         }
     }
@@ -480,8 +480,8 @@ SCENARIO("AssertBufferProcessorTests - FailedAssert - Equality")
                 },
                 std::tuple
                 {
-                    "Differing TypeConverter",
-                    STF::FailedAssert{{}, [](const std::span<const std::byte>) { return std::string{}; }, {}},
+                    "Differing ByteReaders",
+                    STF::FailedAssert{{}, [](const u16, const std::span<const std::byte>) { return std::string{}; }, {}},
                     STF::FailedAssert{},
                     true
                 },
@@ -601,7 +601,7 @@ SCENARIO("AssertBufferProcessorTests - ThreadInfoToString")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessAssertBuffer(0, numFailed, dims, layout, std::as_bytes(std::span{ buffer }), STF::TypeConverterMap{});
+            const auto results = STF::ProcessAssertBuffer(0, numFailed, dims, layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{});
 
             THEN("Results has expected sub strings")
             {

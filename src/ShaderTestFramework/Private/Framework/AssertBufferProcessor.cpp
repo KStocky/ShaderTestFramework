@@ -55,7 +55,7 @@ namespace STF
         return std::get_if<TestRunResults>(&m_Result);
     }
 
-    std::string DefaultTypeConverter(std::span<const std::byte> InBytes)
+    std::string DefaultByteReader(const u16, std::span<const std::byte> InBytes)
     {
         std::string ret;
 
@@ -65,13 +65,13 @@ namespace STF
         }
 
         auto toUint = [](const auto InChunk)
-        {
-            u32 ret = 0;
-            std::memcpy(&ret, InChunk.data(), sizeof(u32));
-            return ret;
-        };
+            {
+                u32 ret = 0;
+                std::memcpy(&ret, InChunk.data(), sizeof(u32));
+                return ret;
+            };
 
-        std::format_to(std::back_inserter(ret), "Bytes: {:#x}", toUint(InBytes) );
+        std::format_to(std::back_inserter(ret), "Bytes: {:#x}", toUint(InBytes));
 
         for (const auto& byte : InBytes | std::views::drop(4) | std::views::chunk(4))
         {
@@ -106,7 +106,7 @@ namespace STF
             const std::string threadInfo = error.Info.ThreadIdType == 0 ? std::string{ "" } : STF::ThreadInfoToString(static_cast<STF::EThreadIdType>(error.Info.ThreadIdType), error.Info.ThreadId, In.DispatchDimensions);
             InOs << std::format("Assert {}: {} {}\n", index, lineInfo, threadInfo);
 
-            if (error.Data.size() == 0 || !error.DataToStringConverter)
+            if (error.Data.size() == 0 || !error.ByteReader)
             {
                 continue;
             }
@@ -122,7 +122,7 @@ namespace STF
                 const u32 align = sizeAndAlignData & 0xffff;
                 byteIndex = AlignedOffset(byteIndex + sizeof(4), align);
 
-                InOs << std::format("Data {}: {}\n", i + 1u, error.DataToStringConverter(std::span{ error.Data.cbegin() + byteIndex, size }));
+                InOs << std::format("Data {}: {}\n", i + 1u, error.ByteReader(0, std::span{ error.Data.cbegin() + byteIndex, size }));
                 byteIndex = AlignedOffset(byteIndex + size, 4);
             }
         }
@@ -159,13 +159,7 @@ namespace STF
     }
 }
 
-STF::TestRunResults STF::ProcessAssertBuffer(
-    const u32 InNumSuccessful, 
-    const u32 InNumFailed,
-    const uint3 InDispatchDimensions,
-    const AssertBufferLayout InLayout,
-    std::span<const std::byte> InAssertBuffer, 
-    const TypeConverterMap& InTypeConverterMap)
+STF::TestRunResults STF::ProcessAssertBuffer(const u32 InNumSuccessful, const u32 InNumFailed, const uint3 InDispatchDimensions, const AssertBufferLayout InLayout, std::span<const std::byte> InAssertBuffer, const MultiTypeByteReaderMap& InByteReaderMap)
 {
     STF::TestRunResults ret{};
     ret.NumSucceeded = InNumSuccessful;
@@ -200,19 +194,19 @@ STF::TestRunResults STF::ProcessAssertBuffer(
             .ThreadIdType = assertInfo.ThreadIdType
         };
 
-        auto typeConverter = assertInfo.TypeId < InTypeConverterMap.size() ? InTypeConverterMap[assertInfo.TypeId] : DefaultTypeConverter;
+        auto byteReader = assertInfo.TypeId < InByteReaderMap.size() ? InByteReaderMap[assertInfo.TypeId] : DefaultByteReader;
 
         auto getData = [InAssertBuffer, &assertInfo]()
-        {
-            if (assertInfo.DataSize == 0)
             {
-                return std::vector<std::byte>{};
-            }
-            const auto begin = InAssertBuffer.cbegin() + assertInfo.DataAddress;
-            return std::vector<std::byte>{begin, begin + assertInfo.DataSize};
-        };
-        
-        ret.FailedAsserts.push_back(FailedAssert{ .Data = getData(), .DataToStringConverter = std::move(typeConverter), .Info = info});
+                if (assertInfo.DataSize == 0)
+                {
+                    return std::vector<std::byte>{};
+                }
+                const auto begin = InAssertBuffer.cbegin() + assertInfo.DataAddress;
+                return std::vector<std::byte>{begin, begin + assertInfo.DataSize};
+            };
+
+        ret.FailedAsserts.push_back(FailedAssert{ .Data = getData(), .ByteReader = std::move(byteReader), .Info = info });
     }
 
     return ret;

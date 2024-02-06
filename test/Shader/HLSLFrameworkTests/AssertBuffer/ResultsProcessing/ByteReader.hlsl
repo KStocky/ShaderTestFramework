@@ -5,12 +5,12 @@ struct TestTypeWithoutId
     uint Value;
 };
 
-struct TestTypeWithTypeId1
+struct TestTypeWithReaderId1
 {
     uint Value;
 };
 
-struct TestTypeWithTypeId2
+struct TestTypeWithReaderId2
 {
     uint Value;
 };
@@ -20,8 +20,8 @@ namespace ttl
     template<typename From>
     struct caster<bool, From, typename enable_if<
         is_same<From, TestTypeWithoutId>::value ||
-        is_same<From, TestTypeWithTypeId1>::value ||
-        is_same<From, TestTypeWithTypeId2>::value
+        is_same<From, TestTypeWithReaderId1>::value ||
+        is_same<From, TestTypeWithReaderId2>::value
         >::type>
     {
         static bool cast(From In)
@@ -33,13 +33,13 @@ namespace ttl
 
 namespace STF
 {
-    template<> struct ByteReaderTraits<TestTypeWithTypeId1> : ByteReaderTraitsBase<TEST_TYPE_1>{};
-    template<> struct ByteReaderTraits<TestTypeWithTypeId2> : ByteReaderTraitsBase<TEST_TYPE_2>{};
+    template<> struct ByteReaderTraits<TestTypeWithReaderId1> : ByteReaderTraitsBase<TEST_READER_1>{};
+    template<> struct ByteReaderTraits<TestTypeWithReaderId2> : ByteReaderTraitsBase<TEST_READER_2>{};
 }
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
-void GIVEN_FailedSingleAssert_WHEN_NoTypeId_THEN_HasExpectedResults()
+void GIVEN_FailedSingleAssert_WHEN_NoReaderId_THEN_HasExpectedResults()
 {
     TestTypeWithoutId t;
     t.Value = 12345678u;
@@ -48,19 +48,19 @@ void GIVEN_FailedSingleAssert_WHEN_NoTypeId_THEN_HasExpectedResults()
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
-void GIVEN_FailedSingleAssert_WHEN_TypeId_THEN_HasExpectedResults()
+void GIVEN_FailedSingleAssert_WHEN_ReaderId_THEN_HasExpectedResults()
 {
-    TestTypeWithTypeId1 t;
+    TestTypeWithReaderId1 t;
     t.Value = 12345678u;
     STF::IsTrue(t, 42);
 }
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
-void GIVEN_FailedTwoSingleAsserts_WHEN_FirstNoTypeIdSecondHasTypeId_THEN_HasExpectedResults()
+void GIVEN_FailedTwoSingleAsserts_WHEN_FirstNoReaderIdSecondHasReaderId_THEN_HasExpectedResults()
 {
     TestTypeWithoutId t;
-    TestTypeWithTypeId1 u;
+    TestTypeWithReaderId1 u;
     u.Value = 12345678u;
     t.Value = 87654321u;
     STF::IsTrue(t, 42);
@@ -69,9 +69,9 @@ void GIVEN_FailedTwoSingleAsserts_WHEN_FirstNoTypeIdSecondHasTypeId_THEN_HasExpe
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
-void GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveSameTypeId_THEN_HasExpectedResults()
+void GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveSameReaderId_THEN_HasExpectedResults()
 {
-    TestTypeWithTypeId1 t;
+    TestTypeWithReaderId1 t;
     t.Value = 12345678u;
     STF::IsTrue(t, 42);
 
@@ -81,10 +81,10 @@ void GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveSameTypeId_THEN_HasExpectedResult
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
-void GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveDifferentTypeId_THEN_HasExpectedResults()
+void GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveDifferentReaderId_THEN_HasExpectedResults()
 {
-    TestTypeWithTypeId1 t;
-    TestTypeWithTypeId2 u;
+    TestTypeWithReaderId1 t;
+    TestTypeWithReaderId2 u;
 
     t.Value = 12345678u;
     u.Value = 87654321u;

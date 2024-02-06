@@ -61,8 +61,8 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/TemplatedByteAddressBuffer.hlsl
     Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithData.hlsl
     Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithNoData.hlsl
+    Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/ByteReader.hlsl
     Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/NoAssertBuffer.hlsl
-    Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/TypeConverter.hlsl
     Shader/HLSLFrameworkTests/AssertBuffer/SizeTests.hlsl
     Shader/HLSLFrameworkTests/Asserts/AreEqual.hlsl
     Shader/HLSLFrameworkTests/Asserts/Fail.hlsl
@@ -131,8 +131,8 @@ set(SOURCES
     Private/Framework/AssertBufferProcessorTests.cpp
     Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/AssertInfoWithDataTests.cpp
     Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/AssertInfoWithNoDataTests.cpp
+    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/ByteReaderTests.cpp
     Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/NoAssertBufferTests.cpp
-    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/TypeConverterTests.cpp
     Private/Framework/HLSLFramework/AssertBuffer/SizeTests.cpp
     Private/Framework/HLSLFramework/Asserts/AreEqualTests.cpp
     Private/Framework/HLSLFramework/Asserts/FailTests.cpp
