@@ -1,5 +1,33 @@
 #pragma once
 
+#include "/Test/TTL/type_traits.hlsli"
+
+namespace STFPrivate
+{
+    template<typename U>
+    struct TypeToVal;
+
+    template<> struct TypeToVal<bool> : ttl::integral_constant<uint, 0>{};
+    template<> struct TypeToVal<int16_t> : ttl::integral_constant<uint, 1>{};
+    template<> struct TypeToVal<int32_t> : ttl::integral_constant<uint, 1>{};
+    template<> struct TypeToVal<int64_t> : ttl::integral_constant<uint, 1>{};
+
+    template<> struct TypeToVal<uint16_t> : ttl::integral_constant<uint, 2>{};
+    template<> struct TypeToVal<uint32_t> : ttl::integral_constant<uint, 2>{};
+    template<> struct TypeToVal<uint64_t> : ttl::integral_constant<uint, 2>{};
+
+    template<> struct TypeToVal<float16_t> : ttl::integral_constant<uint, 3>{};
+    template<> struct TypeToVal<float32_t> : ttl::integral_constant<uint, 3>{};
+    template<> struct TypeToVal<float64_t> : ttl::integral_constant<uint, 3>{};
+
+    template<uint U>
+    struct NumBitsToValBase;
+
+    template<> struct NumBitsToValBase<2> : ttl::integral_constant<uint, 0>{};
+    template<> struct NumBitsToValBase<4> : ttl::integral_constant<uint, 1>{};
+    template<> struct NumBitsToValBase<8> : ttl::integral_constant<uint, 2>{};
+}
+
 namespace STF
 {
     template<uint16_t InReaderId, uint16_t InTypeId = 0>
@@ -9,58 +37,27 @@ namespace STF
         static const uint16_t TypeId = InTypeId;
     };
 
-    template<typename T>
+    template<typename T, typename = void>
     struct ByteReaderTraits : ByteReaderTraitsBase<0, 0>
     {
     };
 
-    template<> struct ByteReaderTraits<bool> : ByteReaderTraitsBase<TYPE_ID_BOOL>{};
-    template<> struct ByteReaderTraits<bool2> : ByteReaderTraitsBase<TYPE_ID_BOOL2>{};
-    template<> struct ByteReaderTraits<bool3> : ByteReaderTraitsBase<TYPE_ID_BOOL3>{};
-    template<> struct ByteReaderTraits<bool4> : ByteReaderTraitsBase<TYPE_ID_BOOL4>{};
-    
-    template<> struct ByteReaderTraits<int16_t> : ByteReaderTraitsBase<TYPE_ID_INT16>{};
-    template<> struct ByteReaderTraits<int16_t2> : ByteReaderTraitsBase<TYPE_ID_INT16_2>{};
-    template<> struct ByteReaderTraits<int16_t3> : ByteReaderTraitsBase<TYPE_ID_INT16_3>{};
-    template<> struct ByteReaderTraits<int16_t4> : ByteReaderTraitsBase<TYPE_ID_INT16_4>{};
 
-    template<> struct ByteReaderTraits<int> : ByteReaderTraitsBase<TYPE_ID_INT>{};
-    template<> struct ByteReaderTraits<int2> : ByteReaderTraitsBase<TYPE_ID_INT2>{};
-    template<> struct ByteReaderTraits<int3> : ByteReaderTraitsBase<TYPE_ID_INT3>{};
-    template<> struct ByteReaderTraits<int4> : ByteReaderTraitsBase<TYPE_ID_INT4>{};
-    
-    template<> struct ByteReaderTraits<int64_t> : ByteReaderTraitsBase<TYPE_ID_INT64>{};
-    template<> struct ByteReaderTraits<int64_t2> : ByteReaderTraitsBase<TYPE_ID_INT64_2>{};
-    template<> struct ByteReaderTraits<int64_t3> : ByteReaderTraitsBase<TYPE_ID_INT64_3>{};
-    template<> struct ByteReaderTraits<int64_t4> : ByteReaderTraitsBase<TYPE_ID_INT64_4>{};
-    
-    template<> struct ByteReaderTraits<uint16_t> : ByteReaderTraitsBase<TYPE_ID_UINT16>{};
-    template<> struct ByteReaderTraits<uint16_t2> : ByteReaderTraitsBase<TYPE_ID_UINT16_2>{};
-    template<> struct ByteReaderTraits<uint16_t3> : ByteReaderTraitsBase<TYPE_ID_UINT16_3>{};
-    template<> struct ByteReaderTraits<uint16_t4> : ByteReaderTraitsBase<TYPE_ID_UINT16_4>{};
 
-    template<> struct ByteReaderTraits<uint> : ByteReaderTraitsBase<TYPE_ID_UINT>{};
-    template<> struct ByteReaderTraits<uint2> : ByteReaderTraitsBase<TYPE_ID_UINT2>{};
-    template<> struct ByteReaderTraits<uint3> : ByteReaderTraitsBase<TYPE_ID_UINT3>{};
-    template<> struct ByteReaderTraits<uint4> : ByteReaderTraitsBase<TYPE_ID_UINT4>{};
-    
-    template<> struct ByteReaderTraits<uint64_t> : ByteReaderTraitsBase<TYPE_ID_UINT64>{};
-    template<> struct ByteReaderTraits<uint64_t2> : ByteReaderTraitsBase<TYPE_ID_UINT64_2>{};
-    template<> struct ByteReaderTraits<uint64_t3> : ByteReaderTraitsBase<TYPE_ID_UINT64_3>{};
-    template<> struct ByteReaderTraits<uint64_t4> : ByteReaderTraitsBase<TYPE_ID_UINT64_4>{};
-    
-    template<> struct ByteReaderTraits<float16_t> : ByteReaderTraitsBase<TYPE_ID_FLOAT16>{};
-    template<> struct ByteReaderTraits<float16_t2> : ByteReaderTraitsBase<TYPE_ID_FLOAT16_2>{};
-    template<> struct ByteReaderTraits<float16_t3> : ByteReaderTraitsBase<TYPE_ID_FLOAT16_3>{};
-    template<> struct ByteReaderTraits<float16_t4> : ByteReaderTraitsBase<TYPE_ID_FLOAT16_4>{};
+    template<typename T>
+    struct ByteReaderTraits<T, typename ttl::enable_if<ttl::fundamental_type_traits<T>::is_fundamental>::type>
+    {
+        using Traits = ttl::fundamental_type_traits<T>;
 
-    template<> struct ByteReaderTraits<float> : ByteReaderTraitsBase<TYPE_ID_FLOAT>{};
-    template<> struct ByteReaderTraits<float2> : ByteReaderTraitsBase<TYPE_ID_FLOAT2>{};
-    template<> struct ByteReaderTraits<float3> : ByteReaderTraitsBase<TYPE_ID_FLOAT3>{};
-    template<> struct ByteReaderTraits<float4> : ByteReaderTraitsBase<TYPE_ID_FLOAT4>{};
-    
-    template<> struct ByteReaderTraits<float64_t> : ByteReaderTraitsBase<TYPE_ID_FLOAT64>{};
-    template<> struct ByteReaderTraits<float64_t2> : ByteReaderTraitsBase<TYPE_ID_FLOAT64_2>{};
-    template<> struct ByteReaderTraits<float64_t3> : ByteReaderTraitsBase<TYPE_ID_FLOAT64_3>{};
-    template<> struct ByteReaderTraits<float64_t4> : ByteReaderTraitsBase<TYPE_ID_FLOAT64_4>{};
+        template<typename U>
+        struct NumBitsToVal : STFPrivate::NumBitsToValBase<ttl::size_of<U>::value>{};
+        
+        static const uint16_t TypeVal = STFPrivate::TypeToVal<typename Traits::base_type>::value & 3;
+        static const uint16_t NumBitsVal = (NumBitsToVal<typename Traits::base_type>::value & 3) << 2;
+        static const uint16_t NumColumns = ((Traits::dim0 - 1) & 3) << 4;
+        static const uint16_t NumRows = ((Traits::dim1 - 1) & 3) << 6;
+        
+        static const uint16_t ReaderId = READER_ID_FUNDAMENTAL;
+        static const uint16_t TypeId = NumRows | NumColumns | NumBitsVal | TypeVal;
+    };
 }
