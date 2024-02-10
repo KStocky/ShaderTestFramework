@@ -39,12 +39,3 @@ namespace CustomByteReaderTraitsTests
     STATIC_ASSERT(STF::ByteReaderTraits<TypeWithReaderTraitsAndTypeId>::ReaderId == TypeWithReaderTraitsAndTypeId::ReaderId);
     STATIC_ASSERT(STF::ByteReaderTraits<TypeWithReaderTraitsAndTypeId>::TypeId == TypeWithReaderTraitsAndTypeId::TypeId);
 }
-
-namespace FundamentalByteReaderTraitsTests
-{
-    template<uint ActualReaderId, typename Type>
-    struct TestReaderId
-    {
-        using ExpectedInfo = STF::PackedFundamentalTypeInfo<Type>;
-    };
-}
