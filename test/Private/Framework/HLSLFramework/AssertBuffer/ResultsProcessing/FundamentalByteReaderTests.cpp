@@ -3,11 +3,9 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 #include <catch2/matchers/catch_matchers_predicate.hpp>
-#include <catch2/matchers/catch_matchers_string.hpp>
 
 SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - FundamentalByteReader")
 {
-    using Catch::Matchers::ContainsSubstring;
     using Catch::Matchers::Predicate;
 
     auto [testName, expectedSubstrings, unexpectedSubstrings] = GENERATE
