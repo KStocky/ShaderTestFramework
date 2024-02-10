@@ -391,6 +391,10 @@ void ShaderTestFixture::PopulateDefaultByteReaders()
 
             std::stringstream ret;
             auto bytePointer = InBytes.data();
+            if (numRows > 1)
+            {
+                ret << "\n";
+            }
             for ([[maybe_unused]] const auto row : std::views::iota(0u, numRows))
             {
                 concreteWriter(ret, bytePointer);

@@ -42,21 +42,7 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - ByteReader")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/AssertBuffer/ResultsProcessing/ByteReader.hlsl"), { 10, 400 }));
-    fixture.RegisterByteReader("TEST_READER_1", 
-        [](const u16, const std::span<const std::byte> InBytes) 
-        {
-            u32 value;
-            std::memcpy(&value, InBytes.data(), sizeof(u32));
-            return std::format("Reader 1: {}", value); 
-        });
-    fixture.RegisterByteReader("TEST_READER_2",
-        [](const u16, const std::span<const std::byte> InBytes)
-        {
-            u32 value;
-            std::memcpy(&value, InBytes.data(), sizeof(u32));
-            return std::format("Reader 2: {}", value);
-        });
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/AssertBuffer/ResultsProcessing/FundamentalByteReader.hlsl"), { 10, 400 }));
 
     DYNAMIC_SECTION(testName)
     {

@@ -62,6 +62,7 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithData.hlsl
     Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithNoData.hlsl
     Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/ByteReader.hlsl
+    Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/ByteReader.hlsl
     Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/NoAssertBuffer.hlsl
     Shader/HLSLFrameworkTests/AssertBuffer/SizeTests.hlsl
     Shader/HLSLFrameworkTests/Asserts/AreEqual.hlsl
@@ -132,6 +133,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/AssertInfoWithDataTests.cpp
     Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/AssertInfoWithNoDataTests.cpp
     Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/ByteReaderTests.cpp
+    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/FundamentalByteReaderTests.cpp
     Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/NoAssertBufferTests.cpp
     Private/Framework/HLSLFramework/AssertBuffer/SizeTests.cpp
     Private/Framework/HLSLFramework/Asserts/AreEqualTests.cpp

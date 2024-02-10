@@ -83,7 +83,7 @@ namespace STF
 
     bool operator==(const FailedAssert& InA, const FailedAssert& InB)
     {
-        return InA.Data == InB.Data && InA.Info == InB.Info;
+        return InA.Data == InB.Data && InA.Info == InB.Info && InA.TypeId == InB.TypeId;
     }
 
     bool operator!=(const FailedAssert& InA, const FailedAssert& InB)
@@ -122,7 +122,7 @@ namespace STF
                 const u32 align = sizeAndAlignData & 0xffff;
                 byteIndex = AlignedOffset(byteIndex + sizeof(4), align);
 
-                InOs << std::format("Data {}: {}\n", i + 1u, error.ByteReader(0, std::span{ error.Data.cbegin() + byteIndex, size }));
+                InOs << std::format("Data {}: {}\n", i + 1u, error.ByteReader(error.TypeId, std::span{ error.Data.cbegin() + byteIndex, size }));
                 byteIndex = AlignedOffset(byteIndex + size, 4);
             }
         }
@@ -194,7 +194,7 @@ STF::TestRunResults STF::ProcessAssertBuffer(const u32 InNumSuccessful, const u3
             .ThreadIdType = assertInfo.ThreadIdType
         };
 
-        auto byteReader = assertInfo.TypeId < InByteReaderMap.size() ? InByteReaderMap[assertInfo.TypeId] : DefaultByteReader;
+        auto byteReader = assertInfo.ReaderId < InByteReaderMap.size() ? InByteReaderMap[assertInfo.ReaderId] : DefaultByteReader;
 
         auto getData = [InAssertBuffer, &assertInfo]()
             {
@@ -206,7 +206,7 @@ STF::TestRunResults STF::ProcessAssertBuffer(const u32 InNumSuccessful, const u3
                 return std::vector<std::byte>{begin, begin + assertInfo.DataSize};
             };
 
-        ret.FailedAsserts.push_back(FailedAssert{ .Data = getData(), .ByteReader = std::move(byteReader), .Info = info });
+        ret.FailedAsserts.push_back(FailedAssert{ .Data = getData(), .ByteReader = std::move(byteReader), .Info = info, .TypeId = assertInfo.TypeId });
     }
 
     return ret;

@@ -24,6 +24,7 @@ namespace ShaderTestPrivate
         uint LineNumber;
         uint ThreadId;
         uint ThreadIdType;
+        uint ReaderAndTypeId;
         uint TypeId;
         uint DataAddress;
         uint DataSize;
@@ -57,11 +58,11 @@ namespace ShaderTestPrivate
         return assertIndex;
     }
 
-    void AddAssertMetaInfo(const uint InMetaIndex, const uint InId, const uint InTypeId, const uint2 InAddressAndSize)
+    void AddAssertMetaInfo(const uint InMetaIndex, const uint InId, const uint InReaderAndTypeId, const uint2 InAddressAndSize)
     {
         RWByteAddressBuffer buffer = GetAssertBuffer();
         const uint metaAddress = InMetaIndex * sizeof(HLSLAssertMetaData);
-        buffer.Store4(metaAddress, uint4(InId, Scratch.ThreadID.Data, (uint)Scratch.ThreadID.Type, InTypeId));
+        buffer.Store4(metaAddress, uint4(InId, Scratch.ThreadID.Data, (uint)Scratch.ThreadID.Type, InReaderAndTypeId));
         buffer.Store2(metaAddress + 16, InAddressAndSize);
     }
 
@@ -138,7 +139,11 @@ namespace ShaderTestPrivate
             {
                 addressAndSize = AddAssertData(In1, In2);
             }
-            AddAssertMetaInfo(metaIndex, InId, STF::ByteReaderTraits<T>::ReaderId, addressAndSize);
+            using Traits = STF::ByteReaderTraits<T>;
+            const uint32_t readerId = Traits::ReaderId;
+            const uint32_t typeId = Traits::TypeId;
+            const uint packed = typeId | (readerId << 16);
+            AddAssertMetaInfo(metaIndex, InId, packed, addressAndSize);
         }
     }
 
@@ -153,8 +158,11 @@ namespace ShaderTestPrivate
             {
                 addressAndSize = AddAssertData(In);
             }
-            
-            AddAssertMetaInfo(metaIndex, InId, STF::ByteReaderTraits<T>::ReaderId, addressAndSize);
+            using Traits = STF::ByteReaderTraits<T>;
+            const uint32_t readerId = Traits::ReaderId;
+            const uint32_t typeId = Traits::TypeId;
+            const uint packed = typeId | (readerId << 16);
+            AddAssertMetaInfo(metaIndex, InId, packed, addressAndSize);
         }
     }
 }

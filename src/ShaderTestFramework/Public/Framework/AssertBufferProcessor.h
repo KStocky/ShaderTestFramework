@@ -34,7 +34,8 @@ namespace STF
 
     struct HLSLAssertMetaData : AssertMetaData
     {
-        u32 TypeId = 0;
+        u16 TypeId = 0;
+        u16 ReaderId = 0;
         u32 DataAddress = 0;
         u32 DataSize = 0;
 
@@ -61,6 +62,7 @@ namespace STF
         std::vector<std::byte> Data;
         MultiTypeByteReader ByteReader;
         AssertMetaData Info;
+        u16 TypeId = 0;
 
         friend bool operator==(const FailedAssert&, const FailedAssert&);
         friend bool operator!=(const FailedAssert&, const FailedAssert&);
