@@ -42,10 +42,11 @@ namespace STF
     {
     };
 
-
+    template<typename T, typename = void>
+    struct PackedFundamentalTypeInfo;
 
     template<typename T>
-    struct ByteReaderTraits<T, typename ttl::enable_if<ttl::fundamental_type_traits<T>::is_fundamental>::type>
+    struct PackedFundamentalTypeInfo<T, typename ttl::enable_if<ttl::fundamental_type_traits<T>::is_fundamental>::type>
     {
         using Traits = ttl::fundamental_type_traits<T>;
 
@@ -53,11 +54,24 @@ namespace STF
         struct NumBitsToVal : STFPrivate::NumBitsToValBase<ttl::size_of<U>::value>{};
         
         static const uint16_t TypeVal = STFPrivate::TypeToVal<typename Traits::base_type>::value & 3;
-        static const uint16_t NumBitsVal = (NumBitsToVal<typename Traits::base_type>::value & 3) << 2;
-        static const uint16_t NumColumns = ((Traits::dim0 - 1) & 3) << 4;
-        static const uint16_t NumRows = ((Traits::dim1 - 1) & 3) << 6;
-        
+        static const uint16_t NumBitsVal = NumBitsToVal<typename Traits::base_type>::value & 3;
+        static const uint16_t NumColumns = (Traits::dim0 - 1) & 3;
+        static const uint16_t NumRows = (Traits::dim1 - 1) & 3;
+
+        static const uint16_t PackedTypeVal = TypeVal;
+        static const uint16_t PackedNumBitsVal = NumBitsVal << 2;
+        static const uint16_t PackedNumColumns = NumColumns << 4;
+        static const uint16_t PackedNumRows = NumRows << 6;
+    };
+}
+
+namespace STF
+{
+    template<typename T>
+    struct ByteReaderTraits<T, typename ttl::enable_if<ttl::fundamental_type_traits<T>::is_fundamental>::type>
+    {
+        using PackedInfo = PackedFundamentalTypeInfo<T>;
         static const uint16_t ReaderId = READER_ID_FUNDAMENTAL;
-        static const uint16_t TypeId = NumRows | NumColumns | NumBitsVal | TypeVal;
+        static const uint16_t TypeId = PackedInfo::PackedNumRows | PackedInfo::PackedNumColumns | PackedInfo::PackedNumBitsVal | PackedInfo::PackedTypeVal;
     };
 }
