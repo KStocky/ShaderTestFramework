@@ -17,13 +17,19 @@ namespace CustomByteReaderTraitsTests
         static const uint16_t ReaderId = 42;
         static const uint16_t TypeId = 124;
     }; 
+}
 
-    namespace STF
-    {
-        template<> struct ByteReaderTraits<TypeWithReaderTraitsNoTypeId> : ByteReaderTraitsBase<TypeWithReaderTraitsNoTypeId::ReaderId>{};
-        template<> struct ByteReaderTraits<TypeWithReaderTraitsAndTypeId> : ByteReaderTraitsBase<TypeWithReaderTraitsAndTypeId::ReaderId, TypeWithReaderTraitsAndTypeId::TypeId>{};
-    }
+namespace STF
+{
+    template<> struct ByteReaderTraits<CustomByteReaderTraitsTests::TypeWithReaderTraitsNoTypeId> 
+        : ByteReaderTraitsBase<CustomByteReaderTraitsTests::TypeWithReaderTraitsNoTypeId::ReaderId>{};
+    
+    template<> struct ByteReaderTraits<CustomByteReaderTraitsTests::TypeWithReaderTraitsAndTypeId> 
+        : ByteReaderTraitsBase<CustomByteReaderTraitsTests::TypeWithReaderTraitsAndTypeId::ReaderId, CustomByteReaderTraitsTests::TypeWithReaderTraitsAndTypeId::TypeId>{};
+}
 
+namespace CustomByteReaderTraitsTests
+{
     STATIC_ASSERT(STF::ByteReaderTraits<TypeWithoutReaderTraits>::ReaderId == 0);
     STATIC_ASSERT(STF::ByteReaderTraits<TypeWithoutReaderTraits>::TypeId == 0);
 
@@ -32,4 +38,13 @@ namespace CustomByteReaderTraitsTests
 
     STATIC_ASSERT(STF::ByteReaderTraits<TypeWithReaderTraitsAndTypeId>::ReaderId == TypeWithReaderTraitsAndTypeId::ReaderId);
     STATIC_ASSERT(STF::ByteReaderTraits<TypeWithReaderTraitsAndTypeId>::TypeId == TypeWithReaderTraitsAndTypeId::TypeId);
+}
+
+namespace FundamentalByteReaderTraitsTests
+{
+    template<uint ActualReaderId, typename Type>
+    struct TestReaderId
+    {
+        using ExpectedInfo = STF::PackedFundamentalTypeInfo<Type>;
+    };
 }
