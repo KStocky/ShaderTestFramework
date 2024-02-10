@@ -137,3 +137,97 @@ namespace PackedFundamentalTypeInfoTests
         MatrixTests<4,4>();
     }
 }
+
+namespace FundamentalByteReaderTraitsTests
+{
+    template<typename Type>
+    void Test()
+    {
+        static const uint16_t ActualTypeId = STF::ByteReaderTraits<Type>::TypeId;
+        using ExpectedInfo = STF::PackedFundamentalTypeInfo<Type>;
+
+        STATIC_ASSERT((ActualTypeId & 3) == ExpectedInfo::TypeVal);
+        STATIC_ASSERT(((ActualTypeId >> 2) & 3) == ExpectedInfo::NumBitsVal);
+        STATIC_ASSERT(((ActualTypeId >> 4) & 3) == ExpectedInfo::NumColumns);
+        STATIC_ASSERT(((ActualTypeId >> 6) & 3) == ExpectedInfo::NumRows); 
+    }
+
+    void ScalarTests()
+    {
+        Test<bool>();
+        Test<int16_t>();
+        Test<int32_t>();
+        Test<int64_t>();
+
+        Test<uint16_t>();
+        Test<uint32_t>();
+        Test<uint64_t>();
+
+        Test<float16_t>();
+        Test<float32_t>();
+        Test<float64_t>();
+    }
+
+    template<uint InDim>
+    void VectorTests()
+    {
+        Test<vector<bool, InDim> >();
+        Test<vector<int16_t, InDim> >();
+        Test<vector<int32_t, InDim> >();
+        Test<vector<int64_t, InDim> >();
+
+        Test<vector<uint16_t, InDim> >();
+        Test<vector<uint32_t, InDim> >();
+        Test<vector<uint64_t, InDim> >();
+
+        Test<vector<float16_t, InDim> >();
+        Test<vector<float32_t, InDim> >();
+        Test<vector<float64_t, InDim> >();
+    }
+
+    template<uint InDim0, uint InDim1>
+    void MatrixTests()
+    {
+        Test<matrix<bool, InDim0, InDim1> >();
+        Test<matrix<int16_t, InDim0, InDim1> >();
+        Test<matrix<int32_t, InDim0, InDim1> >();
+        Test<matrix<int64_t, InDim0, InDim1> >();
+
+        Test<matrix<uint16_t, InDim0, InDim1> >();
+        Test<matrix<uint32_t, InDim0, InDim1> >();
+        Test<matrix<uint64_t, InDim0, InDim1> >();
+
+        Test<matrix<float16_t, InDim0, InDim1> >();
+        Test<matrix<float32_t, InDim0, InDim1> >();
+        Test<matrix<float64_t, InDim0, InDim1> >();
+    }
+
+    void RunTests()
+    {
+        ScalarTests();
+        VectorTests<1>();
+        VectorTests<2>();
+        VectorTests<3>();
+        VectorTests<4>();
+
+        MatrixTests<1,1>();
+        MatrixTests<1,2>();
+        MatrixTests<1,3>();
+        MatrixTests<1,4>();
+
+        MatrixTests<2,1>();
+        MatrixTests<2,2>();
+        MatrixTests<2,3>();
+        MatrixTests<2,4>();
+
+        MatrixTests<3,1>();
+        MatrixTests<3,2>();
+        MatrixTests<3,3>();
+        MatrixTests<3,4>();
+
+        MatrixTests<4,1>();
+        MatrixTests<4,2>();
+        MatrixTests<4,3>();
+        MatrixTests<4,4>();
+    }
+}
