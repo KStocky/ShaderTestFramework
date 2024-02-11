@@ -10,6 +10,11 @@ on:
       - '**CMakeLists.txt'
       - '**.cmake'
       - '.github/workflows/**'
+
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches:
+      - "main"
 jobs:
     Build-And-Test:
         runs-on: windows-latest
