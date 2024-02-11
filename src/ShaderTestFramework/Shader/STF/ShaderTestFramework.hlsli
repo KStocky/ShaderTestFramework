@@ -25,7 +25,6 @@ namespace ShaderTestPrivate
         uint ThreadId;
         uint ThreadIdType;
         uint ReaderAndTypeId;
-        uint TypeId;
         uint DataAddress;
         uint DataSize;
     };

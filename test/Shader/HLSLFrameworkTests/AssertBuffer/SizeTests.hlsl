@@ -1,4 +1,9 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
+#include "/Test/TTL/static_assert.hlsli"
+
+STATIC_ASSERT(
+    ttl::size_of<ShaderTestPrivate::HLSLAssertMetaData>::value == 24u, 
+    "The size of this struct must match the size of HLSLAssertMetaData in AssertBufferProcessor.h");
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]

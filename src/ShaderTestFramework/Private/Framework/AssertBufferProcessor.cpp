@@ -9,6 +9,9 @@
 
 namespace STF
 {
+    static_assert(sizeof(HLSLAssertMetaData) == 24,
+        "The size of this struct must be the same size as ShaderTestPrivate::HLSLAssertMetaData");
+
     static uint3 Unflatten(const u32 InId, const uint3 InDims)
     {
         const u32 xyDim = InDims.x * InDims.y;
