@@ -35,7 +35,7 @@ The installation guide can be found [here](InstallationGuide.md)
 All of the following examples will be using [Catch2](https://github.com/catchorg/Catch2) as its testing framework
 
 ### A Minimal Example
-Let's start with a really simple example ([code](../examples/EX0_MinimalShaderTest/MinimalShaderTest.cpp)). This shader test will pass
+Let's start with a really simple example ([code](../examples/Ex0_MinimalShaderTest/MinimalShaderTest.cpp)). This shader test will pass
 
 ```c++
 SCENARIO("MinimalShaderTestExample")
@@ -111,7 +111,7 @@ assertions: 1 | 1 failed
 
 ### A Worked Example
 
-Let's have a look at ([code](../examples/EX1_FailingPowTests/PowTests.cpp)) and also ensure that you have set up PIX by following the [Setting Up PIX](SettingUpPIX.md) guide.
+Let's have a look at ([code](../examples/Ex1_FailingPowTests/PowTests.cpp)) and also ensure that you have set up PIX by following the [Setting Up PIX](SettingUpPIX.md) guide.
 
 ```c++
 SCENARIO("PowTests")
