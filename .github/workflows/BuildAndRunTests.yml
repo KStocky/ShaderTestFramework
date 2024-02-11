@@ -30,16 +30,15 @@ jobs:
     Build-And-Test:
         runs-on: windows-latest
         steps:
+          - name: Checkout the repo
+            uses: actions/checkout@v4
 
-            - name: Checkout the repo
-              uses: actions/checkout@v4
+          - name: Setup CMake
+            uses: threeal/cmake-action@v1.3.0
 
-            - name: Setup CMake
-              uses: threeal/cmake-action@v1.3.0
+          - name: Build the project
+            run: cmake --build build
 
-            - name: Build the project
-              run: cmake --build build
-
-            - name: Test
-              run: ctest --test-dir build -C Debug --output-on-failure
+          - name: Test
+            run: ctest --test-dir build -C Debug --output-on-failure
             
