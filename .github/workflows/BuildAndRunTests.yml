@@ -1,6 +1,6 @@
 name: Build-And-Run-Tests
 
-run-name: "${{github.actor}}: ${{github.event.head_commit.message || github.event.pull_request.title}}"
+run-name: "${{github.actor}}: ${{github.event.head_commit.message || github.event.pull_request.}}"
 
 on:
   push:
@@ -17,6 +17,15 @@ on:
     types: [opened, reopened, synchronize]
     branches:
       - "main"
+      
+    paths-ignore:
+      - '**.cpp'
+      - '**.h'
+      - '**.hlsli'
+      - '**.hlsl'
+      - '**CMakeLists.txt'
+      - '**.cmake'
+      - '.github/workflows/**'
 jobs:
     Build-And-Test:
         runs-on: windows-latest
