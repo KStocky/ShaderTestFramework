@@ -1,8 +1,24 @@
 name: Build-And-Run-Tests
-run-name: "${{github.actor}}: ${{github.event.head_commit.message}}"
+
+run-name: "${{github.actor}}: ${{github.event.head_commit.message || github.event.pull_request.title}}"
+
 on:
   push:
     paths:
+      - '**.cpp'
+      - '**.h'
+      - '**.hlsli'
+      - '**.hlsl'
+      - '**CMakeLists.txt'
+      - '**.cmake'
+      - '.github/workflows/**'
+
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches:
+      - "main"
+      
+    paths-ignore:
       - '**.cpp'
       - '**.h'
       - '**.hlsli'
@@ -14,16 +30,15 @@ jobs:
     Build-And-Test:
         runs-on: windows-latest
         steps:
+          - name: Checkout the repo
+            uses: actions/checkout@v4
 
-            - name: Checkout the repo
-              uses: actions/checkout@v4
+          - name: Setup CMake
+            uses: threeal/cmake-action@v1.3.0
 
-            - name: Setup CMake
-              uses: threeal/cmake-action@v1.3.0
+          - name: Build the project
+            run: cmake --build build
 
-            - name: Build the project
-              run: cmake --build build
-
-            - name: Test
-              run: ctest --test-dir build -C Debug --output-on-failure
+          - name: Test
+            run: ctest --test-dir build -C Debug --output-on-failure
             
