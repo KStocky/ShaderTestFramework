@@ -15,5 +15,5 @@ void FailingFundamentalAsserts()
 [numthreads(1, 1, 1)]
 void Tests()
 {
-    FailingFundamentalAsserts();
+    //FailingFundamentalAsserts();
 }
