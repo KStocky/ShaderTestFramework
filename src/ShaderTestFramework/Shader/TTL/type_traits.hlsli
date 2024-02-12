@@ -196,9 +196,6 @@ namespace ttl
     template<typename T>
     struct size_of<T, typename enable_if<is_enum<T>::value>::type> : integral_constant<uint, 4>{};
 
-    //template<typename T, typename = void>
-    //struct align_of : integral_constant<uint, (size_of<T>::value < 8u) ? size_of<T>::value : 8u >{};
-
     template<typename T, typename = void>
     struct align_of : integral_constant<uint, (size_of<T>::value % 8u == 0) ? pick_right<uint, size_of<T>::value, 8>::value : ((size_of<T>::value % 4u == 0) ? 4u : 2u) >{};
 
