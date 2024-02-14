@@ -206,6 +206,16 @@ void ShaderTestFixture::RegisterByteReader(std::string InTypeIDName, STF::MultiT
     m_ByteReaderMap.push_back(std::move(InByteReader));
 }
 
+void ShaderTestFixture::RegisterByteReader(std::string InTypeIDName, STF::SingleTypeByteReader InByteReader)
+{
+    RegisterByteReader(std::move(InTypeIDName),
+        [byteReader = std::move(InByteReader)](const u16, const std::span<const std::byte> InData)
+        {
+            return byteReader(InData);
+        }
+    );
+}
+
 DescriptorHeap ShaderTestFixture::CreateDescriptorHeap() const
 {
     D3D12_DESCRIPTOR_HEAP_DESC desc;

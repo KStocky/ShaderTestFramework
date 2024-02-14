@@ -34,6 +34,7 @@ public:
     STF::Results RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ);
     STF::Results RunCompileTimeTest();
     void RegisterByteReader(std::string InTypeIDName, STF::MultiTypeByteReader InByteReader);
+    void RegisterByteReader(std::string InTypeIDName, STF::SingleTypeByteReader InByteReader);
 
     bool IsValid() const;
 
