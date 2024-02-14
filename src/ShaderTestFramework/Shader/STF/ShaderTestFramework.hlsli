@@ -126,6 +126,16 @@ namespace ShaderTestPrivate
 
         return uint2(0, 0);
     }
+
+    template<typename T, typename = void>
+    struct ByteReaderTraitsEval
+    {
+        static const uint16_t ReaderId = STF::ByteReaderTraits<T>::ReaderId;
+        static const uint16_t TypeId = 0;
+    };
+
+    template<typename T>
+    struct ByteReaderTraitsEval<T, typename ttl::enable_if<STF::ByteReaderTraits<T>::TypeId != 0>::type> : STF::ByteReaderTraits<T>{};
     
     template<typename T>
     void AddError(T In1, T In2, int InId)
@@ -138,7 +148,8 @@ namespace ShaderTestPrivate
             {
                 addressAndSize = AddAssertData(In1, In2);
             }
-            using Traits = STF::ByteReaderTraits<T>;
+
+            using Traits = ByteReaderTraitsEval<T>;
             const uint32_t readerId = Traits::ReaderId;
             const uint32_t typeId = Traits::TypeId;
             const uint packed = typeId | (readerId << 16);
@@ -157,7 +168,8 @@ namespace ShaderTestPrivate
             {
                 addressAndSize = AddAssertData(In);
             }
-            using Traits = STF::ByteReaderTraits<T>;
+
+            using Traits = ByteReaderTraitsEval<T>;
             const uint32_t readerId = Traits::ReaderId;
             const uint32_t typeId = Traits::TypeId;
             const uint packed = typeId | (readerId << 16);

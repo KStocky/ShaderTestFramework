@@ -7,7 +7,8 @@ The HLSL and C++ sides of the framework need to be able to communicate how to in
 1. [Byte Readers](#byte-readers)<br>
   a. [When do I need a Byte Reader](#when-do-i-need-a-byte-reader)<br>
   b. [The Fundamental Byte Reader](#the-fundamental-byte-reader)<br>
-  c. [The Default Byte Reader](#the-default-byte-reader)
+  c. [The Default Byte Reader](#the-default-byte-reader)<br>
+  d. [Creating a Byte Reader](#creating-a-byte-reader)
 2. [Byte Writers](#byte-writers)<br>
   a. [When do I need a Byte Writer](#when-do-i-need-a-byte-writer)<br>
   b. [Creating a Byte Writer](#creating-a-byte-writer)
@@ -88,7 +89,7 @@ The default Byte Reader will handle formatting asserts for any type that does no
 //ASSERT(AreEqual, test1, test2);
 ```
 
-Then run `Example6Tests - Failing test with no Byte Reader` in the [Ex6_ByteReadersAndWriters](../examples/Ex6_ByteReadersAndWriters/) example project. Doint this should yield the following error message:
+Then run `Example6Tests - Failing test with no Byte Reader` in the [Ex6_ByteReadersAndWriters](../examples/Ex6_ByteReadersAndWriters/) example project. Doing this should yield the following error message:
 
 ```
 There were 0 successful asserts and 1 failed assertions
@@ -97,7 +98,75 @@ There were 0 successful asserts and 1 failed assertions
   Data 2: Undefined Type -> Bytes: 0x2a, 0x0, 0x0
 ```
 
-Since the default byte reader has no type information to go on, it simple outputs the raw bytes of the objects captured in the assert. Often this is completely fine because you should an assert has to be failing to make use of the error message. Additionally, it is sometimes very little work to just take the byte representation and know what the values of your object were.
+Since the default byte reader has no type information to go on, it simply outputs the raw bytes of the objects captured in the assert. Often this is completely fine because an assert has to be failing to make use of the error message. Additionally, it is sometimes very little work to just take the byte representation and know what the values of your object were.
+
+### Creating a Byte Reader
+
+In the event that test writers wish to provide better error reporting than what the default byte reader can give, test writers are able to create their own byte readers. [FailingAssertWithByteReader.hlsl](../examples/Ex6_ByteReadersAndWriters/ShaderCode/FailingAssertWithByteReader.hlsl) is a modification of the previous example that has had a byte reader implemented. Like in the previous example uncomment this line:
+
+```c++
+//ASSERT(AreEqual, test1, test2);
+```
+
+Then run `Example6Tests - Failing test with Byte Reader` in the [Ex6_ByteReadersAndWriters](../examples/Ex6_ByteReadersAndWriters/) example project. Doing this should yield the following error message:
+
+```
+There were 0 successful asserts and 1 failed assertions
+  Assert 0: Line: 32
+  Data 1: a = 0, b = 2, c = false
+  Data 2: a = 42, b = 0, c = false
+```
+
+As you can see, the error has been formatted using the information about the type. There two steps for making use of a Byte Reader in a test.
+
+#### Step 1: Registering a Byte Reader with the fixture
+
+The above example's byte reader is registered in the following lines of [ByteReadersAndWriters.cpp](../examples/Ex6_ByteReadersAndWriters/ByteReadersAndWriters.cpp):
+
+```c++
+fixture.RegisterByteReader("MY_TYPE_READER_ID",
+    [](const std::span<const std::byte> InData)
+    {
+        struct MyType
+        {
+            u32 a;
+            f64 b;
+            u32 c;
+        };
+
+        MyType val;
+        std::memcpy(&val, InData.data(), sizeof(MyType));
+
+        return std::format("a = {}, b = {}, c = {}", val.a, val.b, val.c ? "true" : "false");
+    });
+```
+
+`RegisterByteReader` takes two parameters:
+
+1. Name - This is the name of the Byte Reader. We will use this to make the HLSL tests aware of this byte reader in the next step. The framework passes this name to the HLSL test using a define. This is why the name given here is in the style of a C++ macro.
+2. A lambda - This lambda takes a `const std::span<const std::byte>` and returns a `std::string`. The input parameter contains all of the bytes written as part of the failed assertion in HLSL. The output string is the string representation of the bytes that will be formatted into the failed assertion output.
+
+In this example we simply create a struct that mimics the struct used in the HLSL tests. This makes it easy to just `memcpy` the bytes into an object of this type. You will notice that we are using a `u32` in place of a `bool` here. That is because in HLSL, `bool`s are 32 bit, whereas in C++ they are 8 bit. So we just use a 32 bit integer here and then interpret it while formatting the string.
+
+#### Step 2: Making the HLSL test aware of the Byte Reader
+
+Test writers need to be able to tell the framework what HLSL types use what Byte Reader on the C++ side. They do this by specializing `STF::ByteReaderTraits` in their HLSL tests. A specialization MUST provide the following member:
+
+`static const uint16_t ReaderId`
+
+The value of this should be set to the value of the name of the reader that was used when calling `RegisterByteReader`. The shader test framework provides a convenience base struct to make this easier. You can see this in [FailingAssertWithByteReader.hlsl](../examples/Ex6_ByteReadersAndWriters/ShaderCode/FailingAssertWithByteReader.hlsl).
+
+```c++
+namespace STF
+{
+    template<>
+    struct ByteReaderTraits<MyType> : ByteReaderTraitsBase<MY_TYPE_READER_ID>{};
+}
+```
+
+Here we are providing the specialization of `STF::ByteReaderTraits` for `MyType` and we are using `STF::ByteReaderTraitsBase` for convenience.
+
+And that is all that is required to register and use a byte reader.
 
 ## Byte Writers
 
