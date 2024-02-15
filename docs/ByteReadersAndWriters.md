@@ -189,7 +189,7 @@ There were 0 successful asserts and 1 failed assertions
 
 #### Multi Type Byte Readers in HLSL
 
-If we are wanting to make use of a Mult Type Byte Reader in HLSL then there is a slight difference in how we specialize the `STF::ByteReaderTraits` template. Below is the specialization from the example:
+If we are wanting to make use of a Multi Type Byte Reader in HLSL then there is a slight difference in how we specialize the `STF::ByteReaderTraits` template. Below is the specialization from the example:
 
 ```c++
 template<uint InNum>
