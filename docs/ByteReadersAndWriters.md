@@ -168,6 +168,63 @@ Here we are providing the specialization of `STF::ByteReaderTraits` for `MyType`
 
 And that is all that is required to register and use a byte reader.
 
+### Creating a Multi Type Byte Reader
+
+There can be cases where you have a family of types that can be formatted in a very similar way. If we were to register a byte reader for each type in this type family, we might have a huge amount of redundant code. In these cases, it can often be the case that a single byte reader could be used. In fact this is the case for the byte reader than handles fundamental types. It is one byte reader that can handle every scalar, vector and matrix fundamental type. Situations where Multi Type Byte Readers are useful:
+
+1. Providing formatting for a templated type that has a number of specializations
+2. Arrays of a type
+
+In this example we will be demonstrating the second of the situations above. The HLSL for this example can be found in [FailingAssertWithMultiTypeByteReader.hlsl](../examples/Ex6_ByteReadersAndWriters/ShaderCode/FailingAssertWithMultiTypeByteReader.hlsl). The C++ is in the `Example6Tests - Failing test with MultiType Byte Reader` scenario in [ByteReadersAndWriters.cpp](../examples/Ex6_ByteReadersAndWriters/ByteReadersAndWriters.cpp)
+
+If we uncomment the assert from this example and run the example we will get the following output:
+
+```
+There were 0 successful asserts and 1 failed assertions
+  Assert 0: Line: 36
+  Data 1: 0, 0, 2, 0
+  Data 2: 0, 0, 0, 42
+```
+
+#### Multi Type Byte Readers in HLSL
+
+If we are wanting to make use of a Mult Type Byte Reader in HLSL then there is a slight difference in how we specialize the `STF::ByteReaderTraits` template. Below is the specialization from the example:
+
+```c++
+template<uint InNum>
+struct ByteReaderTraits<MyType<InNum> > : ByteReaderTraitsBase<MY_TYPE_READER_ID, InNum>{};
+```
+
+The difference here is that we are passing two values to the `STF::ByteReaderTraitsBase` template. We are passing the ReaderId like before. But we are also passing in the value `InNum` which in this example represents the number of elements in the array. This is because for Multi Type Byte Readers `STF::ByteReaderTraits` must have two members:
+
+1. `static const uint16_t ReaderId` - Like with the single type byte reader, this is the id of the reader which is the value of the name of the reader that you use to register the byte reader with `RegisterByteReader`
+2. `static const uint16_t TypeId` - This is an additional 16 bit integer that will be passed to the byte reader in C++. The value of this is test writer defined. It can be anything. In this case we are using the TypeId to pass through the size of the array. But it could be a value that represents a particular type. Or anything else.
+
+#### Multi Type Byte Readers in C++
+
+The only difference between single type and multi type byte readers in C++ is that multi type byte readers take an extra parameter:
+
+```c++
+fixture.RegisterByteReader("MY_TYPE_READER_ID",
+    [](const u16 InTypeId, const std::span<const std::byte> InData)
+    {
+        auto val = std::make_unique_for_overwrite<u32[]>(InTypeId);
+        std::memcpy(val.get(), InData.data(), InData.size_bytes());
+
+        std::stringstream ret;
+        ret << val[0];
+
+        for (u16 index = 1; index < InTypeId; ++index)
+        {
+            ret << ", " << val[index];
+        }
+
+        return ret.str();
+    });
+```
+
+As mentioned above, we are using this extra parameter to pass the size of the array through.
+
 ## Byte Writers
 
 Fundamentally, a ByteWriter is a struct template specialization of `ttl::byte_writer` of a particular type, `T`. It is only an HLSL construct. 
