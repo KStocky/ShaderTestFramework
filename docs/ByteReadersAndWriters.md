@@ -8,7 +8,8 @@ The HLSL and C++ sides of the framework need to be able to communicate how to in
   a. [When do I need a Byte Reader](#when-do-i-need-a-byte-reader)<br>
   b. [The Fundamental Byte Reader](#the-fundamental-byte-reader)<br>
   c. [The Default Byte Reader](#the-default-byte-reader)<br>
-  d. [Creating a Byte Reader](#creating-a-byte-reader)
+  d. [Creating a Byte Reader](#creating-a-byte-reader)<br>
+  e. [Creating a Multi Type Byte Reader](#creating-a-multi-type-byte-reader)
 2. [Byte Writers](#byte-writers)<br>
   a. [When do I need a Byte Writer](#when-do-i-need-a-byte-writer)<br>
   b. [Creating a Byte Writer](#creating-a-byte-writer)
