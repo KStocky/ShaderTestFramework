@@ -63,7 +63,7 @@ SCENARIO("AssertBufferProcessorTests - No Assert Buffer")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessAssertBuffer(numSuccess, numFailed, uint3(1,1,1), STF::AssertBufferLayout{ 0,0 }, std::vector<std::byte>{}, STF::TypeConverterMap{});
+            const auto results = STF::ProcessAssertBuffer(numSuccess, numFailed, uint3(1,1,1), STF::AssertBufferLayout{ 0,0 }, std::vector<std::byte>{}, STF::MultiTypeByteReaderMap{});
 
             THEN("Results has expected errors")
             {
@@ -93,7 +93,7 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - No AssertData")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::TypeConverterMap{});
+            const auto results = STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{});
 
             THEN("Results has expected errors")
             {
@@ -230,7 +230,7 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - AssertData")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::TypeConverterMap{});
+            const auto results = STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{});
 
             THEN("Results has expected errors")
             {
@@ -265,7 +265,7 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - AssertData")
     }
 }
 
-SCENARIO("AssertBufferProcessorTests - AssertInfo - Type Converter")
+SCENARIO("AssertBufferProcessorTests - AssertInfo - Byte Reader")
 {
     using Catch::Matchers::ContainsSubstring;
     auto serializeImpl = OverloadSet{
@@ -318,19 +318,19 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - Type Converter")
     };
 
     auto conv1 =
-        [](const std::span<const std::byte> InBytes)
+        [](const u16 InTypeId, const std::span<const std::byte> InBytes)
         {
             u32 val;
             std::memcpy(&val, InBytes.data(), sizeof(u32));
-            return std::format("Type 1: {}", val);
+            return std::format("Reader 1: Type {}: {}", InTypeId, val);
         };
 
     auto conv2 =
-        [](const std::span<const std::byte> InBytes)
+        [](const u16 InTypeId, const std::span<const std::byte> InBytes)
         {
             u32 val;
             std::memcpy(&val, InBytes.data(), sizeof(u32));
-            return std::format("Type 2: {}", val);
+            return std::format("Reader 2: Type {}: {}", InTypeId, val);
         };
 
     auto [given, numFailed, layout, metaData, expectedAssertData, expectedSubstrings] = GENERATE
@@ -340,63 +340,63 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - Type Converter")
             {
                 std::tuple
                 {
-                    "One failing assert with no type converter",
+                    "One failing assert with no byte reader",
                     1, STF::AssertBufferLayout{1, 100},
-                    std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 2, sizeof(STF::HLSLAssertMetaData) * 1, 8 } },
+                    std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, 2, sizeof(STF::HLSLAssertMetaData) * 1, 8}},
                     std::vector{42u},
                     std::vector<std::string>{"Bytes", "0x2A"}
                 },
                 std::tuple
                 {
-                    "One failing assert with type converter",
+                    "One failing assert with byte reader",
                     1, STF::AssertBufferLayout{1, 100},
-                    std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 1, 8 } },
+                    std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 1, 8 } },
                     std::vector{412u},
-                    std::vector<std::string>{"Type 1", "412"}
+                    std::vector<std::string>{"Reader 1", "412"}
                 },
                 std::tuple
                 {
-                    "One failing assert with different type converter",
+                    "One failing assert with different byte reader",
                     1, STF::AssertBufferLayout{1, 100},
-                    std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 1, sizeof(STF::HLSLAssertMetaData) * 1, 8 } },
+                    std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, 1, sizeof(STF::HLSLAssertMetaData) * 1, 8 } },
                     std::vector{412u},
-                    std::vector<std::string>{"Type 2", "412"}
+                    std::vector<std::string>{"Reader 2", "412"}
                 },
                 std::tuple
                 {
-                    "Two failing asserts with same type converter",
+                    "Two failing asserts with same byte reader",
                     2, STF::AssertBufferLayout{2, 100},
                     std::vector
                     { 
-                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2, 8 },
-                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2 + 8, 8 }
+                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2, 8 },
+                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2 + 8, 8 }
                     },
                     std::vector{412u, 214u},
-                    std::vector<std::string>{"Type 1", "412", "214"}
+                    std::vector<std::string>{"Reader 1", "412", "214"}
                 },
                 std::tuple
                 {
-                    "Two failing asserts with different same type converter",
+                    "Two failing asserts with different same byte reader",
                     2, STF::AssertBufferLayout{2, 100},
                     std::vector
                     {
-                        STF::HLSLAssertMetaData{ 42, 0, 0, 1, sizeof(STF::HLSLAssertMetaData) * 2, 8 },
-                        STF::HLSLAssertMetaData{ 42, 0, 0, 1, sizeof(STF::HLSLAssertMetaData) * 2 + 8, 8 }
+                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, 1, sizeof(STF::HLSLAssertMetaData) * 2, 8 },
+                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, 1, sizeof(STF::HLSLAssertMetaData) * 2 + 8, 8 }
                     },
                     std::vector{412u, 214u},
-                    std::vector<std::string>{"Type 2", "412", "214"}
+                    std::vector<std::string>{"Reader 2", "412", "214"}
                 },
                 std::tuple
                 {
-                    "Two failing asserts with different type converters",
+                    "Two failing asserts with different byte readers",
                     2, STF::AssertBufferLayout{2, 100},
                     std::vector
                     {
-                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2, 8 },
-                        STF::HLSLAssertMetaData{ 42, 0, 0, 1, sizeof(STF::HLSLAssertMetaData) * 2 + 8, 8 }
+                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2, 8 },
+                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, 1, sizeof(STF::HLSLAssertMetaData) * 2 + 8, 8 }
                     },
                     std::vector{412u, 214u},
-                    std::vector<std::string>{"Type 1", "Type 2", "412", "214"}
+                    std::vector<std::string>{"Reader 1", "Reader 2", "412", "214"}
                 }
             }
         )
@@ -414,7 +414,7 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - Type Converter")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::TypeConverterMap{conv1, conv2});
+            const auto results = STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{conv1, conv2});
 
             THEN("Results has expected sub strings")
             {
@@ -450,7 +450,7 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - Throwing")
         {
             THEN("throws")
             {
-                REQUIRE_THROWS(STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::TypeConverterMap{}));
+                REQUIRE_THROWS(STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{}));
             }
         }
     }
@@ -480,8 +480,8 @@ SCENARIO("AssertBufferProcessorTests - FailedAssert - Equality")
                 },
                 std::tuple
                 {
-                    "Differing TypeConverter",
-                    STF::FailedAssert{{}, [](const std::span<const std::byte>) { return std::string{}; }, {}},
+                    "Differing ByteReaders",
+                    STF::FailedAssert{{}, [](const u16, const std::span<const std::byte>) { return std::string{}; }, {}},
                     STF::FailedAssert{},
                     true
                 },
@@ -601,7 +601,7 @@ SCENARIO("AssertBufferProcessorTests - ThreadInfoToString")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessAssertBuffer(0, numFailed, dims, layout, std::as_bytes(std::span{ buffer }), STF::TypeConverterMap{});
+            const auto results = STF::ProcessAssertBuffer(0, numFailed, dims, layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{});
 
             THEN("Results has expected sub strings")
             {

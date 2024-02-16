@@ -10,7 +10,9 @@
 #include "D3D12/GPUDevice.h"
 
 #include <format>
+#include <sstream>
 #include <ranges>
+#include <utility>
 
 #include <WinPixEventRuntime/pix3.h>
 
@@ -33,7 +35,7 @@ ShaderTestFixture::ShaderTestFixture(Desc InParams)
     m_PIXAvailable = PIXLoadLatestWinPixGpuCapturerLibrary() != nullptr;
     m_Device = GPUDevice{ InParams.GPUDeviceParams };
 
-    PopulateDefaultTypeConverters();
+    PopulateDefaultByteReaders();
 }
 
 void ShaderTestFixture::TakeCapture()
@@ -196,12 +198,22 @@ CommandEngine ShaderTestFixture::CreateCommandEngine() const
     return CommandEngine(CommandEngine::CreationParams{ std::move(commandList), std::move(commandQueue), m_Device });
 }
 
-void ShaderTestFixture::RegisterTypeConverter(std::string InTypeIDName, STF::TypeConverter InConverter)
+void ShaderTestFixture::RegisterByteReader(std::string InTypeIDName, STF::MultiTypeByteReader InByteReader)
 {
     const u32 typeId = m_NextTypeID++;
-    ThrowIfFalse(typeId == static_cast<u32>(m_TypeConverterMap.size()));
+    ThrowIfFalse(typeId == static_cast<u32>(m_ByteReaderMap.size()));
     m_Defines.push_back(ShaderMacro{ std::move(InTypeIDName), std::format("{}", typeId) });
-    m_TypeConverterMap.push_back(std::move(InConverter));
+    m_ByteReaderMap.push_back(std::move(InByteReader));
+}
+
+void ShaderTestFixture::RegisterByteReader(std::string InTypeIDName, STF::SingleTypeByteReader InByteReader)
+{
+    RegisterByteReader(std::move(InTypeIDName),
+        [byteReader = std::move(InByteReader)](const u16, const std::span<const std::byte> InData)
+        {
+            return byteReader(InData);
+        }
+    );
 }
 
 DescriptorHeap ShaderTestFixture::CreateDescriptorHeap() const
@@ -277,77 +289,137 @@ STF::Results ShaderTestFixture::ReadbackResults(const GPUResource& InAllocationB
     const auto mappedAssertData = InAssertBuffer.Map();
     const auto assertData = mappedAssertData.Get();
 
-    return STF::ProcessAssertBuffer(success, fails, InDispatchDimensions, m_AssertInfo, assertData, m_TypeConverterMap);
+    return STF::ProcessAssertBuffer(success, fails, InDispatchDimensions, m_AssertInfo, assertData, m_ByteReaderMap);
 }
 
-void ShaderTestFixture::PopulateDefaultTypeConverters()
+namespace ShaderTestFixturePrivate
 {
-    std::array typeIdDefines =
+    template<typename T>
+    struct GenericWriter
     {
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UNDEFINED", [](const std::span<const std::byte> InBytes) -> std::string 
-        { 
-            return std::format("Undefined Type -> {}", STF::DefaultTypeConverter(InBytes)); 
-        } },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_BOOL", [](const std::span<const std::byte> InBytes) -> std::string
-        { 
-            if (InBytes.size_bytes() != 4)
-            {
-                return std::format("Unexpected num bytes: {} for type bool", InBytes.size_bytes());
-            }
-
-            u32 data;
-            std::memcpy(&data, InBytes.data(), InBytes.size_bytes());
-
-            return std::format("{}", data != 0 ? "true" : "false");
-        } },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_BOOL2", STF::CreateDefaultTypeConverter<bool2>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_BOOL3", STF::CreateDefaultTypeConverter<bool3>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_BOOL4", STF::CreateDefaultTypeConverter<bool4>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT16", STF::CreateDefaultTypeConverter<i16>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT16_2", STF::CreateDefaultTypeConverter<int16_t2>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT16_3", STF::CreateDefaultTypeConverter<int16_t3>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT16_4", STF::CreateDefaultTypeConverter<int16_t4>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT", STF::CreateDefaultTypeConverter<i32>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT2", STF::CreateDefaultTypeConverter<int2>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT3", STF::CreateDefaultTypeConverter<int3>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT4", STF::CreateDefaultTypeConverter<int4>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT64", STF::CreateDefaultTypeConverter<i64>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT64_2", STF::CreateDefaultTypeConverter<int64_t2>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT64_3", STF::CreateDefaultTypeConverter<int64_t3>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_INT64_4", STF::CreateDefaultTypeConverter<int64_t4>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT16", STF::CreateDefaultTypeConverter<u16>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT16_2", STF::CreateDefaultTypeConverter<uint16_t2>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT16_3", STF::CreateDefaultTypeConverter<uint16_t3>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT16_4", STF::CreateDefaultTypeConverter<uint16_t4>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT", STF::CreateDefaultTypeConverter<u32>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT2", STF::CreateDefaultTypeConverter<uint2>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT3", STF::CreateDefaultTypeConverter<uint3>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT4", STF::CreateDefaultTypeConverter<uint4>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT64", STF::CreateDefaultTypeConverter<u64>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT64_2", STF::CreateDefaultTypeConverter<uint64_t2>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT64_3", STF::CreateDefaultTypeConverter<uint64_t3>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_UINT64_4", STF::CreateDefaultTypeConverter<uint64_t4>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT16", STF::CreateDefaultTypeConverter<f16>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT16_2", STF::CreateDefaultTypeConverter<float16_t2>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT16_3", STF::CreateDefaultTypeConverter<float16_t3>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT16_4", STF::CreateDefaultTypeConverter<float16_t4>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT", STF::CreateDefaultTypeConverter<float>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT2", STF::CreateDefaultTypeConverter<float2>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT3", STF::CreateDefaultTypeConverter<float3>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT4", STF::CreateDefaultTypeConverter<float4>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT64", STF::CreateDefaultTypeConverter<f64>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT64_2", STF::CreateDefaultTypeConverter<float64_t2>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT64_3", STF::CreateDefaultTypeConverter<float64_t3>() },
-        Tuple<std::string, STF::TypeConverter>{"TYPE_ID_FLOAT64_4", STF::CreateDefaultTypeConverter<float64_t4>() },
+        static void Write(std::stringstream& InOut, const std::byte*& InBytes)
+        {
+            T val;
+            std::memcpy(&val, InBytes, sizeof(T));
+            InOut << val;
+            InBytes += sizeof(T);
+        }
     };
-    
-    m_Defines.reserve(typeIdDefines.size());
-    m_TypeConverterMap.reserve(typeIdDefines.size());
 
-    for (auto&& [define, converter] : typeIdDefines)
+    template<>
+    struct GenericWriter<bool>
     {
-        RegisterTypeConverter(std::move(define), std::move(converter));
-    }
+        static void Write(std::stringstream& InOut, const std::byte*& InBytes)
+        {
+            u32 val;
+            std::memcpy(&val, InBytes, sizeof(u32));
+            InOut << (val != 0 ? "true" : "false");
+            InBytes += sizeof(u32);
+        }
+    };
+}
+
+void ShaderTestFixture::PopulateDefaultByteReaders()
+{
+    RegisterByteReader("TYPE_ID_UNDEFINED", 
+        [](const u16, const std::span<const std::byte> InBytes)
+        {
+            return std::format("Undefined Type -> {}", STF::DefaultByteReader(0, InBytes));
+        });
+
+    RegisterByteReader("READER_ID_FUNDAMENTAL",
+        [](const u16 InTypeId, const std::span<const std::byte> InBytes)
+        {
+            enum class EHLSLFundamentalBaseType
+            {
+                Bool = 0,
+                Int,
+                Uint,
+                Float
+            };
+
+            enum class EHLSLFundamentalTypeBits
+            {
+                Bit16,
+                Bit32,
+                Bit64
+            };
+            const auto type = static_cast<EHLSLFundamentalBaseType>(InTypeId & 0x3);
+            const auto numBytes = static_cast<EHLSLFundamentalTypeBits>((InTypeId >> 2) & 3);
+            const u32 numColumns = ((InTypeId >> 4) & 3) + 1;
+            const u32 numRows = ((InTypeId >> 6) & 3) + 1;
+
+            const auto generateMultiLengthConcreteWriter =
+                []<typename Length16, typename Length32, typename Length64>(const EHLSLFundamentalTypeBits InNumBits)
+                {
+                    switch (InNumBits)
+                    {
+                        case EHLSLFundamentalTypeBits::Bit16:
+                        {
+                            return ShaderTestFixturePrivate::GenericWriter<Length16>::Write;
+                        }
+                        case EHLSLFundamentalTypeBits::Bit32:
+                        {
+                            return ShaderTestFixturePrivate::GenericWriter<Length32>::Write;
+                        }
+                        case EHLSLFundamentalTypeBits::Bit64:
+                        {
+                            return ShaderTestFixturePrivate::GenericWriter<Length64>::Write;
+                        }
+                    default:
+                        std::unreachable();
+                    }
+                };
+
+
+            const auto concreteWriter =
+                [generateMultiLengthConcreteWriter](const EHLSLFundamentalBaseType InType, const EHLSLFundamentalTypeBits InNumBits)
+                {
+                    switch (InType)
+                    {
+                        case EHLSLFundamentalBaseType::Bool:
+                        {
+                            return ShaderTestFixturePrivate::GenericWriter<bool>::Write;
+                        }
+                        case EHLSLFundamentalBaseType::Float:
+                        {
+                            return generateMultiLengthConcreteWriter.operator() < f16, f32, f64 > (InNumBits);
+                        }
+                        case EHLSLFundamentalBaseType::Int:
+                        {
+                            return generateMultiLengthConcreteWriter.operator() < i16, i32, i64 > (InNumBits);
+                        }
+                        case EHLSLFundamentalBaseType::Uint:
+                        {
+                            return generateMultiLengthConcreteWriter.operator() < u16, u32, u64 > (InNumBits);
+                        }
+                        default:
+                            std::unreachable();
+                    }
+                }(type, numBytes);
+
+
+            std::stringstream ret;
+            auto bytePointer = InBytes.data();
+            if (numRows > 1)
+            {
+                ret << "\n";
+            }
+            for ([[maybe_unused]] const auto row : std::views::iota(0u, numRows))
+            {
+                concreteWriter(ret, bytePointer);
+                for ([[maybe_unused]] const auto column : std::views::iota(1u, numColumns))
+                {
+                    ret << ", ";
+                    concreteWriter(ret, bytePointer);
+                }
+                if (row != numRows - 1)
+                {
+                    ret << "\n";
+                }
+            }
+            return ret.str();
+        });
 }
 
 bool ShaderTestFixture::ShouldTakeCapture() const

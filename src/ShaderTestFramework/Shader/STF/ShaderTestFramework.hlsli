@@ -1,8 +1,8 @@
 #pragma once
 
+#include "/Test/STF/ByteReaderTraits.hlsli"
 #include "/Test/STF/RootSignature.hlsli"
 #include "/Test/STF/SectionManagement.hlsli"
-#include "/Test/STF/TypeId.hlsli"
 
 #include "/Test/TTL/byte_writer.hlsli"
 #include "/Test/TTL/caster.hlsli"
@@ -24,7 +24,7 @@ namespace ShaderTestPrivate
         uint LineNumber;
         uint ThreadId;
         uint ThreadIdType;
-        uint TypeId;
+        uint ReaderAndTypeId;
         uint DataAddress;
         uint DataSize;
     };
@@ -57,11 +57,11 @@ namespace ShaderTestPrivate
         return assertIndex;
     }
 
-    void AddAssertMetaInfo(const uint InMetaIndex, const uint InId, const uint InTypeId, const uint2 InAddressAndSize)
+    void AddAssertMetaInfo(const uint InMetaIndex, const uint InId, const uint InReaderAndTypeId, const uint2 InAddressAndSize)
     {
         RWByteAddressBuffer buffer = GetAssertBuffer();
         const uint metaAddress = InMetaIndex * sizeof(HLSLAssertMetaData);
-        buffer.Store4(metaAddress, uint4(InId, Scratch.ThreadID.Data, (uint)Scratch.ThreadID.Type, InTypeId));
+        buffer.Store4(metaAddress, uint4(InId, Scratch.ThreadID.Data, (uint)Scratch.ThreadID.Type, InReaderAndTypeId));
         buffer.Store2(metaAddress + 16, InAddressAndSize);
     }
 
@@ -126,6 +126,16 @@ namespace ShaderTestPrivate
 
         return uint2(0, 0);
     }
+
+    template<typename T, typename = void>
+    struct ByteReaderTraitsEval
+    {
+        static const uint16_t ReaderId = STF::ByteReaderTraits<T>::ReaderId;
+        static const uint16_t TypeId = 0;
+    };
+
+    template<typename T>
+    struct ByteReaderTraitsEval<T, typename ttl::enable_if<STF::ByteReaderTraits<T>::TypeId != 0>::type> : STF::ByteReaderTraits<T>{};
     
     template<typename T>
     void AddError(T In1, T In2, int InId)
@@ -138,7 +148,12 @@ namespace ShaderTestPrivate
             {
                 addressAndSize = AddAssertData(In1, In2);
             }
-            AddAssertMetaInfo(metaIndex, InId, STF::type_id<T>::value, addressAndSize);
+
+            using Traits = ByteReaderTraitsEval<T>;
+            const uint32_t readerId = Traits::ReaderId;
+            const uint32_t typeId = Traits::TypeId;
+            const uint packed = typeId | (readerId << 16);
+            AddAssertMetaInfo(metaIndex, InId, packed, addressAndSize);
         }
     }
 
@@ -153,8 +168,12 @@ namespace ShaderTestPrivate
             {
                 addressAndSize = AddAssertData(In);
             }
-            
-            AddAssertMetaInfo(metaIndex, InId, STF::type_id<T>::value, addressAndSize);
+
+            using Traits = ByteReaderTraitsEval<T>;
+            const uint32_t readerId = Traits::ReaderId;
+            const uint32_t typeId = Traits::TypeId;
+            const uint packed = typeId | (readerId << 16);
+            AddAssertMetaInfo(metaIndex, InId, packed, addressAndSize);
         }
     }
 }

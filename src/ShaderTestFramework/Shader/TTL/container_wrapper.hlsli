@@ -36,13 +36,13 @@ namespace ttl
         }
 
         template<typename U = T>
-        typename enable_if<is_same<U, T>::value && !array_traits<U>::is_array, uint>::type load(const uint InIndex)
+        typename enable_if<is_same<U, T>::value && !array_traits<U>::is_array, element_type>::type load(const uint InIndex)
         {
             return Data.Load(InIndex);
         }
 
         template<typename U = T>
-        typename enable_if<is_same<U, T>::value && array_traits<U>::is_array, uint>::type load(const uint InIndex)
+        typename enable_if<is_same<U, T>::value && array_traits<U>::is_array, element_type>::type load(const uint InIndex)
         {
             return Data[InIndex];
         }

@@ -194,73 +194,73 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - AssertInfoWithD
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment2_THEN_HasExpectedResults",
-                    STF::TestRunResults{ {STF::FailedAssert{serialize(Tuple<u16, u16>{24u, 42u}), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 1, uint3(1,1,1)},
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(Tuple<u16, u16>{24u, 42u}), {}, STF::AssertMetaData{42, 0, 0}, 2}}, 0, 1, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment2_THEN_HasExpectedResults",
-                    STF::TestRunResults{ {STF::FailedAssert{serialize(Tuple<u16, u16>{24u, 42u}), {}, STF::AssertMetaData{42, 0, 0}}, STF::FailedAssert{serialize(Tuple<u16, u16>{1024u, 4u}), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 2, uint3(1,1,1)},
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(Tuple<u16, u16>{24u, 42u}), {}, STF::AssertMetaData{42, 0, 0}, 2}, STF::FailedAssert{serialize(Tuple<u16, u16>{1024u, 4u}), {}, STF::AssertMetaData{42, 0, 0}, 2}}, 0, 2, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment8_THEN_HasExpectedResults",
-                    STF::TestRunResults{ {STF::FailedAssert{serialize(Tuple<u64, u64>{24u, 42u}), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 1, uint3(1,1,1)},
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(Tuple<u64, u64>{24u, 42u}), {}, STF::AssertMetaData{42, 0, 0}, 10}}, 0, 1, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment8_THEN_HasExpectedResults",
-                    STF::TestRunResults{ {STF::FailedAssert{serialize(Tuple<u64, u64>{24u, 42u}), {}, STF::AssertMetaData{42, 0, 0}}, STF::FailedAssert{serialize(Tuple<u64, u64>{1024u, 4u}), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 2, uint3(1,1,1)},
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(Tuple<u64, u64>{24u, 42u}), {}, STF::AssertMetaData{42, 0, 0}, 10}, STF::FailedAssert{serialize(Tuple<u64, u64>{1024u, 4u}), {}, STF::AssertMetaData{42, 0, 0}, 10}}, 0, 2, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign2SecondAlign8_THEN_HasExpectedResults",
-                    STF::TestRunResults{ {STF::FailedAssert{serialize(Tuple<u16, u16>{24u, 42u}), {}, STF::AssertMetaData{42, 0, 0}}, STF::FailedAssert{serialize(Tuple<u64, u64>{1024u, 4u}), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 2, uint3(1,1,1)},
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(Tuple<u16, u16>{24u, 42u}), {}, STF::AssertMetaData{42, 0, 0}, 2}, STF::FailedAssert{serialize(Tuple<u64, u64>{1024u, 4u}), {}, STF::AssertMetaData{42, 0, 0}, 10}}, 0, 2, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign8SecondAlign2_THEN_HasExpectedResults",
-                    STF::TestRunResults{ {STF::FailedAssert{serialize(Tuple<u64, u64>{24u, 42u}), {}, STF::AssertMetaData{42, 0, 0}}, STF::FailedAssert{serialize(Tuple<u16, u16>{1024u, 4u}), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 2, uint3(1,1,1)},
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(Tuple<u64, u64>{24u, 42u}), {}, STF::AssertMetaData{42, 0, 0}, 10}, STF::FailedAssert{serialize(Tuple<u16, u16>{1024u, 4u}), {}, STF::AssertMetaData{42, 0, 0}, 2}}, 0, 2, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment2_THEN_HasExpectedResults",
-                    STF::TestRunResults{ {STF::FailedAssert{serialize(Tuple<u16>{24u}), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 1, uint3(1,1,1)},
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(Tuple<u16>{24u}), {}, STF::AssertMetaData{42, 0, 0}, 2}}, 0, 1, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertOfTypesWithAlignment2_THEN_HasExpectedResults",
-                    STF::TestRunResults{ {STF::FailedAssert{serialize(u16{24u}), {}, STF::AssertMetaData{42, 0, 0}}, STF::FailedAssert{serialize(u16{1024u}), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 2, uint3(1,1,1)},
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(u16{24u}), {}, STF::AssertMetaData{42, 0, 0}, 2}, STF::FailedAssert{serialize(u16{1024u}), {}, STF::AssertMetaData{42, 0, 0}, 2}}, 0, 2, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment8_THEN_HasExpectedResults",
-                    STF::TestRunResults{ {STF::FailedAssert{serialize(u64{24u}), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 1, uint3(1,1,1)},
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(u64{24u}), {}, STF::AssertMetaData{42, 0, 0}, 10}}, 0, 1, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertOfTypesWithAlignment8_THEN_HasExpectedResults",
-                    STF::TestRunResults{ {STF::FailedAssert{serialize(u64{24u}), {}, STF::AssertMetaData{42, 0, 0}}, STF::FailedAssert{serialize(u64{1024u}), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 2, uint3(1,1,1)},
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(u64{24u}), {}, STF::AssertMetaData{42, 0, 0}, 10}, STF::FailedAssert{serialize(u64{1024u}), {}, STF::AssertMetaData{42, 0, 0}, 10}}, 0, 2, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertFirstAlign2SecondAlign8_THEN_HasExpectedResults",
-                    STF::TestRunResults{ {STF::FailedAssert{serialize(u16{24u}), {}, STF::AssertMetaData{42, 0, 0}}, STF::FailedAssert{serialize(u64{1024u}), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 2, uint3(1,1,1)},
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(u16{24u}), {}, STF::AssertMetaData{42, 0, 0}, 2}, STF::FailedAssert{serialize(u64{1024u}), {}, STF::AssertMetaData{42, 0, 0}, 10}}, 0, 2, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertFirstAlign8SecondAlign2_THEN_HasExpectedResults",
-                    STF::TestRunResults{ {STF::FailedAssert{serialize(u64{24u}), {}, STF::AssertMetaData{42, 0, 0}}, STF::FailedAssert{serialize(u16{1024u}), {}, STF::AssertMetaData{42, 0, 0}}}, 0, 2, uint3(1,1,1)},
+                    STF::TestRunResults{ {STF::FailedAssert{serialize(u64{24u}), {}, STF::AssertMetaData{42, 0, 0}, 10}, STF::FailedAssert{serialize(u16{1024u}), {}, STF::AssertMetaData{42, 0, 0}, 2}}, 0, 2, uint3(1,1,1)},
                     10, 100
                 }
             }
@@ -268,7 +268,7 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - AssertInfoWithD
     );
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/AssertBuffer/ResultsProcessing/AssertInfoWithData.hlsl"), { numRecordedAsserts, numBytesData }));
-    fixture.RegisterTypeConverter("TEST_TYPE_WITH_WRITER", [](const std::span<const std::byte>) { return ""; });
+    fixture.RegisterByteReader("TEST_TYPE_WITH_WRITER", [](const u16, const std::span<const std::byte>) { return ""; });
 
     DYNAMIC_SECTION(testName)
     {

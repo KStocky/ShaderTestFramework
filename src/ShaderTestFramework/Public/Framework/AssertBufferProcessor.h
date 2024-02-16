@@ -34,7 +34,8 @@ namespace STF
 
     struct HLSLAssertMetaData : AssertMetaData
     {
-        u32 TypeId = 0;
+        u16 TypeId = 0;
+        u16 ReaderId = 0;
         u32 DataAddress = 0;
         u32 DataSize = 0;
 
@@ -49,17 +50,19 @@ namespace STF
         friend auto operator<=>(const AssertBufferLayout&, const AssertBufferLayout&) = default;
     };
 
-    using TypeConverter = std::function<std::string(std::span<const std::byte>)>;
+    using SingleTypeByteReader = std::function<std::string(std::span<const std::byte>)>;
+    using MultiTypeByteReader = std::function<std::string(const u16, std::span<const std::byte>)>;
 
-    std::string DefaultTypeConverter(std::span<const std::byte> InBytes);
+    std::string DefaultByteReader(const u16, std::span<const std::byte> InBytes);
 
-    using TypeConverterMap = std::vector<TypeConverter>;
+    using MultiTypeByteReaderMap = std::vector<MultiTypeByteReader>;
 
     struct FailedAssert
     {
         std::vector<std::byte> Data;
-        TypeConverter DataToStringConverter;
+        MultiTypeByteReader ByteReader;
         AssertMetaData Info;
+        u16 TypeId = 0;
 
         friend bool operator==(const FailedAssert&, const FailedAssert&);
         friend bool operator!=(const FailedAssert&, const FailedAssert&);
@@ -123,12 +126,12 @@ namespace STF
         const uint3 InDispatchDimensions,
         const AssertBufferLayout InLayout,
         std::span<const std::byte> InAssertData,
-        const TypeConverterMap& InTypeHandlerMap);
+        const MultiTypeByteReaderMap& InByteReaderMap);
 
     template<HLSLTypeTriviallyConvertibleType T>
-    TypeConverter CreateDefaultTypeConverter()
+    SingleTypeByteReader CreateSingleTypeReader()
     {
-        return 
+        return
             [](const std::span<const std::byte> InBytes) -> std::string
             {
                 if (InBytes.size_bytes() != sizeof(T))
@@ -140,6 +143,22 @@ namespace STF
                 std::memcpy(&data, InBytes.data(), sizeof(T));
 
                 return std::format("{}", data);
+            };
+    }
+
+    template<HLSLTypeTriviallyConvertibleType... T>
+    MultiTypeByteReader CreateMultiTypeByteReader()
+    {
+        static constexpr auto numTypes = sizeof...(T);
+        return
+            [readers = std::array{ (CreateSingleTypeReader<T>())...}](const u16 InReaderId, const std::span<const std::byte> InBytes) -> std::string
+            {
+                if (InReaderId >= readers.size())
+                {
+                    return std::format("ReaderId must be less than the number of types used to construct this byte reader. ReaderId = {}, NumTypes = {}", InReaderId, numTypes);
+                }
+
+                return readers[InReaderId](InBytes);
             };
     }
 }

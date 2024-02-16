@@ -20,7 +20,7 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - AssertInfoWithN
                 std::vector{STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0}},
                 STF::FailedAssert{{}, {}, STF::AssertMetaData{32, 0, 0}}}, 0, 2, uint3(1,1,1) },
                 std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_FailedAssertWithLineId_THEN_HasExpectedResults", 10,
-                std::vector{STF::FailedAssert{{}, {}, STF::AssertMetaData{64, 0, 0}}}, 0, 1, uint3(1,1,1) },
+                std::vector{STF::FailedAssert{{}, {}, STF::AssertMetaData{59, 0, 0}}}, 0, 1, uint3(1,1,1) },
                 std::tuple{ "GIVEN_AssertInfoCapacityWithFlatThreadId_WHEN_FailedAssert_THEN_HasExpectedResults", 10,
                 std::vector{STF::FailedAssert{{}, {}, STF::AssertMetaData{66, 12, 1}}}, 0, 1, uint3(1,1,1) },
                 std::tuple{ "GIVEN_AssertInfoCapacityWithFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults", 10,

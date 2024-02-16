@@ -33,7 +33,8 @@ public:
     void TakeCapture();
     STF::Results RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ);
     STF::Results RunCompileTimeTest();
-    void RegisterTypeConverter(std::string InTypeIDName, STF::TypeConverter InConverter);
+    void RegisterByteReader(std::string InTypeIDName, STF::MultiTypeByteReader InByteReader);
+    void RegisterByteReader(std::string InTypeIDName, STF::SingleTypeByteReader InByteReader);
 
     bool IsValid() const;
 
@@ -50,7 +51,7 @@ private:
     GPUResource CreateReadbackBuffer(const u64 InSizeInBytes) const;
     DescriptorHandle CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap, const u32 InIndex) const;
     STF::Results ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer, const uint3 InDispatchDimensions) const;
-    void PopulateDefaultTypeConverters();
+    void PopulateDefaultByteReaders();
 
     u64 CalculateAssertBufferSize() const;
 
@@ -59,7 +60,7 @@ private:
     GPUDevice m_Device;
     std::optional<ShaderCompiler> m_Compiler;
     ShaderCodeSource m_Source;
-    STF::TypeConverterMap m_TypeConverterMap;
+    STF::MultiTypeByteReaderMap m_ByteReaderMap;
     std::vector<std::wstring> m_CompilationFlags;
     std::vector<ShaderMacro> m_Defines;
     D3D_SHADER_MODEL m_ShaderModel;

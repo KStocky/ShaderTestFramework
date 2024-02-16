@@ -6,16 +6,34 @@ struct UnknownAlignmentLessThan8
     int A;
 };
 
-struct UnknownAlignmentGreaterThan8
+struct UnknownAlignmentGreaterThan8Multiple2
+{
+    int16_t A;
+    int16_t B;
+    int16_t C;
+    int16_t D;
+    int16_t E;
+};
+
+struct UnknownAlignmentGreaterThan8Multiple4
 {
     int A;
     int B;
     int C;
 };
 
+struct UnknownAlignmentGreaterThan8Multiple8
+{
+    int A;
+    int B;
+    int C;
+    int D;
+};
+
 struct ReportedAlignment
 {
     float A;
+    float B;
 };
 
 namespace ttl
@@ -35,5 +53,9 @@ STATIC_ASSERT(2u == ttl::align_of<int16_t3x4>::value);
 STATIC_ASSERT(8u == ttl::align_of<int64_t4x2>::value);
 
 STATIC_ASSERT((uint)sizeof(UnknownAlignmentLessThan8) == ttl::align_of<UnknownAlignmentLessThan8>::value);
-STATIC_ASSERT(8u == ttl::align_of<UnknownAlignmentGreaterThan8>::value);
+
+STATIC_ASSERT(2u == ttl::align_of<UnknownAlignmentGreaterThan8Multiple2>::value);
+STATIC_ASSERT(4u == ttl::align_of<UnknownAlignmentGreaterThan8Multiple4>::value);
+STATIC_ASSERT(8u == ttl::align_of<UnknownAlignmentGreaterThan8Multiple8>::value);
+
 STATIC_ASSERT(4u == ttl::align_of<ReportedAlignment>::value);

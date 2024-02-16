@@ -61,8 +61,9 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/TemplatedByteAddressBuffer.hlsl
     Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithData.hlsl
     Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithNoData.hlsl
+    Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/ByteReader.hlsl
+    Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/ByteReader.hlsl
     Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/NoAssertBuffer.hlsl
-    Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/TypeConverter.hlsl
     Shader/HLSLFrameworkTests/AssertBuffer/SizeTests.hlsl
     Shader/HLSLFrameworkTests/Asserts/AreEqual.hlsl
     Shader/HLSLFrameworkTests/Asserts/Fail.hlsl
@@ -70,6 +71,7 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/Asserts/IsTrue.hlsl
     Shader/HLSLFrameworkTests/Asserts/NotEqual.hlsl
     Shader/HLSLFrameworkTests/Bugs/ConversionOperator.hlsl
+    Shader/HLSLFrameworkTests/ByteReaderTraits/ByteReaderTraitsTests.hlsl
     Shader/HLSLFrameworkTests/ByteWriter/ByteWriterTests.hlsl
     Shader/HLSLFrameworkTests/Cast/GIVEN_StructDoesHasDifferentOverloadOfCast_WHEN_CastCalled_THEN_Fails.hlsl
     Shader/HLSLFrameworkTests/Cast/GIVEN_StructDoesHaveOverloadOfCast_WHEN_CastCalled_THEN_Succeeds.hlsl
@@ -107,7 +109,6 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/TypeTraits/FundamentalTypeTraitsTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/IsEnumTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/SizeOfTests.hlsl
-    Shader/HLSLFrameworkTests/TypeTraits/TypeIDTests.hlsl
     Shader/HLSLFrameworkTests/BasicShaderTests.hlsl
     Shader/HLSLFrameworkTests/FlattenIndex.hlsl
     Shader/HLSLFrameworkTests/SectionManagement.hlsl
@@ -131,8 +132,9 @@ set(SOURCES
     Private/Framework/AssertBufferProcessorTests.cpp
     Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/AssertInfoWithDataTests.cpp
     Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/AssertInfoWithNoDataTests.cpp
+    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/ByteReaderTests.cpp
+    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/FundamentalByteReaderTests.cpp
     Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/NoAssertBufferTests.cpp
-    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/TypeConverterTests.cpp
     Private/Framework/HLSLFramework/AssertBuffer/SizeTests.cpp
     Private/Framework/HLSLFramework/Asserts/AreEqualTests.cpp
     Private/Framework/HLSLFramework/Asserts/FailTests.cpp
@@ -152,9 +154,9 @@ set(SOURCES
     Private/Framework/HLSLFramework/TypeTraits/FundamentalTypeTraitsTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/IsEnumTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/SizeOfTests.cpp
-    Private/Framework/HLSLFramework/TypeTraits/TypeIdTests.cpp
     Private/Framework/HLSLFramework/BasicShaderTests.cpp
     Private/Framework/HLSLFramework/Bugs.cpp
+    Private/Framework/HLSLFramework/ByteReaderTraitsTests.cpp
     Private/Framework/HLSLFramework/ByteWriterTests.cpp
     Private/Framework/HLSLFramework/CastTests.cpp
     Private/Framework/HLSLFramework/FlattenIndexTests.cpp

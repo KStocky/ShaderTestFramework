@@ -4,7 +4,7 @@
 #include <catch2/generators/catch_generators.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
-SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - TypeConverter")
+SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - ByteReader")
 {
     using Catch::Matchers::ContainsSubstring;
 
@@ -15,47 +15,47 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - TypeConverter")
             {
                 std::tuple
                 {
-                    "GIVEN_FailedSingleAssert_WHEN_NoTypeId_THEN_HasExpectedResults",
+                    "GIVEN_FailedSingleAssert_WHEN_NoReaderId_THEN_HasExpectedResults",
                     std::vector{"Undefined"}
                 },
                 std::tuple
                 {
-                    "GIVEN_FailedSingleAssert_WHEN_TypeId_THEN_HasExpectedResults",
-                    std::vector{"TYPE 1", "12345678"}
+                    "GIVEN_FailedSingleAssert_WHEN_ReaderId_THEN_HasExpectedResults",
+                    std::vector{"Reader 1", "12345678"}
                 },
                 std::tuple
                 {
-                    "GIVEN_FailedTwoSingleAsserts_WHEN_FirstNoTypeIdSecondHasTypeId_THEN_HasExpectedResults",
-                    std::vector{"TYPE 1", "12345678", "Undefined"}
+                    "GIVEN_FailedTwoSingleAsserts_WHEN_FirstNoReaderIdSecondHasReaderId_THEN_HasExpectedResults",
+                    std::vector{"Reader 1", "12345678", "Undefined"}
                 },
                 std::tuple
                 {
-                    "GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveSameTypeId_THEN_HasExpectedResults",
-                    std::vector{"TYPE 1", "12345678", "1234"}
+                    "GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveSameReaderId_THEN_HasExpectedResults",
+                    std::vector{"Reader 1", "12345678", "1234"}
                 },
                 std::tuple
                 {
-                    "GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveDifferentTypeId_THEN_HasExpectedResults",
-                    std::vector{"TYPE 1", "12345678", "TYPE 2", "87654321"}
+                    "GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveDifferentReaderId_THEN_HasExpectedResults",
+                    std::vector{"Reader 1", "12345678", "Reader 2", "87654321"}
                 }
             }
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/AssertBuffer/ResultsProcessing/TypeConverter.hlsl"), { 10, 400 }));
-    fixture.RegisterTypeConverter("TEST_TYPE_1", 
-        [](const std::span<const std::byte> InBytes) 
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/AssertBuffer/ResultsProcessing/ByteReader.hlsl"), { 10, 400 }));
+    fixture.RegisterByteReader("TEST_READER_1",
+        [](const u16, const std::span<const std::byte> InBytes)
         {
             u32 value;
             std::memcpy(&value, InBytes.data(), sizeof(u32));
-            return std::format("TYPE 1: {}", value); 
+            return std::format("Reader 1: {}", value);
         });
-    fixture.RegisterTypeConverter("TEST_TYPE_2",
-        [](const std::span<const std::byte> InBytes)
+    fixture.RegisterByteReader("TEST_READER_2",
+        [](const u16, const std::span<const std::byte> InBytes)
         {
             u32 value;
             std::memcpy(&value, InBytes.data(), sizeof(u32));
-            return std::format("TYPE 2: {}", value);
+            return std::format("Reader 2: {}", value);
         });
 
     DYNAMIC_SECTION(testName)
