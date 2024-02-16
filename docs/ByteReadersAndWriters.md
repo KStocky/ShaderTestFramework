@@ -243,3 +243,84 @@ To create a Byte Writer of a type, `T`, then specialize `ttl::byte_writer` for y
 1. `static uint bytes_required(T)` -> This function will take an object of type, `T`, and return the number of bytes that that particular object will require to store its value.
 2. `static uint alignment_required(T)` -> This function will report the necessary alignment.
 3. `template<typename U> static void write(inout ttl::container_wrapper<U> ContainerToWriteTo, uint IndexToStartWritingAt, T ObjectToWrite)` -> This function will do the actual writing of the data to a container wrapped in a [`ttl::container_wrapper`](./ContainerWrapper.md) NOTE: It is very important that `ContainerToWriteTo` is marked as `inout` to ensure that it is returned from the function.
+
+They are also required to have the following member:
+```c++
+static const bool has_writer = true;
+```
+
+#### Byte Writers in HLSL 
+
+You can find an example of this in [FailingAssertWithByteWriter.hlsl](../examples/Ex6_ByteReadersAndWriters/ShaderCode/FailingAssertWithByteWriter.hlsl). This example is run from the `Example6Tests - Failing test with Byte Writer` scenario in [ByteReadersAndWriters.cpp](../examples/Ex6_ByteReadersAndWriters/ByteReadersAndWriters.cpp). Before running the example make sure to uncomment the ASSERT so that the test actually fails and you see the failed assert info.
+
+This example has the following type:
+
+```c++
+struct MyIntsSpan
+{
+    uint Start;
+    uint End;
+
+    // Other Functions
+};
+```
+
+This type represents a span of some elements in another array. In this example this array is:
+
+```c++
+const static int MyInts[] = {2, 4, 5, 6, 7, 42, 512, 1024, 3};
+```
+
+If an assert were to fail that involves the `MyIntsSpan` then the bytes written to the assert buffer would just be the `Start` and `End` values. This might be fine. However, it could be better if the bytes that are printed out would be the values that the span represents in the array. To achieve this we can create a `ttl::byte_writer` specialization.
+
+The relevant code from this example is the following:
+
+```
+namespace ttl
+{
+    template<>
+    struct byte_writer<MyIntsSpan>
+    {
+        static const bool has_writer = true;
+
+        static uint bytes_required(MyIntsSpan In)
+        {
+            return (In.End - In.Start) * ttl::size_of<int>::value;
+        }
+
+        static uint alignment_required(MyIntsSpan In)
+        {
+            return ttl::align_of<int>::value;
+        }
+
+        // inout here is very important to make sure that the Container is returned out of the function
+        template<typename U>
+        static void write(inout container_wrapper<U> InContainer, const uint InIndex, const MyIntsSpan In)
+        {
+            const uint size = In.End - In.Start;
+            for (uint i = 0; i < size; ++i)
+            {
+                InContainer.store(InIndex + i * 4u, MyInts[In.Start + i]);
+            }
+        }
+    };
+}
+```
+
+In this example, we have implemented the 3 necessary functions and provided the `has_writer` member.
+
+When we run this example we will get the following output:
+
+```
+There were 0 successful asserts and 1 failed assertions
+  Assert 0: Line: 69
+  Data 1: 4, 5, 6
+  Data 2: 5, 6, 7, 42, 512
+```
+
+As you can see our failed asserted data is what we wrote in the `write` function of the `ttl::byte_writer` specialization rather than the the simple `Start` and `End` indices.
+
+
+---
+
+[Top](#byte-readers-and-writers)
