@@ -96,6 +96,7 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/ProofOfConcept/GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported.hlsl
+    Shader/HLSLFrameworkTests/ProofOfConcept/MatesPrinter.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/SectionTest.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/StringsAndTemplates.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/VariadicMacroOverloading.hlsl

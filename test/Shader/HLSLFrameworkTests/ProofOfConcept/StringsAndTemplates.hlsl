@@ -162,41 +162,41 @@ uint CharToUintDivided(T InChar)
 template<typename T>
 uint CharToUintASCII(T InChar)
 {
-    //CHAR_CHECK(InChar, '\0', 0);
-    //CHAR_CHECK(InChar, '\t', 9);
-    //CHAR_CHECK(InChar, '\n', 10);
+    CHAR_CHECK(InChar, '\0', 0);
+    CHAR_CHECK(InChar, '\t', 9);
+    CHAR_CHECK(InChar, '\n', 10);
     CHAR_CHECK(InChar, ' ', 32);
-    //CHAR_CHECK(InChar, '!', 33);
-    //CHAR_CHECK(InChar, '#', 35);
-    //CHAR_CHECK(InChar, '$', 36);
-    //CHAR_CHECK(InChar, '%', 37);
-    //CHAR_CHECK(InChar, '&', 38);
+    CHAR_CHECK(InChar, '!', 33);
+    CHAR_CHECK(InChar, '#', 35);
+    CHAR_CHECK(InChar, '$', 36);
+    CHAR_CHECK(InChar, '%', 37);
+    CHAR_CHECK(InChar, '&', 38);
 
-    //CHAR_CHECK(InChar, '(', 40);
-    //CHAR_CHECK(InChar, ')', 41);
-    //CHAR_CHECK(InChar, '*', 42);
-    //CHAR_CHECK(InChar, '+', 43);
+    CHAR_CHECK(InChar, '(', 40);
+    CHAR_CHECK(InChar, ')', 41);
+    CHAR_CHECK(InChar, '*', 42);
+    CHAR_CHECK(InChar, '+', 43);
 
-    //CHAR_CHECK(InChar, '-', 45);
-    //CHAR_CHECK(InChar, '.', 46);
-    //CHAR_CHECK(InChar, '/', 47);
-    //CHAR_CHECK(InChar, '0', 48);
-    //CHAR_CHECK(InChar, '1', 49);
-    //CHAR_CHECK(InChar, '2', 50);
-    //CHAR_CHECK(InChar, '3', 51);
-    //CHAR_CHECK(InChar, '4', 52);
-    //CHAR_CHECK(InChar, '5', 53);
-    //CHAR_CHECK(InChar, '6', 54);
-    //CHAR_CHECK(InChar, '7', 55);
-    //CHAR_CHECK(InChar, '8', 56);
-    //CHAR_CHECK(InChar, '9', 57);
-    //CHAR_CHECK(InChar, ':', 58);
-    //CHAR_CHECK(InChar, ';', 59);
-    //CHAR_CHECK(InChar, '<', 60);
-    //CHAR_CHECK(InChar, '=', 61);
-    //CHAR_CHECK(InChar, '>', 62);
-    //CHAR_CHECK(InChar, '?', 63);
-    //CHAR_CHECK(InChar, '@', 64);
+    CHAR_CHECK(InChar, '-', 45);
+    CHAR_CHECK(InChar, '.', 46);
+    CHAR_CHECK(InChar, '/', 47);
+    CHAR_CHECK(InChar, '0', 48);
+    CHAR_CHECK(InChar, '1', 49);
+    CHAR_CHECK(InChar, '2', 50);
+    CHAR_CHECK(InChar, '3', 51);
+    CHAR_CHECK(InChar, '4', 52);
+    CHAR_CHECK(InChar, '5', 53);
+    CHAR_CHECK(InChar, '6', 54);
+    CHAR_CHECK(InChar, '7', 55);
+    CHAR_CHECK(InChar, '8', 56);
+    CHAR_CHECK(InChar, '9', 57);
+    CHAR_CHECK(InChar, ':', 58);
+    CHAR_CHECK(InChar, ';', 59);
+    CHAR_CHECK(InChar, '<', 60);
+    CHAR_CHECK(InChar, '=', 61);
+    CHAR_CHECK(InChar, '>', 62);
+    CHAR_CHECK(InChar, '?', 63);
+    CHAR_CHECK(InChar, '@', 64);
     CHAR_CHECK(InChar, 'A', 65);
     CHAR_CHECK(InChar, 'B', 66);
     CHAR_CHECK(InChar, 'C', 67);
@@ -223,12 +223,12 @@ uint CharToUintASCII(T InChar)
     CHAR_CHECK(InChar, 'X', 88);
     CHAR_CHECK(InChar, 'Y', 89);
     CHAR_CHECK(InChar, 'Z', 90);
-    //CHAR_CHECK(InChar, '[', 91);
-    //CHAR_CHECK(InChar, '\\', 92);
-    //CHAR_CHECK(InChar, ']', 93);
-    //CHAR_CHECK(InChar, '^', 94);
-    //CHAR_CHECK(InChar, '_', 95);
-    //CHAR_CHECK(InChar, '`', 96);
+    CHAR_CHECK(InChar, '[', 91);
+    CHAR_CHECK(InChar, '\\', 92);
+    CHAR_CHECK(InChar, ']', 93);
+    CHAR_CHECK(InChar, '^', 94);
+    CHAR_CHECK(InChar, '_', 95);
+    CHAR_CHECK(InChar, '`', 96);
     CHAR_CHECK(InChar, 'a', 97);
     CHAR_CHECK(InChar, 'b', 98);
     CHAR_CHECK(InChar, 'c', 99);
@@ -255,10 +255,10 @@ uint CharToUintASCII(T InChar)
     CHAR_CHECK(InChar, 'x', 120);
     CHAR_CHECK(InChar, 'y', 121);
     CHAR_CHECK(InChar, 'z', 122);
-    //CHAR_CHECK(InChar, '{', 123);
-    //CHAR_CHECK(InChar, '|', 124);
-    //CHAR_CHECK(InChar, '}', 125);
-    //CHAR_CHECK(InChar, '~', 126);
+    CHAR_CHECK(InChar, '{', 123);
+    CHAR_CHECK(InChar, '|', 124);
+    CHAR_CHECK(InChar, '}', 125);
+    CHAR_CHECK(InChar, '~', 126);
 
     return 255;
 }
@@ -269,6 +269,16 @@ struct StringBuffer
     static const uint MaxNumChars = 256;
     uint Data[MaxNumChars];
     uint Size;
+
+    void Init()
+    {
+        for (uint i = 0; i < MaxNumChars; ++i)
+        {
+            Data[i] = 0;
+        }
+
+        Size = 0;
+    }
 
     void AppendChar(uint InChar)
     {
@@ -281,6 +291,18 @@ struct StringBuffer
         }
     }
 };
+
+namespace ttl
+{
+    template<>
+    struct caster<bool, StringBuffer>
+    {
+        static bool cast(StringBuffer In)
+        {
+            return false;
+        }
+    };
+}
 
 #define TO_STRING_BUFFER(InBuffer, InStr)               \
 {                                                       \
@@ -305,7 +327,7 @@ do{                                                       \
 #define TO_STRING_BUFFER_3(InBuffer, InStr)             \
 do{                                                       \
     const uint numChars = ArrayLen(InStr);              \
-    InBuffer = (StringBuffer)0;                         \
+    InBuffer.Init();                                     \
     for (uint i = 0; i < numChars; ++i)                 \
     {                                                   \
         InBuffer.AppendChar(CharToUintASCII(InStr[i]));      \
@@ -317,12 +339,13 @@ do{                                                       \
 void StringsAndTemplates()
 {
     StringBuffer actual;
-    TO_STRING_BUFFER_2(actual, "Hello There");
+    TO_STRING_BUFFER_3(actual, "Hello There! I really hope that this works\n And that there are ");
 
-    ASSERT(AreEqual, actual.Size, 12u);
+    ASSERT(AreEqual, actual.Size, 64u);
+    //ASSERT(IsTrue, actual);
 
-    //ASSERT(AreEqual, 72u, actual.Data[0]);
-    //ASSERT(AreEqual, 101u, actual.Data[1]);
+    ASSERT(AreEqual, 72u, actual.Data[0]);
+    ASSERT(AreEqual, 101u, actual.Data[1]);
     //ASSERT(AreEqual, 108u, actual.Data[2]);
     //ASSERT(AreEqual, 108u, actual.Data[3]);
     //ASSERT(AreEqual, 111u, actual.Data[4]);
