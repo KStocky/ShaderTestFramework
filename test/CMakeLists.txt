@@ -33,6 +33,8 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/OperatorBoolWithAnEmptyStruct.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/OperatorInt.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/OperatorIntWithAnEmptyStruct.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/PrinterWithOptimizations.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/PrinterWithoutOptimizations.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/SizeofEnumType.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/SizeofOperator.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/StaticAssert.hlsl
