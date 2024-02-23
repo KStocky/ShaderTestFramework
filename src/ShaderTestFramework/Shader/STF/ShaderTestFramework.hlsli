@@ -1,6 +1,7 @@
 #pragma once
 
 #include "/Test/STF/ByteReaderTraits.hlsli"
+#include "/Test/STF/FrameworkResources.hlsli"
 #include "/Test/STF/RootSignature.hlsli"
 #include "/Test/STF/SectionManagement.hlsli"
 
@@ -12,42 +13,10 @@
 
 namespace ShaderTestPrivate
 {
-    const uint AssertBufferIndex;
-    const uint3 DispatchDimensions;
-    const uint MaxNumAsserts;
-    const uint SizeInBytesOfAssertData;
-    const uint SizeInBytesOfAssertBuffer;
-    const uint AllocationBufferIndex;
-
-    struct HLSLAssertMetaData
-    {
-        uint LineNumber;
-        uint ThreadId;
-        uint ThreadIdType;
-        uint ReaderAndTypeId;
-        uint DataAddress;
-        uint DataSize;
-    };
-    
-    RWByteAddressBuffer GetAssertBuffer()
-    {
-        return ResourceDescriptorHeap[AssertBufferIndex];
-    }
-
-    globallycoherent RWByteAddressBuffer GetAllocationBuffer()
-    {
-        return ResourceDescriptorHeap[AllocationBufferIndex];
-    }
-    
     void Success()
     {
         uint successIndex;
         GetAllocationBuffer().InterlockedAdd(0, 1, successIndex);
-    }
-
-    uint StartAddressAssertData()
-    {
-        return sizeof(HLSLAssertMetaData) * MaxNumAsserts;
     }
     
     uint AddAssert()
@@ -59,7 +28,7 @@ namespace ShaderTestPrivate
 
     void AddAssertMetaInfo(const uint InMetaIndex, const uint InId, const uint InReaderAndTypeId, const uint2 InAddressAndSize)
     {
-        RWByteAddressBuffer buffer = GetAssertBuffer();
+        RWByteAddressBuffer buffer = GetTestDataBuffer();
         const uint metaAddress = InMetaIndex * sizeof(HLSLAssertMetaData);
         buffer.Store4(metaAddress, uint4(InId, Scratch.ThreadID.Data, (uint)Scratch.ThreadID.Type, InReaderAndTypeId));
         buffer.Store2(metaAddress + 16, InAddressAndSize);
@@ -81,11 +50,11 @@ namespace ShaderTestPrivate
         uint offset = 0;
         GetAllocationBuffer().InterlockedAdd(8, size, offset);
 
-        const uint startAddress = StartAddressAssertData() + offset;
+        const uint startAddress = Asserts.BeginData() + offset;
         uint address = startAddress;
-        if (address + size < SizeInBytesOfAssertBuffer)
+        if (offset + size < Asserts.SizeInBytesOfData())
         {
-            RWByteAddressBuffer buff = GetAssertBuffer();
+            RWByteAddressBuffer buff = GetTestDataBuffer();
             ttl::write_bytes(buff, address, sizeAndAlign1);
             address = ttl::aligned_offset(address + 4, align1);
             ttl::write_bytes(buff, address, In1);
@@ -112,11 +81,11 @@ namespace ShaderTestPrivate
         uint offset = 0;
         GetAllocationBuffer().InterlockedAdd(8, size, offset);
 
-        const uint startAddress = StartAddressAssertData() + offset;
+        const uint startAddress = Asserts.BeginData() + offset;
         uint address = startAddress;
-        if (address + size < SizeInBytesOfAssertBuffer)
+        if (offset + size < Asserts.SizeInBytesOfData())
         {
-            RWByteAddressBuffer buff = GetAssertBuffer();
+            RWByteAddressBuffer buff = GetTestDataBuffer();
             ttl::write_bytes(buff, address, sizeAndAlign1);
             address = ttl::aligned_offset(address + 4, align1);
             ttl::write_bytes(buff, address, In);
@@ -141,10 +110,10 @@ namespace ShaderTestPrivate
     void AddError(T In1, T In2, int InId)
     {
         const uint metaIndex = AddAssert();
-        if (metaIndex < MaxNumAsserts)
+        if (metaIndex < Asserts.Num())
         {
             uint2 addressAndSize = uint2(0, 0);
-            if (SizeInBytesOfAssertData > 0)
+            if (Asserts.SizeInBytesOfData() > 0)
             {
                 addressAndSize = AddAssertData(In1, In2);
             }
@@ -161,10 +130,10 @@ namespace ShaderTestPrivate
     void AddError(T In, int InId)
     {
         const uint metaIndex = AddAssert();
-        if (metaIndex < MaxNumAsserts)
+        if (metaIndex < Asserts.Num())
         {
             uint2 addressAndSize = uint2(0, 0);
-            if (SizeInBytesOfAssertData > 0)
+            if (Asserts.SizeInBytesOfData() > 0)
             {
                 addressAndSize = AddAssertData(In);
             }

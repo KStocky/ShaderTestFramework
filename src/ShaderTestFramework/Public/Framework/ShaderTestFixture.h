@@ -42,6 +42,14 @@ public:
 
 private:
 
+    struct TestDataSection
+    {
+        u32 Begin = 0;
+        u32 NumMeta = 0;
+        u32 SizeData = 0;
+        u32 SizeSection = 0;
+    };
+
     CompilationResult CompileShader(const std::string_view InName,  const EShaderType InType) const;
     CommandEngine CreateCommandEngine() const;
     DescriptorHeap CreateDescriptorHeap() const;
@@ -53,7 +61,7 @@ private:
     STF::Results ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer, const uint3 InDispatchDimensions) const;
     void PopulateDefaultByteReaders();
 
-    u64 CalculateAssertBufferSize() const;
+    TestDataSection CalculateAssertSection() const;
 
     bool ShouldTakeCapture() const;
 

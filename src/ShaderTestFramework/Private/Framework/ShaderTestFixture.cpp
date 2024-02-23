@@ -70,8 +70,9 @@ STF::Results ShaderTestFixture::RunTest(const std::string_view InName, u32 InX, 
 
             return Tuple{ dimX, dimY, dimZ };
         }();
-
-	const u64 bufferSizeInBytes = CalculateAssertBufferSize();
+    
+    const auto assertSectionInfo = CalculateAssertSection();
+    const u64 bufferSizeInBytes = std::max(assertSectionInfo.SizeSection, 4u);
     auto assertBuffer = CreateAssertBuffer(bufferSizeInBytes);
     auto allocationBuffer = CreateAssertBuffer(12ull);
     auto readBackBuffer = CreateReadbackBuffer(bufferSizeInBytes);
@@ -92,7 +93,7 @@ STF::Results ShaderTestFixture::RunTest(const std::string_view InName, u32 InX, 
         &readBackAllocationBuffer,
         InX, InY, InZ,
         dimX, dimY, dimZ,
-        bufferSizeInBytes,
+        assertSectionInfo,
         this]
         (ScopedCommandContext& InContext)
         {
@@ -106,8 +107,10 @@ STF::Results ShaderTestFixture::RunTest(const std::string_view InName, u32 InX, 
                     InContext->SetBufferUAV(allocationBuffer);
                     std::array params
                     { 
-                        0u, dimX, dimY, dimZ, 
-                        m_AssertInfo.NumFailedAsserts, m_AssertInfo.NumBytesAssertData, static_cast<u32>(bufferSizeInBytes), 1u
+                        dimX, dimY, dimZ, 1u, 
+                        0u, 0u, 0u, 0u,
+                        assertSectionInfo.Begin, assertSectionInfo.NumMeta, assertSectionInfo.SizeData, assertSectionInfo.SizeSection,
+                        0u, 0u, 0u, 0u
                     };
                     InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
                 }
@@ -427,12 +430,15 @@ bool ShaderTestFixture::ShouldTakeCapture() const
     return m_PIXAvailable && m_CaptureRequested;
 }
 
-u64 ShaderTestFixture::CalculateAssertBufferSize() const
-{    
-    const u64 assertInfoSection = AlignedOffset(m_AssertInfo.NumFailedAsserts * sizeof(STF::HLSLAssertMetaData), 8ull);
-    const u64 assertDataSection = m_AssertInfo.NumBytesAssertData > 0 ? AlignedOffset(m_AssertInfo.NumBytesAssertData, 8ull) : 0;
-
-    const u64 requestedSize = assertInfoSection + assertDataSection;
-
-    return requestedSize > 0 ? requestedSize : 4ull;
+ShaderTestFixture::TestDataSection ShaderTestFixture::CalculateAssertSection() const
+{
+    const u32 sizeMeta = static_cast<u32>(AlignedOffset(m_AssertInfo.NumFailedAsserts * sizeof(STF::HLSLAssertMetaData), 8ull));
+    const u32 sizeData = static_cast<u32>(AlignedOffset(m_AssertInfo.NumBytesAssertData, 8ull));
+    return TestDataSection
+    {
+        .Begin = 0u,
+        .NumMeta = m_AssertInfo.NumFailedAsserts,
+        .SizeData = sizeData,
+        .SizeSection = sizeMeta + sizeData
+    };
 }

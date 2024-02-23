@@ -11,13 +11,13 @@ void GIVEN_ZeroAssertsRecorded_WHEN_Ran_THEN_AssertBufferInfoAsExpected()
 {
     const uint bufferSize = 4u;
 
-    STF::AreEqual(bufferSize, ShaderTestPrivate::SizeInBytesOfAssertBuffer);
-    STF::AreEqual(0u, ShaderTestPrivate::SizeInBytesOfAssertData);
-    STF::AreEqual(0u, ShaderTestPrivate::MaxNumAsserts);
+    ASSERT(AreEqual, 0u, ShaderTestPrivate::Asserts.SizeInBytesOfSection());
+    ASSERT(AreEqual, 0u, ShaderTestPrivate::Asserts.SizeInBytesOfData());
+    ASSERT(AreEqual, 0u, ShaderTestPrivate::Asserts.Num());
 
     uint resourceSize = 0;
-    ShaderTestPrivate::GetAssertBuffer().GetDimensions(resourceSize);
-    STF::AreEqual(bufferSize, resourceSize);
+    ShaderTestPrivate::GetTestDataBuffer().GetDimensions(resourceSize);
+    ASSERT(AreEqual, bufferSize, resourceSize);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -26,13 +26,13 @@ void GIVEN_FiveAssertsRecordedAndNoData_WHEN_Ran_THEN_AssertBufferInfoAsExpected
 {
     const uint bufferSize = 5 * sizeof(ShaderTestPrivate::HLSLAssertMetaData);
 
-    STF::AreEqual(bufferSize, ShaderTestPrivate::SizeInBytesOfAssertBuffer);
-    STF::AreEqual(0u, ShaderTestPrivate::SizeInBytesOfAssertData);
-    STF::AreEqual(5u, ShaderTestPrivate::MaxNumAsserts);
+    ASSERT(AreEqual, bufferSize, ShaderTestPrivate::Asserts.SizeInBytesOfSection());
+    ASSERT(AreEqual, 0u, ShaderTestPrivate::Asserts.SizeInBytesOfData());
+    ASSERT(AreEqual, 5u, ShaderTestPrivate::Asserts.Num());
 
     uint resourceSize = 0;
-    ShaderTestPrivate::GetAssertBuffer().GetDimensions(resourceSize);
-    STF::AreEqual(bufferSize, resourceSize);
+    ShaderTestPrivate::GetTestDataBuffer().GetDimensions(resourceSize);
+    ASSERT(AreEqual, bufferSize, resourceSize);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -42,13 +42,13 @@ void GIVEN_FiveAssertsRecordedAnd200BytesOfData_WHEN_Ran_THEN_AssertBufferInfoAs
 
     const uint bufferSize = 5 * sizeof(ShaderTestPrivate::HLSLAssertMetaData) + 200;
 
-    STF::AreEqual(bufferSize, ShaderTestPrivate::SizeInBytesOfAssertBuffer);
-    STF::AreEqual(200u, ShaderTestPrivate::SizeInBytesOfAssertData);
-    STF::AreEqual(5u, ShaderTestPrivate::MaxNumAsserts);
+    ASSERT(AreEqual, bufferSize, ShaderTestPrivate::Asserts.SizeInBytesOfSection());
+    ASSERT(AreEqual, 200u, ShaderTestPrivate::Asserts.SizeInBytesOfData());
+    ASSERT(AreEqual, 5u, ShaderTestPrivate::Asserts.Num());
 
     uint resourceSize = 0;
-    ShaderTestPrivate::GetAssertBuffer().GetDimensions(resourceSize);
-    STF::AreEqual(bufferSize, resourceSize);
+    ShaderTestPrivate::GetTestDataBuffer().GetDimensions(resourceSize);
+    ASSERT(AreEqual, bufferSize, resourceSize);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -59,11 +59,11 @@ void GIVEN_FiveAssertsRecordedAndNonMultipleOf8BytesOfData_WHEN_Ran_THEN_AssertB
     const uint expectedByteSize = 104;
     const uint bufferSize = 5 * sizeof(ShaderTestPrivate::HLSLAssertMetaData) + expectedByteSize;
 
-    STF::AreEqual(bufferSize, ShaderTestPrivate::SizeInBytesOfAssertBuffer);
-    STF::AreEqual(requestedByteSize, ShaderTestPrivate::SizeInBytesOfAssertData);
-    STF::AreEqual(5u, ShaderTestPrivate::MaxNumAsserts);
+    ASSERT(AreEqual, bufferSize, ShaderTestPrivate::Asserts.SizeInBytesOfSection());
+    ASSERT(AreEqual, expectedByteSize, ShaderTestPrivate::Asserts.SizeInBytesOfData());
+    ASSERT(AreEqual, 5u, ShaderTestPrivate::Asserts.Num());
 
     uint resourceSize = 0;
-    ShaderTestPrivate::GetAssertBuffer().GetDimensions(resourceSize);
-    STF::AreEqual(bufferSize, resourceSize);
+    ShaderTestPrivate::GetTestDataBuffer().GetDimensions(resourceSize);
+    ASSERT(AreEqual, bufferSize, resourceSize);
 }
