@@ -58,6 +58,11 @@ namespace STF
         return std::get_if<TestRunResults>(&m_Result);
     }
 
+    const FailedShaderCompilationResult* Results::GetFailedCompilationResult() const
+    {
+		return std::get_if<FailedShaderCompilationResult>(&m_Result);
+    }
+
     std::string DefaultByteReader(const u16, std::span<const std::byte> InBytes)
     {
         std::string ret;

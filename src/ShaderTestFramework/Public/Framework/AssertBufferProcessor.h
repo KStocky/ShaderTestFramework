@@ -113,6 +113,7 @@ namespace STF
         }
 
         const TestRunResults* GetTestResults() const;
+        const FailedShaderCompilationResult* GetFailedCompilationResult() const;
 
         friend std::ostream& operator<<(std::ostream& InOs, const Results& In);
 

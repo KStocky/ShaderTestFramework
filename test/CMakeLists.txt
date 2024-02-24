@@ -108,6 +108,9 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/StaticAssert/NonTemplatedStructMember.hlsl
     Shader/HLSLFrameworkTests/StaticAssert/TemplatedStructMember.hlsl
     Shader/HLSLFrameworkTests/StaticAssert/TemplatedStructMemberInstantiated.hlsl
+    Shader/HLSLFrameworkTests/StringHandling/StringLengthTests/GIVEN_EmptyString_THEN_ReturnsOne.hlsl
+    Shader/HLSLFrameworkTests/StringHandling/StringLengthTests/GIVEN_NonEmptyString_THEN_ReturnsLengthOfString.hlsl
+    Shader/HLSLFrameworkTests/StringHandling/StringLengthTests/GIVEN_StringWithOver64Characters_THEN_FailsCompilation.hlsl
     Shader/HLSLFrameworkTests/StringHandling/StringBufferByteWriterTests.hlsl
     Shader/HLSLFrameworkTests/StringHandling/StringBufferTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/AlignOfTests.hlsl
@@ -158,6 +161,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/Memory/ZeroTests.cpp
     Private/Framework/HLSLFramework/StringHandling/StringBufferByteWriterTests.cpp
     Private/Framework/HLSLFramework/StringHandling/StringBufferTests.cpp
+    Private/Framework/HLSLFramework/StringHandling/StringLengthTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/AlignOfTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/ArrayTraitsTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/ContainerTraitsTests.cpp
