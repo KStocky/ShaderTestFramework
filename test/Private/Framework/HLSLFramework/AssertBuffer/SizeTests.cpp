@@ -21,7 +21,6 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - SizeTests")
     );
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/AssertBuffer/SizeTests.hlsl"), {numRecordedFailedAsserts, numBytesAssertData}));
-    fixture.TakeCapture();
     DYNAMIC_SECTION(testName)
     {
         REQUIRE(fixture.RunTest(testName, 1, 1, 1));
