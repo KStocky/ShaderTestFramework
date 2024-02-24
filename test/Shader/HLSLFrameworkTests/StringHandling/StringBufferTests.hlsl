@@ -62,3 +62,20 @@ void GIVEN_EmptyStringBuffer_WHEN_FiveCharactersAppended_THEN_DataIsAsExpected()
     ASSERT(AreEqual, buff.Data[1], expectedSecondValue);
     ASSERT(AreEqual, buff.Size, 5u);
 }
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_FullStringBuffer_WHEN_AppendCharCalled_THEN_AppendFails()
+{
+    StringBuffer buff = ttl::zero<StringBuffer>();
+    
+    for (uint i = 0; i < StringBuffer::MaxNumChars; ++i)
+    {
+        buff.AppendChar(i + 1);
+    }
+
+    ASSERT(AreEqual, buff.Size, StringBuffer::MaxNumChars);
+
+    buff.AppendChar(64);
+    ASSERT(AreEqual, buff.Size, StringBuffer::MaxNumChars);
+}

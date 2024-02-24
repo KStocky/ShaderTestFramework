@@ -9,7 +9,8 @@ SCENARIO("HLSLFrameworkTests - StringHandling - StringBuffer")
     (
         "GIVEN_EmptyStringBuffer_WHEN_CharacterAppended_THEN_DataIsAsExpected",
         "GIVEN_EmptyStringBuffer_WHEN_FourCharactersAppended_THEN_DataIsAsExpected",
-        "GIVEN_EmptyStringBuffer_WHEN_FiveCharactersAppended_THEN_DataIsAsExpected"
+        "GIVEN_EmptyStringBuffer_WHEN_FiveCharactersAppended_THEN_DataIsAsExpected",
+        "GIVEN_FullStringBuffer_WHEN_AppendCharCalled_THEN_AppendFails"
     );
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/StringHandling/StringBufferTests.hlsl")));
