@@ -1,7 +1,10 @@
 #pragma once
 
 #include "/Test/STF/FrameworkResources.hlsli"
+#include "/Test/TTL/byte_writer.hlsli"
+#include "/Test/TTL/memory.hlsli"
 #include "/Test/TTL/static_assert.hlsli"
+#include "/Test/TTL/type_traits.hlsli"
 
 namespace ShaderTestPrivate
 {
@@ -23,7 +26,41 @@ namespace ShaderTestPrivate
             }
         }
     };
+}
 
+namespace ttl
+{
+    template<>
+    struct byte_writer<ShaderTestPrivate::StringBuffer>
+    {
+        static const bool has_writer = true;
+
+        static uint bytes_required(ShaderTestPrivate::StringBuffer In)
+        {
+            return ttl::aligned_offset(In.Size, 4u);
+        }
+
+        static uint alignment_required(ShaderTestPrivate::StringBuffer In)
+        {
+            return ttl::align_of<uint>::value;
+        }
+
+        template<typename U>
+        static void write(inout container_wrapper<U> InContainer, const uint InIndex, const ShaderTestPrivate::StringBuffer In)
+        {
+            const uint size = bytes_required(In) / ttl::size_of<uint>::value;
+            static const bool isByteAddress = ttl::container_traits<U>::is_byte_address;
+            static const uint storeIndexModifier = isByteAddress ? 4 : 1;
+            for (uint i = 0; i < size; ++i)
+            {
+                InContainer.store(InIndex + i * storeIndexModifier, In.Data[i]);
+            }
+        }
+    };
+}
+
+namespace ShaderTestPrivate
+{
     template<typename T, uint N>
     uint StringLength(T In[N])
     {

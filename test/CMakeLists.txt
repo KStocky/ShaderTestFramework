@@ -108,6 +108,7 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/StaticAssert/NonTemplatedStructMember.hlsl
     Shader/HLSLFrameworkTests/StaticAssert/TemplatedStructMember.hlsl
     Shader/HLSLFrameworkTests/StaticAssert/TemplatedStructMemberInstantiated.hlsl
+    Shader/HLSLFrameworkTests/StringHandling/StringBufferByteWriterTests.hlsl
     Shader/HLSLFrameworkTests/StringHandling/StringBufferTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/AlignOfTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/ArrayTraitsTests.hlsl
@@ -155,6 +156,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/Macros/SectionVarCreationTests.cpp
     Private/Framework/HLSLFramework/Memory/AlignedOffsetTests.cpp
     Private/Framework/HLSLFramework/Memory/ZeroTests.cpp
+    Private/Framework/HLSLFramework/StringHandling/StringBufferByteWriterTests.cpp
     Private/Framework/HLSLFramework/StringHandling/StringBufferTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/AlignOfTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/ArrayTraitsTests.cpp
