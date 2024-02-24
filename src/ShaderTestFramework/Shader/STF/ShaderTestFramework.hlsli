@@ -16,13 +16,13 @@ namespace ShaderTestPrivate
     void Success()
     {
         uint successIndex;
-        GetAllocationBuffer().InterlockedAdd(0, 1, successIndex);
+        GetAllocationBuffer().InterlockedAdd(NumSuccessIndex, 1, successIndex);
     }
     
     uint AddAssert()
     {
         uint assertIndex;
-        GetAllocationBuffer().InterlockedAdd(4, 1, assertIndex);
+        GetAllocationBuffer().InterlockedAdd(NumFailsIndex, 1, assertIndex);
         return assertIndex;
     }
 
@@ -48,7 +48,7 @@ namespace ShaderTestPrivate
         const uint alignedSize2 = ttl::aligned_offset(size2 + 4, align2);
         const uint size = ttl::aligned_offset(alignedSize1 + alignedSize2, 8);
         uint offset = 0;
-        GetAllocationBuffer().InterlockedAdd(8, size, offset);
+        GetAllocationBuffer().InterlockedAdd(AssertDataSizeIndex, size, offset);
 
         const uint startAddress = Asserts.BeginData() + offset;
         uint address = startAddress;
@@ -79,7 +79,7 @@ namespace ShaderTestPrivate
         const uint alignedSize1 = ttl::aligned_offset(size1 + 4, align1);
         const uint size = ttl::aligned_offset(alignedSize1, 8);
         uint offset = 0;
-        GetAllocationBuffer().InterlockedAdd(8, size, offset);
+        GetAllocationBuffer().InterlockedAdd(AssertDataSizeIndex, size, offset);
 
         const uint startAddress = Asserts.BeginData() + offset;
         uint address = startAddress;

@@ -75,6 +75,12 @@ namespace ShaderTestPrivate
         return ResourceDescriptorHeap[TestDataBufferIndex];
     }
 
+    static const uint NumSuccessIndex = 0;
+    static const uint NumFailsIndex = 4;
+    static const uint AssertDataSizeIndex = 8;
+    static const uint NumStringsIndex = 12;
+    static const uint StringDataSizeIndex = 16;
+
     globallycoherent RWByteAddressBuffer GetAllocationBuffer()
     {
         return ResourceDescriptorHeap[AllocationBufferIndex];
