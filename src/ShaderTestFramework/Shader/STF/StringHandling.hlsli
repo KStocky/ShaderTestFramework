@@ -1,9 +1,9 @@
 #pragma once
 
 #include "/Test/STF/FrameworkResources.hlsli"
-#include "/Test/ttl/static_assert.hlsli"
+#include "/Test/TTL/static_assert.hlsli"
 
-namespace STF
+namespace ShaderTestPrivate
 {
     struct StringBuffer
     {
@@ -141,10 +141,10 @@ namespace STF
     #undef CHAR_CHECK
 }
 
-#define TO_STRING_BUFFER(InType, InBuffer, InStr)             \
+#define TO_STRING_BUFFER(InBuffer, InStr)             \
 do{                                                       \
     const uint numChars = STF::StringLen(InStr);              \
-    InBuffer = (InType)0;                                     \
+    ttl::zero(InBuffer);                                     \
     for (uint i = 0; i < numChars; ++i)                 \
     {                                                   \
         InBuffer.AppendChar(CharToUintASCII(InStr[i]));      \
