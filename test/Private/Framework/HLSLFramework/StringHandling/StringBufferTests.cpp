@@ -8,6 +8,7 @@ SCENARIO("HLSLFrameworkTests - StringHandling - StringBuffer")
     auto testName = GENERATE
     (
         "GIVEN_EmptyStringBuffer_WHEN_CharacterAppended_THEN_DataIsAsExpected",
+        "GIVEN_EmptyStringBuffer_WHEN_AttemptingToAppendTwoCharactersAtOnce_THEN_OnlyTheFirstIsAppended",
         "GIVEN_EmptyStringBuffer_WHEN_FourCharactersAppended_THEN_DataIsAsExpected",
         "GIVEN_EmptyStringBuffer_WHEN_FiveCharactersAppended_THEN_DataIsAsExpected",
         "GIVEN_FullStringBuffer_WHEN_AppendCharCalled_THEN_AppendFails"

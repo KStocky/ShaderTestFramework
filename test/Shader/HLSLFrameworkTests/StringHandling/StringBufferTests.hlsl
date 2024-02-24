@@ -18,6 +18,20 @@ void GIVEN_EmptyStringBuffer_WHEN_CharacterAppended_THEN_DataIsAsExpected()
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
+void GIVEN_EmptyStringBuffer_WHEN_AttemptingToAppendTwoCharactersAtOnce_THEN_OnlyTheFirstIsAppended()
+{
+    StringBuffer buff = ttl::zero<StringBuffer>();
+    const uint expectedChar = 0x42;
+    const uint twoChars = 0x3400 | expectedChar;
+
+    buff.AppendChar(twoChars);
+
+    ASSERT(AreEqual, buff.Data[0], expectedChar);
+    ASSERT(AreEqual, buff.Size, 1u);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
 void GIVEN_EmptyStringBuffer_WHEN_FourCharactersAppended_THEN_DataIsAsExpected()
 {
     StringBuffer buff = ttl::zero<StringBuffer>();
