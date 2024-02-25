@@ -167,7 +167,7 @@ namespace STF
     }
 }
 
-STF::TestRunResults STF::ProcessAssertBuffer(const u32 InNumSuccessful, const u32 InNumFailed, const uint3 InDispatchDimensions, const TestDataBufferLayout InLayout, std::span<const std::byte> InAssertBuffer, const MultiTypeByteReaderMap& InByteReaderMap)
+STF::TestRunResults STF::ProcessTestDataBuffer(const u32 InNumSuccessful, const u32 InNumFailed, const uint3 InDispatchDimensions, const TestDataBufferLayout InLayout, std::span<const std::byte> InTestData, const MultiTypeByteReaderMap& InByteReaderMap)
 {
     STF::TestRunResults ret{};
     ret.NumSucceeded = InNumSuccessful;
@@ -183,9 +183,9 @@ STF::TestRunResults STF::ProcessAssertBuffer(const u32 InNumSuccessful, const u3
     }
 
     const u64 requiredBytesForAssertMetaData = InLayout.NumFailedAsserts * sizeof(HLSLAssertMetaData);
-    const bool hasSpaceForAssertInfo = requiredBytesForAssertMetaData <= InAssertBuffer.size_bytes();
+    const bool hasSpaceForAssertInfo = requiredBytesForAssertMetaData <= InTestData.size_bytes();
 
-    ThrowIfFalse(hasSpaceForAssertInfo, std::format("Assert Buffer is not large enough ({} bytes) to hold {} failed asserts (requires {} bytes)", InAssertBuffer.size_bytes(), InNumFailed, requiredBytesForAssertMetaData));
+    ThrowIfFalse(hasSpaceForAssertInfo, std::format("Assert Buffer is not large enough ({} bytes) to hold {} failed asserts (requires {} bytes)", InTestData.size_bytes(), InNumFailed, requiredBytesForAssertMetaData));
 
     const u32 numAssertsToProcess = std::min(InNumFailed, InLayout.NumFailedAsserts);
 
@@ -194,7 +194,7 @@ STF::TestRunResults STF::ProcessAssertBuffer(const u32 InNumSuccessful, const u3
     for (u32 assertIndex = 0; assertIndex < numAssertsToProcess; ++assertIndex)
     {
         HLSLAssertMetaData assertInfo;
-        std::memcpy(&assertInfo, &InAssertBuffer[assertIndex * sizeof(HLSLAssertMetaData)], sizeof(HLSLAssertMetaData));
+        std::memcpy(&assertInfo, &InTestData[assertIndex * sizeof(HLSLAssertMetaData)], sizeof(HLSLAssertMetaData));
         AssertMetaData info
         {
             .LineNumber = assertInfo.LineNumber,
@@ -204,13 +204,13 @@ STF::TestRunResults STF::ProcessAssertBuffer(const u32 InNumSuccessful, const u3
 
         auto byteReader = assertInfo.ReaderId < InByteReaderMap.size() ? InByteReaderMap[assertInfo.ReaderId] : DefaultByteReader;
 
-        auto getData = [InAssertBuffer, &assertInfo]()
+        auto getData = [InTestData, &assertInfo]()
             {
                 if (assertInfo.DataSize == 0)
                 {
                     return std::vector<std::byte>{};
                 }
-                const auto begin = InAssertBuffer.cbegin() + assertInfo.DataAddress;
+                const auto begin = InTestData.cbegin() + assertInfo.DataAddress;
                 return std::vector<std::byte>{begin, begin + assertInfo.DataSize};
             };
 

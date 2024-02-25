@@ -292,7 +292,7 @@ STF::Results ShaderTestFixture::ReadbackResults(const GPUResource& InAllocationB
     const auto mappedAssertData = InAssertBuffer.Map();
     const auto assertData = mappedAssertData.Get();
 
-    return STF::ProcessAssertBuffer(success, fails, InDispatchDimensions, m_AssertInfo, assertData, m_ByteReaderMap);
+    return STF::ProcessTestDataBuffer(success, fails, InDispatchDimensions, m_AssertInfo, assertData, m_ByteReaderMap);
 }
 
 namespace ShaderTestFixturePrivate

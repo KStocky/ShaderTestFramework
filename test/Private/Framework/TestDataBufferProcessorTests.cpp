@@ -63,7 +63,7 @@ SCENARIO("TestDataBufferProcessorTests - No Assert Buffer")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessAssertBuffer(numSuccess, numFailed, uint3(1,1,1), STF::TestDataBufferLayout{ 0,0 }, std::vector<std::byte>{}, STF::MultiTypeByteReaderMap{});
+            const auto results = STF::ProcessTestDataBuffer(numSuccess, numFailed, uint3(1,1,1), STF::TestDataBufferLayout{ 0,0 }, std::vector<std::byte>{}, STF::MultiTypeByteReaderMap{});
 
             THEN("Results has expected errors")
             {
@@ -93,7 +93,7 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - No AssertData")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{});
+            const auto results = STF::ProcessTestDataBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{});
 
             THEN("Results has expected errors")
             {
@@ -230,7 +230,7 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - AssertData")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{});
+            const auto results = STF::ProcessTestDataBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{});
 
             THEN("Results has expected errors")
             {
@@ -414,7 +414,7 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - Byte Reader")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{conv1, conv2});
+            const auto results = STF::ProcessTestDataBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{conv1, conv2});
 
             THEN("Results has expected sub strings")
             {
@@ -450,7 +450,7 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - Throwing")
         {
             THEN("throws")
             {
-                REQUIRE_THROWS(STF::ProcessAssertBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{}));
+                REQUIRE_THROWS(STF::ProcessTestDataBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{}));
             }
         }
     }
@@ -601,7 +601,7 @@ SCENARIO("TestDataBufferProcessorTests - ThreadInfoToString")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessAssertBuffer(0, numFailed, dims, layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{});
+            const auto results = STF::ProcessTestDataBuffer(0, numFailed, dims, layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{});
 
             THEN("Results has expected sub strings")
             {

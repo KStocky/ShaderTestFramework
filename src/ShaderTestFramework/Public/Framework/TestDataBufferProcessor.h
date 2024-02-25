@@ -46,6 +46,8 @@ namespace STF
     {
         u32 NumFailedAsserts = 0;
         u32 NumBytesAssertData = 0;
+        u32 NumStrings = 0;
+        u32 NumBytesStringData = 0;
 
         friend auto operator<=>(const TestDataBufferLayout&, const TestDataBufferLayout&) = default;
     };
@@ -121,12 +123,12 @@ namespace STF
         std::variant<std::monostate, TestRunResults, FailedShaderCompilationResult> m_Result;
     };
 
-    TestRunResults ProcessAssertBuffer(
+    TestRunResults ProcessTestDataBuffer(
         const u32 InNumSuccessful,
         const u32 InNumFailed,
         const uint3 InDispatchDimensions,
         const TestDataBufferLayout InLayout,
-        std::span<const std::byte> InAssertData,
+        std::span<const std::byte> InTestData,
         const MultiTypeByteReaderMap& InByteReaderMap);
 
     template<HLSLTypeTriviallyConvertibleType T>
