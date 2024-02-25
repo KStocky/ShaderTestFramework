@@ -17,6 +17,7 @@ SCENARIO("HLSLFrameworkTests - String - StrLen")
             {
                 std::tuple{"GIVEN_EmptyString_THEN_ReturnsOne", std::vector<std::string>{}},
                 std::tuple{"GIVEN_NonEmptyString_THEN_ReturnsLengthOfString", std::vector<std::string>{}},
+                std::tuple{"GIVEN_StringCreatorWithOver64Characters_THEN_FailsCompilation", std::vector<std::string>{"Strings with greater than 64 characters are not supported"}},
                 std::tuple{"GIVEN_StringWithOver64Characters_THEN_FailsCompilation", std::vector<std::string>{"Strings with greater than 64 characters are not supported"}}
             }
         )

@@ -5,6 +5,5 @@
 [numthreads(1,1,1)]
 void Main()
 {
-    const uint val = ttl::strlen("This is a super long string. Much longer than the library will support due to compiler limitations. This should fail to compile");
     DEFINE_STRING_CREATOR(creator, "This is a super long string. Much longer than the library will support due to compiler limitations. This should fail to compile");
 }

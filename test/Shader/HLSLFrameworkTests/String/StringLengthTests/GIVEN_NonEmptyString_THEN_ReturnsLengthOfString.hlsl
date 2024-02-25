@@ -6,4 +6,8 @@
 void Main()
 {
     ASSERT(AreEqual, 13u, ttl::strlen("Hello there!"));
+    DEFINE_STRING_CREATOR(testCreator, "Hello there!");
+    ttl::string test = testCreator();
+
+    ASSERT(AreEqual, 13u, ttl::strlen("Hello there!"));
 }

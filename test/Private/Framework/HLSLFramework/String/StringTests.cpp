@@ -11,8 +11,10 @@ SCENARIO("HLSLFrameworkTests - String - String")
         "GIVEN_EmptyString_WHEN_AttemptingToAppendTwoCharactersAtOnce_THEN_OnlyTheFirstIsAppended",
         "GIVEN_EmptyString_WHEN_FourCharactersAppended_THEN_DataIsAsExpected",
         "GIVEN_EmptyString_WHEN_FiveCharactersAppended_THEN_DataIsAsExpected",
-        "GIVEN_FullString_WHEN_AppendCharCalled_THEN_AppendFails",
-        "StringLambdaConstructionTest"
+        "GIVEN_EmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsEmpty",
+        "GIVEN_NonEmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsAsExpected",
+        "GIVEN_TwoNonEmptyStringCreator_WHEN_Executed_THEN_BothStringsAreAsExpected",
+        "GIVEN_FullString_WHEN_AppendCalled_THEN_AppendFails"
     );
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/String/StringTests.hlsl")));

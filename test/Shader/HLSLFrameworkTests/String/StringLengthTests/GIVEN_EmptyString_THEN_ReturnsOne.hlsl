@@ -6,4 +6,8 @@
 void Main()
 {
     ASSERT(AreEqual, 1u, ttl::strlen(""));
+
+    ttl::string test;
+    ttl::zero(test);
+    ASSERT(AreEqual, 0u, ttl::strlen(test));
 }

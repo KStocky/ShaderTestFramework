@@ -111,6 +111,7 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/StaticAssert/TemplatedStructMemberInstantiated.hlsl
     Shader/HLSLFrameworkTests/String/StringLengthTests/GIVEN_EmptyString_THEN_ReturnsOne.hlsl
     Shader/HLSLFrameworkTests/String/StringLengthTests/GIVEN_NonEmptyString_THEN_ReturnsLengthOfString.hlsl
+    Shader/HLSLFrameworkTests/String/StringLengthTests/GIVEN_StringCreatorWithOver64Characters_THEN_FailsCompilation.hlsl
     Shader/HLSLFrameworkTests/String/StringLengthTests/GIVEN_StringWithOver64Characters_THEN_FailsCompilation.hlsl
     Shader/HLSLFrameworkTests/String/StringByteWriterTests.hlsl
     Shader/HLSLFrameworkTests/String/StringTests.hlsl

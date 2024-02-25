@@ -77,28 +77,35 @@ void GIVEN_EmptyString_WHEN_FiveCharactersAppended_THEN_DataIsAsExpected()
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
-void GIVEN_FullString_WHEN_AppendCharCalled_THEN_AppendFails()
+void GIVEN_EmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsEmpty()
 {
-    ttl::string buff = ttl::zero<ttl::string>();
-    
-    for (uint i = 0; i < ttl::string::MaxNumChars; ++i)
-    {
-        buff.append(i + 1);
-    }
+    DEFINE_STRING_CREATOR(str1, "");
+    ttl::string buff = str1();
 
-    ASSERT(AreEqual, buff.Size, ttl::string::MaxNumChars);
-
-    buff.append(64);
-    ASSERT(AreEqual, buff.Size, ttl::string::MaxNumChars);
+    ASSERT(AreEqual, buff.Data[0], 0u);
+    // Null terminator is counted as character.
+    ASSERT(AreEqual, buff.Size, 1u);
 }
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
-void StringLambdaConstructionTest()
+void GIVEN_NonEmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsAsExpected()
+{
+    DEFINE_STRING_CREATOR(str1, "Hello");
+    ttl::string buff = str1();
+
+    ASSERT(AreEqual, buff.Data[0], 0x6C6C6548u);
+    ASSERT(AreEqual, buff.Data[1], 0x6Fu);
+    ASSERT(AreEqual, buff.Size, 6u);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_TwoNonEmptyStringCreator_WHEN_Executed_THEN_BothStringsAreAsExpected()
 {
     DEFINE_STRING_CREATOR(str1, "Hello");
     DEFINE_STRING_CREATOR(str2, "Bye");
-    
+
     ttl::string buff1 = str1();
     ttl::string buff2 = str2();
 
@@ -108,4 +115,17 @@ void StringLambdaConstructionTest()
 
     ASSERT(AreEqual, buff2.Data[0], 0x657942u);
     ASSERT(AreEqual, buff2.Size, 4u);
+}
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(1,1,1)]
+void GIVEN_FullString_WHEN_AppendCalled_THEN_AppendFails()
+{
+    DEFINE_STRING_CREATOR(fullString, "123456789012345678901234567890123456789012345678901234567890123");
+    ttl::string buff = fullString();
+
+    ASSERT(AreEqual, buff.Size, ttl::string::MaxNumChars);
+
+    buff.append('!');
+    ASSERT(AreEqual, buff.Size, ttl::string::MaxNumChars);
 }
