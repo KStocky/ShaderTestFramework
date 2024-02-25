@@ -52,6 +52,15 @@ namespace STF
         friend auto operator<=>(const TestDataBufferLayout&, const TestDataBufferLayout&) = default;
     };
 
+    struct AllocationBufferData
+    {
+        u32 NumPassedAsserts = 0;
+        u32 NumFailedAsserts = 0;
+        u32 NumBytesAssertData = 0;
+        u32 NumStrings = 0;
+        u32 NumBytesStringData = 0;
+    };
+
     using SingleTypeByteReader = std::function<std::string(std::span<const std::byte>)>;
     using MultiTypeByteReader = std::function<std::string(const u16, std::span<const std::byte>)>;
 
@@ -73,6 +82,7 @@ namespace STF
     struct TestRunResults
     {
         std::vector<FailedAssert> FailedAsserts;
+        std::vector<std::string> Strings;
         u32 NumSucceeded = 0;
         u32 NumFailed = 0;
         uint3 DispatchDimensions;
@@ -124,8 +134,7 @@ namespace STF
     };
 
     TestRunResults ProcessTestDataBuffer(
-        const u32 InNumSuccessful,
-        const u32 InNumFailed,
+        const AllocationBufferData InAllocationBufferData,
         const uint3 InDispatchDimensions,
         const TestDataBufferLayout InLayout,
         std::span<const std::byte> InTestData,

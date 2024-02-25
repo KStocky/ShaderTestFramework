@@ -167,15 +167,15 @@ namespace STF
     }
 }
 
-STF::TestRunResults STF::ProcessTestDataBuffer(const u32 InNumSuccessful, const u32 InNumFailed, const uint3 InDispatchDimensions, const TestDataBufferLayout InLayout, std::span<const std::byte> InTestData, const MultiTypeByteReaderMap& InByteReaderMap)
+STF::TestRunResults STF::ProcessTestDataBuffer(const AllocationBufferData InAllocationBufferData, const uint3 InDispatchDimensions, const TestDataBufferLayout InLayout, std::span<const std::byte> InTestData, const MultiTypeByteReaderMap& InByteReaderMap)
 {
     STF::TestRunResults ret{};
-    ret.NumSucceeded = InNumSuccessful;
-    ret.NumFailed = InNumFailed;
+    ret.NumSucceeded = InAllocationBufferData.NumPassedAsserts;
+    ret.NumFailed = InAllocationBufferData.NumFailedAsserts;
     ret.DispatchDimensions = InDispatchDimensions;
 
     const bool hasFailedAssertInfo = InLayout.NumFailedAsserts > 0;
-    const bool allSucceeded = InNumFailed == 0;
+    const bool allSucceeded = ret.NumFailed == 0;
 
     if (allSucceeded || !hasFailedAssertInfo)
     {
@@ -185,9 +185,9 @@ STF::TestRunResults STF::ProcessTestDataBuffer(const u32 InNumSuccessful, const 
     const u64 requiredBytesForAssertMetaData = InLayout.NumFailedAsserts * sizeof(HLSLAssertMetaData);
     const bool hasSpaceForAssertInfo = requiredBytesForAssertMetaData <= InTestData.size_bytes();
 
-    ThrowIfFalse(hasSpaceForAssertInfo, std::format("Assert Buffer is not large enough ({} bytes) to hold {} failed asserts (requires {} bytes)", InTestData.size_bytes(), InNumFailed, requiredBytesForAssertMetaData));
+    ThrowIfFalse(hasSpaceForAssertInfo, std::format("Assert Buffer is not large enough ({} bytes) to hold {} failed asserts (requires {} bytes)", InTestData.size_bytes(), ret.NumFailed, requiredBytesForAssertMetaData));
 
-    const u32 numAssertsToProcess = std::min(InNumFailed, InLayout.NumFailedAsserts);
+    const u32 numAssertsToProcess = std::min(ret.NumFailed, InLayout.NumFailedAsserts);
 
     ret.FailedAsserts.reserve(numAssertsToProcess);
 

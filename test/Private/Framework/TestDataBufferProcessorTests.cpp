@@ -26,7 +26,7 @@ SCENARIO("TestDataBufferProcessorTests - Results")
                 std::tuple{ "Constructed from empty string", STF::Results{STF::FailedShaderCompilationResult{""}}, false},
                 std::tuple{ "Constructed from non-empty string", STF::Results{STF::FailedShaderCompilationResult{"Hello"}}, false },
                 std::tuple{ "Zero Failed test run", STF::Results{ STF::TestRunResults{} }, true },
-                std::tuple{ "Non-zero failed test run", STF::Results{ STF::TestRunResults{ {}, 0, 1, uint3{} } }, false }
+                std::tuple{ "Non-zero failed test run", STF::Results{ STF::TestRunResults{ {}, {}, 0, 1, uint3{} } }, false }
             }
         )
     );
@@ -46,15 +46,15 @@ SCENARIO("TestDataBufferProcessorTests - Results")
 
 SCENARIO("TestDataBufferProcessorTests - No Assert Buffer")
 {
-    auto [given, numSuccess, numFailed] = GENERATE
+    auto [given, allocationBufferData] = GENERATE
     (
-        table<std::string, u32, u32>
+        table<std::string, STF::AllocationBufferData>
         (
             {
-                std::tuple{ "Zero success and zero failing asserts", 0, 0 },
-                std::tuple{ "Non-Zero success and zero failing asserts", 1, 0 },
-                std::tuple{ "Non-Zero success and non-zero failing asserts", 1, 1 },
-                std::tuple{ "Zero success and non-zero failing asserts", 0, 1 }
+                std::tuple{ "Zero success and zero failing asserts", STF::AllocationBufferData{0, 0} },
+                std::tuple{ "Non-Zero success and zero failing asserts", STF::AllocationBufferData{1, 0} },
+                std::tuple{ "Non-Zero success and non-zero failing asserts", STF::AllocationBufferData{1, 1} },
+                std::tuple{ "Zero success and non-zero failing asserts", STF::AllocationBufferData{0, 1} }
             }
         )
     );
@@ -63,12 +63,12 @@ SCENARIO("TestDataBufferProcessorTests - No Assert Buffer")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessTestDataBuffer(numSuccess, numFailed, uint3(1,1,1), STF::TestDataBufferLayout{ 0,0 }, std::vector<std::byte>{}, STF::MultiTypeByteReaderMap{});
+            const auto results = STF::ProcessTestDataBuffer(allocationBufferData, uint3(1, 1, 1), STF::TestDataBufferLayout{ 0,0 }, std::vector<std::byte>{}, STF::MultiTypeByteReaderMap{});
 
             THEN("Results has expected errors")
             {
-                REQUIRE(results.NumSucceeded == numSuccess);
-                REQUIRE(results.NumFailed == numFailed);
+                REQUIRE(results.NumSucceeded == allocationBufferData.NumPassedAsserts);
+                REQUIRE(results.NumFailed == allocationBufferData.NumFailedAsserts);
             }
         }
     }
@@ -93,7 +93,7 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - No AssertData")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessTestDataBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{});
+            const auto results = STF::ProcessTestDataBuffer(STF::AllocationBufferData{ 0, numFailed }, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{});
 
             THEN("Results has expected errors")
             {
@@ -173,9 +173,9 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - AssertData")
         (
             {
                 std::tuple
-                { 
-                    "One failing assert with data", 
-                    1, 1, STF::TestDataBufferLayout{1, 100}, 
+                {
+                    "One failing assert with data",
+                    1, 1, STF::TestDataBufferLayout{1, 100},
                     std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 1, 8 } },
                     std::vector{4u}
                 },
@@ -230,7 +230,7 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - AssertData")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessTestDataBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{});
+            const auto results = STF::ProcessTestDataBuffer(STF::AllocationBufferData{ 0, numFailed }, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{});
 
             THEN("Results has expected errors")
             {
@@ -367,7 +367,7 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - Byte Reader")
                     "Two failing asserts with same byte reader",
                     2, STF::TestDataBufferLayout{2, 100},
                     std::vector
-                    { 
+                    {
                         STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2, 8 },
                         STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2 + 8, 8 }
                     },
@@ -414,7 +414,7 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - Byte Reader")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessTestDataBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{conv1, conv2});
+            const auto results = STF::ProcessTestDataBuffer(STF::AllocationBufferData{ 0, numFailed }, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{ conv1, conv2 });
 
             THEN("Results has expected sub strings")
             {
@@ -450,7 +450,7 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - Throwing")
         {
             THEN("throws")
             {
-                REQUIRE_THROWS(STF::ProcessTestDataBuffer(0, numFailed, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{}));
+                REQUIRE_THROWS(STF::ProcessTestDataBuffer(STF::AllocationBufferData{ 0, numFailed }, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{}));
             }
         }
     }
@@ -507,7 +507,7 @@ SCENARIO("TestDataBufferProcessorTests - FailedAssert - Equality")
             {
                 REQUIRE(result == expectedIsEqual);
             }
-            
+
         }
 
         WHEN("Not equals called")
@@ -601,7 +601,7 @@ SCENARIO("TestDataBufferProcessorTests - ThreadInfoToString")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessTestDataBuffer(0, numFailed, dims, layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{});
+            const auto results = STF::ProcessTestDataBuffer(STF::AllocationBufferData{ 0, numFailed }, dims, layout, std::as_bytes(std::span{ buffer }), STF::MultiTypeByteReaderMap{});
 
             THEN("Results has expected sub strings")
             {

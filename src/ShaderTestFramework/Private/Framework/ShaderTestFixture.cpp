@@ -282,17 +282,14 @@ STF::Results ShaderTestFixture::ReadbackResults(const GPUResource& InAllocationB
     const auto mappedAllocationData = InAllocationBuffer.Map();
     const auto allocationData = mappedAllocationData.Get();
 
-    u32 success = 0;
-    u32 fails = 0;
+    STF::AllocationBufferData data;
 
-    std::memcpy(&success, allocationData.data(), sizeof(u32));
-    std::memcpy(&fails, allocationData.data() + sizeof(u32), sizeof(u32));
-
+    std::memcpy(&data, allocationData.data(), sizeof(STF::AllocationBufferData));
 
     const auto mappedAssertData = InAssertBuffer.Map();
     const auto assertData = mappedAssertData.Get();
 
-    return STF::ProcessTestDataBuffer(success, fails, InDispatchDimensions, m_AssertInfo, assertData, m_ByteReaderMap);
+    return STF::ProcessTestDataBuffer(data, InDispatchDimensions, m_AssertInfo, assertData, m_ByteReaderMap);
 }
 
 namespace ShaderTestFixturePrivate
