@@ -42,12 +42,12 @@ namespace STF
         friend auto operator<=>(const HLSLAssertMetaData&, const HLSLAssertMetaData&) = default;
     };
 
-    struct AssertBufferLayout
+    struct TestDataBufferLayout
     {
         u32 NumFailedAsserts = 0;
         u32 NumBytesAssertData = 0;
 
-        friend auto operator<=>(const AssertBufferLayout&, const AssertBufferLayout&) = default;
+        friend auto operator<=>(const TestDataBufferLayout&, const TestDataBufferLayout&) = default;
     };
 
     using SingleTypeByteReader = std::function<std::string(std::span<const std::byte>)>;
@@ -125,7 +125,7 @@ namespace STF
         const u32 InNumSuccessful,
         const u32 InNumFailed,
         const uint3 InDispatchDimensions,
-        const AssertBufferLayout InLayout,
+        const TestDataBufferLayout InLayout,
         std::span<const std::byte> InAssertData,
         const MultiTypeByteReaderMap& InByteReaderMap);
 

@@ -6,7 +6,7 @@ static VirtualShaderDirectoryMapping GetTestVirtualDirectoryMapping()
     return VirtualShaderDirectoryMapping{ "/MyTests", fs::current_path() / "shader" };
 }
 
-static ShaderTestFixture::Desc CreateDescForHLSLFrameworkTest(fs::path&& InPath, STF::AssertBufferLayout InAssertParams = {10, 1024})
+static ShaderTestFixture::Desc CreateDescForHLSLFrameworkTest(fs::path&& InPath, STF::TestDataBufferLayout InAssertParams = {10, 1024})
 {
     ShaderTestFixture::Desc desc{};
 

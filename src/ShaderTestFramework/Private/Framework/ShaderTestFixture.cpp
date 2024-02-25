@@ -1,6 +1,6 @@
 #include "Framework/ShaderTestFixture.h"
 
-#include "Framework/AssertBufferProcessor.h"
+#include "Framework/TestDataBufferProcessor.h"
 #include "Framework/HLSLTypes.h"
 #include "Framework/PIXCapturer.h"
 #include "Utility/EnumReflection.h"

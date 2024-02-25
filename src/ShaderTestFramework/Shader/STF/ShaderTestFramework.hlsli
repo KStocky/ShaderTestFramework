@@ -9,6 +9,7 @@
 #include "/Test/TTL/caster.hlsli"
 #include "/Test/TTL/container_wrapper.hlsli"
 #include "/Test/TTL/memory.hlsli"
+#include "/Test/TTL/string.hlsli"
 #include "/Test/TTL/type_traits.hlsli"
 
 namespace ShaderTestPrivate
@@ -143,6 +144,56 @@ namespace ShaderTestPrivate
             const uint32_t typeId = Traits::TypeId;
             const uint packed = typeId | (readerId << 16);
             AddAssertMetaInfo(metaIndex, InId, packed, addressAndSize);
+        }
+    }
+
+    uint AllocateString()
+    {
+        uint stringIndex;
+        GetAllocationBuffer().InterlockedAdd(NumStringsIndex, 1, stringIndex);
+        return stringIndex;
+    }
+
+    uint2 AddStringData(ttl::string In)
+    {
+        const uint size = ttl::aligned_offset(In.Size, 4u);
+        uint offset = 0;
+        GetAllocationBuffer().InterlockedAdd(StringDataSizeIndex, size, offset);
+
+        const uint startAddress = Strings.BeginData() + offset;
+        uint address = startAddress;
+        if (offset + size < Strings.SizeInBytesOfData())
+        {
+            RWByteAddressBuffer buff = GetTestDataBuffer();
+            ttl::write_bytes(buff, address, size);
+            address = ttl::aligned_offset(address + 4, 4u);
+            ttl::write_bytes(buff, address, In);
+
+            return uint2(startAddress, size);
+        }
+
+        return uint2(0, 0);
+    }
+
+    void AddStringMetaInfo(const uint InMetaIndex, const uint2 InAddressAndSize)
+    {
+        RWByteAddressBuffer buffer = GetTestDataBuffer();
+        const uint metaAddress = InMetaIndex * sizeof(FormattedStringMetaData) + Strings.BeginMeta();
+        buffer.Store2(metaAddress, InAddressAndSize);
+    }
+
+    void AddString(ttl::string In)
+    {
+        const uint stringIndex = AllocateString();
+        if (stringIndex < Strings.Num())
+        {
+            uint2 addressAndSize = uint2(0, 0);
+            if (Strings.SizeInBytesOfData() > 0)
+            {
+                addressAndSize = AddStringData(In);
+            }
+
+            AddStringMetaInfo(stringIndex, addressAndSize);
         }
     }
 }

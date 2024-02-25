@@ -1,4 +1,4 @@
-#include "Framework/AssertBufferProcessor.h"
+#include "Framework/TestDataBufferProcessor.h"
 
 #include "Utility/Exception.h"
 #include "Utility/Math.h"
@@ -167,7 +167,7 @@ namespace STF
     }
 }
 
-STF::TestRunResults STF::ProcessAssertBuffer(const u32 InNumSuccessful, const u32 InNumFailed, const uint3 InDispatchDimensions, const AssertBufferLayout InLayout, std::span<const std::byte> InAssertBuffer, const MultiTypeByteReaderMap& InByteReaderMap)
+STF::TestRunResults STF::ProcessAssertBuffer(const u32 InNumSuccessful, const u32 InNumFailed, const uint3 InDispatchDimensions, const TestDataBufferLayout InLayout, std::span<const std::byte> InAssertBuffer, const MultiTypeByteReaderMap& InByteReaderMap)
 {
     STF::TestRunResults ret{};
     ret.NumSucceeded = InNumSuccessful;

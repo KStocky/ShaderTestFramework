@@ -1,6 +1,6 @@
 
 
-#include "Framework/AssertBufferProcessor.h"
+#include "Framework/TestDataBufferProcessor.h"
 
 #include <Utility/Math.h>
 #include <Utility/Tuple.h>
@@ -14,7 +14,7 @@
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 
-SCENARIO("AssertBufferProcessorTests - Results")
+SCENARIO("TestDataBufferProcessorTests - Results")
 {
 
     auto [given, results, expected] = GENERATE
@@ -44,7 +44,7 @@ SCENARIO("AssertBufferProcessorTests - Results")
     }
 }
 
-SCENARIO("AssertBufferProcessorTests - No Assert Buffer")
+SCENARIO("TestDataBufferProcessorTests - No Assert Buffer")
 {
     auto [given, numSuccess, numFailed] = GENERATE
     (
@@ -63,7 +63,7 @@ SCENARIO("AssertBufferProcessorTests - No Assert Buffer")
     {
         WHEN("Processed")
         {
-            const auto results = STF::ProcessAssertBuffer(numSuccess, numFailed, uint3(1,1,1), STF::AssertBufferLayout{ 0,0 }, std::vector<std::byte>{}, STF::MultiTypeByteReaderMap{});
+            const auto results = STF::ProcessAssertBuffer(numSuccess, numFailed, uint3(1,1,1), STF::TestDataBufferLayout{ 0,0 }, std::vector<std::byte>{}, STF::MultiTypeByteReaderMap{});
 
             THEN("Results has expected errors")
             {
@@ -74,17 +74,17 @@ SCENARIO("AssertBufferProcessorTests - No Assert Buffer")
     }
 }
 
-SCENARIO("AssertBufferProcessorTests - AssertInfo - No AssertData")
+SCENARIO("TestDataBufferProcessorTests - AssertInfo - No AssertData")
 {
 
     auto [given, numFailed, expectedNumAsserts, layout, buffer] = GENERATE
     (
-        table<std::string, u32, u64, STF::AssertBufferLayout, std::vector<STF::HLSLAssertMetaData>>
+        table<std::string, u32, u64, STF::TestDataBufferLayout, std::vector<STF::HLSLAssertMetaData>>
         (
             {
-                std::tuple{ "One failing assert with enough capacity", 1, 1, STF::AssertBufferLayout{1, 0}, std::vector<STF::HLSLAssertMetaData>{ STF::HLSLAssertMetaData{ 42, 0, 1 } } },
-                std::tuple{ "More failing asserts than layout limit", 2, 1, STF::AssertBufferLayout{1, 0}, std::vector<STF::HLSLAssertMetaData>{ STF::HLSLAssertMetaData{ 42, 0, 1 } } },
-                std::tuple{ "Fewer failing asserts than layout limit", 1, 1, STF::AssertBufferLayout{2, 0}, std::vector<STF::HLSLAssertMetaData>{ STF::HLSLAssertMetaData{ 42, 0, 1 }, STF::HLSLAssertMetaData{ 82, 0, 1 } } }
+                std::tuple{ "One failing assert with enough capacity", 1, 1, STF::TestDataBufferLayout{1, 0}, std::vector<STF::HLSLAssertMetaData>{ STF::HLSLAssertMetaData{ 42, 0, 1 } } },
+                std::tuple{ "More failing asserts than layout limit", 2, 1, STF::TestDataBufferLayout{1, 0}, std::vector<STF::HLSLAssertMetaData>{ STF::HLSLAssertMetaData{ 42, 0, 1 } } },
+                std::tuple{ "Fewer failing asserts than layout limit", 1, 1, STF::TestDataBufferLayout{2, 0}, std::vector<STF::HLSLAssertMetaData>{ STF::HLSLAssertMetaData{ 42, 0, 1 }, STF::HLSLAssertMetaData{ 82, 0, 1 } } }
             }
         )
     );
@@ -116,7 +116,7 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - No AssertData")
     }
 }
 
-SCENARIO("AssertBufferProcessorTests - AssertInfo - AssertData")
+SCENARIO("TestDataBufferProcessorTests - AssertInfo - AssertData")
 {
     auto serializeImpl = OverloadSet{
         [] <typename T>(const T & InVal, std::vector<std::byte>&InOutBytes) -> std::enable_if_t<!TIsInstantiationOf<Tuple, T>::Value>
@@ -169,48 +169,48 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - AssertData")
 
     auto [given, numFailed, expectedNumAsserts, layout, metaData, expectedAssertData] = GENERATE
     (
-        table<std::string, u32, u64, STF::AssertBufferLayout, std::vector<STF::HLSLAssertMetaData>, std::vector<u32>>
+        table<std::string, u32, u64, STF::TestDataBufferLayout, std::vector<STF::HLSLAssertMetaData>, std::vector<u32>>
         (
             {
                 std::tuple
                 { 
                     "One failing assert with data", 
-                    1, 1, STF::AssertBufferLayout{1, 100}, 
+                    1, 1, STF::TestDataBufferLayout{1, 100}, 
                     std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 1, 8 } },
                     std::vector{4u}
                 },
                 std::tuple
                 {
                     "One failing assert with no data",
-                    1, 1, STF::AssertBufferLayout{1, 100},
+                    1, 1, STF::TestDataBufferLayout{1, 100},
                     std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 0, 0 } },
                     std::vector<u32>{}
                 },
                 std::tuple
                 {
                     "Two failing assert with no data",
-                    2, 2, STF::AssertBufferLayout{2, 100},
+                    2, 2, STF::TestDataBufferLayout{2, 100},
                     std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 0, 0 }, STF::HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 0, 0 } },
                     std::vector<u32>{}
                 },
                 std::tuple
                 {
                     "First fail has data, Second does not",
-                    2, 2, STF::AssertBufferLayout{2, 100},
+                    2, 2, STF::TestDataBufferLayout{2, 100},
                     std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2, 8 }, STF::HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 0, 0 } },
                     std::vector{16u}
                 },
                 std::tuple
                 {
                     "First fail does not have data, Second does",
-                    2, 2, STF::AssertBufferLayout{2, 100},
+                    2, 2, STF::TestDataBufferLayout{2, 100},
                     std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 0, 0 }, STF::HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2, 8 } },
                     std::vector{16u}
                 },
                 std::tuple
                 {
                     "Both asserts have data",
-                    2, 2, STF::AssertBufferLayout{2, 100},
+                    2, 2, STF::TestDataBufferLayout{2, 100},
                     std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2, 8 }, STF::HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2 + 8, 8 } },
                     std::vector{16u, 32u}
                 }
@@ -265,7 +265,7 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - AssertData")
     }
 }
 
-SCENARIO("AssertBufferProcessorTests - AssertInfo - Byte Reader")
+SCENARIO("TestDataBufferProcessorTests - AssertInfo - Byte Reader")
 {
     using Catch::Matchers::ContainsSubstring;
     auto serializeImpl = OverloadSet{
@@ -335,13 +335,13 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - Byte Reader")
 
     auto [given, numFailed, layout, metaData, expectedAssertData, expectedSubstrings] = GENERATE
     (
-        table<std::string, u32, STF::AssertBufferLayout, std::vector<STF::HLSLAssertMetaData>, std::vector<u32>, std::vector<std::string>>
+        table<std::string, u32, STF::TestDataBufferLayout, std::vector<STF::HLSLAssertMetaData>, std::vector<u32>, std::vector<std::string>>
         (
             {
                 std::tuple
                 {
                     "One failing assert with no byte reader",
-                    1, STF::AssertBufferLayout{1, 100},
+                    1, STF::TestDataBufferLayout{1, 100},
                     std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, 2, sizeof(STF::HLSLAssertMetaData) * 1, 8}},
                     std::vector{42u},
                     std::vector<std::string>{"Bytes", "0x2A"}
@@ -349,7 +349,7 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - Byte Reader")
                 std::tuple
                 {
                     "One failing assert with byte reader",
-                    1, STF::AssertBufferLayout{1, 100},
+                    1, STF::TestDataBufferLayout{1, 100},
                     std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 1, 8 } },
                     std::vector{412u},
                     std::vector<std::string>{"Reader 1", "412"}
@@ -357,7 +357,7 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - Byte Reader")
                 std::tuple
                 {
                     "One failing assert with different byte reader",
-                    1, STF::AssertBufferLayout{1, 100},
+                    1, STF::TestDataBufferLayout{1, 100},
                     std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, 1, sizeof(STF::HLSLAssertMetaData) * 1, 8 } },
                     std::vector{412u},
                     std::vector<std::string>{"Reader 2", "412"}
@@ -365,7 +365,7 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - Byte Reader")
                 std::tuple
                 {
                     "Two failing asserts with same byte reader",
-                    2, STF::AssertBufferLayout{2, 100},
+                    2, STF::TestDataBufferLayout{2, 100},
                     std::vector
                     { 
                         STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2, 8 },
@@ -377,7 +377,7 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - Byte Reader")
                 std::tuple
                 {
                     "Two failing asserts with different same byte reader",
-                    2, STF::AssertBufferLayout{2, 100},
+                    2, STF::TestDataBufferLayout{2, 100},
                     std::vector
                     {
                         STF::HLSLAssertMetaData{ 42, 0, 0, 0, 1, sizeof(STF::HLSLAssertMetaData) * 2, 8 },
@@ -389,7 +389,7 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - Byte Reader")
                 std::tuple
                 {
                     "Two failing asserts with different byte readers",
-                    2, STF::AssertBufferLayout{2, 100},
+                    2, STF::TestDataBufferLayout{2, 100},
                     std::vector
                     {
                         STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2, 8 },
@@ -430,16 +430,16 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - Byte Reader")
     }
 }
 
-SCENARIO("AssertBufferProcessorTests - AssertInfo - Throwing")
+SCENARIO("TestDataBufferProcessorTests - AssertInfo - Throwing")
 {
 
     auto [given, numFailed, expectedNumAsserts, layout, buffer] = GENERATE
     (
-        table<std::string, u32, u64, STF::AssertBufferLayout, std::vector<STF::HLSLAssertMetaData>>
+        table<std::string, u32, u64, STF::TestDataBufferLayout, std::vector<STF::HLSLAssertMetaData>>
         (
             {
-                std::tuple{ "One failing assert with empty buffer", 1, 1, STF::AssertBufferLayout{1, 0}, std::vector<STF::HLSLAssertMetaData>{} },
-                std::tuple{ "Fewer failing asserts than layout limit", 3, 1, STF::AssertBufferLayout{3, 0}, std::vector<STF::HLSLAssertMetaData>{ STF::HLSLAssertMetaData{ 42, 0, 1 }, STF::HLSLAssertMetaData{ 82, 0, 1 } } }
+                std::tuple{ "One failing assert with empty buffer", 1, 1, STF::TestDataBufferLayout{1, 0}, std::vector<STF::HLSLAssertMetaData>{} },
+                std::tuple{ "Fewer failing asserts than layout limit", 3, 1, STF::TestDataBufferLayout{3, 0}, std::vector<STF::HLSLAssertMetaData>{ STF::HLSLAssertMetaData{ 42, 0, 1 }, STF::HLSLAssertMetaData{ 82, 0, 1 } } }
             }
         )
     );
@@ -456,7 +456,7 @@ SCENARIO("AssertBufferProcessorTests - AssertInfo - Throwing")
     }
 }
 
-SCENARIO("AssertBufferProcessorTests - FailedAssert - Equality")
+SCENARIO("TestDataBufferProcessorTests - FailedAssert - Equality")
 {
 
     auto [given, left, right, expectedIsEqual] = GENERATE
@@ -521,20 +521,20 @@ SCENARIO("AssertBufferProcessorTests - FailedAssert - Equality")
     }
 }
 
-SCENARIO("AssertBufferProcessorTests - ThreadInfoToString")
+SCENARIO("TestDataBufferProcessorTests - ThreadInfoToString")
 {
     using Catch::Matchers::ContainsSubstring;
 
     auto [given, numFailed, expectedNumAsserts, dims, layout, buffer, expectedSubstrings, expectedAbsentSubstrings] = GENERATE
     (
-        table<std::string, u32, u64, uint3, STF::AssertBufferLayout, std::vector<STF::HLSLAssertMetaData>, std::vector<std::string>, std::vector<std::string>>
+        table<std::string, u32, u64, uint3, STF::TestDataBufferLayout, std::vector<STF::HLSLAssertMetaData>, std::vector<std::string>, std::vector<std::string>>
         (
             {
                 std::tuple
                 {
                     "No thread id type and zero id",
                     1, 1, uint3(10, 10, 10),
-                    STF::AssertBufferLayout{1, 0},
+                    STF::TestDataBufferLayout{1, 0},
                     std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0 } },
                     std::vector<std::string>{"line"},
                     std::vector<std::string>{"threadid"}
@@ -543,7 +543,7 @@ SCENARIO("AssertBufferProcessorTests - ThreadInfoToString")
                 {
                     "No thread id type and non zero id",
                     1, 1, uint3(10, 10, 10),
-                    STF::AssertBufferLayout{1, 0},
+                    STF::TestDataBufferLayout{1, 0},
                     std::vector{ STF::HLSLAssertMetaData{ 42, 34, 0 } },
                     std::vector<std::string>{"line"},
                     std::vector<std::string>{"threadid"}
@@ -552,7 +552,7 @@ SCENARIO("AssertBufferProcessorTests - ThreadInfoToString")
                 {
                     "int thread id type and zero id",
                     1, 1, uint3(10, 10, 10),
-                    STF::AssertBufferLayout{1, 0},
+                    STF::TestDataBufferLayout{1, 0},
                     std::vector{ STF::HLSLAssertMetaData{ 42, 0, 1 } },
                     std::vector<std::string>{"0"},
                     std::vector<std::string>{}
@@ -561,7 +561,7 @@ SCENARIO("AssertBufferProcessorTests - ThreadInfoToString")
                 {
                     "int thread id type and non zero id",
                     1, 1, uint3(10, 10, 10),
-                    STF::AssertBufferLayout{1, 0},
+                    STF::TestDataBufferLayout{1, 0},
                     std::vector{ STF::HLSLAssertMetaData{ 42, 34, 1 } },
                     std::vector<std::string>{"34"},
                     std::vector<std::string>{}
@@ -570,7 +570,7 @@ SCENARIO("AssertBufferProcessorTests - ThreadInfoToString")
                 {
                     "int3 thread id type and zero id",
                     1, 1, uint3(10, 10, 10),
-                    STF::AssertBufferLayout{1, 0},
+                    STF::TestDataBufferLayout{1, 0},
                     std::vector{ STF::HLSLAssertMetaData{ 42, 0, 2 } },
                     std::vector<std::string>{"0"},
                     std::vector<std::string>{}
@@ -579,7 +579,7 @@ SCENARIO("AssertBufferProcessorTests - ThreadInfoToString")
                 {
                     "int3 thread id type and non zero id",
                     1, 1, uint3(10, 10, 10),
-                    STF::AssertBufferLayout{1, 0},
+                    STF::TestDataBufferLayout{1, 0},
                     std::vector{ STF::HLSLAssertMetaData{ 42, 34, 2 } },
                     std::vector<std::string>{"4, 3, 0"},
                     std::vector<std::string>{}
@@ -588,7 +588,7 @@ SCENARIO("AssertBufferProcessorTests - ThreadInfoToString")
                 {
                     "int3 thread id type and different non zero id",
                     1, 1, uint3(10, 10, 10),
-                    STF::AssertBufferLayout{1, 0},
+                    STF::TestDataBufferLayout{1, 0},
                     std::vector{ STF::HLSLAssertMetaData{ 42, 342, 2 } },
                     std::vector<std::string>{"2, 4, 3"},
                     std::vector<std::string>{}

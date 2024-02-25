@@ -1,5 +1,5 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
-#include "/Test/ttl/static_assert.hlsli"
+#include "/Test/TTL/static_assert.hlsli"
 
 template<typename T, uint N>
 uint ArrayLen(T In[N])

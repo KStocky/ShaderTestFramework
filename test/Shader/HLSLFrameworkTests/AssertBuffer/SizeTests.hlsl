@@ -3,7 +3,7 @@
 
 STATIC_ASSERT(
     ttl::size_of<ShaderTestPrivate::HLSLAssertMetaData>::value == 24u, 
-    "The size of this struct must match the size of HLSLAssertMetaData in AssertBufferProcessor.h");
+    "The size of this struct must match the size of HLSLAssertMetaData in TestDataBufferProcessor.h");
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]

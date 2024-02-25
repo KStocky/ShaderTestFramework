@@ -13,7 +13,7 @@ inline VirtualShaderDirectoryMapping GetTestVirtualDirectoryMapping()
     return VirtualShaderDirectoryMapping{ "/Tests", std::move(shaderDir) };
 }
 
-inline ShaderTestFixture::Desc CreateDescForHLSLFrameworkTest(fs::path&& InPath, STF::AssertBufferLayout InAssertParams = {10, 1024})
+inline ShaderTestFixture::Desc CreateDescForHLSLFrameworkTest(fs::path&& InPath, STF::TestDataBufferLayout InAssertParams = {10, 1024})
 {
     ShaderTestFixture::Desc desc{};
 

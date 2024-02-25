@@ -141,7 +141,6 @@ set(SOURCES
     Private/D3D12/Shader/ShaderHashTests.cpp
     Private/D3D12/Shader/ShaderModelTests.cpp
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManagerTests.cpp
-    Private/Framework/AssertBufferProcessorTests.cpp
     Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/AssertInfoWithDataTests.cpp
     Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/AssertInfoWithNoDataTests.cpp
     Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/ByteReaderTests.cpp
@@ -184,6 +183,7 @@ set(SOURCES
     Private/Framework/HLSLTypesTests.cpp
     Private/Framework/SectionsInHLSLProofOfConceptTests.cpp
     Private/Framework/ShaderTestFixtureTests.cpp
+    Private/Framework/TestDataBufferProcessorTests.cpp
     Private/Utility/AlignedOffsetTests.cpp
     Private/Utility/ConceptsTests.cpp
     Private/Utility/EnumReflectionTests.cpp
