@@ -255,6 +255,12 @@ SCENARIO("HLSLTests")
                         "PrinterWithoutOptimizations",
                         [](const EHLSLVersion InVer) { return InVer >= EHLSLVersion::v2021; },
                         std::vector<std::wstring>{L"-Od", L"-D", L"OPTIMIZATIONS_ENABLED=0"}
+                    },
+                    std::tuple
+                    {
+                        "ImmediatelyInvokableFunctionExpression",
+                        [](const EHLSLVersion) { return false; },
+                        std::vector<std::wstring>{}
                     }
                 }
             )
