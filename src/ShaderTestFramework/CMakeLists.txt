@@ -93,12 +93,12 @@ set(SHADER_SOURCES
     Shader/STF/RootSignature.hlsli
     Shader/STF/SectionManagement.hlsli
     Shader/STF/ShaderTestFramework.hlsli
-    Shader/STF/StringHandling.hlsli
     Shader/TTL/byte_writer.hlsli
     Shader/TTL/caster.hlsli
     Shader/TTL/container_wrapper.hlsli
     Shader/TTL/memory.hlsli
     Shader/TTL/static_assert.hlsli
+    Shader/TTL/string.hlsli
     Shader/TTL/type_traits.hlsli
 )
 

@@ -8,7 +8,7 @@
 
 using Catch::Matchers::ContainsSubstring;
 
-SCENARIO("HLSLFrameworkTests - StringHandling - StringLength")
+SCENARIO("HLSLFrameworkTests - String - StrLen")
 {
     auto [testName, expectedFailStrings] = GENERATE
     (
@@ -22,7 +22,7 @@ SCENARIO("HLSLFrameworkTests - StringHandling - StringLength")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/StringHandling/StringLengthTests/{}.hlsl", testName))));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/String/StringLengthTests/{}.hlsl", testName))));
     DYNAMIC_SECTION(testName)
     {
         if (expectedFailStrings.empty())

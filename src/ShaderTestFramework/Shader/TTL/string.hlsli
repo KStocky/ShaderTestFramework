@@ -1,20 +1,19 @@
 #pragma once
 
-#include "/Test/STF/FrameworkResources.hlsli"
 #include "/Test/TTL/byte_writer.hlsli"
 #include "/Test/TTL/memory.hlsli"
 #include "/Test/TTL/static_assert.hlsli"
 #include "/Test/TTL/type_traits.hlsli"
 
-namespace ShaderTestPrivate
+namespace ttl
 {
-    struct StringBuffer
+    struct string
     {
         static const uint MaxNumChars = 64;
         uint Data[MaxNumChars / sizeof(uint)];
         uint Size;
 
-        void AppendChar(uint InChar)
+        void append(uint InChar)
         {
             if (Size < MaxNumChars)
             {
@@ -26,27 +25,24 @@ namespace ShaderTestPrivate
             }
         }
     };
-}
-
-namespace ttl
-{
+    
     template<>
-    struct byte_writer<ShaderTestPrivate::StringBuffer>
+    struct byte_writer<string>
     {
         static const bool has_writer = true;
 
-        static uint bytes_required(ShaderTestPrivate::StringBuffer In)
+        static uint bytes_required(string In)
         {
             return ttl::aligned_offset(In.Size, 4u);
         }
 
-        static uint alignment_required(ShaderTestPrivate::StringBuffer In)
+        static uint alignment_required(string In)
         {
             return ttl::align_of<uint>::value;
         }
 
         template<typename U>
-        static void write(inout container_wrapper<U> InContainer, const uint InIndex, const ShaderTestPrivate::StringBuffer In)
+        static void write(inout container_wrapper<U> InContainer, const uint InIndex, const string In)
         {
             const uint size = bytes_required(In) / ttl::size_of<uint>::value;
             static const bool isByteAddress = ttl::container_traits<U>::is_byte_address;
@@ -57,21 +53,27 @@ namespace ttl
             }
         }
     };
-}
 
-namespace ShaderTestPrivate
-{
     template<typename T, uint N>
-    uint StringLength(T In[N])
+    typename enable_if<!is_same<T, string>::value, uint>::type strlen(T In[N])
     {
-        STATIC_ASSERT(N <= StringBuffer::MaxNumChars, "Strings with greater than 64 characters are not supported");
+        STATIC_ASSERT(N <= string::MaxNumChars, "Strings with greater than 64 characters are not supported");
         return N;
     }
 
+    template<typename T>
+    typename enable_if<is_same<T, string>::value, uint>::type strlen(T In)
+    {
+        return In.Size;
+    }
+}
+
+namespace ttl_detail
+{
     #define CHAR_CHECK(InCharA, InCharB, Ret) if (InCharA == InCharB) return Ret
 
     template<typename T>
-    uint CharToUintASCII(T InChar)
+    uint char_to_uint(T InChar)
     {
         CHAR_CHECK(InChar, '\0', 0);
         CHAR_CHECK(InChar, '\t', 9);
@@ -178,12 +180,24 @@ namespace ShaderTestPrivate
     #undef CHAR_CHECK
 }
 
-#define TO_STRING_BUFFER(InBuffer, InStr)             \
+#define TO_STRING(InString, InStr)             \
 do{                                                       \
-    const uint numChars = STF::StringLen(InStr);              \
-    ttl::zero(InBuffer);                                     \
+    const uint numChars = ttl::strlen(InStr);              \
+    ttl::zero(InString);                                     \
     for (uint i = 0; i < numChars; ++i)                 \
     {                                                   \
-        InBuffer.AppendChar(CharToUintASCII(InStr[i]));      \
+        InString.append(ttl_detail::char_to_uint(InStr[i]));      \
     }                                                   \
 }while(false)
+
+#define DEFINE_STRING_CREATOR_IMPL(InName, InStr)   \
+struct {                                            \
+ttl::string operator()(){                           \
+ttl::string ret;                                    \
+TO_STRING(ret, InStr);                              \
+return ret;                                         \
+}                                                   \
+} InName
+
+
+#define DEFINE_STRING_CREATOR(InName, InStr) DEFINE_STRING_CREATOR_IMPL(InName, InStr)
