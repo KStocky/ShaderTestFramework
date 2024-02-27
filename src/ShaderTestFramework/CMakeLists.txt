@@ -47,7 +47,9 @@ set(SOURCES
     Public/Framework/HLSLTypes.h
     Public/Framework/PIXCapturer.h
     Public/Framework/ShaderTestFixture.h
+    Public/Framework/TestDataBufferLayout.h
     Public/Framework/TestDataBufferProcessor.h
+    Public/Framework/TestDataBufferStructs.h
     Public/Platform.h
     Public/Utility/Algorithm.h
     Public/Utility/Concepts.h
@@ -84,6 +86,7 @@ set(SOURCES
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManager.cpp
     Private/Framework/PIXCapturer.cpp
     Private/Framework/ShaderTestFixture.cpp
+    Private/Framework/TestDataBufferLayout.cpp
     Private/Framework/TestDataBufferProcessor.cpp
 )
 

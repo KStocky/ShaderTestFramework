@@ -3,6 +3,7 @@
 #include "Platform.h"
 
 #include "Framework/HLSLTypes.h"
+#include "Framework/TestDataBufferLayout.h"
 #include "Utility/Concepts.h"
 #include "Utility/OverloadSet.h"
 #include "Utility/Type.h"
@@ -21,35 +22,6 @@ namespace STF
         None,
         Int,
         Int3
-    };
-
-    struct AssertMetaData
-    {
-        u32 LineNumber = 0;
-        u32 ThreadId = 0;
-        u32 ThreadIdType = 0;
-
-        friend auto operator<=>(const AssertMetaData&, const AssertMetaData&) = default;
-    };
-
-    struct HLSLAssertMetaData : AssertMetaData
-    {
-        u16 TypeId = 0;
-        u16 ReaderId = 0;
-        u32 DataAddress = 0;
-        u32 DataSize = 0;
-
-        friend auto operator<=>(const HLSLAssertMetaData&, const HLSLAssertMetaData&) = default;
-    };
-
-    struct TestDataBufferLayout
-    {
-        u32 NumFailedAsserts = 0;
-        u32 NumBytesAssertData = 0;
-        u32 NumStrings = 0;
-        u32 NumBytesStringData = 0;
-
-        friend auto operator<=>(const TestDataBufferLayout&, const TestDataBufferLayout&) = default;
     };
 
     struct AllocationBufferData
@@ -136,7 +108,7 @@ namespace STF
     TestRunResults ProcessTestDataBuffer(
         const AllocationBufferData InAllocationBufferData,
         const uint3 InDispatchDimensions,
-        const TestDataBufferLayout InLayout,
+        TestDataBufferLayout InLayout,
         std::span<const std::byte> InTestData,
         const MultiTypeByteReaderMap& InByteReaderMap);
 

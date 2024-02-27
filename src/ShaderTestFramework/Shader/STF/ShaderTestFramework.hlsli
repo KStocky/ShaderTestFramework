@@ -178,7 +178,7 @@ namespace ShaderTestPrivate
     void AddStringMetaInfo(const uint InMetaIndex, const uint2 InAddressAndSize)
     {
         RWByteAddressBuffer buffer = GetTestDataBuffer();
-        const uint metaAddress = InMetaIndex * sizeof(FormattedStringMetaData) + Strings.BeginMeta();
+        const uint metaAddress = InMetaIndex * sizeof(StringMetaData) + Strings.BeginMeta();
         buffer.Store2(metaAddress, InAddressAndSize);
     }
 

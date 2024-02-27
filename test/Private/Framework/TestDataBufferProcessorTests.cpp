@@ -245,11 +245,11 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - AssertData")
                         for (u64 assertIndex = 0; assertIndex < expectedNumAsserts; ++assertIndex)
                         {
                             const auto& metaInfo = metaData[assertIndex];
-                            if (metaInfo.DataSize > 0)
+                            if (metaInfo.DynamicDataInfo.DataSize > 0)
                             {
                                 std::vector<std::byte> expectedData;
                                 expectedData.resize(8);
-                                std::memcpy(expectedData.data(), assertData.data() + (metaInfo.DataAddress - sizeMetaData), 8);
+                                std::memcpy(expectedData.data(), assertData.data() + (metaInfo.DynamicDataInfo.DataAddress - sizeMetaData), 8);
 
                                 REQUIRE(results.FailedAsserts[assertIndex].Data == expectedData);
                             }

@@ -174,7 +174,9 @@ STF::TestRunResults STF::ProcessTestDataBuffer(const AllocationBufferData InAllo
     ret.NumFailed = InAllocationBufferData.NumFailedAsserts;
     ret.DispatchDimensions = InDispatchDimensions;
 
-    const bool hasFailedAssertInfo = InLayout.NumFailedAsserts > 0;
+    const auto assertSectionInfo = InLayout.GetAssertSection();
+
+    const bool hasFailedAssertInfo = assertSectionInfo.NumMeta() > 0;
     const bool allSucceeded = ret.NumFailed == 0;
 
     if (allSucceeded || !hasFailedAssertInfo)
@@ -182,12 +184,12 @@ STF::TestRunResults STF::ProcessTestDataBuffer(const AllocationBufferData InAllo
         return ret;
     }
 
-    const u64 requiredBytesForAssertMetaData = InLayout.NumFailedAsserts * sizeof(HLSLAssertMetaData);
+    const u64 requiredBytesForAssertMetaData = assertSectionInfo.SizeInBytesOfMeta();
     const bool hasSpaceForAssertInfo = requiredBytesForAssertMetaData <= InTestData.size_bytes();
 
     ThrowIfFalse(hasSpaceForAssertInfo, std::format("Assert Buffer is not large enough ({} bytes) to hold {} failed asserts (requires {} bytes)", InTestData.size_bytes(), ret.NumFailed, requiredBytesForAssertMetaData));
 
-    const u32 numAssertsToProcess = std::min(ret.NumFailed, InLayout.NumFailedAsserts);
+    const u32 numAssertsToProcess = std::min(ret.NumFailed, assertSectionInfo.NumMeta());
 
     ret.FailedAsserts.reserve(numAssertsToProcess);
 
@@ -206,12 +208,12 @@ STF::TestRunResults STF::ProcessTestDataBuffer(const AllocationBufferData InAllo
 
         auto getData = [InTestData, &assertInfo]()
             {
-                if (assertInfo.DataSize == 0)
+                if (assertInfo.DynamicDataInfo.DataSize == 0)
                 {
                     return std::vector<std::byte>{};
                 }
-                const auto begin = InTestData.cbegin() + assertInfo.DataAddress;
-                return std::vector<std::byte>{begin, begin + assertInfo.DataSize};
+                const auto begin = InTestData.cbegin() + assertInfo.DynamicDataInfo.DataAddress;
+                return std::vector<std::byte>{begin, begin + assertInfo.DynamicDataInfo.DataSize};
             };
 
         ret.FailedAsserts.push_back(FailedAssert{ .Data = getData(), .ByteReader = std::move(byteReader), .Info = info, .TypeId = assertInfo.TypeId });

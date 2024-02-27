@@ -43,7 +43,7 @@ namespace ShaderTestPrivate
         }
     };
 
-    struct DynamicUserDataInfo
+    struct DynamicSectionDataInfo
     {
         uint DataAddress;
         uint DataSize;
@@ -55,12 +55,12 @@ namespace ShaderTestPrivate
         uint ThreadId;
         uint ThreadIdType;
         uint ReaderAndTypeId;
-        DynamicUserDataInfo UserDataInfo;
+        DynamicSectionDataInfo DynamicDataInfo;
     };
 
-    struct FormattedStringMetaData
+    struct StringMetaData
     {
-        DynamicUserDataInfo UserDataInfo;
+        DynamicSectionDataInfo DynamicDataInfo;
     };
 
     const uint3 DispatchDimensions;
@@ -68,7 +68,7 @@ namespace ShaderTestPrivate
     const uint TestDataBufferIndex;
 
     const TestDataSection<HLSLAssertMetaData> Asserts;
-    const TestDataSection<FormattedStringMetaData> Strings;
+    const TestDataSection<StringMetaData> Strings;
 
     RWByteAddressBuffer GetTestDataBuffer()
     {
