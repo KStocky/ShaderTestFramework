@@ -11,11 +11,13 @@ namespace STF
     {
     public:
 
+        constexpr TestDataSection() = default;
+
         constexpr TestDataSection(u32 InBegin, u32 InNumMeta, u32 InSizeInBytesOfData)
-            : m_Begin(InBegin)
+            : m_Begin(static_cast<u32>(AlignedOffset(InBegin, 8ull)))
             , m_NumMeta(InNumMeta)
-            , m_SizeData(InSizeInBytesOfData)
-            , m_SizeSection(InSizeInBytesOfData + static_cast<u32>(AlignedOffset(InNumMeta * sizeof(MetaDataType), 8ull)))
+            , m_SizeData(static_cast<u32>(AlignedOffset(InSizeInBytesOfData, 8ull)))
+            , m_SizeSection(m_SizeData + static_cast<u32>(AlignedOffset(InNumMeta * sizeof(MetaDataType), 8ull)))
         {
         }
 
@@ -41,7 +43,7 @@ namespace STF
 
         constexpr u32 SizeInBytesOfMeta() const
         {
-            return static_cast<u32>(AlignedOffset(m_NumMeta * sizeof(MetaDataType), 8ull));
+            return m_SizeSection - m_SizeData;
         }
 
         constexpr u32 BeginData() const
@@ -72,7 +74,7 @@ namespace STF
         TestDataSection<HLSLAssertMetaData> GetAssertSection() const;
         TestDataSection<StringMetaData> GetStringSection() const;
 
-        const u32 GetSizeOfTestData() const;
+        u32 GetSizeOfTestData() const;
 
     private:
         TestDataSection<HLSLAssertMetaData> m_Asserts;

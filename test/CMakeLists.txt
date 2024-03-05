@@ -183,6 +183,7 @@ set(SOURCES
     Private/Framework/HLSLTypesTests.cpp
     Private/Framework/SectionsInHLSLProofOfConceptTests.cpp
     Private/Framework/ShaderTestFixtureTests.cpp
+    Private/Framework/TestDataBufferLayoutTests.cpp
     Private/Framework/TestDataBufferProcessorTests.cpp
     Private/Utility/AlignedOffsetTests.cpp
     Private/Utility/ConceptsTests.cpp
