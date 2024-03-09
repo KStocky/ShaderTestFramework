@@ -105,6 +105,9 @@ namespace STF
         std::variant<std::monostate, TestRunResults, FailedShaderCompilationResult> m_Result;
     };
 
+    std::vector<FailedAssert> ProcessFailedAsserts(const TestDataSection<HLSLAssertMetaData>& InAssertSection, const u32 InNumFailed, const std::span<const std::byte> InTestData, const MultiTypeByteReaderMap& InByteReaderMap);
+    std::vector<std::string> ProcessStrings(const TestDataSection<StringMetaData>& InStringSection, const u32 InNumStrings, const std::span<const std::byte> InTestData);
+
     TestRunResults ProcessTestDataBuffer(
         const AllocationBufferData InAllocationBufferData,
         const uint3 InDispatchDimensions,
