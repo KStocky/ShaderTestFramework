@@ -165,8 +165,6 @@ namespace ShaderTestPrivate
         if (offset + size < Strings.SizeInBytesOfData())
         {
             RWByteAddressBuffer buff = GetTestDataBuffer();
-            ttl::write_bytes(buff, address, size);
-            address = ttl::aligned_offset(address + 4, 4u);
             ttl::write_bytes(buff, address, In);
 
             return uint2(startAddress, size);
