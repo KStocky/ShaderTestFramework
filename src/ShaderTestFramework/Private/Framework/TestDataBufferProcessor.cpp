@@ -168,13 +168,7 @@ namespace STF
 
     std::vector<FailedAssert> ProcessFailedAsserts(const TestDataSection<HLSLAssertMetaData>& InAssertSection, const u32 InNumFailed, const std::span<const std::byte> InTestData, const MultiTypeByteReaderMap& InByteReaderMap)
     {
-        const u64 requiredBytesForAssertMetaData = InAssertSection.SizeInBytesOfMeta();
-        const bool hasSpaceForAssertInfo = requiredBytesForAssertMetaData <= InTestData.size_bytes();
-
-        ThrowIfFalse(hasSpaceForAssertInfo, std::format("Assert Buffer is not large enough ({} bytes) to hold {} failed asserts (requires {} bytes)", InTestData.size_bytes(), InNumFailed, requiredBytesForAssertMetaData));
-
         const u32 numAssertsToProcess = std::min(InNumFailed, InAssertSection.NumMeta());
-
         std::vector<FailedAssert> ret;
         ret.reserve(numAssertsToProcess);
 
@@ -212,6 +206,13 @@ namespace STF
             StringMetaData stringInfo;
             std::memcpy(&stringInfo, &InTestData[InStringSection.Begin() + stringIndex * sizeof(StringMetaData)], sizeof(StringMetaData));
 
+            const bool hasString = stringInfo.DynamicDataInfo.DataAddress + stringInfo.DynamicDataInfo.DataSize > 0;
+            const bool hasRoomForString = stringInfo.DynamicDataInfo.DataAddress + stringInfo.DynamicDataInfo.DataSize < InTestData.size_bytes();
+            if (!hasString || !hasRoomForString)
+            {
+                break;
+            }
+
             std::string str;
             str.reserve(stringInfo.DynamicDataInfo.DataSize);
 
@@ -220,7 +221,7 @@ namespace STF
             for (u32 packedIndex = 0; packedIndex < numPacks; ++packedIndex)
             {
                 u32 packedChars;
-                std::memcpy(&packedChars, &InTestData[stringInfo.DynamicDataInfo.DataAddress + packedIndex], sizeof(u32));
+                std::memcpy(&packedChars, &InTestData[stringInfo.DynamicDataInfo.DataAddress + packedIndex * 4u], sizeof(u32));
 
                 if (packedIndex != numPacks - 1)
                 {
@@ -253,6 +254,7 @@ namespace STF
         ret.DispatchDimensions = InDispatchDimensions;
 
         const auto assertSectionInfo = InLayout.GetAssertSection();
+        const auto stringSectionInfo = InLayout.GetStringSection();
 
         const bool hasFailedAssertInfo = assertSectionInfo.NumMeta() > 0;
         const bool allSucceeded = ret.NumFailed == 0;
@@ -262,9 +264,12 @@ namespace STF
             return ret;
         }
 
-        ret.FailedAsserts = ProcessFailedAsserts(assertSectionInfo, ret.NumFailed, InTestData, InByteReaderMap);
+        const u64 requiredBytesForMetaData = assertSectionInfo.SizeInBytesOfMeta() + stringSectionInfo.SizeInBytesOfSection();
+        const bool hasSpaceForMetaInfo = requiredBytesForMetaData <= InTestData.size_bytes();
 
-        const auto stringSectionInfo = InLayout.GetStringSection();
+        ThrowIfFalse(hasSpaceForMetaInfo, std::format("Assert Buffer is not large enough ({} bytes) to hold {} failed asserts (requires {} bytes)", InTestData.size_bytes(), InAllocationBufferData.NumFailedAsserts, requiredBytesForMetaData));
+
+        ret.FailedAsserts = ProcessFailedAsserts(assertSectionInfo, ret.NumFailed, InTestData, InByteReaderMap);
         
         ret.Strings = ProcessStrings(stringSectionInfo, InAllocationBufferData.NumStrings, InTestData);
 

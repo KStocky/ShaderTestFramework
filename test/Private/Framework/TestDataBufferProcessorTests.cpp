@@ -6,6 +6,7 @@
 #include <Utility/Tuple.h>
 #include <Utility/TypeTraits.h>
 
+#include <numeric>
 #include <string>
 #include <vector>
 
@@ -13,6 +14,94 @@
 #include <catch2/generators/catch_generators.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
+namespace
+{
+    std::vector<std::byte> EncodeStringData(const STF::TestDataSection<STF::StringMetaData> InStringLayout, const std::span<std::string> InStrings)
+    {
+        std::vector<std::byte> ret;
+
+        ret.resize(InStringLayout.Begin() + InStringLayout.SizeInBytesOfSection());
+        std::memset(ret.data(), 0, ret.size());
+
+        const u32 numStrings = std::min(static_cast<u32>(InStrings.size()), InStringLayout.NumMeta());
+
+        u32 stringDataAllocated = 0;
+        for (u32 stringMetaIndex = 0; stringMetaIndex < numStrings; ++stringMetaIndex)
+        {
+            const auto& str = InStrings[stringMetaIndex];
+            const u32 stringLen = static_cast<u32>(AlignedOffset(str.size(), 4));
+
+            if (stringLen + stringDataAllocated >= InStringLayout.SizeInBytesOfData())
+            {
+                break;
+            }
+
+            STF::StringMetaData meta
+            {
+                .DynamicDataInfo
+                {
+                    .DataAddress = InStringLayout.BeginData() + stringDataAllocated,
+                    .DataSize = stringLen
+                }
+            };
+
+            std::memcpy(ret.data() + InStringLayout.Begin() + stringMetaIndex * sizeof(STF::StringMetaData), &meta, sizeof(sizeof(STF::StringMetaData)));
+
+            stringDataAllocated += stringLen;
+
+            const u64 numPackedUints = AlignedOffset(str.size(), 4) / 4;
+            const bool fullyPacked = numPackedUints * 4 == str.size();
+            for (u64 packedIndex = 0; packedIndex < numPackedUints; ++packedIndex)
+            {
+                u32 packed = 0;
+                if ((packedIndex != numPackedUints - 1) || fullyPacked)
+                {
+                    packed = packed | (str[packedIndex * 4 + 0] << 0);
+                    packed = packed | (str[packedIndex * 4 + 1] << 8);
+                    packed = packed | (str[packedIndex * 4 + 2] << 16);
+                    packed = packed | (str[packedIndex * 4 + 3] << 24);
+                }
+                else
+                {
+                    for (u32 charIndex = 0; charIndex < (str.size() % 4); ++charIndex)
+                    {
+                        packed = packed | (str[packedIndex * 4 + charIndex] << (charIndex * 8));
+                    }
+                }
+
+                std::memcpy(ret.data() + meta.DynamicDataInfo.DataAddress + packedIndex * sizeof(u32), &packed, sizeof(u32));
+            }
+        }
+
+        return ret;
+    }
+
+    u32 CalculateNumBytes(const std::span<std::string> InStrings)
+    {
+        return std::reduce(InStrings.cbegin(), InStrings.cend(), 0u,
+            [](const u32 InVal, const std::string& InStr)
+            {
+                return InVal + static_cast<u32>(InStr.size());
+            });
+    }
+
+    u32 NumStringsFitInBuffer(const std::span<std::string> InStrings, const u32 InBufferSize)
+    {
+        u32 running = 0;
+        const u32 numStrings = static_cast<u32>(InStrings.size());
+        for (u64 index = 0; index < numStrings; ++index)
+        {
+            const u32 size = static_cast<u32>(AlignedOffset(InStrings[index].size(), 4));
+            if (running + size >= InBufferSize)
+            {
+                return static_cast<u32>(index);
+            }
+            running += size;
+        }
+
+        return numStrings;
+    }
+}
 
 SCENARIO("TestDataBufferProcessorTests - Results")
 {
@@ -39,6 +128,74 @@ SCENARIO("TestDataBufferProcessorTests - Results")
             THEN("result is as expected")
             {
                 REQUIRE(actual == expected);
+            }
+        }
+    }
+}
+
+SCENARIO("TestDataBufferProcessorTests - ProcessStrings")
+{
+    using Catch::Matchers::ContainsSubstring;
+
+    auto [given, stringSection] = GENERATE
+    (
+        table<std::string, STF::TestDataSection<STF::StringMetaData>>
+        (
+            {
+                std::tuple{ "Empty string section", STF::TestDataSection<STF::StringMetaData>{0, 0, 0} },
+                std::tuple{ "Begin: 0, Num: 1, Size: 0", STF::TestDataSection<STF::StringMetaData>{0, 1, 0} },
+                std::tuple{ "Begin: 0, Num: 1, Size: 15", STF::TestDataSection<STF::StringMetaData>{0, 1, 16} },
+                std::tuple{ "Begin: 0, Num: 2, Size: 15", STF::TestDataSection<STF::StringMetaData>{0, 2, 16} },
+                std::tuple{ "Begin: 0, Num: 1, Size: 64", STF::TestDataSection<STF::StringMetaData>{0, 1, 64} },
+                std::tuple{ "Begin: 0, Num: 10, Size: 1024", STF::TestDataSection<STF::StringMetaData>{0, 10, 1024} },
+                std::tuple{ "Begin: 32, Num: 1, Size: 0", STF::TestDataSection<STF::StringMetaData>{32, 1, 0} },
+                std::tuple{ "Begin: 32, Num: 1, Size: 15", STF::TestDataSection<STF::StringMetaData>{32, 1, 16} },
+                std::tuple{ "Begin: 32, Num: 2, Size: 15", STF::TestDataSection<STF::StringMetaData>{32, 2, 16} },
+                std::tuple{ "Begin: 32, Num: 1, Size: 64", STF::TestDataSection<STF::StringMetaData>{32, 1, 64} },
+                std::tuple{ "Begin: 32, Num: 10, Size: 1024", STF::TestDataSection<STF::StringMetaData>{32, 10, 1024} }
+            }
+        )
+    );
+
+    GIVEN(given)
+    {
+
+        auto [when, strings] = GENERATE
+        (
+            table<std::string, std::vector<std::string>>
+            (
+                {
+                    std::tuple{"no strings", std::vector<std::string>{}},
+                    std::tuple{"A single string", std::vector<std::string>{"Hello there!"}},
+                    std::tuple{"Two small strings", std::vector<std::string>{"Hello", "There"}},
+                    std::tuple{"Two medium strings", std::vector<std::string>{"Hello!!!!", "There!!!!!"}},
+                    std::tuple{"One Large String", std::vector<std::string>{"Hello there, this is a very large string"}},
+                    std::tuple{"Two Large Strings", std::vector<std::string>{"Hello there, this is a very large string", "Another fairly large but legal string"}}
+                }
+            )
+        );
+
+        WHEN(when)
+        {
+            auto result = STF::ProcessStrings(stringSection, static_cast<u32>(strings.size()), EncodeStringData(stringSection, strings));
+
+            THEN("Result has expected number of strings")
+            {
+                const u64 numStrings = NumStringsFitInBuffer(strings, stringSection.SizeInBytesOfData());
+                const u64 expectedSize = std::min(numStrings, u64{ stringSection.NumMeta() });
+
+                REQUIRE(result.size() == expectedSize);
+
+                if (expectedSize > 0)
+                {
+                    AND_THEN("Result contains expected strings")
+                    {
+                        for (u64 stringIndex = 0; stringIndex < expectedSize; ++stringIndex)
+                        {
+                            REQUIRE_THAT(strings[stringIndex], ContainsSubstring(result[stringIndex], Catch::CaseSensitive::No));
+                        }
+                    }
+                }
             }
         }
     }
