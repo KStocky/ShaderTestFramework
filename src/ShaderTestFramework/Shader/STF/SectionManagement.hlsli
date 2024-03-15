@@ -1,5 +1,9 @@
 #pragma once
 
+#include "/Test/TTL/byte_writer.hlsli"
+#include "/Test/TTL/memory.hlsli"
+#include "/Test/TTL/type_traits.hlsli"
+
 namespace ShaderTestPrivate
 {
     static const int NumSections = 32;
@@ -128,4 +132,60 @@ namespace ShaderTestPrivate
     {
         return (InIndex.z * InDimensions.x * InDimensions.y) + (InIndex.y * InDimensions.x) + InIndex.x;
     }
+}
+
+namespace ttl
+{
+    using ShaderTestPrivate::PerThreadScratchData;
+
+    template<>
+    struct byte_writer<PerThreadScratchData>
+    {
+        static const bool has_writer = true;
+
+        static uint bytes_required(PerThreadScratchData In)
+        {
+            if (ShaderTestPrivate::Scratch.Sections[0].ParentID != -1)
+            {
+                return 0;
+            }
+
+            uint numSections = 1;
+            int currentSection = ShaderTestPrivate::Scratch.CurrentSectionID;
+            while(ShaderTestPrivate::Scratch.Sections[currentSection].ParentID != -1)
+            {
+                ++numSections;
+                currentSection = ShaderTestPrivate::Scratch.Sections[currentSection].ParentID;
+            }
+            return ttl::aligned_offset(numSections, 4u);
+        }
+
+        static uint alignment_required(PerThreadScratchData In)
+        {
+            return ttl::align_of<uint>::value;
+        }
+
+        template<typename U>
+        static void write(inout container_wrapper<U> InContainer, const uint InIndex, const PerThreadScratchData In)
+        {
+            const uint numUints = bytes_required(In) / ttl::size_of<uint>::value;
+            static const bool isByteAddress = ttl::container_traits<U>::is_byte_address;
+            static const uint storeIndexModifier = isByteAddress ? 4 : 1;
+
+            int currentSection = ShaderTestPrivate::Scratch.CurrentSectionID;
+
+            for (uint i = 0; i < numUints; ++i)
+            {
+                uint packedIds = 0;
+                
+                for (uint numPackedSectionIds = 0; numPackedSectionIds < 4 && currentSection != -1; ++numPackedSectionIds)
+                {
+                    packedIds = packedIds | (currentSection << (numPackedSectionIds * 8));
+                    currentSection = ShaderTestPrivate::Scratch.Sections[currentSection].ParentID;
+                }
+
+                InContainer.store(InIndex + i * storeIndexModifier, packedIds);
+            }
+        }
+    };
 }
