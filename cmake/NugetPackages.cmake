@@ -5,8 +5,8 @@ include(Nuget)
 function(nuget_get_agility_sdk IN_TARGET OUT_SUCCEEDED OUT_INCLUDE_PATH OUT_BINARY_PATH OUT_SDK_VER)
 
     set(MAJOR_VER "1")
-    set(MINOR_VER "611")
-    set(PATCH_VER "2")
+    set(MINOR_VER "613")
+    set(PATCH_VER "1")
 
     nuget_pkg_get(${IN_TARGET} "Microsoft.Direct3D.D3D12" "${MAJOR_VER}.${MINOR_VER}.${PATCH_VER}" ${OUT_SUCCEEDED} PKG_PATH)
 
