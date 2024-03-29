@@ -21,7 +21,7 @@ endfunction()
 
 function(nuget_get_dxc IN_TARGET OUT_SUCCEEDED OUT_INCLUDE_PATH OUT_BINARY_PATH OUT_LIB_PATH)
 
-    nuget_pkg_get(${IN_TARGET} "Microsoft.Direct3D.DXC" "1.7.2308.12" ${OUT_SUCCEEDED} PKG_PATH)
+    nuget_pkg_get(${IN_TARGET} "Microsoft.Direct3D.DXC" "1.8.2403.21" ${OUT_SUCCEEDED} PKG_PATH)
 
     if (${${OUT_SUCCEEDED}})
         set(${OUT_INCLUDE_PATH} "${PKG_PATH}/build/native/include")
