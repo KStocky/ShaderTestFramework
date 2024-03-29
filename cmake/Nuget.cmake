@@ -49,8 +49,8 @@ function(nuget_pkg_get IN_TARGET IN_PKG_NAME IN_VERSION OUT_SUCCEEDED OUT_PKG_PA
     nuget_pkg_already_installed(${IN_TARGET} ${IN_PKG_NAME} PKG_EXISTS CURRENT_VERSION)
 
     if (${PKG_EXISTS})
-        if(CURRENT_VERSION STRGREATER_EQUAL IN_VERSION)
-            if(CURRENT_VERSION STRGREATER IN_VERSION)
+        if(CURRENT_VERSION VERSION_GREATER_EQUAL IN_VERSION)
+            if(CURRENT_VERSION VERSION_GREATER IN_VERSION)
                 message("Package ${IN_PKG_NAME} already has a more up to date version installed. Current: ${CURRENT_VERSION} Requested: ${IN_VERSION}")
             endif()
 
@@ -76,7 +76,7 @@ function(nuget_pkg_get IN_TARGET IN_PKG_NAME IN_VERSION OUT_SUCCEEDED OUT_PKG_PA
     if (${STATUS_CODE} EQUAL 0)
 
         message(STATUS "${IN_PKG_NAME} download complete!")
-        if (${PKG_EXISTS} AND CURRENT_VERSION STRLESS IN_VERSION)
+        if (${PKG_EXISTS} AND CURRENT_VERSION VERSION_LESS IN_VERSION)
             message("Deleting old version ${CURRENT_VERSION}")
             file(REMOVE_RECURSE ${PKG_DIR})
         endif()
