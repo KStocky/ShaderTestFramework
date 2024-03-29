@@ -45,7 +45,7 @@ endfunction()
 
 function(nuget_get_WinPixEventRuntime IN_TARGET OUT_SUCCEEDED OUT_INCLUDE_PATH OUT_BINARY_PATH)
 
-    nuget_pkg_get(${IN_TARGET} "WinPixEventRuntime" "1.0.231030001" ${OUT_SUCCEEDED} PKG_PATH)
+    nuget_pkg_get(${IN_TARGET} "WinPixEventRuntime" "1.0.240308001" ${OUT_SUCCEEDED} PKG_PATH)
 
     if (${${OUT_SUCCEEDED}})
         set(${OUT_INCLUDE_PATH} "${PKG_PATH}/Include")
