@@ -63,7 +63,7 @@ namespace ShaderTestPrivate
     
     }
 
-     bool ShouldEnter(int InID)
+    bool ShouldEnter(int InID)
     {   
         const ESectionRunState state = Scratch.Sections[InID].RunState;
         switch (state)
@@ -145,17 +145,17 @@ namespace ttl
 
         static uint bytes_required(PerThreadScratchData In)
         {
-            if (ShaderTestPrivate::Scratch.Sections[0].ParentID != -1)
+            if (In.Sections[0].ParentID != -1)
             {
                 return 0;
             }
 
             uint numSections = 1;
-            int currentSection = ShaderTestPrivate::Scratch.CurrentSectionID;
-            while(ShaderTestPrivate::Scratch.Sections[currentSection].ParentID != -1)
+            int currentSection = In.CurrentSectionID;
+            while(In.Sections[currentSection].ParentID != -1)
             {
                 ++numSections;
-                currentSection = ShaderTestPrivate::Scratch.Sections[currentSection].ParentID;
+                currentSection = In.Sections[currentSection].ParentID;
             }
             return ttl::aligned_offset(numSections, 4u);
         }
@@ -172,7 +172,7 @@ namespace ttl
             static const bool isByteAddress = ttl::container_traits<U>::is_byte_address;
             static const uint storeIndexModifier = isByteAddress ? 4 : 1;
 
-            int currentSection = ShaderTestPrivate::Scratch.CurrentSectionID;
+            int currentSection = In.CurrentSectionID;
 
             for (uint i = 0; i < numUints; ++i)
             {
@@ -181,7 +181,7 @@ namespace ttl
                 for (uint numPackedSectionIds = 0; numPackedSectionIds < 4 && currentSection != -1; ++numPackedSectionIds)
                 {
                     packedIds = packedIds | (currentSection << (numPackedSectionIds * 8));
-                    currentSection = ShaderTestPrivate::Scratch.Sections[currentSection].ParentID;
+                    currentSection = In.Sections[currentSection].ParentID;
                 }
 
                 InContainer.store(InIndex + i * storeIndexModifier, packedIds);
