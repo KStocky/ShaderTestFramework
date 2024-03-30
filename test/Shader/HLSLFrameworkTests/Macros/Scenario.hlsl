@@ -32,10 +32,10 @@ void GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce(uint3 DispatchThreadI
         static int num = 0;
 
         static const int Section_1Num = 1;
-        if (ShaderTestPrivate::TryEnterSection(Section_1Num))
+        if (ShaderTestPrivate::Scratch.TryEnterSection(Section_1Num))
         {
             ++num;
-            ShaderTestPrivate::OnLeave();
+            ShaderTestPrivate::Scratch.OnLeave();
         }
 
         STF::AreEqual(1, num);
@@ -54,17 +54,17 @@ void GIVEN_TwoSections_WHEN_Ran_THEN_EachSectionIsEnteredOnce(uint3 DispatchThre
         static int num1 = 0;
         static int num2 = 0;
         static const int Section_1Num = 1;
-        if (ShaderTestPrivate::TryEnterSection(Section_1Num))
+        if (ShaderTestPrivate::Scratch.TryEnterSection(Section_1Num))
         {
             ++num1;
-            ShaderTestPrivate::OnLeave();
+            ShaderTestPrivate::Scratch.OnLeave();
         }
         
         static const int Section_2Num = 2;
-        if (ShaderTestPrivate::TryEnterSection(Section_2Num))
+        if (ShaderTestPrivate::Scratch.TryEnterSection(Section_2Num))
         {
             ++num2;
-            ShaderTestPrivate::OnLeave();
+            ShaderTestPrivate::Scratch.OnLeave();
         }
 
         if (numEntered == 1)
@@ -97,24 +97,24 @@ void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnte
         static int num3 = 0;
 
         static const int Section_1Num = 1;
-        if (ShaderTestPrivate::TryEnterSection(Section_1Num))
+        if (ShaderTestPrivate::Scratch.TryEnterSection(Section_1Num))
         {
             ++num1;
-            ShaderTestPrivate::OnLeave();
+            ShaderTestPrivate::Scratch.OnLeave();
         }
 
         static const int Section_2Num = 2;
-        if (ShaderTestPrivate::TryEnterSection(Section_2Num))
+        if (ShaderTestPrivate::Scratch.TryEnterSection(Section_2Num))
         {
             ++num2;
 
             static const int Section_3Num = 3;
-            if (ShaderTestPrivate::TryEnterSection(Section_3Num))
+            if (ShaderTestPrivate::Scratch.TryEnterSection(Section_3Num))
             {
                 ++num3;
-                ShaderTestPrivate::OnLeave();
+                ShaderTestPrivate::Scratch.OnLeave();
             }
-            ShaderTestPrivate::OnLeave();
+            ShaderTestPrivate::Scratch.OnLeave();
         }
     
         if (numEntered == 1)

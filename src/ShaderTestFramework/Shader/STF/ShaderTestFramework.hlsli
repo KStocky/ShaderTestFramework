@@ -306,9 +306,9 @@ namespace STF
 
 #define STF_DEFINE_TEST_ENTRY_FUNC(InID, InName, ...) void InName(__VA_ARGS__) \
 {\
-    ShaderTestPrivate::InitScratch();\
+    ShaderTestPrivate::Scratch.Init();\
     STF_DECLARE_TEST_FUNC(InID); \
-    while(ShaderTestPrivate::TryLoopScenario())\
+    while(ShaderTestPrivate::Scratch.TryLoopScenario())\
     {\
         STF_GET_TEST_FUNC_NAME(InID)();\
     }\
@@ -316,27 +316,27 @@ namespace STF
 STF_DECLARE_TEST_FUNC(InID)
 
 #define STF_SCENARIO_IF_0(InScenarioID)\
-ShaderTestPrivate::InitScratch();\
-while(ShaderTestPrivate::TryLoopScenario())
+ShaderTestPrivate::Scratch.Init();\
+while(ShaderTestPrivate::Scratch.TryLoopScenario())
 
 #define STF_SCENARIO_IF_1(InScenarioID, InThreadID)\
-ShaderTestPrivate::InitScratch();\
+ShaderTestPrivate::Scratch.Init();\
 STF::RegisterThreadID(InThreadID); \
-while(ShaderTestPrivate::TryLoopScenario())
+while(ShaderTestPrivate::Scratch.TryLoopScenario())
 
 #define STF_SCENARIO_IMPL(InName, InNumArgs, InScenarioID, ...) STF_JOIN(InName, InNumArgs)(InScenarioID, ##__VA_ARGS__)
 
 #define SCENARIO(...) STF_SCENARIO_IMPL(STF_SCENARIO_IF_, STF_NUM_ARGS(__VA_ARGS__), __LINE__, ##__VA_ARGS__)
 
 #define STF_BEGIN_SECTION_IMPL(InID) STF_CREATE_SECTION_VAR_IMPL(InID); \
-    if (ShaderTestPrivate::TryEnterSection(STF_GET_SECTION_VAR_NAME(InID))) \
+    if (ShaderTestPrivate::Scratch.TryEnterSection(STF_GET_SECTION_VAR_NAME(InID))) \
     {\
 
 #define BEGIN_SECTION STF_BEGIN_SECTION_IMPL(__LINE__)
-#define END_SECTION ShaderTestPrivate::OnLeave(); }
+#define END_SECTION ShaderTestPrivate::Scratch.OnLeave(); }
 
 #define STF_SECTION_IMPL(InID) STF_CREATE_SECTION_VAR_IMPL(InID); \
-    while (ShaderTestPrivate::TryEnterSection(STF_GET_SECTION_VAR_NAME(InID)))
+    while (ShaderTestPrivate::Scratch.TryEnterSection(STF_GET_SECTION_VAR_NAME(InID)))
 
 #define SECTION() STF_SECTION_IMPL(__LINE__)
 
