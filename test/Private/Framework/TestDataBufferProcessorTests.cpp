@@ -76,6 +76,23 @@ namespace
         return ret;
     }
 
+    std::vector<std::byte> EncodeSectionData(const STF::TestDataSection<STF::SectionInfoMetaData> InSectionLayout, const std::span<STF::SectionInfoMetaData> InSections)
+    {
+        std::vector<std::byte> ret;
+
+        ret.resize(InSectionLayout.Begin() + InSectionLayout.SizeInBytesOfSection());
+        std::memset(ret.data(), 0, ret.size());
+
+        const u32 numSections = std::min(static_cast<u32>(InSections.size()), InSectionLayout.NumMeta());
+
+        for (u32 sectionMetaIndex = 0; sectionMetaIndex < numSections; ++sectionMetaIndex)
+        {
+            std::memcpy(ret.data() + InSectionLayout.Begin() + sectionMetaIndex * sizeof(STF::SectionInfoMetaData), &InSections[sectionMetaIndex], sizeof(STF::SectionInfoMetaData));
+        }
+
+        return ret;
+    }
+
     u32 CalculateNumBytes(const std::span<std::string> InStrings)
     {
         return std::reduce(InStrings.cbegin(), InStrings.cend(), 0u,
@@ -115,7 +132,7 @@ SCENARIO("TestDataBufferProcessorTests - Results")
                 std::tuple{ "Constructed from empty string", STF::Results{STF::FailedShaderCompilationResult{""}}, false},
                 std::tuple{ "Constructed from non-empty string", STF::Results{STF::FailedShaderCompilationResult{"Hello"}}, false },
                 std::tuple{ "Zero Failed test run", STF::Results{ STF::TestRunResults{} }, true },
-                std::tuple{ "Non-zero failed test run", STF::Results{ STF::TestRunResults{ {}, {}, 0, 1, uint3{} } }, false }
+                std::tuple{ "Non-zero failed test run", STF::Results{ STF::TestRunResults{ {}, {}, {}, 0, 1, uint3{} } }, false }
             }
         )
     );
@@ -193,6 +210,60 @@ SCENARIO("TestDataBufferProcessorTests - ProcessStrings")
                         for (u64 stringIndex = 0; stringIndex < expectedSize; ++stringIndex)
                         {
                             REQUIRE_THAT(strings[stringIndex], ContainsSubstring(result[stringIndex], Catch::CaseSensitive::No));
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+SCENARIO("TestDataBufferProcessorTests - ProcessSections")
+{
+    auto [given, sectionInfo] = GENERATE
+    (
+        table<std::string, STF::TestDataSection<STF::SectionInfoMetaData>>
+        (
+            {
+                std::tuple{ "Empty section info section", STF::TestDataSection<STF::SectionInfoMetaData>{0u, 0u, 0u} },
+                std::tuple{ "Begin: 0, Num: 1", STF::TestDataSection<STF::SectionInfoMetaData>{0u, 1u, 0u} },
+            }
+        )
+    );
+
+    GIVEN(given)
+    {
+
+        auto [when, sections] = GENERATE
+        (
+            table<std::string, std::vector<STF::SectionInfoMetaData>>
+            (
+                {
+                    std::tuple{"no sections", std::vector<STF::SectionInfoMetaData>{}},
+                    std::tuple{"a single section", std::vector<STF::SectionInfoMetaData>{{0u, 0u, static_cast<u32>(-1)}}},
+                }
+            )
+        );
+
+        WHEN(when)
+        {
+            auto result = STF::ProcessSectionInfo(sectionInfo, static_cast<u32>(sections.size()), EncodeSectionData(sectionInfo, sections));
+
+            THEN("Result has expected number of sections")
+            {
+                const u64 expectedSize = std::min(sections.size(), u64{sectionInfo.NumMeta()});
+
+                REQUIRE(result.size() == expectedSize);
+
+                if (expectedSize > 0)
+                {
+                    AND_THEN("Result contains expected sections")
+                    {
+                        for (u64 sectionIndex = 0; sectionIndex < expectedSize; ++sectionIndex)
+                        {
+                            REQUIRE(sections[sectionIndex].ParentId == result[sectionIndex].ParentId);
+                            REQUIRE(sections[sectionIndex].SectionId == result[sectionIndex].SectionId);
+                            REQUIRE(sections[sectionIndex].StringId == result[sectionIndex].StringId);
                         }
                     }
                 }

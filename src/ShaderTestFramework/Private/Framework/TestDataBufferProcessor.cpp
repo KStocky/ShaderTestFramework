@@ -246,6 +246,23 @@ namespace STF
         return ret;
     }
 
+    std::vector<SectionInfoMetaData> ProcessSectionInfo(const TestDataSection<SectionInfoMetaData>& InSectionInfoSection, const u32 InNumSections, const std::span<const std::byte> InTestData)
+    {
+        const u32 numSectionsToProcess = std::min(InNumSections, InSectionInfoSection.NumMeta());
+        std::vector<SectionInfoMetaData> ret;
+        ret.reserve(numSectionsToProcess);
+
+        for (u32 sectionIndex = 0; sectionIndex < numSectionsToProcess; ++sectionIndex)
+        {
+            SectionInfoMetaData sectionInfo;
+            std::memcpy(&sectionInfo, &InTestData[InSectionInfoSection.Begin() + sectionIndex * sizeof(SectionInfoMetaData)], sizeof(SectionInfoMetaData));
+
+            ret.push_back(sectionInfo);
+        }
+
+        return ret;
+    }
+
     TestRunResults ProcessTestDataBuffer(const AllocationBufferData InAllocationBufferData, const uint3 InDispatchDimensions, const TestDataBufferLayout InLayout, std::span<const std::byte> InTestData, const MultiTypeByteReaderMap& InByteReaderMap)
     {
         TestRunResults ret{};
@@ -255,6 +272,7 @@ namespace STF
 
         const auto assertSectionInfo = InLayout.GetAssertSection();
         const auto stringSectionInfo = InLayout.GetStringSection();
+        const auto sectionInfoSectionInfo = InLayout.GetSectionInfoSection();
 
         const bool hasFailedAssertInfo = assertSectionInfo.NumMeta() > 0;
         const bool allSucceeded = ret.NumFailed == 0;
@@ -264,14 +282,14 @@ namespace STF
             return ret;
         }
 
-        const u64 requiredBytesForMetaData = assertSectionInfo.SizeInBytesOfMeta() + stringSectionInfo.SizeInBytesOfSection();
+        const u64 requiredBytesForMetaData = assertSectionInfo.SizeInBytesOfMeta() + stringSectionInfo.SizeInBytesOfMeta() + sectionInfoSectionInfo.SizeInBytesOfMeta();
         const bool hasSpaceForMetaInfo = requiredBytesForMetaData <= InTestData.size_bytes();
 
         ThrowIfFalse(hasSpaceForMetaInfo, std::format("Assert Buffer is not large enough ({} bytes) to hold {} failed asserts (requires {} bytes)", InTestData.size_bytes(), InAllocationBufferData.NumFailedAsserts, requiredBytesForMetaData));
 
         ret.FailedAsserts = ProcessFailedAsserts(assertSectionInfo, ret.NumFailed, InTestData, InByteReaderMap);
-        
         ret.Strings = ProcessStrings(stringSectionInfo, InAllocationBufferData.NumStrings, InTestData);
+        ret.Sections = ProcessSectionInfo(sectionInfoSectionInfo, InAllocationBufferData.NumSections, InTestData);
 
         return ret;
     }

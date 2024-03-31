@@ -31,6 +31,7 @@ namespace STF
         u32 NumBytesAssertData = 0;
         u32 NumStrings = 0;
         u32 NumBytesStringData = 0;
+        u32 NumSections = 0;
     };
 
     using SingleTypeByteReader = std::function<std::string(std::span<const std::byte>)>;
@@ -55,6 +56,7 @@ namespace STF
     {
         std::vector<FailedAssert> FailedAsserts;
         std::vector<std::string> Strings;
+        std::vector<SectionInfoMetaData> Sections;
         u32 NumSucceeded = 0;
         u32 NumFailed = 0;
         uint3 DispatchDimensions;
@@ -107,6 +109,7 @@ namespace STF
 
     std::vector<FailedAssert> ProcessFailedAsserts(const TestDataSection<HLSLAssertMetaData>& InAssertSection, const u32 InNumFailed, const std::span<const std::byte> InTestData, const MultiTypeByteReaderMap& InByteReaderMap);
     std::vector<std::string> ProcessStrings(const TestDataSection<StringMetaData>& InStringSection, const u32 InNumStrings, const std::span<const std::byte> InTestData);
+    std::vector<SectionInfoMetaData> ProcessSectionInfo(const TestDataSection<SectionInfoMetaData>& InSectionInfoSection, const u32 InNumSections, const std::span<const std::byte> InTestData);
 
     TestRunResults ProcessTestDataBuffer(
         const AllocationBufferData InAllocationBufferData,
