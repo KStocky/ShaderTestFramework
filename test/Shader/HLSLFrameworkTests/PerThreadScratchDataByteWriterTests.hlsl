@@ -98,10 +98,35 @@ void PerThreadScratchDataByteWriterTests()
                             }
                         }
 
-                        data.OnLeave();
+                        SECTION(/*AND WHEN two sections are left*/)
+                        {
+                            data.OnLeave();
+                            data.OnLeave();
+
+                            SECTION(/*THEN 4 Bytes now required*/)
+                            {
+                                ASSERT(AreEqual, ttl::bytes_required(data), 4u);
+                                ASSERT(AreEqual, ttl::alignment_required(data), 4u);
+                            }
+
+                            SECTION(/*AND WHEN bytes written*/)
+                            {
+                                ttl::write_bytes(vec, 0, data);
+
+                                SECTION(/*THEN first uint is (0 << 24) | (1 << 16) | (2 << 8) | (3 << 0)*/)
+                                {
+                                    static const uint expected = (0 << 24) | (1 << 16) | (2 << 8) | (3 << 0);
+                                    ASSERT(AreEqual, vec[0], expected);
+                                }
+                            }
+                        }
+                    }
+
+                    SECTION(/*AND WHEN a section is left*/)
+                    {
                         data.OnLeave();
 
-                        SECTION(/*THEN 4 Bytes now required*/)
+                        SECTION(/*THEN 4 Bytes still required*/)
                         {
                             ASSERT(AreEqual, ttl::bytes_required(data), 4u);
                             ASSERT(AreEqual, ttl::alignment_required(data), 4u);
@@ -111,30 +136,11 @@ void PerThreadScratchDataByteWriterTests()
                         {
                             ttl::write_bytes(vec, 0, data);
 
-                            SECTION(/*THEN first uint is (0 << 24) | (1 << 16) | (2 << 8) | (3 << 0)*/)
+                            SECTION(/*THEN first uint is (0 << 16) | (1 << 8) | (2 << 0)*/)
                             {
-                                static const uint expected = (0 << 24) | (1 << 16) | (2 << 8) | (3 << 0);
+                                static const uint expected = (0 << 16) | (1 << 8) | (2 << 0);
                                 ASSERT(AreEqual, vec[0], expected);
                             }
-                        }
-                    }
-
-                    data.OnLeave();
-
-                    SECTION(/*THEN 4 Bytes still required*/)
-                    {
-                        ASSERT(AreEqual, ttl::bytes_required(data), 4u);
-                        ASSERT(AreEqual, ttl::alignment_required(data), 4u);
-                    }
-
-                    SECTION(/*AND WHEN bytes written*/)
-                    {
-                        ttl::write_bytes(vec, 0, data);
-
-                        SECTION(/*THEN first uint is (0 << 16) | (1 << 8) | (2 << 0)*/)
-                        {
-                            static const uint expected = (0 << 16) | (1 << 8) | (2 << 0);
-                            ASSERT(AreEqual, vec[0], expected);
                         }
                     }
                 }
