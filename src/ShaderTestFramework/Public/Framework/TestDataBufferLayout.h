@@ -69,16 +69,18 @@ namespace STF
     class TestDataBufferLayout
     {
     public:
-        TestDataBufferLayout(u32 InNumFailedAsserts = 0, u32 InBytesAssertData = 0, u32 InNumStrings = 0, u32 InBytesStringData = 0);
+        TestDataBufferLayout(u32 InNumFailedAsserts = 0, u32 InBytesAssertData = 0, u32 InNumStrings = 0, u32 InBytesStringData = 0, u32 InNumSections = 0);
 
         TestDataSection<HLSLAssertMetaData> GetAssertSection() const;
         TestDataSection<StringMetaData> GetStringSection() const;
+        TestDataSection<SectionInfoMetaData> GetSectionInfoSection() const;
 
         u32 GetSizeOfTestData() const;
 
     private:
         TestDataSection<HLSLAssertMetaData> m_Asserts;
         TestDataSection<StringMetaData> m_Strings;
+        TestDataSection<SectionInfoMetaData> m_Sections;
 
         friend auto operator<=>(const TestDataBufferLayout&, const TestDataBufferLayout&) = default;
     };

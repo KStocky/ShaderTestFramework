@@ -91,7 +91,7 @@ SCENARIO("TestDataBufferLayoutTests")
 
     WHEN("Num Failed Asserts: " << numFailedAsserts)
     {
-        auto [actualSizeAssertData, expectedSizeAssertData] = GENERATE
+        const auto [actualSizeAssertData, expectedSizeAssertData] = GENERATE
         (
             table<u32, u32>
             (
@@ -110,7 +110,7 @@ SCENARIO("TestDataBufferLayoutTests")
 
             AND_WHEN("Num Strings: " << numStrings)
             {
-                auto [actualSizeStringData, expectedSizeStringData] = GENERATE
+                const auto [actualSizeStringData, expectedSizeStringData] = GENERATE
                 (
                     table<u32, u32>
                     (
@@ -125,17 +125,25 @@ SCENARIO("TestDataBufferLayoutTests")
 
                 AND_WHEN("Size of String Data: " << actualSizeStringData)
                 {
-                    const STF::TestDataBufferLayout test{ numFailedAsserts, actualSizeAssertData, numStrings, actualSizeStringData };
-                    THEN("Values are all as expected")
-                    {
-                        const auto assertSection = test.GetAssertSection();
-                        const auto stringSection = test.GetStringSection();
+                    const auto numSections = GENERATE(0u, 8u, 32u, 64u);
 
-                        REQUIRE(test.GetSizeOfTestData() == assertSection.SizeInBytesOfSection() + stringSection.SizeInBytesOfSection());
-                        REQUIRE(assertSection.NumMeta() == numFailedAsserts);
-                        REQUIRE(assertSection.SizeInBytesOfData() == expectedSizeAssertData);
-                        REQUIRE(stringSection.NumMeta() == numStrings);
-                        REQUIRE(stringSection.SizeInBytesOfData() == expectedSizeStringData);
+                    AND_WHEN("Has " << numSections << " sections")
+                    {
+                        const STF::TestDataBufferLayout test{ numFailedAsserts, actualSizeAssertData, numStrings, actualSizeStringData, numSections };
+                        THEN("Values are all as expected")
+                        {
+                            const auto assertSection = test.GetAssertSection();
+                            const auto stringSection = test.GetStringSection();
+                            const auto sectionInfoSection = test.GetSectionInfoSection();
+
+                            REQUIRE(test.GetSizeOfTestData() == assertSection.SizeInBytesOfSection() + stringSection.SizeInBytesOfSection() + sectionInfoSection.SizeInBytesOfSection());
+                            REQUIRE(assertSection.NumMeta() == numFailedAsserts);
+                            REQUIRE(assertSection.SizeInBytesOfData() == expectedSizeAssertData);
+                            REQUIRE(stringSection.NumMeta() == numStrings);
+                            REQUIRE(stringSection.SizeInBytesOfData() == expectedSizeStringData);
+                            REQUIRE(sectionInfoSection.NumMeta() == numSections);
+                            REQUIRE(sectionInfoSection.SizeInBytesOfData() == 0u);
+                        }
                     }
                 }
             }

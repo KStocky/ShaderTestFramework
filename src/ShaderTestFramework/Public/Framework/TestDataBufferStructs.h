@@ -32,4 +32,12 @@ namespace STF
     {
         DynamicSectionDataInfo DynamicDataInfo;
     };
+
+    struct SectionInfoMetaData
+    {
+        u32 SectionId = 0;
+        u32 StringId = 0;
+        u32 ParentId = 0;
+        friend auto operator<=>(const SectionInfoMetaData&, const SectionInfoMetaData&) = default;
+    };
 }
