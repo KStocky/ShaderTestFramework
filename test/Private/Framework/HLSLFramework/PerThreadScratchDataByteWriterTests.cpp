@@ -7,7 +7,7 @@ SCENARIO("HLSLFrameworkTests - PerThreadScratchData - ByteWriter")
 {
     auto testName = GENERATE
     (
-        "GIVEN_Uninitialized_WHEN_BytesRequiredQueried_THEN_ZeroReturned"
+        "PerThreadScratchDataByteWriterTests"
     );
 
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/PerThreadScratchDataByteWriterTests.hlsl")));

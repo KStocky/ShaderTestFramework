@@ -4,10 +4,141 @@
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
-void GIVEN_Uninitialized_WHEN_BytesRequiredQueried_THEN_ZeroReturned()
+void PerThreadScratchDataByteWriterTests()
 {
-    ShaderTestPrivate::PerThreadScratchData data;
-    ttl::zero(data);
-    ASSERT(AreEqual, ttl::bytes_required(data), 0u);
-}
+    SCENARIO()
+    {
+        ShaderTestPrivate::PerThreadScratchData data;
+        ttl::zero(data);
 
+        uint vec[ShaderTestPrivate::NumSections / 4];
+        ttl::zero(vec);
+
+        SECTION(/*GIVEN Uninitialized THEN Properties are as expected*/)
+        {
+            ASSERT(AreEqual, ttl::bytes_required(data), 0u);
+            ASSERT(AreEqual, ttl::alignment_required(data), 4u);
+        }
+
+        SECTION(/*GIVEN Initialized */)
+        {
+            data.Init();
+
+            SECTION(/*THEN Properties are as expected*/)
+            {
+                ASSERT(AreEqual, ttl::bytes_required(data), 4u);
+                ASSERT(AreEqual, ttl::alignment_required(data), 4u);
+            }
+
+            data.TryLoopScenario();
+
+            SECTION(/*WHEN Bytes Written*/)
+            {
+                ttl::write_bytes(vec, 0, data);
+
+                SECTION(/*THEN first uint is 0*/)
+                {
+                    ASSERT(AreEqual, vec[0], 0u);
+                }
+            }
+
+            SECTION(/*WHEN Section Entered*/)
+            {
+                data.TryEnterSection(1);
+
+                SECTION(/*THEN Properties are as expected*/)
+                {
+                    ASSERT(AreEqual, ttl::bytes_required(data), 4u);
+                    ASSERT(AreEqual, ttl::alignment_required(data), 4u);
+                }
+
+                SECTION(/*AND WHEN 3 sections entered*/)
+                {
+                    data.TryEnterSection(2);
+                    data.TryEnterSection(3);
+
+                    SECTION(/*THEN 4 Bytes still required*/)
+                    {
+                        ASSERT(AreEqual, ttl::bytes_required(data), 4u);
+                        ASSERT(AreEqual, ttl::alignment_required(data), 4u);
+                    }
+
+                    SECTION(/*AND WHEN bytes written*/)
+                    {
+                        ttl::write_bytes(vec, 0, data);
+
+                        SECTION(/*THEN first uint is (0 << 24) | (1 << 16) | (2 << 8) | (3 << 0)*/)
+                        {
+                            static const uint expected = (0 << 24) | (1 << 16) | (2 << 8) | (3 << 0);
+                            ASSERT(AreEqual, vec[0], expected);
+                        }
+                    }
+
+                    SECTION(/*AND WHEN 5 sections entered*/)
+                    {
+                        data.TryEnterSection(4);
+                        data.TryEnterSection(5);
+
+                        SECTION(/*THEN 8 Bytes is required*/)
+                        {
+                            ASSERT(AreEqual, ttl::bytes_required(data), 8u);
+                            ASSERT(AreEqual, ttl::alignment_required(data), 4u);
+                        }
+
+                        SECTION(/*AND WHEN bytes written*/)
+                        {
+                            ttl::write_bytes(vec, 0, data);
+
+                            SECTION(/*THEN first two uints is as expected*/)
+                            {
+                                static const uint expectedFirst = (2 << 24) | (3 << 16) | (4 << 8) | (5 << 0);
+                                static const uint expectedSecond = 1;
+                                ASSERT(AreEqual, vec[0], expectedFirst);
+                                ASSERT(AreEqual, vec[1], expectedSecond);
+                            }
+                        }
+
+                        data.OnLeave();
+                        data.OnLeave();
+
+                        SECTION(/*THEN 4 Bytes now required*/)
+                        {
+                            ASSERT(AreEqual, ttl::bytes_required(data), 4u);
+                            ASSERT(AreEqual, ttl::alignment_required(data), 4u);
+                        }
+
+                        SECTION(/*AND WHEN bytes written*/)
+                        {
+                            ttl::write_bytes(vec, 0, data);
+
+                            SECTION(/*THEN first uint is (0 << 24) | (1 << 16) | (2 << 8) | (3 << 0)*/)
+                            {
+                                static const uint expected = (0 << 24) | (1 << 16) | (2 << 8) | (3 << 0);
+                                ASSERT(AreEqual, vec[0], expected);
+                            }
+                        }
+                    }
+
+                    data.OnLeave();
+
+                    SECTION(/*THEN 4 Bytes still required*/)
+                    {
+                        ASSERT(AreEqual, ttl::bytes_required(data), 4u);
+                        ASSERT(AreEqual, ttl::alignment_required(data), 4u);
+                    }
+
+                    SECTION(/*AND WHEN bytes written*/)
+                    {
+                        ttl::write_bytes(vec, 0, data);
+
+                        SECTION(/*THEN first uint is (0 << 16) | (1 << 8) | (2 << 0)*/)
+                        {
+                            static const uint expected = (0 << 16) | (1 << 8) | (2 << 0);
+                            ASSERT(AreEqual, vec[0], expected);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
