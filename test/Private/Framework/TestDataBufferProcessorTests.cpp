@@ -227,6 +227,11 @@ SCENARIO("TestDataBufferProcessorTests - ProcessSections")
             {
                 std::tuple{ "Empty section info section", STF::TestDataSection<STF::SectionInfoMetaData>{0u, 0u, 0u} },
                 std::tuple{ "Begin: 0, Num: 1", STF::TestDataSection<STF::SectionInfoMetaData>{0u, 1u, 0u} },
+                std::tuple{ "Begin: 0, Num: 2", STF::TestDataSection<STF::SectionInfoMetaData>{0u, 2u, 0u} },
+                std::tuple{ "Begin: 0, Num: 32", STF::TestDataSection<STF::SectionInfoMetaData>{0u, 32u, 0u} },
+                std::tuple{ "Begin: 32, Num: 1", STF::TestDataSection<STF::SectionInfoMetaData>{32u, 1u, 0u} },
+                std::tuple{ "Begin: 32, Num: 2", STF::TestDataSection<STF::SectionInfoMetaData>{32u, 2u, 0u} },
+                std::tuple{ "Begin: 32, Num: 32", STF::TestDataSection<STF::SectionInfoMetaData>{32u, 32u, 0u} },
             }
         )
     );
@@ -241,6 +246,8 @@ SCENARIO("TestDataBufferProcessorTests - ProcessSections")
                 {
                     std::tuple{"no sections", std::vector<STF::SectionInfoMetaData>{}},
                     std::tuple{"a single section", std::vector<STF::SectionInfoMetaData>{{0u, 0u, static_cast<u32>(-1)}}},
+                    std::tuple{"Two sections", std::vector<STF::SectionInfoMetaData>{{0u, 0u, static_cast<u32>(-1)}, {1u, 0u, 0}} },
+                    std::tuple{"32 sections", std::vector<STF::SectionInfoMetaData>(32, STF::SectionInfoMetaData{0u, 0u, static_cast<u32>(-1)})}
                 }
             )
         );
