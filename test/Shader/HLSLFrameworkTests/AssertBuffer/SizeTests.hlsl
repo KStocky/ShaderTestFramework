@@ -2,7 +2,7 @@
 #include "/Test/TTL/static_assert.hlsli"
 
 STATIC_ASSERT(
-    ttl::size_of<ShaderTestPrivate::HLSLAssertMetaData>::value == 24u, 
+    ttl::size_of<ShaderTestPrivate::HLSLAssertMetaData>::value == 32u, 
     "The size of this struct must match the size of HLSLAssertMetaData in TestDataBufferProcessor.h");
 
 [RootSignature(SHADER_TEST_RS)]

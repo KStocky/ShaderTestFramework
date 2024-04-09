@@ -9,7 +9,7 @@
 
 namespace STF
 {
-    static_assert(sizeof(HLSLAssertMetaData) == 24,
+    static_assert(sizeof(HLSLAssertMetaData) == 32,
         "The size of this struct must be the same size as ShaderTestPrivate::HLSLAssertMetaData");
 
     static uint3 Unflatten(const u32 InId, const uint3 InDims)
@@ -101,6 +101,7 @@ namespace STF
 
     std::ostream& operator<<(std::ostream& InOs, const TestRunResults& In)
     {
+        using namespace std::literals;
         InOs << std::format("There were {} successful asserts and {} failed assertions\n", In.NumSucceeded, In.NumFailed);
 
         if (In.FailedAsserts.empty())
@@ -110,9 +111,51 @@ namespace STF
 
         for (const auto& [index, error] : std::views::enumerate(In.FailedAsserts))
         {
+            InOs << std::format("Assert {}\n", index);
+            u32 indentLevel = 0;
+            auto tabbedWriter =
+                [&InOs, &indentLevel](const auto InToWrite)
+                {
+                    for (u32 index = 0; index < indentLevel; index++)
+                    {
+                        InOs << "\t";
+                    }
+
+                    InOs << InToWrite;
+                };
+
+            if (error.Info.SectionId != -1 && error.Info.SectionId < In.Sections.size())
+            {
+                auto sectionPrinter =
+                    [&indentLevel, &tabbedWriter, &In](this auto&& InSelf, const i32 InSectionId)
+                    {
+                        if (InSectionId < -1 || InSectionId >= In.Sections.size())
+                        {
+                            indentLevel = 0;
+                            tabbedWriter("INVALID SECTION ID. Aborting Section reporting\n");
+                            return;
+                        }
+
+                        const bool isSection = In.Sections[InSectionId].ParentId >= 0;
+                        const i32 stringId = In.Sections[InSectionId].StringId;
+                        const bool hasString = stringId >= 0 && stringId < In.Strings.size();
+
+                        if (isSection)
+                        {
+                            InSelf(In.Sections[InSectionId].ParentId);
+                        }
+
+                        tabbedWriter(std::format("{}: {}\n", isSection ? "SECTION"sv : "SCENARIO"sv, hasString ? In.Strings[stringId] : "UNKNOWN"s));
+                        
+                        ++indentLevel;
+                    };
+
+                sectionPrinter(error.Info.SectionId);
+            }
+
             const std::string lineInfo = error.Info.LineNumber == u32(-1) ? std::string{ "" } : std::format("Line: {}", error.Info.LineNumber);
             const std::string threadInfo = error.Info.ThreadIdType == 0 ? std::string{ "" } : STF::ThreadInfoToString(static_cast<STF::EThreadIdType>(error.Info.ThreadIdType), error.Info.ThreadId, In.DispatchDimensions);
-            InOs << std::format("Assert {}: {} {}\n", index, lineInfo, threadInfo);
+            tabbedWriter(std::format("Assert {}: {} {}\n", index, lineInfo, threadInfo));
 
             if (error.Data.size() == 0 || !error.ByteReader)
             {
@@ -130,7 +173,7 @@ namespace STF
                 const u32 align = sizeAndAlignData & 0xffff;
                 byteIndex = AlignedOffset(byteIndex + sizeof(4), align);
 
-                InOs << std::format("Data {}: {}\n", i + 1u, error.ByteReader(error.TypeId, std::span{ error.Data.cbegin() + byteIndex, size }));
+                tabbedWriter(std::format("Data {}: {}\n", i + 1u, error.ByteReader(error.TypeId, std::span{ error.Data.cbegin() + byteIndex, size })));
                 byteIndex = AlignedOffset(byteIndex + size, 4);
             }
         }

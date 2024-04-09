@@ -31,8 +31,8 @@ namespace ShaderTestPrivate
     {
         RWByteAddressBuffer buffer = GetTestDataBuffer();
         const uint metaAddress = InMetaIndex * sizeof(HLSLAssertMetaData);
-        buffer.Store4(metaAddress, uint4(InId, Scratch.ThreadID.Data, (uint)Scratch.ThreadID.Type, InReaderAndTypeId));
-        buffer.Store2(metaAddress + 16, InAddressAndSize);
+        buffer.Store4(metaAddress, uint4(InId, Scratch.ThreadID.Data, (uint)Scratch.ThreadID.Type, Scratch.GetSectionID()));
+        buffer.Store3(metaAddress + 16, uint3(InReaderAndTypeId, InAddressAndSize));
     }
 
     template<typename T>

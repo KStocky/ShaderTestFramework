@@ -7,6 +7,7 @@
 #include <Utility/TypeTraits.h>
 
 #include <numeric>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -118,9 +119,69 @@ namespace
 
         return numStrings;
     }
+
+    template<typename T>
+    void EncodeAssertData(const T& InSingleData, std::vector<std::byte>& InOutBytes)
+    {
+        static constexpr u32 size = sizeof(T);
+        static constexpr u32 align = alignof(T);
+        static constexpr u32 sizeAndAlign = (size << 16) | align;
+        static constexpr u64 sizeOfAllocation = AlignedOffset(size + 4, 8);
+
+        const auto oldSize = InOutBytes.size();
+
+        InOutBytes.resize(InOutBytes.size() + sizeOfAllocation);
+        auto address = InOutBytes.data() + oldSize;
+        std::memcpy(address, &sizeAndAlign, sizeof(u32));
+        address += AlignedOffset(sizeof(u32), align);
+        std::memcpy(address, &InSingleData, size);
+    }
+
+    template<typename T>
+    void EncodeAssertData(const Tuple<T,T>& InPairData, std::vector<std::byte>& InOutBytes)
+    {
+        static constexpr u32 size = sizeof(T);
+        static constexpr u32 align = alignof(T);
+        static constexpr u32 sizeAndAlign = (size << 16) | align;
+        static constexpr u64 sizeSingle = AlignedOffset(size + 4, align);
+        static constexpr u64 sizeOfAllocation = AlignedOffset(sizeSingle * 2, 8);
+
+        const auto oldSize = InOutBytes.size();
+
+        InOutBytes.resize(InOutBytes.size() + sizeOfAllocation);
+        auto address = InOutBytes.data() + oldSize;
+        std::memcpy(address, &sizeAndAlign, sizeof(u32));
+        address += AlignedOffset(sizeof(u32), align);
+        std::memcpy(address, &Get<0>(InPairData), size);
+        address += AlignedOffset(size, 4);
+        std::memcpy(address, &sizeAndAlign, sizeof(u32));
+        address += AlignedOffset(sizeof(u32), align);
+        std::memcpy(address, &Get<1>(InPairData), size);
+    }
+
+    template<typename T>
+    void EncodeAssertData(const std::span<T> InAssertData, std::vector<std::byte>& InOutBytes)
+    {
+        for (const auto& data : InAssertData)
+        {
+            EncodeAssertData(data, InOutBytes);
+        }
+    }
+
+    template<typename T>
+    std::vector<std::byte> EncodeAssertData(const std::span<T> InAssertData)
+    {
+        std::vector<std::byte> ret;
+        for (const auto& data : InAssertData)
+        {
+            EncodeAssertData(data, ret);
+        }
+
+        return ret;
+    }
 }
 
-SCENARIO("TestDataBufferProcessorTests - Results")
+SCENARIO("TestDataBufferProcessorTests - Results - Operator Bool")
 {
 
     auto [given, results, expected] = GENERATE
@@ -245,9 +306,9 @@ SCENARIO("TestDataBufferProcessorTests - ProcessSections")
             (
                 {
                     std::tuple{"no sections", std::vector<STF::SectionInfoMetaData>{}},
-                    std::tuple{"a single section", std::vector<STF::SectionInfoMetaData>{{0u, 0u, static_cast<u32>(-1)}}},
-                    std::tuple{"Two sections", std::vector<STF::SectionInfoMetaData>{{0u, 0u, static_cast<u32>(-1)}, {1u, 0u, 0}} },
-                    std::tuple{"32 sections", std::vector<STF::SectionInfoMetaData>(32, STF::SectionInfoMetaData{0u, 0u, static_cast<u32>(-1)})}
+                    std::tuple{"a single section", std::vector<STF::SectionInfoMetaData>{{0u, -1,-1}}},
+                    std::tuple{"Two sections", std::vector<STF::SectionInfoMetaData>{{0u, -1, -1}, {1u, -1, -1}} },
+                    std::tuple{"32 sections", std::vector<STF::SectionInfoMetaData>(32, STF::SectionInfoMetaData{0u, -1, -1})}
                 }
             )
         );
@@ -353,55 +414,6 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - No AssertData")
 
 SCENARIO("TestDataBufferProcessorTests - AssertInfo - AssertData")
 {
-    auto serializeImpl = OverloadSet{
-        [] <typename T>(const T & InVal, std::vector<std::byte>&InOutBytes) -> std::enable_if_t<!TIsInstantiationOf<Tuple, T>::Value>
-        {
-            static constexpr u32 size = sizeof(T);
-            static constexpr u32 align = alignof(T);
-            static constexpr u32 sizeAndAlign = (size << 16) | align;
-            static constexpr u64 sizeOfAllocation = AlignedOffset(size + 4, 8);
-
-            const auto oldSize = InOutBytes.size();
-
-            InOutBytes.resize(InOutBytes.size() + sizeOfAllocation);
-            auto address = InOutBytes.data() + oldSize;
-            std::memcpy(address, &sizeAndAlign, sizeof(u32));
-            address += AlignedOffset(sizeof(u32), align);
-            std::memcpy(address, &InVal, size);
-        },
-        [] <typename T>(const Tuple<T, T>&InVal, std::vector<std::byte>&InOutBytes)
-        {
-            static constexpr u32 size = sizeof(T);
-            static constexpr u32 align = alignof(T);
-            static constexpr u32 sizeAndAlign = (size << 16) | align;
-            static constexpr u64 sizeSingle = AlignedOffset(size + 4, align);
-            static constexpr u64 sizeOfAllocation = AlignedOffset(sizeSingle * 2, 8);
-
-            const auto oldSize = InOutBytes.size();
-
-            InOutBytes.resize(InOutBytes.size() + sizeOfAllocation);
-            auto address = InOutBytes.data() + oldSize;
-            std::memcpy(address, &sizeAndAlign, sizeof(u32));
-            address += AlignedOffset(sizeof(u32), align);
-            std::memcpy(address, &Get<0>(InVal), size);
-            address += AlignedOffset(size, 4);
-            std::memcpy(address, &sizeAndAlign, sizeof(u32));
-            address += AlignedOffset(sizeof(u32), align);
-            std::memcpy(address, &Get<1>(InVal), size);
-        }
-    };
-
-    auto serialize = [&serializeImpl]<typename T>(const std::span<T> InVals)
-    {
-        std::vector<std::byte> ret;
-        for (const auto val : InVals)
-        {
-            serializeImpl(val, ret);
-        }
-
-        return ret;
-    };
-
     auto [given, numFailed, expectedNumAsserts, layout, metaData, expectedAssertData] = GENERATE
     (
         table<std::string, u32, u64, STF::TestDataBufferLayout, std::vector<STF::HLSLAssertMetaData>, std::vector<u32>>
@@ -454,7 +466,7 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - AssertData")
     );
 
     std::vector<std::byte> buffer;
-    auto assertData = serialize(std::span{ expectedAssertData });
+    auto assertData = EncodeAssertData(std::span{ expectedAssertData });
     const u64 sizeMetaData = metaData.size() * sizeof(STF::HLSLAssertMetaData);
     buffer.resize(sizeMetaData + assertData.size());
 
@@ -503,54 +515,6 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - AssertData")
 SCENARIO("TestDataBufferProcessorTests - AssertInfo - Byte Reader")
 {
     using Catch::Matchers::ContainsSubstring;
-    auto serializeImpl = OverloadSet{
-        [] <typename T>(const T & InVal, std::vector<std::byte>&InOutBytes) -> std::enable_if_t<!TIsInstantiationOf<Tuple, T>::Value>
-        {
-            static constexpr u32 size = sizeof(T);
-            static constexpr u32 align = alignof(T);
-            static constexpr u32 sizeAndAlign = (size << 16) | align;
-            static constexpr u64 sizeOfAllocation = AlignedOffset(size + 4, 8);
-
-            const auto oldSize = InOutBytes.size();
-
-            InOutBytes.resize(InOutBytes.size() + sizeOfAllocation);
-            auto address = InOutBytes.data() + oldSize;
-            std::memcpy(address, &sizeAndAlign, sizeof(u32));
-            address += AlignedOffset(sizeof(u32), align);
-            std::memcpy(address, &InVal, size);
-        },
-        [] <typename T>(const Tuple<T, T>&InVal, std::vector<std::byte>&InOutBytes)
-        {
-            static constexpr u32 size = sizeof(T);
-            static constexpr u32 align = alignof(T);
-            static constexpr u32 sizeAndAlign = (size << 16) | align;
-            static constexpr u64 sizeSingle = AlignedOffset(size + 4, align);
-            static constexpr u64 sizeOfAllocation = AlignedOffset(sizeSingle * 2, 8);
-
-            const auto oldSize = InOutBytes.size();
-
-            InOutBytes.resize(InOutBytes.size() + sizeOfAllocation);
-            auto address = InOutBytes.data() + oldSize;
-            std::memcpy(address, &sizeAndAlign, sizeof(u32));
-            address += AlignedOffset(sizeof(u32), align);
-            std::memcpy(address, &Get<0>(InVal), size);
-            address += AlignedOffset(size, 4);
-            std::memcpy(address, &sizeAndAlign, sizeof(u32));
-            address += AlignedOffset(sizeof(u32), align);
-            std::memcpy(address, &Get<1>(InVal), size);
-        }
-    };
-
-    auto serialize = [&serializeImpl]<typename T>(const std::span<T> InVals)
-    {
-        std::vector<std::byte> ret;
-        for (const auto val : InVals)
-        {
-            serializeImpl(val, ret);
-        }
-
-        return ret;
-    };
 
     auto conv1 =
         [](const u16 InTypeId, const std::span<const std::byte> InBytes)
@@ -577,7 +541,7 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - Byte Reader")
                 {
                     "One failing assert with no byte reader",
                     1, STF::TestDataBufferLayout{1, 100},
-                    std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, 2, sizeof(STF::HLSLAssertMetaData) * 1, 8}},
+                    std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, 2, sizeof(STF::HLSLAssertMetaData) * 1, 8}},
                     std::vector{42u},
                     std::vector<std::string>{"Bytes", "0x2A"}
                 },
@@ -585,7 +549,7 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - Byte Reader")
                 {
                     "One failing assert with byte reader",
                     1, STF::TestDataBufferLayout{1, 100},
-                    std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 1, 8 } },
+                    std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 1, 8 } },
                     std::vector{412u},
                     std::vector<std::string>{"Reader 1", "412"}
                 },
@@ -593,7 +557,7 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - Byte Reader")
                 {
                     "One failing assert with different byte reader",
                     1, STF::TestDataBufferLayout{1, 100},
-                    std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, 1, sizeof(STF::HLSLAssertMetaData) * 1, 8 } },
+                    std::vector{ STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, 1, sizeof(STF::HLSLAssertMetaData) * 1, 8 } },
                     std::vector{412u},
                     std::vector<std::string>{"Reader 2", "412"}
                 },
@@ -603,8 +567,8 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - Byte Reader")
                     2, STF::TestDataBufferLayout{2, 100},
                     std::vector
                     {
-                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2, 8 },
-                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2 + 8, 8 }
+                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2, 8 },
+                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2 + 8, 8 }
                     },
                     std::vector{412u, 214u},
                     std::vector<std::string>{"Reader 1", "412", "214"}
@@ -615,8 +579,8 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - Byte Reader")
                     2, STF::TestDataBufferLayout{2, 100},
                     std::vector
                     {
-                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, 1, sizeof(STF::HLSLAssertMetaData) * 2, 8 },
-                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, 1, sizeof(STF::HLSLAssertMetaData) * 2 + 8, 8 }
+                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, 1, sizeof(STF::HLSLAssertMetaData) * 2, 8 },
+                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, 1, sizeof(STF::HLSLAssertMetaData) * 2 + 8, 8 }
                     },
                     std::vector{412u, 214u},
                     std::vector<std::string>{"Reader 2", "412", "214"}
@@ -627,8 +591,8 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - Byte Reader")
                     2, STF::TestDataBufferLayout{2, 100},
                     std::vector
                     {
-                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2, 8 },
-                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, 1, sizeof(STF::HLSLAssertMetaData) * 2 + 8, 8 }
+                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, 0, sizeof(STF::HLSLAssertMetaData) * 2, 8 },
+                        STF::HLSLAssertMetaData{ 42, 0, 0, 0, 0, 1, sizeof(STF::HLSLAssertMetaData) * 2 + 8, 8 }
                     },
                     std::vector{412u, 214u},
                     std::vector<std::string>{"Reader 1", "Reader 2", "412", "214"}
@@ -638,7 +602,7 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - Byte Reader")
     );
 
     std::vector<std::byte> buffer;
-    auto assertData = serialize(std::span{ expectedAssertData });
+    auto assertData = EncodeAssertData(std::span{ expectedAssertData });
     const u64 sizeMetaData = metaData.size() * sizeof(STF::HLSLAssertMetaData);
     buffer.resize(sizeMetaData + assertData.size());
 

@@ -43,6 +43,11 @@ namespace ShaderTestPrivate
         ThreadIDInfo ThreadID;
         ScenarioSectionInfo Sections[NumSections];
 
+        int GetSectionID()
+        {
+            return Sections[0].ParentID == -1 ? CurrentSectionID : -1;
+        }
+
         void Init()
         {
             NextSectionID = 1;

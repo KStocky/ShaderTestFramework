@@ -54,8 +54,10 @@ namespace ShaderTestPrivate
         uint LineNumber;
         uint ThreadId;
         uint ThreadIdType;
+        int SectionId;
         uint ReaderAndTypeId;
         DynamicSectionDataInfo DynamicDataInfo;
+        uint Padding0;
     };
 
     struct StringMetaData
