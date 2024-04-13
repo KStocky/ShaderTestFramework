@@ -113,6 +113,7 @@ namespace STF
         {
             InOs << std::format("Assert {}\n", index);
             u32 indentLevel = 0;
+            bool validTree = true;
             auto tabbedWriter =
                 [&InOs, &indentLevel](const auto InToWrite)
                 {
@@ -127,11 +128,12 @@ namespace STF
             if (error.Info.SectionId != -1 && error.Info.SectionId < In.Sections.size())
             {
                 auto sectionPrinter =
-                    [&indentLevel, &tabbedWriter, &In](this auto&& InSelf, const i32 InSectionId)
+                    [&indentLevel, &validTree, &tabbedWriter, &In](this auto&& InSelf, const i32 InSectionId)
                     {
                         if (InSectionId < -1 || InSectionId >= In.Sections.size())
                         {
                             indentLevel = 0;
+                            validTree = false;
                             tabbedWriter("INVALID SECTION ID. Aborting Section reporting\n");
                             return;
                         }
@@ -145,7 +147,10 @@ namespace STF
                             InSelf(In.Sections[InSectionId].ParentId);
                         }
 
-                        tabbedWriter(std::format("{}: {}\n", isSection ? "SECTION"sv : "SCENARIO"sv, hasString ? In.Strings[stringId] : "UNKNOWN"s));
+                        if (validTree)
+                        {
+                            tabbedWriter(std::format("{}: {}\n", isSection ? "SECTION"sv : "SCENARIO"sv, hasString ? In.Strings[stringId] : "UNKNOWN"s));
+                        }
                         
                         ++indentLevel;
                     };
@@ -155,7 +160,7 @@ namespace STF
 
             const std::string lineInfo = error.Info.LineNumber == u32(-1) ? std::string{ "" } : std::format("Line: {}", error.Info.LineNumber);
             const std::string threadInfo = error.Info.ThreadIdType == 0 ? std::string{ "" } : STF::ThreadInfoToString(static_cast<STF::EThreadIdType>(error.Info.ThreadIdType), error.Info.ThreadId, In.DispatchDimensions);
-            tabbedWriter(std::format("Assert {}: {} {}\n", index, lineInfo, threadInfo));
+            tabbedWriter(std::format("{} {}\n", lineInfo, threadInfo));
 
             if (error.Data.size() == 0 || !error.ByteReader)
             {

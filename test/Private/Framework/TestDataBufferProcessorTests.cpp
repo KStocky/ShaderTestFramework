@@ -6,6 +6,7 @@
 #include <Utility/Tuple.h>
 #include <Utility/TypeTraits.h>
 
+#include <algorithm>
 #include <numeric>
 #include <sstream>
 #include <string>
@@ -169,7 +170,7 @@ namespace
     }
 
     template<typename T>
-    std::vector<std::byte> EncodeAssertData(const std::span<T> InAssertData)
+    std::vector<std::byte> EncodeAssertData(const std::vector<T>& InAssertData)
     {
         std::vector<std::byte> ret;
         for (const auto& data : InAssertData)
@@ -178,6 +179,17 @@ namespace
         }
 
         return ret;
+    }
+
+    auto CreateByteReader(const std::string_view InSalt)
+    {
+        return 
+            [InSalt](const u16 InTypeId, const std::span<const std::byte> InBytes)
+            {
+                u32 val;
+                std::memcpy(&val, InBytes.data(), sizeof(u32));
+                return std::format("{}: Type {}: {}", InSalt, InTypeId, val);
+            };
     }
 }
 
@@ -466,7 +478,7 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - AssertData")
     );
 
     std::vector<std::byte> buffer;
-    auto assertData = EncodeAssertData(std::span{ expectedAssertData });
+    auto assertData = EncodeAssertData(expectedAssertData);
     const u64 sizeMetaData = metaData.size() * sizeof(STF::HLSLAssertMetaData);
     buffer.resize(sizeMetaData + assertData.size());
 
@@ -602,7 +614,7 @@ SCENARIO("TestDataBufferProcessorTests - AssertInfo - Byte Reader")
     );
 
     std::vector<std::byte> buffer;
-    auto assertData = EncodeAssertData(std::span{ expectedAssertData });
+    auto assertData = EncodeAssertData(expectedAssertData);
     const u64 sizeMetaData = metaData.size() * sizeof(STF::HLSLAssertMetaData);
     buffer.resize(sizeMetaData + assertData.size());
 
@@ -815,6 +827,556 @@ SCENARIO("TestDataBufferProcessorTests - ThreadInfoToString")
                 for (const auto& expectedString : expectedAbsentSubstrings)
                 {
                     REQUIRE_THAT(stream.str(), !ContainsSubstring(expectedString, Catch::CaseSensitive::No));
+                }
+            }
+        }
+    }
+}
+
+SCENARIO("TestDataBufferProcessorTests - TestRunResults - Stream Operator")
+{
+    using Catch::Matchers::ContainsSubstring;
+    using Catch::Matchers::Equals;
+
+    GIVEN("Zero asserts, zero strings and zero sections")
+    {
+        auto [numPass, numFail, expectedString] = GENERATE
+        (
+            table<u32, u32, std::string>
+            (
+                {
+                    std::tuple
+                    {
+                        0u,
+                        0u,
+                        "There were 0 successful asserts and 0 failed assertions\n"
+                    },
+                    std::tuple
+                    {
+                        1u,
+                        0u,
+                        "There were 1 successful asserts and 0 failed assertions\n"
+                    },
+                    std::tuple
+                    {
+                        2u,
+                        0u,
+                        "There were 2 successful asserts and 0 failed assertions\n"
+                    },
+                    std::tuple
+                    {
+                        0u,
+                        1u,
+                        "There were 0 successful asserts and 1 failed assertions\n"
+                    },
+                    std::tuple
+                    {
+                        0u,
+                        2u,
+                        "There were 0 successful asserts and 2 failed assertions\n"
+                    },
+                    std::tuple
+                    {
+                        42u,
+                        125u,
+                        "There were 42 successful asserts and 125 failed assertions\n"
+                    }
+                }
+            )
+        );
+
+        WHEN("Num Passes: " << numPass << " Num Fails: " << numFail)
+        {
+            std::stringstream buffer;
+            const STF::TestRunResults results{ .NumSucceeded = numPass, .NumFailed = numFail };
+
+            buffer << results;
+
+            THEN("Output is as expected")
+            {
+                REQUIRE_THAT(buffer.str(), Equals(expectedString, Catch::CaseSensitive::No));
+            }
+        }
+    }
+
+    GIVEN("Failed Asserts with no data")
+    {
+        auto [andGiven, failedAsserts, sections, strings, expectedSubstrings, expectedAbsentSubstrings ] = GENERATE
+        (
+            table<std::string, std::vector<STF::FailedAssert>, std::vector<STF::SectionInfoMetaData>, std::vector<std::string>, std::vector<std::string>, std::vector<std::string>>
+            (
+                {
+                    std::tuple
+                    {
+                        "single assert with no sections and no strings and no threadId",
+                        std::vector
+                        {
+                            STF::FailedAssert
+                            {
+                                .Info = STF::AssertMetaData
+                                {
+                                    .LineNumber = 42,
+                                    .ThreadId = 0,
+                                    .ThreadIdType = 0,
+                                    .SectionId = -1
+                                }
+                            }
+                        },
+                        std::vector<STF::SectionInfoMetaData>{},
+                        std::vector<std::string>{},
+                        std::vector<std::string>{"Assert 0", "Line: 42"},
+                        std::vector<std::string>{"INVALID SECTION ID", "SECTION", "SCENARIO", "UNKNOWN", "DATA"}
+                    },
+                    std::tuple
+                    {
+                        "single assert with no sections and no strings and no threadId with data",
+                        std::vector
+                        {
+                            STF::FailedAssert
+                            {
+                                .Data = EncodeAssertData(std::vector<u32>{0x12345678u}),
+                                .Info = STF::AssertMetaData
+                                {
+                                    .LineNumber = 42,
+                                    .ThreadId = 0,
+                                    .ThreadIdType = 0,
+                                    .SectionId = -1
+                                }
+                            }
+                        },
+                        std::vector<STF::SectionInfoMetaData>{},
+                        std::vector<std::string>{},
+                        std::vector<std::string>{"Assert 0", "Line: 42"},
+                        std::vector<std::string>{"INVALID SECTION ID", "SECTION", "SCENARIO", "UNKNOWN", "DATA"}
+                    },
+                    std::tuple
+                    {
+                        "single assert with no sections and no strings and no threadId with data and Byte reader",
+                        std::vector
+                        {
+                            STF::FailedAssert
+                            {
+                                .Data = EncodeAssertData(std::vector<u32>{1234}),
+                                .ByteReader = CreateByteReader("Expected Byte Reader"),
+                                .Info = STF::AssertMetaData
+                                {
+                                    .LineNumber = 42,
+                                    .ThreadId = 0,
+                                    .ThreadIdType = 0,
+                                    .SectionId = -1
+                                }
+                            }
+                        },
+                        std::vector<STF::SectionInfoMetaData>{},
+                        std::vector<std::string>{},
+                        std::vector<std::string>{"Assert 0", "Line: 42", "Expected Byte Reader", "Data 1:", "Type 0"},
+                        std::vector<std::string>{"INVALID SECTION ID", "SECTION", "SCENARIO", "UNKNOWN", "Data 2: "}
+                    },
+                    std::tuple
+                    {
+                        "single assert with no sections and no strings and no threadId with data and Byte reader and type id",
+                        std::vector
+                        {
+                            STF::FailedAssert
+                            {
+                                .Data = EncodeAssertData(std::vector<u32>{1234}),
+                                .ByteReader = CreateByteReader("Expected Byte Reader"),
+                                .Info = STF::AssertMetaData
+                                {
+                                    .LineNumber = 42,
+                                    .ThreadId = 0,
+                                    .ThreadIdType = 0,
+                                    .SectionId = -1
+                                },
+                                .TypeId = 21
+                            }
+                        },
+                        std::vector<STF::SectionInfoMetaData>{},
+                        std::vector<std::string>{},
+                        std::vector<std::string>{"Assert 0", "Line: 42", "Expected Byte Reader", "Data 1:", "Type 21"},
+                        std::vector<std::string>{"INVALID SECTION ID", "SECTION", "SCENARIO", "UNKNOWN", "Data 2: ", "Type 0"}
+                    },
+                    std::tuple
+                    {
+                        "single assert with no sections and no strings and no threadId with mulitple data and Byte reader and type id",
+                        std::vector
+                        {
+                            STF::FailedAssert
+                            {
+                                .Data = EncodeAssertData(std::vector{Tuple{1234, 5678}}),
+                                .ByteReader = CreateByteReader("Expected Byte Reader"),
+                                .Info = STF::AssertMetaData
+                                {
+                                    .LineNumber = 42,
+                                    .ThreadId = 0,
+                                    .ThreadIdType = 0,
+                                    .SectionId = -1
+                                },
+                                .TypeId = 21
+                            }
+                        },
+                        std::vector<STF::SectionInfoMetaData>{},
+                        std::vector<std::string>{},
+                        std::vector<std::string>{"Assert 0", "Line: 42", "Expected Byte Reader", "Data 1:", "Data 2: ", "Type 21", "1234", "5678"},
+                        std::vector<std::string>{"INVALID SECTION ID", "SECTION", "SCENARIO", "UNKNOWN" "Type 0"}
+                    },
+                    std::tuple
+                    {
+                        "single assert with no sections and no strings and single threadId",
+                        std::vector
+                        {
+                            STF::FailedAssert
+                            {
+                                .Info = STF::AssertMetaData
+                                {
+                                    .LineNumber = 42,
+                                    .ThreadId = 34,
+                                    .ThreadIdType = 1,
+                                    .SectionId = -1
+                                }
+                            }
+                        },
+                        std::vector<STF::SectionInfoMetaData>{},
+                        std::vector<std::string>{},
+                        std::vector<std::string>{"Assert 0", "Line: 42", "ThreadId: 34"},
+                        std::vector<std::string>{"INVALID SECTION ID", "SECTION", "SCENARIO", "UNKNOWN", "DATA"}
+                    },
+                    std::tuple
+                    {
+                        "single assert with no sections and no strings and multi dim threadId",
+                        std::vector
+                        {
+                            STF::FailedAssert
+                            {
+                                .Info = STF::AssertMetaData
+                                {
+                                    .LineNumber = 42,
+                                    .ThreadId = 34,
+                                    .ThreadIdType = 2,
+                                    .SectionId = -1
+                                }
+                            }
+                        },
+                        std::vector<STF::SectionInfoMetaData>{},
+                        std::vector<std::string>{},
+                        std::vector<std::string>{"Assert 0", "Line: 42", "ThreadId: (34, 0, 0)"},
+                        std::vector<std::string>{"INVALID SECTION ID", "SECTION", "SCENARIO", "UNKNOWN", "DATA"}
+                    },
+                    std::tuple
+                    {
+                        "two asserts with no sections and no strings",
+                        std::vector
+                        {
+                            STF::FailedAssert
+                            {
+                                .Info = STF::AssertMetaData
+                                {
+                                    .LineNumber = 42,
+                                    .ThreadId = 34,
+                                    .ThreadIdType = 2,
+                                    .SectionId = -1
+                                }
+                            },
+                            STF::FailedAssert
+                            {
+                                .Info = STF::AssertMetaData
+                                {
+                                    .LineNumber = 56,
+                                    .ThreadId = 16,
+                                    .ThreadIdType = 1,
+                                    .SectionId = -1
+                                }
+                            }
+                        },
+                        std::vector<STF::SectionInfoMetaData>{},
+                        std::vector<std::string>{},
+                        std::vector<std::string>{"Assert 0", "Assert 1", "Line: 42", "Line: 56", "ThreadId: 16"},
+                        std::vector<std::string>{"INVALID SECTION ID", "SECTION", "SCENARIO", "UNKNOWN", "DATA"}
+                    },
+                    std::tuple
+                    {
+                        "single assert with a section and no strings",
+                        std::vector
+                        {
+                            STF::FailedAssert
+                            {
+                                .Info = STF::AssertMetaData
+                                {
+                                    .LineNumber = 42,
+                                    .ThreadId = 0,
+                                    .ThreadIdType = 0,
+                                    .SectionId = 0
+                                }
+                            }
+                        },
+                        std::vector
+                        {
+                            STF::SectionInfoMetaData
+                            {
+                            }
+                        },
+                        std::vector<std::string>{},
+                        std::vector<std::string>{"Assert 0", "Line: 42", "SCENARIO", "UNKNOWN", "\t"},
+                        std::vector<std::string>{"INVALID SECTION ID", "SECTION", "DATA", "\t\t"}
+                    },
+                    std::tuple
+                    {
+                        "single assert with invalid section tree and no strings",
+                        std::vector
+                        {
+                            STF::FailedAssert
+                            {
+                                .Info = STF::AssertMetaData
+                                {
+                                    .LineNumber = 42,
+                                    .ThreadId = 0,
+                                    .ThreadIdType = 0,
+                                    .SectionId = 0
+                                }
+                            }
+                        },
+                        std::vector
+                        {
+                            STF::SectionInfoMetaData
+                            {
+                                .ParentId = 1
+                            }
+                        },
+                        std::vector<std::string>{},
+                        std::vector<std::string>{"Assert 0", "Line: 42", "INVALID SECTION ID" },
+                        std::vector<std::string>{"SCENARIO", "UNKNOWN", "DATA"}
+                    },
+                    std::tuple
+                    {
+                        "single assert with section that does not exist and no strings",
+                        std::vector
+                        {
+                            STF::FailedAssert
+                            {
+                                .Info = STF::AssertMetaData
+                                {
+                                    .LineNumber = 42,
+                                    .ThreadId = 0,
+                                    .ThreadIdType = 0,
+                                    .SectionId = 1
+                                }
+                            }
+                        },
+                        std::vector
+                        {
+                            STF::SectionInfoMetaData
+                            {
+                            }
+                        },
+                        std::vector<std::string>{},
+                        std::vector<std::string>{"Assert 0", "Line: 42" },
+                        std::vector<std::string>{"INVALID SECTION ID", "SECTION", "SCENARIO", "UNKNOWN", "DATA"}
+                    },
+                    std::tuple
+                    {
+                        "single assert with a multi section tree",
+                        std::vector
+                        {
+                            STF::FailedAssert
+                            {
+                                .Info = STF::AssertMetaData
+                                {
+                                    .LineNumber = 42,
+                                    .ThreadId = 0,
+                                    .ThreadIdType = 0,
+                                    .SectionId = 1
+                                }
+                            }
+                        },
+                        std::vector
+                        {
+                            STF::SectionInfoMetaData
+                            {
+                            },
+                            STF::SectionInfoMetaData
+                            {
+                                .ParentId = 0
+                            }
+                        },
+                        std::vector<std::string>{},
+                        std::vector<std::string>{"Assert 0", "Line: 42", "SCENARIO", "UNKNOWN", "SECTION", "\t", "\t\t"},
+                        std::vector<std::string>{"INVALID SECTION ID", "DATA", "\t\t\t"}
+                    },
+                    std::tuple
+                    {
+                        "single assert with a multi section tree and assert data",
+                        std::vector
+                        {
+                            STF::FailedAssert
+                            {
+                                .Data = EncodeAssertData(std::vector{34u}),
+                                .ByteReader = CreateByteReader("Expected"),
+                                .Info = STF::AssertMetaData
+                                {
+                                    .LineNumber = 42,
+                                    .ThreadId = 0,
+                                    .ThreadIdType = 0,
+                                    .SectionId = 1
+                                }
+                            }
+                        },
+                        std::vector
+                        {
+                            STF::SectionInfoMetaData
+                            {
+                            },
+                            STF::SectionInfoMetaData
+                            {
+                                .ParentId = 0
+                            }
+                        },
+                        std::vector<std::string>{},
+                        std::vector<std::string>{"Assert 0", "Line: 42", "SCENARIO", "UNKNOWN", "\tSECTION", "\t\tData 1:", "Expected"},
+                        std::vector<std::string>{"INVALID SECTION ID", "\t\t\t"}
+                    },
+                    std::tuple
+                    {
+                        "single assert with a section with a valid string id",
+                        std::vector
+                        {
+                            STF::FailedAssert
+                            {
+                                .Info = STF::AssertMetaData
+                                {
+                                    .LineNumber = 42,
+                                    .ThreadId = 0,
+                                    .ThreadIdType = 0,
+                                    .SectionId = 0
+                                }
+                            }
+                        },
+                        std::vector
+                        {
+                            STF::SectionInfoMetaData
+                            {
+                                .StringId = 0
+                            }
+                        },
+                        std::vector<std::string>{"TestingString"},
+                        std::vector<std::string>{"Assert 0", "Line: 42", "SCENARIO", "TestingString"},
+                        std::vector<std::string>{"INVALID SECTION ID", "SECTION", "DATA", "UNKNOWN"}
+                    }, 
+                    std::tuple
+                    {
+                        "single assert with a multi section tree with valid string ids",
+                        std::vector
+                        {
+                            STF::FailedAssert
+                            {
+                                .Info = STF::AssertMetaData
+                                {
+                                    .LineNumber = 42,
+                                    .ThreadId = 0,
+                                    .ThreadIdType = 0,
+                                    .SectionId = 1
+                                }
+                            }
+                        },
+                        std::vector
+                        {
+                            STF::SectionInfoMetaData
+                            {
+                                .StringId = 0
+                            },
+                            STF::SectionInfoMetaData
+                            {
+                                .StringId = 1,
+                                .ParentId = 0
+                            }
+                        },
+                        std::vector<std::string>{"TestingString1", "TestingString2"},
+                        std::vector<std::string>{"Assert 0", "Line: 42", "SCENARIO: TestingString1", "SECTION: TestingString2"},
+                        std::vector<std::string>{"INVALID SECTION ID", "DATA", "UNKNOWN"}
+                    },
+                    std::tuple
+                    {
+                        "single assert with a section with an invalid string id",
+                        std::vector
+                        {
+                            STF::FailedAssert
+                            {
+                                .Info = STF::AssertMetaData
+                                {
+                                    .LineNumber = 42,
+                                    .ThreadId = 0,
+                                    .ThreadIdType = 0,
+                                    .SectionId = 0
+                                }
+                            }
+                        },
+                        std::vector
+                        {
+                            STF::SectionInfoMetaData
+                            {
+                                .StringId = 1
+                            }
+                        },
+                        std::vector<std::string>{"TestingString"},
+                        std::vector<std::string>{"Assert 0", "Line: 42", "SCENARIO", "UNKNOWN"},
+                        std::vector<std::string>{"INVALID SECTION ID", "SECTION", "DATA", "TestingString"}
+                    },
+                    std::tuple
+                    {
+                        "single assert with a multi section tree with 1 invalid string id",
+                        std::vector
+                        {
+                            STF::FailedAssert
+                            {
+                                .Info = STF::AssertMetaData
+                                {
+                                    .LineNumber = 42,
+                                    .ThreadId = 0,
+                                    .ThreadIdType = 0,
+                                    .SectionId = 1
+                                }
+                            }
+                        },
+                        std::vector
+                        {
+                            STF::SectionInfoMetaData
+                            {
+                                .StringId = 0
+                            },
+                            STF::SectionInfoMetaData
+                            {
+                                .StringId = 2,
+                                .ParentId = 0
+                            }
+                        },
+                        std::vector<std::string>{"TestingString1", "TestingString2"},
+                        std::vector<std::string>{"Assert 0", "Line: 42", "SCENARIO: TestingString1", "SECTION: UNKNOWN"},
+                        std::vector<std::string>{"INVALID SECTION ID", "DATA"}
+                    }
+                }
+            )
+        );
+
+        AND_GIVEN(andGiven)
+        {
+            WHEN("results streamed")
+            {
+                std::stringstream buffer;
+
+                const STF::TestRunResults results{ .FailedAsserts = failedAsserts, .Strings = std::move(strings), .Sections = std::move(sections), .DispatchDimensions = uint3(100,1,1) };
+
+                buffer << results;
+
+                THEN("Output is as expected")
+                {
+                    for (const auto& expectedString : expectedSubstrings)
+                    {
+                        REQUIRE_THAT(buffer.str(), ContainsSubstring(expectedString, Catch::CaseSensitive::No));
+                    }
+
+                    for (const auto& expectedString : expectedAbsentSubstrings)
+                    {
+                        REQUIRE_THAT(buffer.str(), !ContainsSubstring(expectedString, Catch::CaseSensitive::No));
+                    }
                 }
             }
         }
