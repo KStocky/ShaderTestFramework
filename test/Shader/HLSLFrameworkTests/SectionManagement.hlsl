@@ -1,12 +1,20 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
 
+struct EmptyCallable
+{
+    void operator()(int, int)
+    {
+    }
+};
+
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
+    EmptyCallable nullCallable;
     ShaderTestPrivate::Scratch.Init();
     int num = 0;
-    while (ShaderTestPrivate::Scratch.TryLoopScenario())
+    while (ShaderTestPrivate::Scratch.TryLoopScenario(nullCallable))
     {
         ++num;
     }  
@@ -18,13 +26,14 @@ void GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce(uint3 DispatchThreadI
 [numthreads(1,1,1)]
 void GIVEN_SingleSubsection_WHEN_RanUsingIf_THEN_SectionsEntered2Times(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
+    EmptyCallable nullCallable;
     ShaderTestPrivate::Scratch.Init();
     int num = 0;
-    while (ShaderTestPrivate::Scratch.TryLoopScenario())
+    while (ShaderTestPrivate::Scratch.TryLoopScenario(nullCallable))
     {
         ++num;
         static const int Section_1Num = 1;
-        if (ShaderTestPrivate::Scratch.TryEnterSection(Section_1Num))
+        if (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_1Num))
         {
             ++num;
 
@@ -39,13 +48,14 @@ void GIVEN_SingleSubsection_WHEN_RanUsingIf_THEN_SectionsEntered2Times(uint3 Dis
 [numthreads(1,1,1)]
 void GIVEN_SingleSubsection_WHEN_RanUsingWhile_THEN_SectionsEntered2Times(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
+    EmptyCallable nullCallable;
     ShaderTestPrivate::Scratch.Init();
     int num = 0;
-    while (ShaderTestPrivate::Scratch.TryLoopScenario())
+    while (ShaderTestPrivate::Scratch.TryLoopScenario(nullCallable))
     {
         ++num;
         static const int Section_1Num = 1;
-        while (ShaderTestPrivate::Scratch.TryEnterSection(Section_1Num))
+        while (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_1Num))
         {
             ++num;
         }
@@ -58,20 +68,21 @@ void GIVEN_SingleSubsection_WHEN_RanUsingWhile_THEN_SectionsEntered2Times(uint3 
 [numthreads(1,1,1)]
 void GIVEN_TwoSubsections_WHEN_RanUsingIf_THEN_SectionsEntered4Times(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
+    EmptyCallable nullCallable;
     ShaderTestPrivate::Scratch.Init();
     int num = 0;
-    while (ShaderTestPrivate::Scratch.TryLoopScenario())
+    while (ShaderTestPrivate::Scratch.TryLoopScenario(nullCallable))
     {
         ++num;
         static const int Section_1Num = 1;
-        if (ShaderTestPrivate::Scratch.TryEnterSection(Section_1Num))
+        if (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_1Num))
         {
             ++num;
             ShaderTestPrivate::Scratch.OnLeave();
         }
         
         static const int Section_2Num = 2;
-        if (ShaderTestPrivate::Scratch.TryEnterSection(Section_2Num))
+        if (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_2Num))
         {
             ++num;
             ShaderTestPrivate::Scratch.OnLeave();
@@ -85,19 +96,20 @@ void GIVEN_TwoSubsections_WHEN_RanUsingIf_THEN_SectionsEntered4Times(uint3 Dispa
 [numthreads(1,1,1)]
 void GIVEN_TwoSubsections_WHEN_RanUsingWhile_THEN_SectionsEntered4Times(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
+    EmptyCallable nullCallable;
     ShaderTestPrivate::Scratch.Init();
     int num = 0;
-    while (ShaderTestPrivate::Scratch.TryLoopScenario())
+    while (ShaderTestPrivate::Scratch.TryLoopScenario(nullCallable))
     {
         ++num;
         static const int Section_1Num = 1;
-        while (ShaderTestPrivate::Scratch.TryEnterSection(Section_1Num))
+        while (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_1Num))
         {
             ++num;
         }
         
         static const int Section_2Num = 2;
-        while (ShaderTestPrivate::Scratch.TryEnterSection(Section_2Num))
+        while (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_2Num))
         {
             ++num;
         }
@@ -110,26 +122,27 @@ void GIVEN_TwoSubsections_WHEN_RanUsingWhile_THEN_SectionsEntered4Times(uint3 Di
 [numthreads(1,1,1)]
 void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_RanUsingIf_THEN_SectionsEntered5Times(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
+    EmptyCallable nullCallable;
     ShaderTestPrivate::Scratch.Init();
     int num = 0;
-    while (ShaderTestPrivate::Scratch.TryLoopScenario())
+    while (ShaderTestPrivate::Scratch.TryLoopScenario(nullCallable))
     {
         ++num;
 
         static const int Section_1Num = 1;
-        if (ShaderTestPrivate::Scratch.TryEnterSection(Section_1Num))
+        if (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_1Num))
         {
             ++num;
             ShaderTestPrivate::Scratch.OnLeave();
         }
 
         static const int Section_2Num = 2;
-        if (ShaderTestPrivate::Scratch.TryEnterSection(Section_2Num))
+        if (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_2Num))
         {
             ++num;
 
             static const int Section_3Num = 3;
-            if (ShaderTestPrivate::Scratch.TryEnterSection(Section_3Num))
+            if (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_3Num))
             {
                 ++num;
                 ShaderTestPrivate::Scratch.OnLeave();
@@ -145,25 +158,26 @@ void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_RanUsingIf_THEN_SectionsEn
 [numthreads(1,1,1)]
 void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_RanUsingWhile_THEN_SectionsEntered5Times(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
+    EmptyCallable nullCallable;
     ShaderTestPrivate::Scratch.Init();
     int num = 0;
-    while (ShaderTestPrivate::Scratch.TryLoopScenario())
+    while (ShaderTestPrivate::Scratch.TryLoopScenario(nullCallable))
     {
         ++num;
 
         static const int Section_1Num = 1;
-        while (ShaderTestPrivate::Scratch.TryEnterSection(Section_1Num))
+        while (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_1Num))
         {
             ++num;
         }
 
         static const int Section_2Num = 2;
-        while (ShaderTestPrivate::Scratch.TryEnterSection(Section_2Num))
+        while (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_2Num))
         {
             ++num;
 
             static const int Section_3Num = 3;
-            while (ShaderTestPrivate::Scratch.TryEnterSection(Section_3Num))
+            while (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_3Num))
             {
                 ++num;
             }

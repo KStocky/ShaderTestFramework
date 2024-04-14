@@ -10,6 +10,7 @@ namespace ShaderTestPrivate
 
     enum class ESectionRunState
     {
+        NeverRun,
         NeedsRun,
         Running,
         RunningEnteredSubsection,
@@ -75,6 +76,7 @@ namespace ShaderTestPrivate
             const ESectionRunState state = Sections[InID].RunState;
             switch (state)
             {
+                case ESectionRunState::NeverRun:
                 case ESectionRunState::NeedsRun:
                 {
                     return true;
@@ -95,9 +97,15 @@ namespace ShaderTestPrivate
             return false;
         }
 
-        bool TryLoopScenario()
+        template<typename T>
+        bool TryLoopScenario(const T InOnFirstEnter)
         {
+            if (Sections[0].RunState == ESectionRunState::NeverRun)
+            {
+                InOnFirstEnter(0, -1);
+            }
             const bool shouldEnter = 
+                Sections[0].RunState == ESectionRunState::NeverRun || 
                 Sections[0].RunState == ESectionRunState::NeedsRun || 
                 Sections[0].RunState == ESectionRunState::RunningNeedsRerun;
 
@@ -112,7 +120,8 @@ namespace ShaderTestPrivate
             return false;
         }
 
-        bool TryEnterSection(int InID)
+        template<typename T>
+        bool TryEnterSection(const T InOnFirstEnter, int InID)
         {
             if (!ShouldEnter(InID))
             {
@@ -124,6 +133,11 @@ namespace ShaderTestPrivate
             {
                 Sections[CurrentSectionID].RunState = ESectionRunState::RunningEnteredSubsection;
                 Sections[InID].ParentID = CurrentSectionID;
+
+                if (Sections[InID].RunState == ESectionRunState::NeverRun)
+                {
+                    InOnFirstEnter(InID, CurrentSectionID);
+                }
                 Sections[InID].RunState = ESectionRunState::Running;
                 CurrentSectionID = InID;
                 return true;

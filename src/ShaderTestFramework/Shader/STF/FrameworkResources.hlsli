@@ -65,12 +65,20 @@ namespace ShaderTestPrivate
         DynamicSectionDataInfo DynamicDataInfo;
     };
 
+    struct SectionInfoMetaData
+    {
+        int SectionId;
+        int StringId;
+        int ParentId;
+    };
+
     const uint3 DispatchDimensions;
     const uint AllocationBufferIndex;
     const uint TestDataBufferIndex;
 
     const TestDataSection<HLSLAssertMetaData> Asserts;
     const TestDataSection<StringMetaData> Strings;
+    const TestDataSection<SectionInfoMetaData> Sections;
 
     RWByteAddressBuffer GetTestDataBuffer()
     {
@@ -80,8 +88,11 @@ namespace ShaderTestPrivate
     static const uint NumSuccessIndex = 0;
     static const uint NumFailsIndex = 4;
     static const uint AssertDataSizeIndex = 8;
+
     static const uint NumStringsIndex = 12;
     static const uint StringDataSizeIndex = 16;
+
+    static const uint NumSectionsIndex = 20;
 
     globallycoherent RWByteAddressBuffer GetAllocationBuffer()
     {

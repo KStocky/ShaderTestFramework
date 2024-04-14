@@ -73,9 +73,9 @@ STF::Results ShaderTestFixture::RunTest(const std::string_view InName, u32 InX, 
     
     const u64 bufferSizeInBytes = std::max(m_TestDataLayout.GetSizeOfTestData(), 4u);
     auto assertBuffer = CreateAssertBuffer(bufferSizeInBytes);
-    auto allocationBuffer = CreateAssertBuffer(12ull);
+    auto allocationBuffer = CreateAssertBuffer(28ull);
     auto readBackBuffer = CreateReadbackBuffer(bufferSizeInBytes);
-    auto readBackAllocationBuffer = CreateReadbackBuffer(12ull);
+    auto readBackAllocationBuffer = CreateReadbackBuffer(28ull);
 
     const auto assertUAV = CreateAssertBufferUAV(assertBuffer, resourceHeap, 0);
     const auto allocationUAV = CreateAssertBufferUAV(allocationBuffer, resourceHeap, 1);
@@ -107,12 +107,14 @@ STF::Results ShaderTestFixture::RunTest(const std::string_view InName, u32 InX, 
 
                         const auto assertSection = m_TestDataLayout.GetAssertSection();
                         const auto stringSection = m_TestDataLayout.GetStringSection();
+                        const auto sectionSection = m_TestDataLayout.GetSectionInfoSection();
                         std::array params
                         {
                             dimX, dimY, dimZ, 1u,
                             0u, 0u, 0u, 0u,
                             assertSection.Begin(), assertSection.NumMeta(), assertSection.SizeInBytesOfData(), assertSection.SizeInBytesOfSection(),
                             stringSection.Begin(), stringSection.NumMeta(), stringSection.SizeInBytesOfData(), stringSection.SizeInBytesOfSection(),
+                            sectionSection.Begin(), sectionSection.NumMeta(), sectionSection.SizeInBytesOfData(), sectionSection.SizeInBytesOfSection()
                         };
                         InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
                     }

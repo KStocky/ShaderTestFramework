@@ -37,7 +37,7 @@ namespace STF
 
     struct SectionInfoMetaData
     {
-        u32 SectionId = 0;
+        i32 SectionId = -1;
         i32 StringId = -1;
         i32 ParentId = -1;
         friend auto operator<=>(const SectionInfoMetaData&, const SectionInfoMetaData&) = default;

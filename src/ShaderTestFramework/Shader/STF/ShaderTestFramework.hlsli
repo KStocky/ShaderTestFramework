@@ -180,7 +180,7 @@ namespace ShaderTestPrivate
         buffer.Store2(metaAddress, InAddressAndSize);
     }
 
-    void AddString(ttl::string In)
+    uint AddString(ttl::string In)
     {
         const uint stringIndex = AllocateString();
         if (stringIndex < Strings.Num())
@@ -193,7 +193,62 @@ namespace ShaderTestPrivate
 
             AddStringMetaInfo(stringIndex, addressAndSize);
         }
+
+        return stringIndex;
     }
+
+    uint AllocateSection()
+    {
+        uint sectionIndex;
+        GetAllocationBuffer().InterlockedAdd(NumSectionsIndex, 1, sectionIndex);
+        return sectionIndex;
+    }
+
+    void AddSection(SectionInfoMetaData InSectionInfo)
+    {
+        const uint sectionIndex = AllocateSection();
+
+        if (sectionIndex < Sections.Num())
+        {
+            const uint bufferAddress = Sections.BeginMeta() + sectionIndex * ttl::size_of<SectionInfoMetaData>::value;
+            GetTestDataBuffer().Store(bufferAddress, InSectionInfo);
+        }
+    }
+
+    //enum class EFirstThreadStatus
+    //{
+    //    Unknown,
+    //    FirstThread,
+    //    NotFirstThread
+    //};
+//
+    //bool IsFirstThread()
+    //{
+    //    static EFirstThreadStatus FirstThreadStatus;
+    //    
+    //    switch(FirstThreadStatus)
+    //    {
+    //        case EFirstThreadStatus::Unknown:
+    //        {
+    //            GetAllocationBuffer().InterlockedAdd()
+    //        }
+    //    }
+//
+    //    return FirstThreadStatus;
+    //}
+
+    struct OnFirstEntryOfSectionFunctor
+    {
+        int StringId;
+        void operator()(const int InSectionId, const int InParentId)
+        {
+            SectionInfoMetaData metaData;
+            metaData.SectionId = InSectionId;
+            metaData.ParentId = InParentId;
+            metaData.StringId = StringId;
+            AddSection(metaData);
+        }
+    };
 }
 
 namespace STF
@@ -315,30 +370,24 @@ namespace STF
 }\
 STF_DECLARE_TEST_FUNC(InID)
 
-#define STF_SCENARIO_IF_0(InScenarioID)\
-ShaderTestPrivate::Scratch.Init();\
-while(ShaderTestPrivate::Scratch.TryLoopScenario())
+#define STF_SCENARIO_IMPL(InName, InScenarioId)                                                                                   \
+DEFINE_STRING_CREATOR(STF_JOIN(scenarioNameCreator, InScenarioId), InName);                                                         \
+static uint STF_JOIN(scenarioNameId, InScenarioId) = ShaderTestPrivate::AddString(STF_JOIN(scenarioNameCreator, InScenarioId)());    \
+ShaderTestPrivate::OnFirstEntryOfSectionFunctor STF_JOIN(onFirstEntry, InScenarioId);                                                                       \
+STF_JOIN(onFirstEntry, InScenarioId).StringId = STF_JOIN(scenarioNameId, InScenarioId);                                                                     \
+ShaderTestPrivate::Scratch.Init();                                                                                                  \
+while(ShaderTestPrivate::Scratch.TryLoopScenario(STF_JOIN(onFirstEntry, InScenarioId)))
 
-#define STF_SCENARIO_IF_1(InScenarioID, InThreadID)\
-ShaderTestPrivate::Scratch.Init();\
-STF::RegisterThreadID(InThreadID); \
-while(ShaderTestPrivate::Scratch.TryLoopScenario())
+#define SCENARIO(InName) STF_SCENARIO_IMPL(InName, __LINE__)
 
-#define STF_SCENARIO_IMPL(InName, InNumArgs, InScenarioID, ...) STF_JOIN(InName, InNumArgs)(InScenarioID, ##__VA_ARGS__)
+#define STF_SECTION_IMPL(InName, InID) STF_CREATE_SECTION_VAR_IMPL(InID);                                       \
+DEFINE_STRING_CREATOR(STF_JOIN(sectionNameCreator, InID), InName);                                              \
+static uint STF_JOIN(sectionNameId, InID) = ShaderTestPrivate::AddString(STF_JOIN(sectionNameCreator, InID)()); \
+ShaderTestPrivate::OnFirstEntryOfSectionFunctor STF_JOIN(onFirstEntry, InID);                                   \
+STF_JOIN(onFirstEntry, InID).StringId = STF_JOIN(sectionNameId, InID);                                          \
+while (ShaderTestPrivate::Scratch.TryEnterSection(STF_JOIN(onFirstEntry, InID), STF_GET_SECTION_VAR_NAME(InID)))
 
-#define SCENARIO(...) STF_SCENARIO_IMPL(STF_SCENARIO_IF_, STF_NUM_ARGS(__VA_ARGS__), __LINE__, ##__VA_ARGS__)
-
-#define STF_BEGIN_SECTION_IMPL(InID) STF_CREATE_SECTION_VAR_IMPL(InID); \
-    if (ShaderTestPrivate::Scratch.TryEnterSection(STF_GET_SECTION_VAR_NAME(InID))) \
-    {\
-
-#define BEGIN_SECTION STF_BEGIN_SECTION_IMPL(__LINE__)
-#define END_SECTION ShaderTestPrivate::Scratch.OnLeave(); }
-
-#define STF_SECTION_IMPL(InID) STF_CREATE_SECTION_VAR_IMPL(InID); \
-    while (ShaderTestPrivate::Scratch.TryEnterSection(STF_GET_SECTION_VAR_NAME(InID)))
-
-#define SECTION() STF_SECTION_IMPL(__LINE__)
+#define SECTION(InName) STF_SECTION_IMPL(InName, __LINE__)
 
 #define STF_ASSERT_IF_0(InName, InId) STF::InName(InId)
 #define STF_ASSERT_IF_1(InName, InId, InArg) STF::InName(InArg, InId)
