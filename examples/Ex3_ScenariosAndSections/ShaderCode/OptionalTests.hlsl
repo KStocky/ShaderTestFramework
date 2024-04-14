@@ -52,33 +52,33 @@ void OptionalTestsWithoutScenariosAndSections()
 [numthreads(1, 1, 1)]
 void OptionalTestsWithScenariosAndSections()
 {
-    SCENARIO(/*GIVEN An Optional that is reset*/)
+    SCENARIO("GIVEN An Optional that is reset")
     {
         Optional<int> opt;
         opt.Reset();
 
-        SECTION(/*THEN IsValid returns false*/)
+        SECTION("THEN IsValid returns false")
         {
             STF::IsFalse(opt.IsValid);
         }
 
-        SECTION(/*THEN GetOrDefault returns default value*/)
+        SECTION("THEN GetOrDefault returns default value")
         {
             const int expectedValue = 42;
             STF::AreEqual(expectedValue, opt.GetOrDefault(expectedValue));
         }
 
-        SECTION(/*WHEN value is set*/)
+        SECTION("WHEN value is set")
         {
             const int expectedValue = 42;
             opt.Set(expectedValue);
 
-            SECTION(/*THEN IsValid returns true*/)
+            SECTION("THEN IsValid returns true")
             {
                 STF::IsTrue(opt.IsValid);
             }
 
-            SECTION(/*THEN GetOrDefault returns set value*/)
+            SECTION("THEN GetOrDefault returns set value")
             {
                 const int defaultValue = 24;
                 STF::AreEqual( expectedValue, opt.GetOrDefault(defaultValue));
@@ -91,12 +91,13 @@ void OptionalTestsWithScenariosAndSections()
 [numthreads(32, 1, 1)]
 void OptionalTestsWithScenariosAndSectionsAndThreadIds(uint3 DTid : SV_DispatchThreadID)
 {
-    SCENARIO(DTid/*GIVEN An Optional that is reset*/)
+    STF::RegisterThreadID(DTid);
+    SCENARIO("GIVEN An Optional that is reset")
     {
         Optional<int> opt;
         opt.Reset();
 
-        SECTION(/*THEN IsValid returns false*/)
+        SECTION("THEN IsValid returns false")
         {
             //if (DTid.x == 16)
             //{
@@ -108,23 +109,23 @@ void OptionalTestsWithScenariosAndSectionsAndThreadIds(uint3 DTid : SV_DispatchT
             }
         }
 
-        SECTION(/*THEN GetOrDefault returns default value*/)
+        SECTION("THEN GetOrDefault returns default value")
         {
             const int expectedValue = 42;
             STF::AreEqual(expectedValue, opt.GetOrDefault(expectedValue));
         }
 
-        SECTION(/*WHEN value is set*/)
+        SECTION("WHEN value is set")
         {
             const int expectedValue = 42;
             opt.Set(expectedValue);
 
-            SECTION(/*THEN IsValid returns true*/)
+            SECTION("THEN IsValid returns true")
             {
                 STF::IsTrue(opt.IsValid);
             }
 
-            SECTION(/*THEN GetOrDefault returns set value*/)
+            SECTION("THEN GetOrDefault returns set value")
             {
                 const int defaultValue = 24;
                 STF::AreEqual( expectedValue, opt.GetOrDefault(defaultValue));
