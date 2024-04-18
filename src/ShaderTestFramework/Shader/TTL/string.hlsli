@@ -180,6 +180,7 @@ namespace ttl_detail
     #undef CHAR_CHECK
 }
 
+#if TTL_ENABLE_STRINGS
 #define TO_STRING(InString, InStr)             \
 do{                                                       \
     const uint numChars = ttl::strlen(InStr);              \
@@ -189,6 +190,10 @@ do{                                                       \
         InString.append(ttl_detail::char_to_uint(InStr[i]));      \
     }                                                   \
 }while(false)
+
+#else
+#define TO_STRING(InString, InStr) ttl::zero(InString)
+#endif
 
 #define DEFINE_STRING_CREATOR_IMPL(InName, InStr)   \
 struct {                                            \

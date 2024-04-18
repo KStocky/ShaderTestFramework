@@ -190,6 +190,32 @@ CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName
         job.Flags = Enum::MakeFlags(EShaderCompileFlags::SkipOptimization, EShaderCompileFlags::O0);
     }
 
+    const bool isO3 = 
+        [&job]()
+        {
+            const bool flagsHaveO3 = !Enum::EnumHasMask(job.Flags, Enum::MakeFlags(EShaderCompileFlags::O0, EShaderCompileFlags::SkipOptimization));
+            const bool additionalFlagsHaveO3 = std::ranges::none_of(job.AdditionalFlags,
+                [](const std::wstring& InFlag)
+                {
+                    return
+                        InFlag.contains(L"-O0") ||
+                        InFlag.contains(L"-O1") ||
+                        InFlag.contains(L"-O2") ||
+                        InFlag.contains(L"-Od");
+                });
+
+            return flagsHaveO3 && additionalFlagsHaveO3;
+        }();
+
+    if (isO3)
+    {
+        job.Defines.emplace_back(ShaderMacro("TTL_ENABLE_STRINGS", "1"));
+    }
+    else
+    {
+        job.Defines.emplace_back(ShaderMacro("TTL_ENABLE_STRINGS", "0"));
+    }
+
     return m_Compiler->CompileShader(job);
 }
 
