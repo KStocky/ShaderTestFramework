@@ -123,7 +123,7 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/TypeTraits/SizeOfTests.hlsl
     Shader/HLSLFrameworkTests/BasicShaderTests.hlsl
     Shader/HLSLFrameworkTests/FlattenIndex.hlsl
-    Shader/HLSLFrameworkTests/PerThreadScratchDataByteWriterTests.hlsl
+    Shader/HLSLFrameworkTests/SectionHierarchyByteWriterTests.hlsl
     Shader/HLSLFrameworkTests/SectionManagement.hlsl
     Shader/HLSLFrameworkTests/ThreadDimensionTests.hlsl
     Shader/HLSLFrameworkTests/ThreadIdRegistrationTests.hlsl
@@ -176,7 +176,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/ByteWriterTests.cpp
     Private/Framework/HLSLFramework/CastTests.cpp
     Private/Framework/HLSLFramework/FlattenIndexTests.cpp
-    Private/Framework/HLSLFramework/PerThreadScratchDataByteWriterTests.cpp
+    Private/Framework/HLSLFramework/SectionHierarchyByteWriterTests.cpp
     Private/Framework/HLSLFramework/ProofOfConceptTests.cpp
     Private/Framework/HLSLFramework/SectionManagementTests.cpp
     Private/Framework/HLSLFramework/StaticAssertTests.cpp

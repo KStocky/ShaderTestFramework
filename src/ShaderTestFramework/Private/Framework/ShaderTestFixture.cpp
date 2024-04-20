@@ -187,7 +187,7 @@ CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName
         job.AdditionalFlags.emplace_back(L"-Qembed_debug");
         job.AdditionalFlags.emplace_back(L"-Zss");
         job.AdditionalFlags.emplace_back(L"-Zi");
-        job.Flags = Enum::MakeFlags(EShaderCompileFlags::SkipOptimization, EShaderCompileFlags::O0);
+        //job.Flags = Enum::MakeFlags(EShaderCompileFlags::SkipOptimization, EShaderCompileFlags::O0);
     }
 
     const bool isO3 = 
@@ -350,12 +350,75 @@ namespace ShaderTestFixturePrivate
     };
 }
 
+namespace
+{
+    static const int NumSections = 32;
+
+    enum class ESectionRunState
+    {
+        NeverEntered,
+        NeedsRun,
+        Running,
+        RunningEnteredSubsection,
+        RunningNeedsRerun,
+        Completed
+    };
+
+    struct ScenarioSectionInfo
+    {
+        int ParentID;
+        ESectionRunState RunState;
+    };
+
+    enum class EThreadIDType
+    {
+        None,
+        Int,
+        Int3
+    };
+
+    struct ThreadIDInfo
+    {
+        u32 Data;
+        EThreadIDType Type;
+    };
+
+    struct PerThreadScratchData
+    {
+        i32 CurrentSectionID;
+        i32 NextSectionID;
+        ThreadIDInfo ThreadID;
+        ScenarioSectionInfo Sections[NumSections];
+    };
+}
+
 void ShaderTestFixture::PopulateDefaultByteReaders()
 {
     RegisterByteReader("TYPE_ID_UNDEFINED", 
         [](const u16, const std::span<const std::byte> InBytes)
         {
             return std::format("Undefined Type -> {}", STF::DefaultByteReader(0, InBytes));
+        });
+
+    RegisterByteReader("READER_ID_PER_THREAD_SCRATCH",
+        [](const std::span<const std::byte> InBytes)
+        {
+            PerThreadScratchData data;
+            std::memcpy(&data, InBytes.data(), sizeof(PerThreadScratchData));
+
+            std::stringstream buff;
+            buff << "\nCurrentSectionID: " << data.CurrentSectionID << "\n";
+            buff << "NextSectionID: " << data.NextSectionID << "\n";
+            buff << "Sections:\n--------------------------------------\n";
+            for (i32 i = 0; i < NumSections; ++i)
+            {
+                buff << "Section " << i << "\n";
+                buff << "ParentID: " << data.Sections[i].ParentID << "\n";
+                const auto runState = Enum::UnscopedName(data.Sections[i].RunState);
+                buff << "RunState: " << runState << "\n-------------------------\n";
+            }
+
+            return buff.str();
         });
 
     RegisterByteReader("READER_ID_FUNDAMENTAL",

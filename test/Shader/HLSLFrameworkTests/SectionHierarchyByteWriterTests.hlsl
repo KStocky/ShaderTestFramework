@@ -11,7 +11,7 @@ struct EmptyCallable
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
-void PerThreadScratchDataByteWriterTests()
+void SectionHierarchyByteWriterTests()
 {
     EmptyCallable nullCallable;
     SCENARIO("")
@@ -24,8 +24,10 @@ void PerThreadScratchDataByteWriterTests()
 
         SECTION("GIVEN Uninitialized THEN Properties are as expected")
         {
-            ASSERT(AreEqual, ttl::bytes_required(data), 0u);
-            ASSERT(AreEqual, ttl::alignment_required(data), 4u);
+            ShaderTestPrivate::SectionHierarchy sh;
+            sh.Scratch = data;
+            ASSERT(AreEqual, ttl::bytes_required(sh), 0u);
+            ASSERT(AreEqual, ttl::alignment_required(sh), 4u);
         }
 
         SECTION("GIVEN Initialized ")
@@ -34,15 +36,19 @@ void PerThreadScratchDataByteWriterTests()
 
             SECTION("THEN Properties are as expected")
             {
-                ASSERT(AreEqual, ttl::bytes_required(data), 4u);
-                ASSERT(AreEqual, ttl::alignment_required(data), 4u);
+                ShaderTestPrivate::SectionHierarchy sh;
+                sh.Scratch = data;
+                ASSERT(AreEqual, ttl::bytes_required(sh), 4u);
+                ASSERT(AreEqual, ttl::alignment_required(sh), 4u);
             }
 
             data.TryLoopScenario(nullCallable);
 
             SECTION("WHEN Bytes Written")
             {
-                ttl::write_bytes(vec, 0, data);
+                ShaderTestPrivate::SectionHierarchy sh;
+                sh.Scratch = data;
+                ttl::write_bytes(vec, 0, sh);
 
                 SECTION("THEN first uint is 0")
                 {
@@ -56,8 +62,10 @@ void PerThreadScratchDataByteWriterTests()
 
                 SECTION("THEN Properties are as expected")
                 {
-                    ASSERT(AreEqual, ttl::bytes_required(data), 4u);
-                    ASSERT(AreEqual, ttl::alignment_required(data), 4u);
+                    ShaderTestPrivate::SectionHierarchy sh;
+                    sh.Scratch = data;
+                    ASSERT(AreEqual, ttl::bytes_required(sh), 4u);
+                    ASSERT(AreEqual, ttl::alignment_required(sh), 4u);
                 }
 
                 SECTION("AND WHEN 3 sections entered")
@@ -67,13 +75,17 @@ void PerThreadScratchDataByteWriterTests()
 
                     SECTION("THEN 4 Bytes still required")
                     {
-                        ASSERT(AreEqual, ttl::bytes_required(data), 4u);
-                        ASSERT(AreEqual, ttl::alignment_required(data), 4u);
+                        ShaderTestPrivate::SectionHierarchy sh;
+                        sh.Scratch = data;
+                        ASSERT(AreEqual, ttl::bytes_required(sh), 4u);
+                        ASSERT(AreEqual, ttl::alignment_required(sh), 4u);
                     }
 
                     SECTION("AND WHEN bytes written")
                     {
-                        ttl::write_bytes(vec, 0, data);
+                        ShaderTestPrivate::SectionHierarchy sh;
+                        sh.Scratch = data;
+                        ttl::write_bytes(vec, 0, sh);
 
                         SECTION("THEN first uint is (0 << 24) | (1 << 16) | (2 << 8) | (3 << 0)")
                         {
@@ -89,14 +101,18 @@ void PerThreadScratchDataByteWriterTests()
 
                         SECTION("THEN 8 Bytes is required")
                         {
-                            ASSERT(AreEqual, ttl::bytes_required(data), 8u);
-                            ASSERT(AreEqual, ttl::alignment_required(data), 4u);
+                            ShaderTestPrivate::SectionHierarchy sh;
+                            sh.Scratch = data;
+                            ASSERT(AreEqual, ttl::bytes_required(sh), 8u);
+                            ASSERT(AreEqual, ttl::alignment_required(sh), 4u);
                         }
 
                         SECTION("AND WHEN bytes written")
                         {
-                            ttl::write_bytes(vec, 0, data);
-
+                            ShaderTestPrivate::SectionHierarchy sh;
+                            sh.Scratch = data;
+                            ttl::write_bytes(vec, 0, sh);
+                            
                             SECTION("THEN first two uints is as expected")
                             {
                                 static const uint expectedFirst = (2 << 24) | (3 << 16) | (4 << 8) | (5 << 0);
@@ -113,13 +129,17 @@ void PerThreadScratchDataByteWriterTests()
 
                             SECTION("THEN 4 Bytes now required")
                             {
-                                ASSERT(AreEqual, ttl::bytes_required(data), 4u);
-                                ASSERT(AreEqual, ttl::alignment_required(data), 4u);
+                                ShaderTestPrivate::SectionHierarchy sh;
+                                sh.Scratch = data;
+                                ASSERT(AreEqual, ttl::bytes_required(sh), 4u);
+                                ASSERT(AreEqual, ttl::alignment_required(sh), 4u);
                             }
 
                             SECTION("AND WHEN bytes written")
                             {
-                                ttl::write_bytes(vec, 0, data);
+                                ShaderTestPrivate::SectionHierarchy sh;
+                                sh.Scratch = data;
+                                ttl::write_bytes(vec, 0, sh);
 
                                 SECTION("THEN first uint is (0 << 24) | (1 << 16) | (2 << 8) | (3 << 0)")
                                 {
@@ -136,13 +156,17 @@ void PerThreadScratchDataByteWriterTests()
 
                         SECTION("THEN 4 Bytes still required")
                         {
-                            ASSERT(AreEqual, ttl::bytes_required(data), 4u);
-                            ASSERT(AreEqual, ttl::alignment_required(data), 4u);
+                            ShaderTestPrivate::SectionHierarchy sh;
+                            sh.Scratch = data;
+                            ASSERT(AreEqual, ttl::bytes_required(sh), 4u);
+                            ASSERT(AreEqual, ttl::alignment_required(sh), 4u);
                         }
 
                         SECTION("AND WHEN bytes written")
                         {
-                            ttl::write_bytes(vec, 0, data);
+                            ShaderTestPrivate::SectionHierarchy sh;
+                            sh.Scratch = data;
+                            ttl::write_bytes(vec, 0, sh);
 
                             SECTION("THEN first uint is (0 << 16) | (1 << 8) | (2 << 0)")
                             {
