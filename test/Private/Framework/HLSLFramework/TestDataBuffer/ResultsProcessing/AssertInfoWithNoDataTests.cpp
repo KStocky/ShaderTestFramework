@@ -3,7 +3,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - AssertInfoWithNoData")
+SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - AssertInfoWithNoData")
 {
     auto [testName, numRecordedAsserts, failedAsserts, numSucceeded, numFailed, dims] = GENERATE
     (

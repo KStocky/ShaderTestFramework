@@ -7,7 +7,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - AssertInfoWithData")
+SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - AssertInfoWithData")
 {
 
     auto serializeImpl = OverloadSet{ 

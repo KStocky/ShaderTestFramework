@@ -4,7 +4,7 @@
 #include <catch2/generators/catch_generators.hpp>
 #include <catch2/matchers/catch_matchers_predicate.hpp>
 
-SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - FundamentalByteReader")
+SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - FundamentalByteReader")
 {
     using Catch::Matchers::Predicate;
 
