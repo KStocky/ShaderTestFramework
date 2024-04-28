@@ -114,6 +114,7 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/TestDataBuffer/ResultsProcessing/ByteReader.hlsl
     Shader/HLSLFrameworkTests/TestDataBuffer/ResultsProcessing/ByteReader.hlsl
     Shader/HLSLFrameworkTests/TestDataBuffer/ResultsProcessing/NoAssertBuffer.hlsl
+    Shader/HLSLFrameworkTests/TestDataBuffer/ResultsProcessing/SectionsWithStrings.hlsl
     Shader/HLSLFrameworkTests/TestDataBuffer/SizeTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/AlignOfTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/ArrayTraitsTests.hlsl
@@ -163,6 +164,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/TestDataBuffer/ResultsProcessing/ByteReaderTests.cpp
     Private/Framework/HLSLFramework/TestDataBuffer/ResultsProcessing/FundamentalByteReaderTests.cpp
     Private/Framework/HLSLFramework/TestDataBuffer/ResultsProcessing/NoAssertBufferTests.cpp
+    Private/Framework/HLSLFramework/TestDataBuffer/ResultsProcessing/SectionsWithStringsTests.cpp
     Private/Framework/HLSLFramework/TestDataBuffer/SizeTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/AlignOfTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/ArrayTraitsTests.cpp

@@ -2,6 +2,8 @@
 
 #include "Platform.h"
 
+#include <ostream>
+
 namespace STF
 {
     struct DynamicSectionDataInfo
@@ -41,5 +43,6 @@ namespace STF
         i32 StringId = -1;
         i32 ParentId = -1;
         friend auto operator<=>(const SectionInfoMetaData&, const SectionInfoMetaData&) = default;
+        friend std::ostream& operator<<(std::ostream& InOs, const SectionInfoMetaData& In);
     };
 }

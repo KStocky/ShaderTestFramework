@@ -88,6 +88,7 @@ set(SOURCES
     Private/Framework/ShaderTestFixture.cpp
     Private/Framework/TestDataBufferLayout.cpp
     Private/Framework/TestDataBufferProcessor.cpp
+    Private/Framework/TestDataBufferStructs.cpp
 )
 
 set(SHADER_SOURCES
