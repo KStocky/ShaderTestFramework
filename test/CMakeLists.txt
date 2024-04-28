@@ -62,12 +62,6 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/PixelShaderWithSamplerFeedback.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/PixelShaderWithSV_Barycentrics.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/TemplatedByteAddressBuffer.hlsl
-    Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithData.hlsl
-    Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithNoData.hlsl
-    Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/ByteReader.hlsl
-    Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/ByteReader.hlsl
-    Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/NoAssertBuffer.hlsl
-    Shader/HLSLFrameworkTests/AssertBuffer/SizeTests.hlsl
     Shader/HLSLFrameworkTests/Asserts/AreEqual.hlsl
     Shader/HLSLFrameworkTests/Asserts/Fail.hlsl
     Shader/HLSLFrameworkTests/Asserts/IsFalse.hlsl
@@ -115,6 +109,12 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/String/StringLengthTests/GIVEN_StringWithOver64Characters_THEN_FailsCompilation.hlsl
     Shader/HLSLFrameworkTests/String/StringByteWriterTests.hlsl
     Shader/HLSLFrameworkTests/String/StringTests.hlsl
+    Shader/HLSLFrameworkTests/TestDataBuffer/ResultsProcessing/AssertInfoWithData.hlsl
+    Shader/HLSLFrameworkTests/TestDataBuffer/ResultsProcessing/AssertInfoWithNoData.hlsl
+    Shader/HLSLFrameworkTests/TestDataBuffer/ResultsProcessing/ByteReader.hlsl
+    Shader/HLSLFrameworkTests/TestDataBuffer/ResultsProcessing/ByteReader.hlsl
+    Shader/HLSLFrameworkTests/TestDataBuffer/ResultsProcessing/NoAssertBuffer.hlsl
+    Shader/HLSLFrameworkTests/TestDataBuffer/SizeTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/AlignOfTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/ArrayTraitsTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/ContainerTraitsTests.hlsl

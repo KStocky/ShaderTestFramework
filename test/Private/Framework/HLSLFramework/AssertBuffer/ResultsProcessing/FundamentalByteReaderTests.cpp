@@ -122,7 +122,7 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - FundamentalByte
             return true;
         };
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/AssertBuffer/ResultsProcessing/FundamentalByteReader.hlsl"), { 10, 400 }));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/TestDataBuffer/ResultsProcessing/FundamentalByteReader.hlsl"), { 10, 400 }));
 
     DYNAMIC_SECTION(testName)
     {
