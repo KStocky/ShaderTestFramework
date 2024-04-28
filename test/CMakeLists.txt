@@ -142,12 +142,6 @@ set(SOURCES
     Private/D3D12/Shader/ShaderHashTests.cpp
     Private/D3D12/Shader/ShaderModelTests.cpp
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManagerTests.cpp
-    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/AssertInfoWithDataTests.cpp
-    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/AssertInfoWithNoDataTests.cpp
-    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/ByteReaderTests.cpp
-    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/FundamentalByteReaderTests.cpp
-    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/NoAssertBufferTests.cpp
-    Private/Framework/HLSLFramework/AssertBuffer/SizeTests.cpp
     Private/Framework/HLSLFramework/Asserts/AreEqualTests.cpp
     Private/Framework/HLSLFramework/Asserts/FailTests.cpp
     Private/Framework/HLSLFramework/Asserts/IsFalseTests.cpp
@@ -164,6 +158,12 @@ set(SOURCES
     Private/Framework/HLSLFramework/String/StringByteWriterTests.cpp
     Private/Framework/HLSLFramework/String/StringLengthTests.cpp
     Private/Framework/HLSLFramework/String/StringTests.cpp
+    Private/Framework/HLSLFramework/TestDataBuffer/ResultsProcessing/AssertInfoWithDataTests.cpp
+    Private/Framework/HLSLFramework/TestDataBuffer/ResultsProcessing/AssertInfoWithNoDataTests.cpp
+    Private/Framework/HLSLFramework/TestDataBuffer/ResultsProcessing/ByteReaderTests.cpp
+    Private/Framework/HLSLFramework/TestDataBuffer/ResultsProcessing/FundamentalByteReaderTests.cpp
+    Private/Framework/HLSLFramework/TestDataBuffer/ResultsProcessing/NoAssertBufferTests.cpp
+    Private/Framework/HLSLFramework/TestDataBuffer/SizeTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/AlignOfTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/ArrayTraitsTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/ContainerTraitsTests.cpp
