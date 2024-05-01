@@ -196,7 +196,7 @@ CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName
         job.AdditionalFlags.emplace_back(L"-Qembed_debug");
         job.AdditionalFlags.emplace_back(L"-Zss");
         job.AdditionalFlags.emplace_back(L"-Zi");
-        //job.Flags = Enum::MakeFlags(EShaderCompileFlags::SkipOptimization, EShaderCompileFlags::O0);
+        job.Flags = Enum::MakeFlags(EShaderCompileFlags::SkipOptimization, EShaderCompileFlags::O0);
     }
 
     const bool isO3 = 
