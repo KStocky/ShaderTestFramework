@@ -1,6 +1,7 @@
 #pragma once
 
 #include "/Test/STF/ByteReaderTraits.hlsli"
+#include "/Test/STF/FrameworkResources.hlsli"
 #include "/Test/STF/RootSignature.hlsli"
 #include "/Test/STF/SectionManagement.hlsli"
 
@@ -8,61 +9,30 @@
 #include "/Test/TTL/caster.hlsli"
 #include "/Test/TTL/container_wrapper.hlsli"
 #include "/Test/TTL/memory.hlsli"
+#include "/Test/TTL/string.hlsli"
 #include "/Test/TTL/type_traits.hlsli"
 
 namespace ShaderTestPrivate
 {
-    const uint AssertBufferIndex;
-    const uint3 DispatchDimensions;
-    const uint MaxNumAsserts;
-    const uint SizeInBytesOfAssertData;
-    const uint SizeInBytesOfAssertBuffer;
-    const uint AllocationBufferIndex;
-
-    struct HLSLAssertMetaData
-    {
-        uint LineNumber;
-        uint ThreadId;
-        uint ThreadIdType;
-        uint ReaderAndTypeId;
-        uint DataAddress;
-        uint DataSize;
-    };
-    
-    RWByteAddressBuffer GetAssertBuffer()
-    {
-        return ResourceDescriptorHeap[AssertBufferIndex];
-    }
-
-    globallycoherent RWByteAddressBuffer GetAllocationBuffer()
-    {
-        return ResourceDescriptorHeap[AllocationBufferIndex];
-    }
-    
     void Success()
     {
         uint successIndex;
-        GetAllocationBuffer().InterlockedAdd(0, 1, successIndex);
-    }
-
-    uint StartAddressAssertData()
-    {
-        return sizeof(HLSLAssertMetaData) * MaxNumAsserts;
+        GetAllocationBuffer().InterlockedAdd(NumSuccessIndex, 1, successIndex);
     }
     
     uint AddAssert()
     {
         uint assertIndex;
-        GetAllocationBuffer().InterlockedAdd(4, 1, assertIndex);
+        GetAllocationBuffer().InterlockedAdd(NumFailsIndex, 1, assertIndex);
         return assertIndex;
     }
 
     void AddAssertMetaInfo(const uint InMetaIndex, const uint InId, const uint InReaderAndTypeId, const uint2 InAddressAndSize)
     {
-        RWByteAddressBuffer buffer = GetAssertBuffer();
+        RWByteAddressBuffer buffer = GetTestDataBuffer();
         const uint metaAddress = InMetaIndex * sizeof(HLSLAssertMetaData);
-        buffer.Store4(metaAddress, uint4(InId, Scratch.ThreadID.Data, (uint)Scratch.ThreadID.Type, InReaderAndTypeId));
-        buffer.Store2(metaAddress + 16, InAddressAndSize);
+        buffer.Store4(metaAddress, uint4(InId, Scratch.ThreadID.Data, (uint)Scratch.ThreadID.Type, Scratch.GetSectionID()));
+        buffer.Store3(metaAddress + 16, uint3(InReaderAndTypeId, InAddressAndSize));
     }
 
     template<typename T>
@@ -79,13 +49,13 @@ namespace ShaderTestPrivate
         const uint alignedSize2 = ttl::aligned_offset(size2 + 4, align2);
         const uint size = ttl::aligned_offset(alignedSize1 + alignedSize2, 8);
         uint offset = 0;
-        GetAllocationBuffer().InterlockedAdd(8, size, offset);
+        GetAllocationBuffer().InterlockedAdd(AssertDataSizeIndex, size, offset);
 
-        const uint startAddress = StartAddressAssertData() + offset;
+        const uint startAddress = Asserts.BeginData() + offset;
         uint address = startAddress;
-        if (address + size < SizeInBytesOfAssertBuffer)
+        if (offset + size < Asserts.SizeInBytesOfData())
         {
-            RWByteAddressBuffer buff = GetAssertBuffer();
+            RWByteAddressBuffer buff = GetTestDataBuffer();
             ttl::write_bytes(buff, address, sizeAndAlign1);
             address = ttl::aligned_offset(address + 4, align1);
             ttl::write_bytes(buff, address, In1);
@@ -110,13 +80,13 @@ namespace ShaderTestPrivate
         const uint alignedSize1 = ttl::aligned_offset(size1 + 4, align1);
         const uint size = ttl::aligned_offset(alignedSize1, 8);
         uint offset = 0;
-        GetAllocationBuffer().InterlockedAdd(8, size, offset);
+        GetAllocationBuffer().InterlockedAdd(AssertDataSizeIndex, size, offset);
 
-        const uint startAddress = StartAddressAssertData() + offset;
+        const uint startAddress = Asserts.BeginData() + offset;
         uint address = startAddress;
-        if (address + size < SizeInBytesOfAssertBuffer)
+        if (offset + size < Asserts.SizeInBytesOfData())
         {
-            RWByteAddressBuffer buff = GetAssertBuffer();
+            RWByteAddressBuffer buff = GetTestDataBuffer();
             ttl::write_bytes(buff, address, sizeAndAlign1);
             address = ttl::aligned_offset(address + 4, align1);
             ttl::write_bytes(buff, address, In);
@@ -141,10 +111,10 @@ namespace ShaderTestPrivate
     void AddError(T In1, T In2, int InId)
     {
         const uint metaIndex = AddAssert();
-        if (metaIndex < MaxNumAsserts)
+        if (metaIndex < Asserts.Num())
         {
             uint2 addressAndSize = uint2(0, 0);
-            if (SizeInBytesOfAssertData > 0)
+            if (Asserts.SizeInBytesOfData() > 0)
             {
                 addressAndSize = AddAssertData(In1, In2);
             }
@@ -161,10 +131,10 @@ namespace ShaderTestPrivate
     void AddError(T In, int InId)
     {
         const uint metaIndex = AddAssert();
-        if (metaIndex < MaxNumAsserts)
+        if (metaIndex < Asserts.Num())
         {
             uint2 addressAndSize = uint2(0, 0);
-            if (SizeInBytesOfAssertData > 0)
+            if (Asserts.SizeInBytesOfData() > 0)
             {
                 addressAndSize = AddAssertData(In);
             }
@@ -176,6 +146,88 @@ namespace ShaderTestPrivate
             AddAssertMetaInfo(metaIndex, InId, packed, addressAndSize);
         }
     }
+
+    uint2 AddStringData(ttl::string In)
+    {
+        const uint size = ttl::aligned_offset(In.Size, 4u);
+        uint offset = 0;
+        GetAllocationBuffer().InterlockedAdd(StringDataSizeIndex, size, offset);
+
+        const uint startAddress = Strings.BeginData() + offset;
+        uint address = startAddress;
+        if (offset + size < Strings.SizeInBytesOfData())
+        {
+            RWByteAddressBuffer buff = GetTestDataBuffer();
+            ttl::write_bytes(buff, address, In);
+
+            return uint2(startAddress, size);
+        }
+
+        return uint2(0, 0);
+    }
+
+    void AddStringMetaInfo(const uint InMetaIndex, const uint2 InAddressAndSize)
+    {
+        RWByteAddressBuffer buffer = GetTestDataBuffer();
+        const uint metaAddress = InMetaIndex * sizeof(StringMetaData) + Strings.BeginMeta();
+        buffer.Store2(metaAddress, InAddressAndSize);
+    }
+
+    bool ShouldWriteGlobalData(const uint InAllocationAddress, const int InId)
+    {
+        uint oldIndex;
+        GetAllocationBuffer().InterlockedCompareExchange(InAllocationAddress, InId, InId + 1, oldIndex);
+
+        return oldIndex == InId;
+    }
+
+    void AddGlobalString(const uint InId, ttl::string In)
+    {
+        const uint stringIndex = InId;
+        if (!ShouldWriteGlobalData(NumStringsIndex, InId))
+        {
+            return;
+        }
+
+        if (stringIndex < Strings.Num())
+        {
+            uint2 addressAndSize = uint2(0, 0);
+            if (Strings.SizeInBytesOfData() > 0)
+            {
+                addressAndSize = AddStringData(In);
+            }
+
+            AddStringMetaInfo(stringIndex, addressAndSize);
+        }
+    }
+
+    void AddGlobalSection(SectionInfoMetaData InSectionInfo)
+    {
+        const uint sectionIndex = InSectionInfo.SectionId;
+        if (!ShouldWriteGlobalData(NumSectionsIndex, InSectionInfo.SectionId))
+        {
+            return;
+        }
+
+        if (sectionIndex < Sections.Num())
+        {
+            const uint bufferAddress = Sections.BeginMeta() + sectionIndex * ttl::size_of<SectionInfoMetaData>::value;
+            GetTestDataBuffer().Store(bufferAddress, InSectionInfo);
+        }
+    }
+
+    struct OnFirstEntryOfSectionFunctor
+    {
+        int StringId;
+        void operator()(const int InSectionId, const int InParentId)
+        {
+            SectionInfoMetaData metaData;
+            metaData.SectionId = InSectionId;
+            metaData.ParentId = InParentId;
+            metaData.StringId = StringId;
+            AddGlobalSection(metaData);
+        }
+    };
 }
 
 namespace STF
@@ -288,39 +340,35 @@ namespace STF
 
 #define STF_DEFINE_TEST_ENTRY_FUNC(InID, InName, ...) void InName(__VA_ARGS__) \
 {\
-    ShaderTestPrivate::InitScratch();\
+    ShaderTestPrivate::Scratch.Init();\
     STF_DECLARE_TEST_FUNC(InID); \
-    while(ShaderTestPrivate::TryLoopScenario())\
+    while(ShaderTestPrivate::Scratch.TryLoopScenario())\
     {\
         STF_GET_TEST_FUNC_NAME(InID)();\
     }\
 }\
 STF_DECLARE_TEST_FUNC(InID)
 
-#define STF_SCENARIO_IF_0(InScenarioID)\
-ShaderTestPrivate::InitScratch();\
-while(ShaderTestPrivate::TryLoopScenario())
+#define STF_SCENARIO_IMPL(InName, InScenarioId)                                                                                   \
+DEFINE_STRING_CREATOR(STF_JOIN(scenarioNameCreator, InScenarioId), InName);                                                         \
+static uint STF_JOIN(scenarioNameId, InScenarioId) = ShaderTestPrivate::Scratch.NextStringID++; \
+ShaderTestPrivate::AddGlobalString(STF_JOIN(scenarioNameId, InScenarioId), STF_JOIN(scenarioNameCreator, InScenarioId)());    \
+ShaderTestPrivate::OnFirstEntryOfSectionFunctor STF_JOIN(onFirstEntry, InScenarioId);                                                                       \
+STF_JOIN(onFirstEntry, InScenarioId).StringId = STF_JOIN(scenarioNameId, InScenarioId);                                                                     \
+ShaderTestPrivate::Scratch.Init();                                                                                                  \
+while(ShaderTestPrivate::Scratch.TryLoopScenario(STF_JOIN(onFirstEntry, InScenarioId)))
 
-#define STF_SCENARIO_IF_1(InScenarioID, InThreadID)\
-ShaderTestPrivate::InitScratch();\
-STF::RegisterThreadID(InThreadID); \
-while(ShaderTestPrivate::TryLoopScenario())
+#define SCENARIO(InName) STF_SCENARIO_IMPL(InName, __LINE__)
 
-#define STF_SCENARIO_IMPL(InName, InNumArgs, InScenarioID, ...) STF_JOIN(InName, InNumArgs)(InScenarioID, ##__VA_ARGS__)
+#define STF_SECTION_IMPL(InName, InID) STF_CREATE_SECTION_VAR_IMPL(InID);                                       \
+DEFINE_STRING_CREATOR(STF_JOIN(sectionNameCreator, InID), InName);                                              \
+static uint STF_JOIN(sectionNameId, InID) = ShaderTestPrivate::Scratch.NextStringID++; \
+ShaderTestPrivate::AddGlobalString(STF_JOIN(sectionNameId, InID), STF_JOIN(sectionNameCreator, InID)()); \
+ShaderTestPrivate::OnFirstEntryOfSectionFunctor STF_JOIN(onFirstEntry, InID);                                   \
+STF_JOIN(onFirstEntry, InID).StringId = STF_JOIN(sectionNameId, InID);                                          \
+while (ShaderTestPrivate::Scratch.TryEnterSection(STF_JOIN(onFirstEntry, InID), STF_GET_SECTION_VAR_NAME(InID)))
 
-#define SCENARIO(...) STF_SCENARIO_IMPL(STF_SCENARIO_IF_, STF_NUM_ARGS(__VA_ARGS__), __LINE__, ##__VA_ARGS__)
-
-#define STF_BEGIN_SECTION_IMPL(InID) STF_CREATE_SECTION_VAR_IMPL(InID); \
-    if (ShaderTestPrivate::TryEnterSection(STF_GET_SECTION_VAR_NAME(InID))) \
-    {\
-
-#define BEGIN_SECTION STF_BEGIN_SECTION_IMPL(__LINE__)
-#define END_SECTION ShaderTestPrivate::OnLeave(); }
-
-#define STF_SECTION_IMPL(InID) STF_CREATE_SECTION_VAR_IMPL(InID); \
-    while (ShaderTestPrivate::TryEnterSection(STF_GET_SECTION_VAR_NAME(InID)))
-
-#define SECTION() STF_SECTION_IMPL(__LINE__)
+#define SECTION(InName) STF_SECTION_IMPL(InName, __LINE__)
 
 #define STF_ASSERT_IF_0(InName, InId) STF::InName(InId)
 #define STF_ASSERT_IF_1(InName, InId, InArg) STF::InName(InArg, InId)

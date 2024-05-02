@@ -7,17 +7,11 @@ SCENARIO("HLSLFrameworkTests - Macros - SECTIONS")
 {
     auto testName = GENERATE
     (
-        "GIVEN_EmptySection_WHEN_RanUsingBeginEnd_THEN_NoAssertMade",
         "GIVEN_EmptySection_WHEN_RanUsingSingle_THEN_NoAssertMade",
-        "GIVEN_SingleSection_WHEN_RanUsingBeginEnd_THEN_SectionsEnteredOnce",
         "GIVEN_SingleSection_WHEN_RanUsingSingle_THEN_SectionsEnteredOnce",
-        "GIVEN_TwoSections_WHEN_RanUsingBeginEnd_THEN_EachSectionIsEnteredOnce",
         "GIVEN_TwoSections_WHEN_RanUsingSingle_THEN_EachSectionIsEnteredOnce",
-        "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_RanUsingBeginEnd_THEN_EachSectionIsEnteredOnce",
         "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_RanUsingSingle_THEN_EachSectionIsEnteredOnce",
-        "GIVEN_TwoSubSectionsWithTwoNestedSubsections_WHEN_RanUsingBeginEnd_THEN_ExpectedSubsectionEntryOccurs",
         "GIVEN_TwoSubSectionsWithTwoNestedSubsections_WHEN_RanUsingSingle_THEN_ExpectedSubsectionEntryOccurs",
-        "GIVEN_ThreeLevelsDeepSections_WHEN_RanUsingBeginEnd_THEN_ExpectedSubsectionEntryOccurs",
         "GIVEN_ThreeLevelsDeepSections_WHEN_RanUsingSingle_THEN_ExpectedSubsectionEntryOccurs"
     );
 

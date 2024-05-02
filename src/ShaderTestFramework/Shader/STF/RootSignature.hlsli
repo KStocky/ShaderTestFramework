@@ -12,6 +12,6 @@
     "CBV_SRV_UAV_HEAP_DIRECTLY_INDEXED" \
 ")," \
 "RootConstants(" \
-    "num32BitConstants=8," \
+    "num32BitConstants=20," \
     "b0" \
 ")"

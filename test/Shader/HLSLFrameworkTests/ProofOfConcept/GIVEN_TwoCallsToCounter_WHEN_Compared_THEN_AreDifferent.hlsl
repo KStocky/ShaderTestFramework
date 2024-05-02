@@ -6,7 +6,7 @@ void GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent(uint3 DispatchThrea
 {
 	int a = __COUNTER__;
 	int b = __COUNTER__;
-	if (a == 0 && b == 1)
+	if (a == (b - 1))
 	{
 		ShaderTestPrivate::Success();
 	}

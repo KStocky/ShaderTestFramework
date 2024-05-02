@@ -3,7 +3,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - AssertInfoWithNoData")
+SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - AssertInfoWithNoData")
 {
     auto [testName, numRecordedAsserts, failedAsserts, numSucceeded, numFailed, dims] = GENERATE
     (
@@ -41,7 +41,7 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - AssertInfoWithN
         .DispatchDimensions = dims
     };
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/AssertBuffer/ResultsProcessing/AssertInfoWithNoData.hlsl"), { numRecordedAsserts, 0 }));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/TestDataBuffer/ResultsProcessing/AssertInfoWithNoData.hlsl"), { numRecordedAsserts, 0 }));
 
     DYNAMIC_SECTION(testName)
     {

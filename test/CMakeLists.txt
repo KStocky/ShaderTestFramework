@@ -23,6 +23,7 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/GloballyCoherentTypeModifier.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/GlobalString.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/HasMemberCheck.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/ImmediatelyInvokableFunctionExpression.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/IsEnum.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/LineMacro.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/LocalString.hlsl
@@ -33,6 +34,8 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/OperatorBoolWithAnEmptyStruct.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/OperatorInt.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/OperatorIntWithAnEmptyStruct.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/PrinterWithOptimizations.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/PrinterWithoutOptimizations.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/SizeofEnumType.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/SizeofOperator.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/StaticAssert.hlsl
@@ -59,12 +62,6 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/PixelShaderWithSamplerFeedback.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/PixelShaderWithSV_Barycentrics.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/TemplatedByteAddressBuffer.hlsl
-    Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithData.hlsl
-    Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/AssertInfoWithNoData.hlsl
-    Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/ByteReader.hlsl
-    Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/ByteReader.hlsl
-    Shader/HLSLFrameworkTests/AssertBuffer/ResultsProcessing/NoAssertBuffer.hlsl
-    Shader/HLSLFrameworkTests/AssertBuffer/SizeTests.hlsl
     Shader/HLSLFrameworkTests/Asserts/AreEqual.hlsl
     Shader/HLSLFrameworkTests/Asserts/Fail.hlsl
     Shader/HLSLFrameworkTests/Asserts/IsFalse.hlsl
@@ -92,17 +89,33 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/Macros/Sections.hlsl
     Shader/HLSLFrameworkTests/Macros/SectionVarCreation.hlsl
     Shader/HLSLFrameworkTests/Memory/AlignedOffsetTests.hlsl
+    Shader/HLSLFrameworkTests/Memory/ZeroTests.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported.hlsl
+    Shader/HLSLFrameworkTests/ProofOfConcept/MatesPrinter.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/SectionTest.hlsl
+    Shader/HLSLFrameworkTests/ProofOfConcept/StringsAndTemplates.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/VariadicMacroOverloading.hlsl
     Shader/HLSLFrameworkTests/StaticAssert/ConditionNoMessage.hlsl
     Shader/HLSLFrameworkTests/StaticAssert/ConditionWithMessage.hlsl
     Shader/HLSLFrameworkTests/StaticAssert/NonTemplatedStructMember.hlsl
     Shader/HLSLFrameworkTests/StaticAssert/TemplatedStructMember.hlsl
     Shader/HLSLFrameworkTests/StaticAssert/TemplatedStructMemberInstantiated.hlsl
+    Shader/HLSLFrameworkTests/String/StringLengthTests/GIVEN_EmptyString_THEN_ReturnsOne.hlsl
+    Shader/HLSLFrameworkTests/String/StringLengthTests/GIVEN_NonEmptyString_THEN_ReturnsLengthOfString.hlsl
+    Shader/HLSLFrameworkTests/String/StringLengthTests/GIVEN_StringCreatorWithOver64Characters_THEN_FailsCompilation.hlsl
+    Shader/HLSLFrameworkTests/String/StringLengthTests/GIVEN_StringWithOver64Characters_THEN_FailsCompilation.hlsl
+    Shader/HLSLFrameworkTests/String/StringByteWriterTests.hlsl
+    Shader/HLSLFrameworkTests/String/StringTests.hlsl
+    Shader/HLSLFrameworkTests/TestDataBuffer/ResultsProcessing/AssertInfoWithData.hlsl
+    Shader/HLSLFrameworkTests/TestDataBuffer/ResultsProcessing/AssertInfoWithNoData.hlsl
+    Shader/HLSLFrameworkTests/TestDataBuffer/ResultsProcessing/ByteReader.hlsl
+    Shader/HLSLFrameworkTests/TestDataBuffer/ResultsProcessing/ByteReader.hlsl
+    Shader/HLSLFrameworkTests/TestDataBuffer/ResultsProcessing/NoAssertBuffer.hlsl
+    Shader/HLSLFrameworkTests/TestDataBuffer/ResultsProcessing/SectionsWithStrings.hlsl
+    Shader/HLSLFrameworkTests/TestDataBuffer/SizeTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/AlignOfTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/ArrayTraitsTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/ContainerTraitsTests.hlsl
@@ -111,6 +124,7 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/TypeTraits/SizeOfTests.hlsl
     Shader/HLSLFrameworkTests/BasicShaderTests.hlsl
     Shader/HLSLFrameworkTests/FlattenIndex.hlsl
+    Shader/HLSLFrameworkTests/SectionHierarchyByteWriterTests.hlsl
     Shader/HLSLFrameworkTests/SectionManagement.hlsl
     Shader/HLSLFrameworkTests/ThreadDimensionTests.hlsl
     Shader/HLSLFrameworkTests/ThreadIdRegistrationTests.hlsl
@@ -129,13 +143,6 @@ set(SOURCES
     Private/D3D12/Shader/ShaderHashTests.cpp
     Private/D3D12/Shader/ShaderModelTests.cpp
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManagerTests.cpp
-    Private/Framework/AssertBufferProcessorTests.cpp
-    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/AssertInfoWithDataTests.cpp
-    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/AssertInfoWithNoDataTests.cpp
-    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/ByteReaderTests.cpp
-    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/FundamentalByteReaderTests.cpp
-    Private/Framework/HLSLFramework/AssertBuffer/ResultsProcessing/NoAssertBufferTests.cpp
-    Private/Framework/HLSLFramework/AssertBuffer/SizeTests.cpp
     Private/Framework/HLSLFramework/Asserts/AreEqualTests.cpp
     Private/Framework/HLSLFramework/Asserts/FailTests.cpp
     Private/Framework/HLSLFramework/Asserts/IsFalseTests.cpp
@@ -148,6 +155,17 @@ set(SOURCES
     Private/Framework/HLSLFramework/Macros/SectionsTests.cpp
     Private/Framework/HLSLFramework/Macros/SectionVarCreationTests.cpp
     Private/Framework/HLSLFramework/Memory/AlignedOffsetTests.cpp
+    Private/Framework/HLSLFramework/Memory/ZeroTests.cpp
+    Private/Framework/HLSLFramework/String/StringByteWriterTests.cpp
+    Private/Framework/HLSLFramework/String/StringLengthTests.cpp
+    Private/Framework/HLSLFramework/String/StringTests.cpp
+    Private/Framework/HLSLFramework/TestDataBuffer/ResultsProcessing/AssertInfoWithDataTests.cpp
+    Private/Framework/HLSLFramework/TestDataBuffer/ResultsProcessing/AssertInfoWithNoDataTests.cpp
+    Private/Framework/HLSLFramework/TestDataBuffer/ResultsProcessing/ByteReaderTests.cpp
+    Private/Framework/HLSLFramework/TestDataBuffer/ResultsProcessing/FundamentalByteReaderTests.cpp
+    Private/Framework/HLSLFramework/TestDataBuffer/ResultsProcessing/NoAssertBufferTests.cpp
+    Private/Framework/HLSLFramework/TestDataBuffer/ResultsProcessing/SectionsWithStringsTests.cpp
+    Private/Framework/HLSLFramework/TestDataBuffer/SizeTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/AlignOfTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/ArrayTraitsTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/ContainerTraitsTests.cpp
@@ -160,6 +178,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/ByteWriterTests.cpp
     Private/Framework/HLSLFramework/CastTests.cpp
     Private/Framework/HLSLFramework/FlattenIndexTests.cpp
+    Private/Framework/HLSLFramework/SectionHierarchyByteWriterTests.cpp
     Private/Framework/HLSLFramework/ProofOfConceptTests.cpp
     Private/Framework/HLSLFramework/SectionManagementTests.cpp
     Private/Framework/HLSLFramework/StaticAssertTests.cpp
@@ -168,6 +187,8 @@ set(SOURCES
     Private/Framework/HLSLTypesTests.cpp
     Private/Framework/SectionsInHLSLProofOfConceptTests.cpp
     Private/Framework/ShaderTestFixtureTests.cpp
+    Private/Framework/TestDataBufferLayoutTests.cpp
+    Private/Framework/TestDataBufferProcessorTests.cpp
     Private/Utility/AlignedOffsetTests.cpp
     Private/Utility/ConceptsTests.cpp
     Private/Utility/EnumReflectionTests.cpp

@@ -3,6 +3,7 @@
 #include "Platform.h"
 
 #include "Framework/HLSLTypes.h"
+#include "Framework/TestDataBufferLayout.h"
 #include "Utility/Concepts.h"
 #include "Utility/OverloadSet.h"
 #include "Utility/Type.h"
@@ -23,31 +24,14 @@ namespace STF
         Int3
     };
 
-    struct AssertMetaData
+    struct AllocationBufferData
     {
-        u32 LineNumber = 0;
-        u32 ThreadId = 0;
-        u32 ThreadIdType = 0;
-
-        friend auto operator<=>(const AssertMetaData&, const AssertMetaData&) = default;
-    };
-
-    struct HLSLAssertMetaData : AssertMetaData
-    {
-        u16 TypeId = 0;
-        u16 ReaderId = 0;
-        u32 DataAddress = 0;
-        u32 DataSize = 0;
-
-        friend auto operator<=>(const HLSLAssertMetaData&, const HLSLAssertMetaData&) = default;
-    };
-
-    struct AssertBufferLayout
-    {
+        u32 NumPassedAsserts = 0;
         u32 NumFailedAsserts = 0;
         u32 NumBytesAssertData = 0;
-
-        friend auto operator<=>(const AssertBufferLayout&, const AssertBufferLayout&) = default;
+        u32 NumStrings = 0;
+        u32 NumBytesStringData = 0;
+        u32 NumSections = 0;
     };
 
     using SingleTypeByteReader = std::function<std::string(std::span<const std::byte>)>;
@@ -71,6 +55,8 @@ namespace STF
     struct TestRunResults
     {
         std::vector<FailedAssert> FailedAsserts;
+        std::vector<std::string> Strings;
+        std::vector<SectionInfoMetaData> Sections;
         u32 NumSucceeded = 0;
         u32 NumFailed = 0;
         uint3 DispatchDimensions;
@@ -113,6 +99,7 @@ namespace STF
         }
 
         const TestRunResults* GetTestResults() const;
+        const FailedShaderCompilationResult* GetFailedCompilationResult() const;
 
         friend std::ostream& operator<<(std::ostream& InOs, const Results& In);
 
@@ -120,12 +107,15 @@ namespace STF
         std::variant<std::monostate, TestRunResults, FailedShaderCompilationResult> m_Result;
     };
 
-    TestRunResults ProcessAssertBuffer(
-        const u32 InNumSuccessful,
-        const u32 InNumFailed,
+    std::vector<FailedAssert> ProcessFailedAsserts(const TestDataSection<HLSLAssertMetaData>& InAssertSection, const u32 InNumFailed, const std::span<const std::byte> InTestData, const MultiTypeByteReaderMap& InByteReaderMap);
+    std::vector<std::string> ProcessStrings(const TestDataSection<StringMetaData>& InStringSection, const u32 InNumStrings, const std::span<const std::byte> InTestData);
+    std::vector<SectionInfoMetaData> ProcessSectionInfo(const TestDataSection<SectionInfoMetaData>& InSectionInfoSection, const u32 InNumSections, const std::span<const std::byte> InTestData);
+
+    TestRunResults ProcessTestDataBuffer(
+        const AllocationBufferData InAllocationBufferData,
         const uint3 InDispatchDimensions,
-        const AssertBufferLayout InLayout,
-        std::span<const std::byte> InAssertData,
+        TestDataBufferLayout InLayout,
+        std::span<const std::byte> InTestData,
         const MultiTypeByteReaderMap& InByteReaderMap);
 
     template<HLSLTypeTriviallyConvertibleType T>

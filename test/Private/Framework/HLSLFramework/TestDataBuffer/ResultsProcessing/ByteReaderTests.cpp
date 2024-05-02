@@ -4,7 +4,7 @@
 #include <catch2/generators/catch_generators.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
-SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - ByteReader")
+SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - ByteReader")
 {
     using Catch::Matchers::ContainsSubstring;
 
@@ -42,7 +42,7 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - ResultProcessing - ByteReader")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/AssertBuffer/ResultsProcessing/ByteReader.hlsl"), { 10, 400 }));
+    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/TestDataBuffer/ResultsProcessing/ByteReader.hlsl"), { 10, 400 }));
     fixture.RegisterByteReader("TEST_READER_1",
         [](const u16, const std::span<const std::byte> InBytes)
         {

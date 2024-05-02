@@ -1,10 +1,17 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
 
+struct EmptyCallable
+{
+    void operator()(int, int)
+    {
+    }
+};
+
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_EmptyScenario_WHEN_Ran_THEN_NoAssertMade(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    SCENARIO()
+    SCENARIO("")
     {
     }
 }
@@ -13,7 +20,7 @@ void GIVEN_EmptyScenario_WHEN_Ran_THEN_NoAssertMade(uint3 DispatchThreadId : SV_
 [numthreads(1,1,1)]
 void GIVEN_ScenarioWithNoSections_WHEN_Ran_THEN_FunctionOnlyEnteredOnce(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    SCENARIO()
+    SCENARIO("")
     {
         static int counter = 0;
         const int num = counter++;
@@ -25,17 +32,18 @@ void GIVEN_ScenarioWithNoSections_WHEN_Ran_THEN_FunctionOnlyEnteredOnce(uint3 Di
 [numthreads(1,1,1)]
 void GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    SCENARIO()
+    EmptyCallable nullCallable;
+    SCENARIO("")
     {
         static int counter = 1;
         const int numEntered = counter++;
         static int num = 0;
 
         static const int Section_1Num = 1;
-        if (ShaderTestPrivate::TryEnterSection(Section_1Num))
+        if (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_1Num))
         {
             ++num;
-            ShaderTestPrivate::OnLeave();
+            ShaderTestPrivate::Scratch.OnLeave();
         }
 
         STF::AreEqual(1, num);
@@ -47,24 +55,25 @@ void GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce(uint3 DispatchThreadI
 [numthreads(1,1,1)]
 void GIVEN_TwoSections_WHEN_Ran_THEN_EachSectionIsEnteredOnce(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    SCENARIO()
+    EmptyCallable nullCallable;
+    SCENARIO("")
     {
         static int counter = 1;
         const int numEntered = counter++;
         static int num1 = 0;
         static int num2 = 0;
         static const int Section_1Num = 1;
-        if (ShaderTestPrivate::TryEnterSection(Section_1Num))
+        if (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_1Num))
         {
             ++num1;
-            ShaderTestPrivate::OnLeave();
+            ShaderTestPrivate::Scratch.OnLeave();
         }
         
         static const int Section_2Num = 2;
-        if (ShaderTestPrivate::TryEnterSection(Section_2Num))
+        if (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_2Num))
         {
             ++num2;
-            ShaderTestPrivate::OnLeave();
+            ShaderTestPrivate::Scratch.OnLeave();
         }
 
         if (numEntered == 1)
@@ -88,7 +97,8 @@ void GIVEN_TwoSections_WHEN_Ran_THEN_EachSectionIsEnteredOnce(uint3 DispatchThre
 [numthreads(1,1,1)]
 void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    SCENARIO()
+    EmptyCallable nullCallable;
+    SCENARIO("")
     {
         static int counter = 1;
         const int numEntered = counter++;
@@ -97,24 +107,24 @@ void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnte
         static int num3 = 0;
 
         static const int Section_1Num = 1;
-        if (ShaderTestPrivate::TryEnterSection(Section_1Num))
+        if (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_1Num))
         {
             ++num1;
-            ShaderTestPrivate::OnLeave();
+            ShaderTestPrivate::Scratch.OnLeave();
         }
 
         static const int Section_2Num = 2;
-        if (ShaderTestPrivate::TryEnterSection(Section_2Num))
+        if (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_2Num))
         {
             ++num2;
 
             static const int Section_3Num = 3;
-            if (ShaderTestPrivate::TryEnterSection(Section_3Num))
+            if (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_3Num))
             {
                 ++num3;
-                ShaderTestPrivate::OnLeave();
+                ShaderTestPrivate::Scratch.OnLeave();
             }
-            ShaderTestPrivate::OnLeave();
+            ShaderTestPrivate::Scratch.OnLeave();
         }
     
         if (numEntered == 1)
@@ -140,7 +150,7 @@ void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnte
 [numthreads(1,1,1)]
 void GIVEN_ScenarioWithoutId_WHEN_Ran_THEN_IdIsNone(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    SCENARIO()
+    SCENARIO("")
     {
     }
     STF::AreEqual(0u, ShaderTestPrivate::Scratch.ThreadID.Data);
@@ -151,7 +161,8 @@ void GIVEN_ScenarioWithoutId_WHEN_Ran_THEN_IdIsNone(uint3 DispatchThreadId : SV_
 [numthreads(42,1,1)]
 void GIVEN_ScenarioWithDispatchThreadId_WHEN_Ran_THEN_IdIsInt3(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    SCENARIO(DispatchThreadId)
+    STF::RegisterThreadID(DispatchThreadId);
+    SCENARIO("")
     {
     }
     STF::AreEqual(ShaderTestPrivate::FlattenIndex(DispatchThreadId, ShaderTestPrivate::DispatchDimensions), ShaderTestPrivate::Scratch.ThreadID.Data);
@@ -160,9 +171,10 @@ void GIVEN_ScenarioWithDispatchThreadId_WHEN_Ran_THEN_IdIsInt3(uint3 DispatchThr
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(42,1,1)]
-void GIVEN_ScenarioWithIntId_WHEN_Ran_THEN_IdIsInt(uint3 DispatchThreadId : SV_DispatchThreadID)
+void GIVEN_ScenarioWithIntId_WHEN_Ran_THEN_IdIsInt()
 {
-    SCENARIO(42)
+    STF::RegisterThreadID(42);
+    SCENARIO("")
     {
     }
     STF::AreEqual(42u, ShaderTestPrivate::Scratch.ThreadID.Data);

@@ -65,7 +65,7 @@ void GIVEN_ThreadIDGivenAsUint_WHEN_ThreadIDQueried_THEN_RegisteredThreadIdIsCor
 void GIVEN_ThreadIdNotRegistered_WHEN_ThreadIDQueried_THEN_RegisteredThreadIdIsCorrect(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
     const uint expectedData = 0;
-    ShaderTestPrivate::InitScratch();
+    ShaderTestPrivate::Scratch.Init();
 
     STF::AreEqual(expectedData, ShaderTestPrivate::Scratch.ThreadID.Data);
     STF::AreEqual(ShaderTestPrivate::EThreadIDType::None, ShaderTestPrivate::Scratch.ThreadID.Type);

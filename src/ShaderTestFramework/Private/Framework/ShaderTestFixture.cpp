@@ -1,6 +1,6 @@
 #include "Framework/ShaderTestFixture.h"
 
-#include "Framework/AssertBufferProcessor.h"
+#include "Framework/TestDataBufferProcessor.h"
 #include "Framework/HLSLTypes.h"
 #include "Framework/PIXCapturer.h"
 #include "Utility/EnumReflection.h"
@@ -16,6 +16,15 @@
 
 #include <WinPixEventRuntime/pix3.h>
 
+namespace
+{
+    bool LoadPix()
+    {
+        static bool isAvailable = PIXLoadLatestWinPixGpuCapturerLibrary() != nullptr;
+        return isAvailable;
+    }
+}
+
 ShaderTestFixture::ShaderTestFixture(Desc InParams)
 	: m_Device()
 	, m_Compiler()
@@ -24,7 +33,7 @@ ShaderTestFixture::ShaderTestFixture(Desc InParams)
     , m_Defines(std::move(InParams.Defines))
 	, m_ShaderModel(InParams.ShaderModel)
     , m_HLSLVersion(InParams.HLSLVersion)
-    , m_AssertInfo(InParams.AssertInfo)
+    , m_TestDataLayout(InParams.TestDataLayout)
 	, m_IsWarp(InParams.GPUDeviceParams.DeviceType == GPUDevice::EDeviceType::Software)
 {
     fs::path shaderDir = std::filesystem::current_path();
@@ -32,7 +41,7 @@ ShaderTestFixture::ShaderTestFixture(Desc InParams)
     shaderDir += SHADER_SRC;
     InParams.Mappings.push_back({ "/Test", std::move(shaderDir) });
     m_Compiler.emplace(std::move(InParams.Mappings));
-    m_PIXAvailable = PIXLoadLatestWinPixGpuCapturerLibrary() != nullptr;
+    m_PIXAvailable = LoadPix();
     m_Device = GPUDevice{ InParams.GPUDeviceParams };
 
     PopulateDefaultByteReaders();
@@ -70,67 +79,75 @@ STF::Results ShaderTestFixture::RunTest(const std::string_view InName, u32 InX, 
 
             return Tuple{ dimX, dimY, dimZ };
         }();
-
-	const u64 bufferSizeInBytes = CalculateAssertBufferSize();
+    
+    const u64 bufferSizeInBytes = std::max(m_TestDataLayout.GetSizeOfTestData(), 4u);
     auto assertBuffer = CreateAssertBuffer(bufferSizeInBytes);
-    auto allocationBuffer = CreateAssertBuffer(12ull);
+    auto allocationBuffer = CreateAssertBuffer(28ull);
     auto readBackBuffer = CreateReadbackBuffer(bufferSizeInBytes);
-    auto readBackAllocationBuffer = CreateReadbackBuffer(12ull);
+    auto readBackAllocationBuffer = CreateReadbackBuffer(28ull);
 
     const auto assertUAV = CreateAssertBufferUAV(assertBuffer, resourceHeap, 0);
     const auto allocationUAV = CreateAssertBufferUAV(allocationBuffer, resourceHeap, 1);
 
-    const auto capturer = PIXCapturer(InName, ShouldTakeCapture());
+    {
+        const auto capturer = PIXCapturer(InName, ShouldTakeCapture());
 
-    engine.Execute(InName,
-        [&resourceHeap,
-        &pipelineState,
-        &rootSignature,
-        &assertBuffer,
-        &allocationBuffer,
-        &readBackBuffer,
-        &readBackAllocationBuffer,
-        InX, InY, InZ,
-        dimX, dimY, dimZ,
-        bufferSizeInBytes,
-        this]
-        (ScopedCommandContext& InContext)
-        {
-            InContext.Section("Test Setup",
+        engine.Execute(InName,
+            [&resourceHeap,
+            &pipelineState,
+            &rootSignature,
+            &assertBuffer,
+            &allocationBuffer,
+            &readBackBuffer,
+            &readBackAllocationBuffer,
+            InX, InY, InZ,
+            dimX, dimY, dimZ,
+            this]
+            (ScopedCommandContext& InContext)
+            {
+                InContext.Section("Test Setup",
                 [&](ScopedCommandContext& InContext)
-                {
-                    InContext->SetPipelineState(pipelineState);
-                    InContext->SetDescriptorHeaps(resourceHeap);
-                    InContext->SetComputeRootSignature(rootSignature);
-                    InContext->SetBufferUAV(assertBuffer);
-                    InContext->SetBufferUAV(allocationBuffer);
-                    std::array params
-                    { 
-                        0u, dimX, dimY, dimZ, 
-                        m_AssertInfo.NumFailedAsserts, m_AssertInfo.NumBytesAssertData, static_cast<u32>(bufferSizeInBytes), 1u
-                    };
-                    InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
-                }
-            );
+                    {
+                        InContext->SetPipelineState(pipelineState);
+                        InContext->SetDescriptorHeaps(resourceHeap);
+                        InContext->SetComputeRootSignature(rootSignature);
+                        InContext->SetBufferUAV(assertBuffer);
+                        InContext->SetBufferUAV(allocationBuffer);
 
-            InContext.Section("Test Dispatch",
-                [InX, InY, InZ](ScopedCommandContext& InContext)
-                {
-                    InContext->Dispatch(InX, InY, InZ);
-                }
-            );
+                        const auto assertSection = m_TestDataLayout.GetAssertSection();
+                        const auto stringSection = m_TestDataLayout.GetStringSection();
+                        const auto sectionSection = m_TestDataLayout.GetSectionInfoSection();
+                        std::array params
+                        {
+                            dimX, dimY, dimZ, 1u,
+                            0u, 0u, 0u, 0u,
+                            assertSection.Begin(), assertSection.NumMeta(), assertSection.SizeInBytesOfData(), assertSection.SizeInBytesOfSection(),
+                            stringSection.Begin(), stringSection.NumMeta(), stringSection.SizeInBytesOfData(), stringSection.SizeInBytesOfSection(),
+                            sectionSection.Begin(), sectionSection.NumMeta(), sectionSection.SizeInBytesOfData(), sectionSection.SizeInBytesOfSection()
+                        };
+                        InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
+                    }
+                );
 
-            InContext.Section("Results readback",
-                [&](ScopedCommandContext& InContext)
-                {
-                    InContext->CopyBufferResource(readBackBuffer, assertBuffer);
-                    InContext->CopyBufferResource(readBackAllocationBuffer, allocationBuffer);
-                }
-            );
-        }
-    );
+                InContext.Section("Test Dispatch",
+                    [InX, InY, InZ](ScopedCommandContext& InContext)
+                    {
+                        InContext->Dispatch(InX, InY, InZ);
+                    }
+                );
 
-	engine.Flush();
+                InContext.Section("Results readback",
+                    [&](ScopedCommandContext& InContext)
+                    {
+                        InContext->CopyBufferResource(readBackBuffer, assertBuffer);
+                        InContext->CopyBufferResource(readBackAllocationBuffer, allocationBuffer);
+                    }
+                );
+            }
+        );
+
+        engine.Flush();
+    }
 
     return ReadbackResults(readBackAllocationBuffer, readBackBuffer, uint3(dimX, dimY, dimZ));
 }
@@ -180,6 +197,32 @@ CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName
         job.AdditionalFlags.emplace_back(L"-Zss");
         job.AdditionalFlags.emplace_back(L"-Zi");
         job.Flags = Enum::MakeFlags(EShaderCompileFlags::SkipOptimization, EShaderCompileFlags::O0);
+    }
+
+    const bool isO3 = 
+        [&job]()
+        {
+            const bool flagsHaveO3 = !Enum::EnumHasMask(job.Flags, Enum::MakeFlags(EShaderCompileFlags::O0, EShaderCompileFlags::SkipOptimization));
+            const bool additionalFlagsHaveO3 = std::ranges::none_of(job.AdditionalFlags,
+                [](const std::wstring& InFlag)
+                {
+                    return
+                        InFlag.contains(L"-O0") ||
+                        InFlag.contains(L"-O1") ||
+                        InFlag.contains(L"-O2") ||
+                        InFlag.contains(L"-Od");
+                });
+
+            return flagsHaveO3 && additionalFlagsHaveO3;
+        }();
+
+    if (isO3)
+    {
+        job.Defines.emplace_back(ShaderMacro("TTL_ENABLE_STRINGS", "1"));
+    }
+    else
+    {
+        job.Defines.emplace_back(ShaderMacro("TTL_ENABLE_STRINGS", "0"));
     }
 
     return m_Compiler->CompileShader(job);
@@ -279,17 +322,14 @@ STF::Results ShaderTestFixture::ReadbackResults(const GPUResource& InAllocationB
     const auto mappedAllocationData = InAllocationBuffer.Map();
     const auto allocationData = mappedAllocationData.Get();
 
-    u32 success = 0;
-    u32 fails = 0;
+    STF::AllocationBufferData data;
 
-    std::memcpy(&success, allocationData.data(), sizeof(u32));
-    std::memcpy(&fails, allocationData.data() + sizeof(u32), sizeof(u32));
-
+    std::memcpy(&data, allocationData.data(), sizeof(STF::AllocationBufferData));
 
     const auto mappedAssertData = InAssertBuffer.Map();
     const auto assertData = mappedAssertData.Get();
 
-    return STF::ProcessAssertBuffer(success, fails, InDispatchDimensions, m_AssertInfo, assertData, m_ByteReaderMap);
+    return STF::ProcessTestDataBuffer(data, InDispatchDimensions, m_TestDataLayout, assertData, m_ByteReaderMap);
 }
 
 namespace ShaderTestFixturePrivate
@@ -319,12 +359,77 @@ namespace ShaderTestFixturePrivate
     };
 }
 
+namespace
+{
+    static const int NumSections = 32;
+
+    enum class ESectionRunState
+    {
+        NeverEntered,
+        NeedsRun,
+        Running,
+        RunningEnteredSubsection,
+        RunningNeedsRerun,
+        Completed
+    };
+
+    struct ScenarioSectionInfo
+    {
+        int ParentID;
+        ESectionRunState RunState;
+    };
+
+    enum class EThreadIDType
+    {
+        None,
+        Int,
+        Int3
+    };
+
+    struct ThreadIDInfo
+    {
+        u32 Data;
+        EThreadIDType Type;
+    };
+
+    struct PerThreadScratchData
+    {
+        i32 CurrentSectionID;
+        i32 NextSectionID;
+        i32 NextStringID;
+        ThreadIDInfo ThreadID;
+        ScenarioSectionInfo Sections[NumSections];
+    };
+}
+
 void ShaderTestFixture::PopulateDefaultByteReaders()
 {
     RegisterByteReader("TYPE_ID_UNDEFINED", 
         [](const u16, const std::span<const std::byte> InBytes)
         {
             return std::format("Undefined Type -> {}", STF::DefaultByteReader(0, InBytes));
+        });
+
+    RegisterByteReader("READER_ID_PER_THREAD_SCRATCH",
+        [](const std::span<const std::byte> InBytes)
+        {
+            PerThreadScratchData data;
+            std::memcpy(&data, InBytes.data(), sizeof(PerThreadScratchData));
+
+            std::stringstream buff;
+            buff << "\nCurrentSectionID: " << data.CurrentSectionID << "\n";
+            buff << "NextSectionID: " << data.NextSectionID << "\n";
+            buff << "NextStringID: " << data.NextStringID << "\n";
+            buff << "Sections:\n--------------------------------------\n";
+            for (i32 i = 0; i < NumSections; ++i)
+            {
+                buff << "Section " << i << "\n";
+                buff << "ParentID: " << data.Sections[i].ParentID << "\n";
+                const auto runState = Enum::UnscopedName(data.Sections[i].RunState);
+                buff << "RunState: " << runState << "\n-------------------------\n";
+            }
+
+            return buff.str();
         });
 
     RegisterByteReader("READER_ID_FUNDAMENTAL",
@@ -427,12 +532,3 @@ bool ShaderTestFixture::ShouldTakeCapture() const
     return m_PIXAvailable && m_CaptureRequested;
 }
 
-u64 ShaderTestFixture::CalculateAssertBufferSize() const
-{    
-    const u64 assertInfoSection = AlignedOffset(m_AssertInfo.NumFailedAsserts * sizeof(STF::HLSLAssertMetaData), 8ull);
-    const u64 assertDataSection = m_AssertInfo.NumBytesAssertData > 0 ? AlignedOffset(m_AssertInfo.NumBytesAssertData, 8ull) : 0;
-
-    const u64 requestedSize = assertInfoSection + assertDataSection;
-
-    return requestedSize > 0 ? requestedSize : 4ull;
-}
