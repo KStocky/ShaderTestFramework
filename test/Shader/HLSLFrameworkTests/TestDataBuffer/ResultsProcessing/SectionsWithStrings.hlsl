@@ -111,3 +111,31 @@ void GIVEN_NestedSections_WHEN_AssertsInEachSection_THEN_HasExpectedResults()
         }
     }
 }
+
+[RootSignature(SHADER_TEST_RS)]
+[numthreads(32, 1, 1)]
+void GIVEN_NestedSectionsWithMultipleThreads_WHEN_AssertsInEachSection_THEN_HasExpectedResults(uint3 InThreadId : SV_DispatchThreadID)
+{
+    SCENARIO("TestScenario")
+    {
+        SECTION("TestSection1")
+        {
+            ASSERT(NotEqual, InThreadId.x, 16u);
+
+            SECTION("TestSection2")
+            {
+                ASSERT(NotEqual, InThreadId.x, 16u);
+            }
+
+            SECTION("TestSection3")
+            {
+                ASSERT(NotEqual, InThreadId.x, 16u);
+            }
+        }
+
+        SECTION("TestSection4")
+        {
+            ASSERT(NotEqual, InThreadId.x, 16u);
+        }
+    }
+}

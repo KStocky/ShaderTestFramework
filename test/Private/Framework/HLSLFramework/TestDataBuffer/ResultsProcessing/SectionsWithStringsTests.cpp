@@ -23,7 +23,7 @@ SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - SectionsWithS
                     std::vector<std::string>{},
                     std::vector<STF::SectionInfoMetaData>{},
                     std::vector<i32>{-1}
-
+                
                 },
                 std::tuple
                 {
@@ -174,6 +174,45 @@ SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - SectionsWithS
                         }
                     },
                     std::vector<i32>{1,2,1,3,4}
+                },
+                std::tuple
+                {
+                    "GIVEN_NestedSectionsWithMultipleThreads_WHEN_AssertsInEachSection_THEN_HasExpectedResults",
+                    std::vector<std::string>{"TestScenario", "TestSection1", "TestSection2", "TestSection3", "TestSection4"},
+                    std::vector
+                    {
+                        STF::SectionInfoMetaData
+                        {
+                            .SectionId = 0,
+                            .StringId = 0,
+                            .ParentId = -1
+                        },
+                        STF::SectionInfoMetaData
+                        {
+                            .SectionId = 1,
+                            .StringId = 1,
+                            .ParentId = 0
+                        },
+                        STF::SectionInfoMetaData
+                        {
+                            .SectionId = 2,
+                            .StringId = 2,
+                            .ParentId = 1
+                        },
+                        STF::SectionInfoMetaData
+                        {
+                            .SectionId = 3,
+                            .StringId = 3,
+                            .ParentId = 1
+                        },
+                        STF::SectionInfoMetaData
+                        {
+                            .SectionId = 4,
+                            .StringId = 4,
+                            .ParentId = 0
+                        }
+                    },
+                    std::vector<i32>{1,2,1,3,4}
                 }
             }
         )
@@ -196,6 +235,8 @@ SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - SectionsWithS
         REQUIRE(actual);
         
         REQUIRE(actual->FailedAsserts.size() == expectedFailingSectionIds.size());
+        REQUIRE(actual->Sections.size() == expectedSections.size());
+        REQUIRE(actual->Strings.size() == expectedStrings.size());
         REQUIRE(actual->Sections == expectedSections);
         REQUIRE(actual->Strings == expectedStrings);
 

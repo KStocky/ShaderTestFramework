@@ -147,13 +147,6 @@ namespace ShaderTestPrivate
         }
     }
 
-    uint AllocateString()
-    {
-        uint stringIndex;
-        GetAllocationBuffer().InterlockedAdd(NumStringsIndex, 1, stringIndex);
-        return stringIndex;
-    }
-
     uint2 AddStringData(ttl::string In)
     {
         const uint size = ttl::aligned_offset(In.Size, 4u);
@@ -180,9 +173,22 @@ namespace ShaderTestPrivate
         buffer.Store2(metaAddress, InAddressAndSize);
     }
 
-    uint AddString(ttl::string In)
+    bool ShouldWriteGlobalData(const uint InAllocationAddress, const int InId)
     {
-        const uint stringIndex = AllocateString();
+        uint oldIndex;
+        GetAllocationBuffer().InterlockedCompareExchange(InAllocationAddress, InId, InId + 1, oldIndex);
+
+        return oldIndex == InId;
+    }
+
+    void AddGlobalString(const uint InId, ttl::string In)
+    {
+        const uint stringIndex = InId;
+        if (!ShouldWriteGlobalData(NumStringsIndex, InId))
+        {
+            return;
+        }
+
         if (stringIndex < Strings.Num())
         {
             uint2 addressAndSize = uint2(0, 0);
@@ -193,20 +199,15 @@ namespace ShaderTestPrivate
 
             AddStringMetaInfo(stringIndex, addressAndSize);
         }
-
-        return stringIndex;
     }
 
-    uint AllocateSection()
+    void AddGlobalSection(SectionInfoMetaData InSectionInfo)
     {
-        uint sectionIndex;
-        GetAllocationBuffer().InterlockedAdd(NumSectionsIndex, 1, sectionIndex);
-        return sectionIndex;
-    }
-
-    void AddSection(SectionInfoMetaData InSectionInfo)
-    {
-        const uint sectionIndex = AllocateSection();
+        const uint sectionIndex = InSectionInfo.SectionId;
+        if (!ShouldWriteGlobalData(NumSectionsIndex, InSectionInfo.SectionId))
+        {
+            return;
+        }
 
         if (sectionIndex < Sections.Num())
         {
@@ -214,28 +215,6 @@ namespace ShaderTestPrivate
             GetTestDataBuffer().Store(bufferAddress, InSectionInfo);
         }
     }
-
-    //enum class EFirstThreadStatus
-    //{
-    //    Unknown,
-    //    FirstThread,
-    //    NotFirstThread
-    //};
-//
-    //bool IsFirstThread()
-    //{
-    //    static EFirstThreadStatus FirstThreadStatus;
-    //    
-    //    switch(FirstThreadStatus)
-    //    {
-    //        case EFirstThreadStatus::Unknown:
-    //        {
-    //            GetAllocationBuffer().InterlockedAdd()
-    //        }
-    //    }
-//
-    //    return FirstThreadStatus;
-    //}
 
     struct OnFirstEntryOfSectionFunctor
     {
@@ -246,7 +225,7 @@ namespace ShaderTestPrivate
             metaData.SectionId = InSectionId;
             metaData.ParentId = InParentId;
             metaData.StringId = StringId;
-            AddSection(metaData);
+            AddGlobalSection(metaData);
         }
     };
 }
@@ -372,7 +351,8 @@ STF_DECLARE_TEST_FUNC(InID)
 
 #define STF_SCENARIO_IMPL(InName, InScenarioId)                                                                                   \
 DEFINE_STRING_CREATOR(STF_JOIN(scenarioNameCreator, InScenarioId), InName);                                                         \
-static uint STF_JOIN(scenarioNameId, InScenarioId) = ShaderTestPrivate::AddString(STF_JOIN(scenarioNameCreator, InScenarioId)());    \
+static uint STF_JOIN(scenarioNameId, InScenarioId) = ShaderTestPrivate::Scratch.NextStringID++; \
+ShaderTestPrivate::AddGlobalString(STF_JOIN(scenarioNameId, InScenarioId), STF_JOIN(scenarioNameCreator, InScenarioId)());    \
 ShaderTestPrivate::OnFirstEntryOfSectionFunctor STF_JOIN(onFirstEntry, InScenarioId);                                                                       \
 STF_JOIN(onFirstEntry, InScenarioId).StringId = STF_JOIN(scenarioNameId, InScenarioId);                                                                     \
 ShaderTestPrivate::Scratch.Init();                                                                                                  \
@@ -382,7 +362,8 @@ while(ShaderTestPrivate::Scratch.TryLoopScenario(STF_JOIN(onFirstEntry, InScenar
 
 #define STF_SECTION_IMPL(InName, InID) STF_CREATE_SECTION_VAR_IMPL(InID);                                       \
 DEFINE_STRING_CREATOR(STF_JOIN(sectionNameCreator, InID), InName);                                              \
-static uint STF_JOIN(sectionNameId, InID) = ShaderTestPrivate::AddString(STF_JOIN(sectionNameCreator, InID)()); \
+static uint STF_JOIN(sectionNameId, InID) = ShaderTestPrivate::Scratch.NextStringID++; \
+ShaderTestPrivate::AddGlobalString(STF_JOIN(sectionNameId, InID), STF_JOIN(sectionNameCreator, InID)()); \
 ShaderTestPrivate::OnFirstEntryOfSectionFunctor STF_JOIN(onFirstEntry, InID);                                   \
 STF_JOIN(onFirstEntry, InID).StringId = STF_JOIN(sectionNameId, InID);                                          \
 while (ShaderTestPrivate::Scratch.TryEnterSection(STF_JOIN(onFirstEntry, InID), STF_GET_SECTION_VAR_NAME(InID)))

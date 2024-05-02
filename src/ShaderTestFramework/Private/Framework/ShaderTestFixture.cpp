@@ -396,6 +396,7 @@ namespace
     {
         i32 CurrentSectionID;
         i32 NextSectionID;
+        i32 NextStringID;
         ThreadIDInfo ThreadID;
         ScenarioSectionInfo Sections[NumSections];
     };
@@ -418,6 +419,7 @@ void ShaderTestFixture::PopulateDefaultByteReaders()
             std::stringstream buff;
             buff << "\nCurrentSectionID: " << data.CurrentSectionID << "\n";
             buff << "NextSectionID: " << data.NextSectionID << "\n";
+            buff << "NextStringID: " << data.NextStringID << "\n";
             buff << "Sections:\n--------------------------------------\n";
             for (i32 i = 0; i < NumSections; ++i)
             {

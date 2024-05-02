@@ -42,6 +42,7 @@ namespace ShaderTestPrivate
     {
         int CurrentSectionID;
         int NextSectionID;
+        int NextStringID;
         ThreadIDInfo ThreadID;
         ScenarioSectionInfo Sections[NumSections];
 
