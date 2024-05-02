@@ -13,6 +13,10 @@
 
 Just like [Catch2](https://github.com/catchorg/Catch2), STF is able to use scenarios and sections to define tests. Using Scenarios and Sections allows test writers to reuse test setup code in a simple to understand manner. Throughout this topic, we will be referring to ([Ex3_ScenariosAndSections](../examples/Ex2_ScenariosAndSections)).
 
+NOTE: All threads in a dispatch MUST have the same control flow through a SCENARIO. This is because there isn't support for logging section information on a per thread basis. STF assumes all threads will follow the set control flow through the test. 
+
+e.g. It is not supported for half of your threads to go into one section while the other half of your threads skip that section and go into a different section.
+
 ## Writing Optional\<T> in HLSL
 
 Before we can compare different methods of writing tests, we must first have some code to test. For the sake of this example we will be testing the following struct
