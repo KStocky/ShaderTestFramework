@@ -193,33 +193,33 @@ As we saw in [Testing Optional\<T> without Scenarios And Sections](#testing-opti
 [numthreads(1, 1, 1)]
 void OptionalTestsWithScenariosAndSections()
 {
-    SCENARIO(/*GIVEN An Optional that is reset*/)
+    SCENARIO("GIVEN An Optional that is reset")
     {
         Optional<int> opt;
         opt.Reset();
 
-        SECTION(/*THEN IsValid returns false*/)
+        SECTION("THEN IsValid returns false")
         {
             STF::IsFalse(opt.IsValid);
         }
 
-        SECTION(/*THEN GetOrDefault returns default value*/)
+        SECTION("THEN GetOrDefault returns default value")
         {
             const int expectedValue = 42;
             STF::AreEqual(expectedValue, opt.GetOrDefault(expectedValue));
         }
 
-        SECTION(/*WHEN value is set*/)
+        SECTION("WHEN value is set")
         {
             const int expectedValue = 42;
             opt.Set(expectedValue);
 
-            SECTION(/*THEN IsValid returns true*/)
+            SECTION("THEN IsValid returns true")
             {
                 STF::IsTrue(opt.IsValid);
             }
 
-            SECTION(/*THEN GetOrDefault returns set value*/)
+            SECTION("THEN GetOrDefault returns set value")
             {
                 const int defaultValue = 24;
                 STF::AreEqual( expectedValue, opt.GetOrDefault(defaultValue));
@@ -233,7 +233,7 @@ void OptionalTestsWithScenariosAndSections()
 
 If you have not seen testing frameworks that structure their tests like this, the above code may look odd. So let's talk about it by following the execution of the test.
 
-First, execution enters the `SCENARIO` block. The first thing to notice here is that inside the parenthesis, we have a comment which describes this block. Due to the lack of string support in HLSL, there is no convenient way to mark each block with a textual name. Providing this text as a comment in the place of a string can be useful. But it is up to the test writer.
+First, execution enters the `SCENARIO` block. The first thing to notice here is that inside the parenthesis, we have a comment which describes this block.
 
 Next we set up our `Optional` and call reset on it. Then we enter the first `SECTION` block. This will then assert that the 'Optional' is invalid. At this point we have executed the first test that we created in the previous section. 
 
@@ -269,12 +269,12 @@ Code that we run on the GPU is naturally going to be multi-threaded. Most exampl
 [numthreads(32, 1, 1)]
 void OptionalTestsWithScenariosAndSectionsAndThreadIds(uint3 DTid : SV_DispatchThreadID)
 {
-    SCENARIO(/*GIVEN An Optional that is reset*/)
+    SCENARIO("GIVEN An Optional that is reset")
     {
         Optional<int> opt;
         opt.Reset();
 
-        SECTION(/*THEN IsValid returns false*/)
+        SECTION("THEN IsValid returns false")
         {
             if (DTid.x == 16)
             {
@@ -286,23 +286,23 @@ void OptionalTestsWithScenariosAndSectionsAndThreadIds(uint3 DTid : SV_DispatchT
             }
         }
 
-        SECTION(/*THEN GetOrDefault returns default value*/)
+        SECTION("THEN GetOrDefault returns default value")
         {
             const int expectedValue = 42;
             STF::AreEqual(expectedValue, opt.GetOrDefault(expectedValue));
         }
 
-        SECTION(/*WHEN value is set*/)
+        SECTION("WHEN value is set")
         {
             const int expectedValue = 42;
             opt.Set(expectedValue);
 
-            SECTION(/*THEN IsValid returns true*/)
+            SECTION("THEN IsValid returns true")
             {
                 STF::IsTrue(opt.IsValid);
             }
 
-            SECTION(/*THEN GetOrDefault returns set value*/)
+            SECTION("THEN GetOrDefault returns set value")
             {
                 const int defaultValue = 24;
                 STF::AreEqual( expectedValue, opt.GetOrDefault(defaultValue));
@@ -320,34 +320,39 @@ FAILED:
 with expansion:
   There were 127 successful asserts and 1 failed assertions
   Assert 0:
-  Data 1: false
+  SCENARIO: GIVEN An Optional that is reset
+        SECTION: THEN IsValid returns false
+                Data 1: false
 
 ===============================================================================
 test cases: 3 | 2 passed | 1 failed
 assertions: 3 | 2 passed | 1 failed
 ```
 
-This error states that there were 127 successful asserts and 1 failed one. Trying to track down this in a real test could be a nightmare. Obviously in this case it is very easy to see which thread produced the assert. It is very clearly the thread with threadid (16,0,0). But let's assume that we don't know that for the sake of this example. Shader Test Framework makes tracking down issues like this where an assert only fails on one thread out of many quite easy. The `SCENARIO` macro accepts an argument which is interpretted by the framework as a thread id. This means that we can change our `SCENARIO` declaration to the following:
+This error states that there were 127 successful asserts and 1 failed one. Trying to track down this in a real test could be a nightmare. Obviously in this case it is very easy to see which thread produced the assert. It is very clearly the thread with threadid (16,0,0). But let's assume that we don't know that for the sake of this example. Shader Test Framework makes tracking down issues like this where an assert only fails on one thread out of many quite easy. STF provides a function that can be called at the start of a test called `STF::RegisterThreadID`. Passing the thread id to this function will provide the framework with ability to tag each failed assert with its associated thread id. So we can change the start of our test to the following:
 
 ```c++
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(32, 1, 1)]
 void OptionalTestsWithScenariosAndSectionsAndThreadIds(uint3 DTid : SV_DispatchThreadID)
 {
-    SCENARIO(DTid/*GIVEN An Optional that is reset*/)
+    STF::RegisterThreadID(DTid);
+    SCENARIO("GIVEN An Optional that is reset")
     {
         // Everything else is the same
     }
 }
 ```
-So simply just passing the dispatch thread id to the `SCENARIO` macro. This will change our assert error message to the following
+This will change our assert error message to the following
 ```
 FAILED:
   REQUIRE( fixture.RunTest("OptionalTestsWithScenariosAndSectionsAndThreadIds", 1, 1, 1) )
 with expansion:
   There were 127 successful asserts and 1 failed assertions
   Assert 0:  ThreadId: (16, 0, 0)
-  Data 1: false
+  SCENARIO: GIVEN An Optional that is reset
+        SECTION: THEN IsValid returns false
+                Data 1: false
 ```
 
 As you can see, the thread id is now given. This can be an exceptionally effective way of tracking down edge cases in certain test failures, and also in tests that are written as stress tests of a system.

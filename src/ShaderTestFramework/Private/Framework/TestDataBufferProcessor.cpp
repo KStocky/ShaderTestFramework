@@ -111,7 +111,10 @@ namespace STF
 
         for (const auto& [index, error] : std::views::enumerate(In.FailedAsserts))
         {
-            InOs << std::format("Assert {}\n", index);
+            const std::string lineInfo = error.Info.LineNumber == u32(-1) ? std::string{ "" } : std::format("Line: {}", error.Info.LineNumber);
+            const std::string threadInfo = error.Info.ThreadIdType == 0 ? std::string{ "" } : STF::ThreadInfoToString(static_cast<STF::EThreadIdType>(error.Info.ThreadIdType), error.Info.ThreadId, In.DispatchDimensions);
+
+            InOs << std::format("Assert {}: {} {}\n", index, lineInfo, threadInfo);
             u32 indentLevel = 0;
             bool validTree = true;
             auto tabbedWriter =
@@ -157,10 +160,6 @@ namespace STF
 
                 sectionPrinter(error.Info.SectionId);
             }
-
-            const std::string lineInfo = error.Info.LineNumber == u32(-1) ? std::string{ "" } : std::format("Line: {}", error.Info.LineNumber);
-            const std::string threadInfo = error.Info.ThreadIdType == 0 ? std::string{ "" } : STF::ThreadInfoToString(static_cast<STF::EThreadIdType>(error.Info.ThreadIdType), error.Info.ThreadId, In.DispatchDimensions);
-            tabbedWriter(std::format("{} {}\n", lineInfo, threadInfo));
 
             if (error.Data.size() == 0 || !error.ByteReader)
             {
