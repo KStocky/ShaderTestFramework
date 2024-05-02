@@ -1116,8 +1116,8 @@ SCENARIO("TestDataBufferProcessorTests - TestRunResults - Stream Operator")
                             }
                         },
                         std::vector<std::string>{},
-                        std::vector<std::string>{"Assert 0", "Line: 42", "SCENARIO", "UNKNOWN", "\t"},
-                        std::vector<std::string>{"INVALID SECTION ID", "SECTION", "DATA", "\t\t"}
+                        std::vector<std::string>{"Assert 0", "Line: 42", "SCENARIO", "UNKNOWN"},
+                        std::vector<std::string>{"INVALID SECTION ID", "SECTION", "DATA", "\t\t", "\t"}
                     },
                     std::tuple
                     {
@@ -1199,8 +1199,8 @@ SCENARIO("TestDataBufferProcessorTests - TestRunResults - Stream Operator")
                             }
                         },
                         std::vector<std::string>{},
-                        std::vector<std::string>{"Assert 0", "Line: 42", "SCENARIO", "UNKNOWN", "SECTION", "\t", "\t\t"},
-                        std::vector<std::string>{"INVALID SECTION ID", "DATA", "\t\t\t"}
+                        std::vector<std::string>{"Assert 0", "Line: 42", "SCENARIO", "UNKNOWN", "SECTION", "\t"},
+                        std::vector<std::string>{"INVALID SECTION ID", "DATA", "\t\t\t", "\t\t"}
                     },
                     std::tuple
                     {
