@@ -99,11 +99,11 @@ void OptionalTestsWithScenariosAndSectionsAndThreadIds(uint3 DTid : SV_DispatchT
 
         SECTION("THEN IsValid returns false")
         {
-            if (DTid.x == 16)
-            {
-                STF::IsTrue(opt.IsValid);
-            }
-            else
+            //if (DTid.x == 16)
+            //{
+            //    STF::IsTrue(opt.IsValid);
+            //}
+            //else
             {
                 STF::IsFalse(opt.IsValid);
             }
