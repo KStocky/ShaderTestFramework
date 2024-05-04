@@ -6,7 +6,8 @@
 3. [Testing Optional\<T> without Scenarios And Sections](#testing-optional-without-scenarios-and-sections)
 4. [Testing Optional\<T> with Scenarios And Sections](#testing-optionalt-with-scenarios-and-sections)<br>
     a. [Following the Execution Line by Line](#following-the-execution-line-by-line)<br>
-    b. [An Explanation](#an-explanation)
+    b. [An Explanation](#an-explanation)<br>
+    c. [A note on Strings](#a-note-on-strings)<br>
 5. [Tracking down failures on a Particular Thread](#tracking-down-failures-on-a-particular-thread)
 
 ## An Introduction to Scenarios and Sections
@@ -237,9 +238,9 @@ void OptionalTestsWithScenariosAndSections()
 
 If you have not seen testing frameworks that structure their tests like this, the above code may look odd. So let's talk about it by following the execution of the test.
 
-First, execution enters the `SCENARIO` block. The first thing to notice here is that inside the parenthesis, we have a comment which describes this block.
+First, execution enters the `SCENARIO` block. The first thing to notice here is that we have a string that describes the "scenario". This in itself is odd because HLSL does not technically support strings.
 
-Next we set up our `Optional` and call reset on it. Then we enter the first `SECTION` block. This will then assert that the 'Optional' is invalid. At this point we have executed the first test that we created in the previous section. 
+Next we set up our `Optional` and call reset on it. Then we enter the first `SECTION` block. Sections also take a string to describe what is going on in it, just like `SCENARIO`s This will then assert that the 'Optional' is invalid. At this point we have executed the first test that we created in the previous section. 
 
 Execution now leaves the first `SECTION` block and will skip every subsequent `SECTION`. It will then loop back to the start of the `SCENARIO` and check if every `SECTION` has been executed. Only one `SECTION` has been executed, so execution re-enters the `SCENARIO` from the top. This means that a new `Optional` is created and subsequently reset.
 
@@ -263,6 +264,16 @@ This results in a series of tests where common setup is shared and tests can be 
 It also ensures that all code is kept together and is structured in a way, that is easy to reason about. This was the problem that became apparent towards the end of the last section when we were trying to structure our tests without Scenarios and Sections.
 
 As previously mentioned, this mechanism is taken from [Catch2](https://github.com/catchorg/Catch2/) and more information on the subject can be read on [Catch2's tutorial](https://github.com/catchorg/Catch2/blob/devel/docs/tutorial.md#test-cases-and-sections).
+
+### A note on Strings
+
+As noted in [Following the Execution Line by Line](#following-the-execution-line-by-line), `SCENARIO` and `SECTION` take a string as a parameter. This is used in error reporting to better describe where a failed assert comes from. It also gives a nice fluent way of describing test cases. There are a couple of things to note about strings in HLSL:
+
+1. Strings are not actually supported by HLSL. They only work due to exploiting DXC. You can read more about how this works in [Shader Printf in HLSL and DX12](https://therealmjp.github.io/posts/hlsl-printf/) by MJP. The implementation used in STF is pretty much taken wholesale from there. And it is a fantastic article on the topic. Definitely worth a read.
+
+2. There is a hard limit of 64 characters per string imposed by STF. This was due to finding that if a string was 65 characters or longer, then whether it compiled or not was dependent on the contents of the string. During testing I have found no issues with any string that had 64 characters or fewer. [Link](https://discord.com/channels/590611987420020747/1209044520285507634) to a discord thread talking about this particular issue.
+
+3. Strings are compiled out in debug builds. The compiler will not let any string through in a debug build unfortunately. This is done by defining `TTL_ENABLE_STRINGS` to be `0` when a test is run with optimizations disabled. So if using edit and continue in PIX, you will have to set this define to `0` when disabling optimizations.
 
 ## Tracking down failures on a Particular Thread
 

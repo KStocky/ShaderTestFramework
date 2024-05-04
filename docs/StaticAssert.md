@@ -1,6 +1,6 @@
 # Static Assert
 
-Shader Test Framework provides a static assert facility that attempts to emulate [static_assert](https://en.cppreference.com/w/cpp/language/static_assert) from C++. This can be useful for writing tests for code that is known at compile time e.g. template meta programming.
+Shader Test Framework provides a static assert facility that works like [static_assert](https://en.cppreference.com/w/cpp/language/static_assert) from C++. This can be useful for writing tests for code that is known at compile time e.g. template meta programming.
 
 **Contents**
 1. [Header](#header)
@@ -8,7 +8,8 @@ Shader Test Framework provides a static assert facility that attempts to emulate
 3. [Notes](#notes)<br>
     a. [1. Where `STATIC_ASSERT` can be used](#1-where-static_assert-can-be-used)<br>
     b. [2. Conditions with commas](#2-conditions-with-commas)<br>
-    c. [3. ttl::always_false<T>](#3-ttlalways_false)
+    c. [3. ttl::always_false<T>](#3-ttlalways_false)<br>
+    d. [4. `STATIC_ASSERT` wraps `_Static_assert`](#4-static_assert-wraps-_static_assert)
 4. [Examples](#examples)<br>
 
 ## Header
@@ -33,9 +34,13 @@ Shader Test Framework provides a static assert facility that attempts to emulate
 
 Since `STATIC_ASSERT` is implemented as a macro, every comma is interpretted as a macro argument delimiter. A common occurance of having a comma in your condition is if the condtion is using a type trait like `ttl::is_same<T, U>`. To avoid compilation errors due to this surround the condition with parentheses.
 
-### 3. ttl::always_false<T>
+### 3. `ttl::always_false<T>`
 
 Just like with [static_assert](https://en.cppreference.com/w/cpp/language/static_assert), `STATIC_ASSERT(false)` within a template will always fail to compile regardless of if the template has been instantiated or not. This issue is discussed in [Allowing static_assert(false)](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2593r0.html). To get around this issue, `ttl::always_false<T>` can be used to ensure that if a templated is instantiated that compilation will fail.
+
+### 4. `STATIC_ASSERT` wraps `_Static_assert`
+
+DXC provides `_Static_assert` as an intrinsic. By all means use this intrinsic directly, instead of `STATIC_ASSERT`. According to one of the devs ([Link](https://discord.com/channels/590611987420020747/996417435374714920/1235339227344932996)), it ain't going anywhere. The one nice thing that `STATIC_ASSERT` provides that `_Static_assert` does not, is the ability to not provide an error message as an argument.
 
 ## Examples
 
