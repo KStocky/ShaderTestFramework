@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdfloat>
 #include "float16/float16_t.hpp"
 
 #include <sstream>
