@@ -23,3 +23,5 @@
 #define TTL_NUM_ARGS_IMPL(...) TTL_NUM_ARGS_N(__VA_ARGS__)    
 
 #define TTL_NUM_ARGS(...) TTL_NUM_ARGS_IMPL(Ignored, ##__VA_ARGS__, TTL_NUM_ARGS_RSEQ_N())
+
+#define TTL_JOIN_MACRO(InStem, InSuffix, ...) TTL_JOIN(InStem, InSuffix)(__VA_ARGS__)

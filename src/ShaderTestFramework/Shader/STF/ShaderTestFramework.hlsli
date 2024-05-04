@@ -350,5 +350,4 @@ while (ShaderTestPrivate::Scratch.TryEnterSection(TTL_JOIN(onFirstEntry, InID), 
 #define STF_ASSERT_IF_0(InName, InId) STF::InName(InId)
 #define STF_ASSERT_IF_1(InName, InId, InArg) STF::InName(InArg, InId)
 #define STF_ASSERT_IF_2(InName, InId, InArg1, InArg2) STF::InName(InArg1, InArg2, InId)
-#define STF_ASSERT_IMPL(InStem, InNumArgs, InName, InId, ...) TTL_JOIN(InStem, InNumArgs)(InName, InId, ##__VA_ARGS__)
-#define ASSERT(InName, ...) STF_ASSERT_IMPL(STF_ASSERT_IF_, TTL_NUM_ARGS(__VA_ARGS__), InName, __LINE__, ##__VA_ARGS__)
+#define ASSERT(InName, ...) TTL_JOIN_MACRO(STF_ASSERT_IF_, TTL_NUM_ARGS(__VA_ARGS__), InName, __LINE__, ##__VA_ARGS__)
