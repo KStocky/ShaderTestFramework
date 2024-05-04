@@ -100,6 +100,7 @@ set(SHADER_SOURCES
     Shader/TTL/byte_writer.hlsli
     Shader/TTL/caster.hlsli
     Shader/TTL/container_wrapper.hlsli
+    Shader/TTL/macro.hlsli
     Shader/TTL/memory.hlsli
     Shader/TTL/static_assert.hlsli
     Shader/TTL/string.hlsli
