@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TTL_MACRO_HEADER
+#define TTL_MACRO_HEADER
 
 #define TTL_JOIN(a, b) a##b
 
@@ -25,3 +26,5 @@
 #define TTL_NUM_ARGS(...) TTL_NUM_ARGS_IMPL(Ignored, ##__VA_ARGS__, TTL_NUM_ARGS_RSEQ_N())
 
 #define TTL_JOIN_MACRO(InStem, InSuffix, ...) TTL_JOIN(InStem, InSuffix)(__VA_ARGS__)
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STF_ROOT_SIGNATURE_HEADER
+#define STF_ROOT_SIGNATURE_HEADER
 
 #define SHADER_TEST_RS \
 "RootFlags(" \
@@ -15,3 +16,5 @@
     "num32BitConstants=20," \
     "b0" \
 ")"
+
+#endif

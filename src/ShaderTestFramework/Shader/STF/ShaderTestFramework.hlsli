@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STF_SHADER_TEST_FRAMEWORK_HEADER
+#define STF_SHADER_TEST_FRAMEWORK_HEADER
 
 #include "/Test/STF/ByteReaderTraits.hlsli"
 #include "/Test/STF/FrameworkResources.hlsli"
@@ -351,3 +352,5 @@ while (ShaderTestPrivate::Scratch.TryEnterSection(TTL_JOIN(onFirstEntry, InID), 
 #define STF_ASSERT_IF_1(InName, InId, InArg) STF::InName(InArg, InId)
 #define STF_ASSERT_IF_2(InName, InId, InArg1, InArg2) STF::InName(InArg1, InArg2, InId)
 #define ASSERT(InName, ...) TTL_JOIN_MACRO(STF_ASSERT_IF_, TTL_NUM_ARGS(__VA_ARGS__), InName, __LINE__, ##__VA_ARGS__)
+
+#endif

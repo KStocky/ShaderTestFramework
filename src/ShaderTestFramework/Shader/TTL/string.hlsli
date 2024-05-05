@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TTL_STRING_HEADER
+#define TTL_STRING_HEADER
 
 #include "/Test/TTL/byte_writer.hlsli"
 #include "/Test/TTL/memory.hlsli"
@@ -206,3 +207,5 @@ return ret;                                         \
 
 
 #define DEFINE_STRING_CREATOR(InName, InStr) DEFINE_STRING_CREATOR_IMPL(InName, InStr)
+
+#endif

@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef TTL_TYPE_TRAITS_HEADER
+#define TTL_TYPE_TRAITS_HEADER
 
 namespace ttl
 {
@@ -203,3 +205,5 @@ namespace ttl
     struct align_of<T, typename enable_if<fundamental_type_traits<T>::is_fundamental>::type> 
         : integral_constant<uint, size_of<typename fundamental_type_traits<T>::base_type>::value>{};
 }
+
+#endif

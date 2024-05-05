@@ -1,4 +1,7 @@
-#pragma once
+
+#ifndef TTL_CASTER_HEADER
+#define TTL_CASTER_HEADER
+
 #include "/Test/TTL/type_traits.hlsli"
 
 namespace ttl
@@ -21,3 +24,5 @@ namespace ttl
         return caster<To, From>::cast(In);
     }
 }
+
+#endif

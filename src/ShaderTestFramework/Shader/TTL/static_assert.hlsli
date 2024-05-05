@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TTL_STATIC_ASSERT_HEADER
+#define TTL_STATIC_ASSERT_HEADER
 
 #include "/Test/TTL/macro.hlsli"
 #include "/Test/TTL/type_traits.hlsli"
@@ -12,3 +13,5 @@ namespace ttl
     template<typename T>
     struct always_false : false_type{};
 }
+
+#endif

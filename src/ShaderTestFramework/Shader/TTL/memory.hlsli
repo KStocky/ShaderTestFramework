@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TTL_MEMORY_HEADER
+#define TTL_MEMORY_HEADER
 
 namespace ttl
 {
@@ -19,3 +20,5 @@ namespace ttl
         return (T)0;
     }
 }
+
+#endif
