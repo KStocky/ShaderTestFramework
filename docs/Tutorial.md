@@ -5,10 +5,11 @@
 1. [Requirements](#requirements)
 2. [Optional Requirements](#optional-requirements)
 3. [Getting ShaderTestFramework](#getting-shader-test-framework)
-4. [Writing tests](#writing-tests)
+4. [Writing tests](#writing-tests)<br>
  a. [A Minimal Example](#a-minimal-example)<br>
  b. [A Worked Example](#a-worked-example)<br>
- c. [What did we do here](#what-did-we-do-here)
+ c. [What did we do here](#what-did-we-do-here)<br>
+ d. [A note on Edit and Continue](#a-note-on-edit-and-continue)
 5. [Working with Shader Files using Virtual Shader Directories](#working-with-shader-files-using-virtual-shader-directories)
 6. [SCENARIOs and SECTIONs](#scenarios-and-sections)
 7. [Assertions](#assertions)
@@ -217,7 +218,7 @@ If we keep stepping into the code we will find that due to this we end up adding
 
 ![Assert Failed](images/PowTestAssertFailed.png)
 
-This is what we would expect. Now we know how to fix the problem. We can go back to our project and make the change
+This is what we would expect. Now we know how to fix the problem. From here we can use "Edit And Continue". Edit And Continue is a feature in PIX which allows you to make shader changes from withint a capture, recompile the shader, and then rerun the PIX capture as if the original capture had those shader changes. So within PIX we can make the following change to the `MyPow` function:
 
 ```c++
 int MyPow(int num, int power)
@@ -231,7 +232,15 @@ int MyPow(int num, int power)
 }
 ```
 
-Now we can rerun our tests and see them passing!
+When we make this change in PIX we should be able to apply the changes using `F6` or hitting the "apply" button like so:
+
+![Make Change in Pix](images/PowTestEditShader.png)
+
+Once we hit apply, and re-start stepping through the test, we can now see that execution takes us to the success part of the shader:
+
+![Pow Success](images/PowTestSuccess.png)
+
+Now we have confirmed that this is the fix to make, we can apply the change to our actual shader and watch our test go green!
 
 ### What did we do here?
 
@@ -240,7 +249,12 @@ This was a fairly simple exercise in the following:
 - Determining which assert failed using the test results output
 - Taking a PIX capture of the failing test.
 - Using shader debugging in PIX to step through the shader to figure out what went wrong
-- Fixing the bug
+- Fixed the bug in PIX
+- Used Edit And Continue to confirm that the fix worked
+
+### A note on Edit and Continue
+
+There is currently a bug in PIX Edit and Continue which means that PIX will fail to recompile shaders when `#pragma once` is used in shader header files. For this reason `STF` uses include guards. To ensure that Edit and Continue can be used in your projects, prefer include guards over `#pragma once`
 
 ## Working with Shader Files using Virtual Shader Directories
 
