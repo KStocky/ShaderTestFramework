@@ -1,4 +1,8 @@
-#pragma once
+// Use header guards for shader header files rather than #pragma once
+// #pragma once will work. However there is a bug with edit and continue in pix.
+// If you try to recompile a shader in pix and #pragma once is used in the shader, it will fail to compile
+#ifndef OPTIONAL_EXAMPLE_HEADER_GUARD
+#define OPTIONAL_EXAMPLE_HEADER_GUARD
 
 template<typename T>
 struct Optional
@@ -28,3 +32,5 @@ struct Optional
         return InDefault;
     }
 };
+
+#endif
