@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STF_BYTE_READER_TRAITS_HEADER
+#define STF_BYTE_READER_TRAITS_HEADER
 
 #include "/Test/TTL/type_traits.hlsli"
 
@@ -75,3 +76,5 @@ namespace STF
         static const uint16_t TypeId = PackedInfo::PackedNumRows | PackedInfo::PackedNumColumns | PackedInfo::PackedNumBitsVal | PackedInfo::PackedTypeVal;
     };
 }
+
+#endif

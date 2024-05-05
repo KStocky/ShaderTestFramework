@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TTL_BYTE_WRITER_HEADER
+#define TTL_BYTE_WRITER_HEADER
 
 #include "/Test/TTL/container_wrapper.hlsli"
 #include "/Test/TTL/type_traits.hlsli"
@@ -73,3 +74,5 @@ namespace ttl
         InContainer = buff.Data;
     }
 }
+
+#endif

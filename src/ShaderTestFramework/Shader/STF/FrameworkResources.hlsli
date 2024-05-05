@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STF_FRAME_RESOURCES_HEADER
+#define STF_FRAME_RESOURCES_HEADER
 
 #include "/Test/TTL/type_traits.hlsli"
 
@@ -99,3 +100,5 @@ namespace ShaderTestPrivate
         return ResourceDescriptorHeap[AllocationBufferIndex];
     }
 }
+
+#endif

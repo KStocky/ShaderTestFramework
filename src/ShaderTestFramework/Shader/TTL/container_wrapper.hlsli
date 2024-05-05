@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TTL_CONTAINER_WRAPPER_HEADER
+#define TTL_CONTAINER_WRAPPER_HEADER
 
 #include "/Test/TTL/type_traits.hlsli"
 
@@ -114,3 +115,5 @@ namespace ttl
         }
     };
 }
+
+#endif

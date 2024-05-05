@@ -1,4 +1,6 @@
-#pragma once
+#ifndef STF_SECTION_MANAGEMENT_HEADER
+#define STF_SECTION_MANAGEMENT_HEADER
+
 #include "/Test/STF/ByteReaderTraits.hlsli"
 #include "/Test/TTL/byte_writer.hlsli"
 #include "/Test/TTL/caster.hlsli"
@@ -245,3 +247,5 @@ namespace ttl
     template<>
     struct size_of<ShaderTestPrivate::PerThreadScratchData> : integral_constant<uint, (8 * 32) + 16>{};
 }
+
+#endif
