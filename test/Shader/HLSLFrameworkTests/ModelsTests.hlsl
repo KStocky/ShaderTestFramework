@@ -188,7 +188,63 @@ namespace ModelsRefinesTests
         void Bar();
     };
 
+    struct HasNeither{};
+
     STATIC_ASSERT((!ttl::models<HasFooAndBarConcept, HasFoo>::value));
     STATIC_ASSERT((!ttl::models<HasFooAndBarConcept, HasBar>::value));
     STATIC_ASSERT((ttl::models<HasFooAndBarConcept, HasBoth>::value));
+    STATIC_ASSERT((!ttl::models<HasFooAndBarConcept, HasNeither>::value));
+}
+
+namespace ModelsOrTests
+{
+    struct HasFooConcept
+    {
+        template<typename T>
+        __decltype(
+            ttl::declval<T>().Foo()
+        ) requires();
+    };
+
+    struct HasBarConcept
+    {
+        template<typename T>
+        __decltype(
+            ttl::declval<T>().Bar()
+        ) requires();
+    };
+
+    struct HasFooOrBarConcept
+    {
+        template<typename T>
+        __decltype(
+            ttl::models_or<
+                ttl::models<HasFooConcept, T>::value,
+                ttl::models<HasBarConcept, T>::value
+                >()
+        ) requires();
+    };
+
+    struct HasFoo
+    {
+        void Foo();
+    };
+
+    struct HasBar
+    {
+        void Bar();
+    };
+
+    struct HasBoth
+    {
+        void Foo();
+        void Bar();
+    };
+
+    struct HasNeither{};
+
+    STATIC_ASSERT((ttl::models<HasFooOrBarConcept, HasFoo>::value));
+    STATIC_ASSERT((ttl::models<HasFooOrBarConcept, HasBar>::value));
+    STATIC_ASSERT((ttl::models<HasFooOrBarConcept, HasBoth>::value));
+    STATIC_ASSERT((!ttl::models<HasFooOrBarConcept, HasNeither>::value));
 }

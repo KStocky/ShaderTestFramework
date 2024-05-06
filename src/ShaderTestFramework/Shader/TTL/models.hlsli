@@ -103,10 +103,10 @@ namespace ttl
         typename Arg0, typename Arg1 = ttl_detail::null_type, typename Arg2 = ttl_detail::null_type,
         typename Arg3 = ttl_detail::null_type, typename Arg4 = ttl_detail::null_type, typename Arg5 = ttl_detail::null_type
     >
-    __decltype
-    (
-        models_if<models<Concept, Arg0, Arg1, Arg2, Arg3, Arg4, Arg5>::value>()
-    ) models_refines();
+    typename enable_if<models<Concept, Arg0, Arg1, Arg2, Arg3, Arg4, Arg5>::value>::type models_refines();
+
+    template<bool Cond1, bool Cond2>
+    typename ttl::enable_if<Cond1 || Cond2>::type models_or();
 }
 
 #endif
