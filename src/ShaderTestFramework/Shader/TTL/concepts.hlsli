@@ -24,7 +24,7 @@ namespace ttl
         ) requires();
     };
 
-    struct is_string
+    struct string_literal
     {
         template<typename T>
         __decltype(
