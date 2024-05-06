@@ -99,6 +99,7 @@ set(SHADER_SOURCES
     Shader/STF/ShaderTestFramework.hlsli
     Shader/TTL/byte_writer.hlsli
     Shader/TTL/caster.hlsli
+    Shader/TTL/concepts.hlsli
     Shader/TTL/container_wrapper.hlsli
     Shader/TTL/macro.hlsli
     Shader/TTL/memory.hlsli

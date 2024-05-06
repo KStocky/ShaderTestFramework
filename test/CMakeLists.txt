@@ -125,6 +125,7 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/TypeTraits/SizeOfTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/VoidTTests.hlsl
     Shader/HLSLFrameworkTests/BasicShaderTests.hlsl
+    Shader/HLSLFrameworkTests/ConceptsTests.hlsl
     Shader/HLSLFrameworkTests/FlattenIndex.hlsl
     Shader/HLSLFrameworkTests/ModelsTests.hlsl
     Shader/HLSLFrameworkTests/SectionHierarchyByteWriterTests.hlsl
@@ -182,6 +183,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/ByteReaderTraitsTests.cpp
     Private/Framework/HLSLFramework/ByteWriterTests.cpp
     Private/Framework/HLSLFramework/CastTests.cpp
+    Private/Framework/HLSLFramework/ConceptsTests.cpp
     Private/Framework/HLSLFramework/FlattenIndexTests.cpp
     Private/Framework/HLSLFramework/ModelsTests.cpp
     Private/Framework/HLSLFramework/SectionHierarchyByteWriterTests.cpp
