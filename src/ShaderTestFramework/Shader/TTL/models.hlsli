@@ -92,20 +92,20 @@ namespace ttl
             ttl_detail::models_resolver<Concept, Arg0, Arg1, Arg2, Arg3, Arg4, Arg5>::value;
     };
 
-    template<bool Cond> struct models_if{};
-    template<> struct models_if<true> : integral_constant<bool, true>{};
+    template<bool Cond>
+    typename enable_if<Cond>::type models_if();
 
-    template<typename T, typename U> struct models_if_same{};
-    template<typename T> struct models_if_same<T, T> : integral_constant<bool, true>{};
+    template<typename T, typename U>
+    typename enable_if<is_same<T, U>::value>::type models_if_same(); 
 
-    template <
+    template<
         typename Concept, 
         typename Arg0, typename Arg1 = ttl_detail::null_type, typename Arg2 = ttl_detail::null_type,
         typename Arg3 = ttl_detail::null_type, typename Arg4 = ttl_detail::null_type, typename Arg5 = ttl_detail::null_type
     >
     __decltype
     (
-        models_if<models<Concept, Arg0, Arg1, Arg2, Arg3, Arg4, Arg5>::value>::value
+        models_if<models<Concept, Arg0, Arg1, Arg2, Arg3, Arg4, Arg5>::value>()
     ) models_refines();
 }
 

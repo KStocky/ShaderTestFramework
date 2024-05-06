@@ -90,7 +90,7 @@ namespace ModelsIfTests
     {
         template<typename T>
         __decltype(
-            ttl::models_if<T::value>::value
+            ttl::models_if<T::value>()
         ) requires();
     };
 
@@ -128,7 +128,7 @@ namespace ModelsIfSameTests
     {
         template<typename T, typename Ret>
         __decltype(
-            ttl::models_if_same<Ret, __decltype(ttl::declval<T>()())>::value
+            ttl::models_if_same<Ret, __decltype(ttl::declval<T>()())>()
         ) requires();
     };
 
