@@ -68,3 +68,15 @@ namespace EqualityComparableTests
     STATIC_ASSERT((!ttl::models<ttl::equality_comparable, D, A>::value));
     STATIC_ASSERT((!ttl::models<ttl::equality_comparable, E, A>::value));
 }
+
+namespace IsStringTests
+{
+    struct A
+    {
+    };
+
+    STATIC_ASSERT((!ttl::models<ttl::is_string, A[6]>::value));
+    STATIC_ASSERT((!ttl::models<ttl::is_string, A>::value));
+
+    STATIC_ASSERT((ttl::models<ttl::is_string, __decltype("Hello")>::value));
+}
