@@ -123,6 +123,7 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/TypeTraits/FundamentalTypeTraitsTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/IsEnumTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/SizeOfTests.hlsl
+    Shader/HLSLFrameworkTests/TypeTraits/VoidTTests.hlsl
     Shader/HLSLFrameworkTests/BasicShaderTests.hlsl
     Shader/HLSLFrameworkTests/FlattenIndex.hlsl
     Shader/HLSLFrameworkTests/SectionHierarchyByteWriterTests.hlsl
@@ -174,6 +175,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/TypeTraits/FundamentalTypeTraitsTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/IsEnumTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/SizeOfTests.cpp
+    Private/Framework/HLSLFramework/TypeTraits/VoidTTests.cpp
     Private/Framework/HLSLFramework/BasicShaderTests.cpp
     Private/Framework/HLSLFramework/Bugs.cpp
     Private/Framework/HLSLFramework/ByteReaderTraitsTests.cpp
