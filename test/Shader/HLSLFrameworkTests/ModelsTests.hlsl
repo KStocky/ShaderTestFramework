@@ -144,3 +144,51 @@ namespace ModelsIfSameTests
     STATIC_ASSERT((!ttl::models<FuncReturnTypeConcept, FuncReturnType2, ReturnType1>::value));
     STATIC_ASSERT((ttl::models<FuncReturnTypeConcept, FuncReturnType2, ReturnType2>::value));
 }
+
+namespace ModelsRefinesTests
+{
+    struct HasFooConcept
+    {
+        template<typename T>
+        __decltype(
+            ttl::declval<T>().Foo()
+        ) requires();
+    };
+
+    struct HasBarConcept
+    {
+        template<typename T>
+        __decltype(
+            ttl::declval<T>().Bar()
+        ) requires();
+    };
+
+    struct HasFooAndBarConcept
+    {
+        template<typename T>
+        __decltype(
+            ttl::models_refines<HasFooConcept, T>(),
+            ttl::models_refines<HasBarConcept, T>()
+        ) requires();
+    };
+
+    struct HasFoo
+    {
+        void Foo();
+    };
+
+    struct HasBar
+    {
+        void Bar();
+    };
+
+    struct HasBoth
+    {
+        void Foo();
+        void Bar();
+    };
+
+    STATIC_ASSERT((!ttl::models<HasFooAndBarConcept, HasFoo>::value));
+    STATIC_ASSERT((!ttl::models<HasFooAndBarConcept, HasBar>::value));
+    STATIC_ASSERT((ttl::models<HasFooAndBarConcept, HasBoth>::value));
+}

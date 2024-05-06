@@ -97,6 +97,16 @@ namespace ttl
 
     template<typename T, typename U> struct models_if_same{};
     template<typename T> struct models_if_same<T, T> : integral_constant<bool, true>{};
+
+    template <
+        typename Concept, 
+        typename Arg0, typename Arg1 = ttl_detail::null_type, typename Arg2 = ttl_detail::null_type,
+        typename Arg3 = ttl_detail::null_type, typename Arg4 = ttl_detail::null_type, typename Arg5 = ttl_detail::null_type
+    >
+    __decltype
+    (
+        models_if<models<Concept, Arg0, Arg1, Arg2, Arg3, Arg4, Arg5>::value>::value
+    ) models_refines();
 }
 
 #endif
