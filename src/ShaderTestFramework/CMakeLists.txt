@@ -102,6 +102,7 @@ set(SHADER_SOURCES
     Shader/TTL/container_wrapper.hlsli
     Shader/TTL/macro.hlsli
     Shader/TTL/memory.hlsli
+    Shader/TTL/models.hlsli
     Shader/TTL/static_assert.hlsli
     Shader/TTL/string.hlsli
     Shader/TTL/type_traits.hlsli
