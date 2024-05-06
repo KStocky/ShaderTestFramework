@@ -119,6 +119,7 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/TypeTraits/AlignOfTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/ArrayTraitsTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/ContainerTraitsTests.hlsl
+    Shader/HLSLFrameworkTests/TypeTraits/DeclValTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/FundamentalTypeTraitsTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/IsEnumTests.hlsl
     Shader/HLSLFrameworkTests/TypeTraits/SizeOfTests.hlsl
@@ -169,6 +170,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/TypeTraits/AlignOfTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/ArrayTraitsTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/ContainerTraitsTests.cpp
+    Private/Framework/HLSLFramework/TypeTraits/DeclValTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/FundamentalTypeTraitsTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/IsEnumTests.cpp
     Private/Framework/HLSLFramework/TypeTraits/SizeOfTests.cpp

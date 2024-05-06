@@ -204,6 +204,9 @@ namespace ttl
     template<typename T>
     struct align_of<T, typename enable_if<fundamental_type_traits<T>::is_fundamental>::type> 
         : integral_constant<uint, size_of<typename fundamental_type_traits<T>::base_type>::value>{};
+
+    template<typename T>
+    T declval();
 }
 
 #endif
