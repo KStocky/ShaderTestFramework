@@ -91,6 +91,12 @@ namespace ttl
         static const bool value = 
             ttl_detail::models_resolver<Concept, Arg0, Arg1, Arg2, Arg3, Arg4, Arg5>::value;
     };
+
+    template<bool Cond> struct models_if{};
+    template<> struct models_if<true> : integral_constant<bool, true>{};
+
+    template<typename T, typename U> struct models_if_same{};
+    template<typename T> struct models_if_same<T, T> : integral_constant<bool, true>{};
 }
 
 #endif
