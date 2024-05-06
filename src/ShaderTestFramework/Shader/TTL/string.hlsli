@@ -81,7 +81,7 @@ namespace ttl_detail
         CHAR_CHECK(InChar, '\n', 10);
         CHAR_CHECK(InChar, ' ', 32);
         CHAR_CHECK(InChar, '!', 33);
-        CHAR_CHECK(InChar, '\"', 33);
+        CHAR_CHECK(InChar, '"', 34);
         CHAR_CHECK(InChar, '#', 35);
         CHAR_CHECK(InChar, '$', 36);
         CHAR_CHECK(InChar, '%', 37);
