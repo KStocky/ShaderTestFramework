@@ -223,7 +223,14 @@ namespace ttl
         >
     using void_t = typename ttl_detail::make_void<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>::type;
 
-
+    template<typename T> struct is_function : false_type {};
+    template<typename RetType> struct is_function<RetType()> : true_type {};
+    template<typename RetType, typename Arg0> struct is_function<RetType(Arg0)> : true_type {};
+    template<typename RetType, typename Arg0, typename Arg1> struct is_function<RetType(Arg0, Arg1)> : true_type {};
+    template<typename RetType, typename Arg0, typename Arg1, typename Arg2> struct is_function<RetType(Arg0, Arg1, Arg2)> : true_type {};
+    template<typename RetType, typename Arg0, typename Arg1, typename Arg2, typename Arg3> struct is_function<RetType(Arg0, Arg1, Arg2, Arg3)> : true_type {};
+    template<typename RetType, typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4> struct is_function<RetType(Arg0, Arg1, Arg2, Arg3, Arg4)> : true_type {};
+    template<typename RetType, typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5> struct is_function<RetType(Arg0, Arg1, Arg2, Arg3, Arg4, Arg5)> : true_type {};
 }
 
 #endif
