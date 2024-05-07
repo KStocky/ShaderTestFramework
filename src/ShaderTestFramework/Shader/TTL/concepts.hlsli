@@ -31,6 +31,64 @@ namespace ttl
             models_if<(__decltype(ttl_detail::array_len(declval<T>()))::value > 0)>()
         ) requires();
     };
+
+    struct invocable_functor
+    {
+        template<
+            typename F
+            >
+        __decltype(
+            declval<F>()()
+        ) requires();
+
+        template<
+            typename F,
+            typename Arg0
+            >
+        __decltype(
+            declval<F>()(declval<Arg0>())
+        ) requires();
+
+        template<
+            typename F,
+            typename Arg0, typename Arg1
+            >
+        __decltype(
+            declval<F>()(declval<Arg0>(), declval<Arg1>())
+        ) requires();
+
+        template<
+            typename F,
+            typename Arg0, typename Arg1, typename Arg2
+            >
+        __decltype(
+            declval<F>()(declval<Arg0>(), declval<Arg1>(), declval<Arg2>())
+        ) requires();
+
+        template<
+            typename F,
+            typename Arg0, typename Arg1, typename Arg2, typename Arg3
+            >
+        __decltype(
+            declval<F>()(declval<Arg0>(), declval<Arg1>(), declval<Arg2>(), declval<Arg3>())
+        ) requires();
+
+        template<
+            typename F,
+            typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4
+            >
+        __decltype(
+            declval<F>()(declval<Arg0>(), declval<Arg1>(), declval<Arg2>(), declval<Arg3>(), declval<Arg4>())
+        ) requires();
+
+        template<
+            typename F,
+            typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5
+            >
+        __decltype(
+            declval<F>()(declval<Arg0>(), declval<Arg1>(), declval<Arg2>(), declval<Arg3>(), declval<Arg4>(), declval<Arg5>())
+        ) requires();
+    };
 }
 
 #endif
