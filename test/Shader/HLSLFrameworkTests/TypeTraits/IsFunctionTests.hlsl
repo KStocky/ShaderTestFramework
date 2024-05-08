@@ -3,6 +3,7 @@
 #include "/Test/TTL/type_traits.hlsli"
 
 struct ParamType{};
+struct NotParamType{};
 
 struct Functor
 {
