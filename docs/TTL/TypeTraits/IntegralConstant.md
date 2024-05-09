@@ -8,10 +8,10 @@ If the shader adds specializations for ttl::integral_constant, the behavior is u
 1. [Header](#header)
 2. [Declaration](#declaration)
 3. [Template Parameters](#template-parameters)
-4. [Member Constants](#member-constants)
-5. [Member Functions](#member-functions)
-6. [Non-Member Functions](#non-member-functions)
-7. [Examples](#examples)
+4. [Specializations](#specializations)
+5. [Nested Types](#nested-types)
+6. [Member Constants](#member-constants)
+7. [Example](#example)
 
 ## Header
 
@@ -67,7 +67,12 @@ _Static_assert(Five::value == 5, "Expected the value to be 5");
 _Static_assert(Two::value == 2, "Expected the value to be 2");
 _Static_assert(Five::value + Two::value == 7, "Expected the answer to be 7");
 
+_Static_assert(Two::value == 2, "Expected the value to be 2");
+_Static_assert(Five::value == 5, "Expected the value to be 5");
+
+_Static_assert(ttl::is_same<typename Two::value_type, int>::value, "Expected the value to be of type int");
+
 ```
 ---
 
-[Top](#ttlcaster)
+[Top](#ttlintegral_constant)
