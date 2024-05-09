@@ -74,8 +74,8 @@ struct Functor
 void Foo(){}
 float Bar(int){}
 
-_Static_assert(ttl::is_function<__decltype(ZeroParamFunction)>::value, "Expected the type of Foo to be a function type");
-_Static_assert(ttl::is_function<__decltype(OneParamFunction)>::value, "Expected the type of Bar to be a function type");
+_Static_assert(ttl::is_function<__decltype(Foo)>::value, "Expected the type of Foo to be a function type");
+_Static_assert(ttl::is_function<__decltype(Bar)>::value, "Expected the type of Bar to be a function type");
 
 _Static_assert(!ttl::is_function<Functor>::value, "Expected a functors to not be a function");
 _Static_assert(!ttl::is_function<int>::value, "Expected int to not be a function");
