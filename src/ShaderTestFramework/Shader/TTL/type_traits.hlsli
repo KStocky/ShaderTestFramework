@@ -212,7 +212,7 @@ namespace ttl
         typename T0 = void, typename T1 = void , typename T2 = void, typename T3 = void, typename T4 = void,
         typename T5 = void, typename T6 = void , typename T7 = void, typename T8 = void, typename T9 = void
         >
-    using void_t = void
+    using void_t = void;
 
     template<typename T> struct is_function : false_type {};
     template<typename RetType> struct is_function<RetType()> : true_type {};
