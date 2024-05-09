@@ -2,15 +2,6 @@
 #ifndef TTL_TYPE_TRAITS_HEADER
 #define TTL_TYPE_TRAITS_HEADER
 
-namespace ttl_detail
-{
-    template<
-        typename T0 = void, typename T1 = void , typename T2 = void, typename T3 = void, typename T4 = void,
-        typename T5 = void, typename T6 = void , typename T7 = void, typename T8 = void, typename T9 = void
-        >
-    struct make_void { using type = void; };
-}
-
 namespace ttl
 {
     template<typename T, T v>
@@ -221,7 +212,7 @@ namespace ttl
         typename T0 = void, typename T1 = void , typename T2 = void, typename T3 = void, typename T4 = void,
         typename T5 = void, typename T6 = void , typename T7 = void, typename T8 = void, typename T9 = void
         >
-    using void_t = typename ttl_detail::make_void<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>::type;
+    using void_t = void
 
     template<typename T> struct is_function : false_type {};
     template<typename RetType> struct is_function<RetType()> : true_type {};
