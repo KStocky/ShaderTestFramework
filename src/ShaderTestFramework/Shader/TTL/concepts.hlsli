@@ -88,8 +88,8 @@ namespace ttl
             typename F
             >
         __decltype(
-            models_or<
-                models<invocable_functor, F>::value,
+            models_if<
+                models<invocable_functor, F>::value ||
                 is_invocable_function<F>::value
             >()
         ) requires();
@@ -99,8 +99,8 @@ namespace ttl
             typename Arg0
             >
         __decltype(
-            models_or<
-                models<invocable_functor, F, Arg0>::value,
+            models_if<
+                models<invocable_functor, F, Arg0>::value ||
                 is_invocable_function<F, Arg0>::value
             >()
         ) requires();
@@ -110,8 +110,8 @@ namespace ttl
             typename Arg0, typename Arg1
             >
         __decltype(
-            models_or<
-                models<invocable_functor, F, Arg0, Arg1>::value,
+            models_if<
+                models<invocable_functor, F, Arg0, Arg1>::value ||
                 is_invocable_function<F, Arg0, Arg1>::value
             >()
         ) requires();
@@ -121,8 +121,8 @@ namespace ttl
             typename Arg0, typename Arg1, typename Arg2
             >
         __decltype(
-            models_or<
-                models<invocable_functor, F, Arg0, Arg1, Arg2>::value,
+            models_if<
+                models<invocable_functor, F, Arg0, Arg1, Arg2>::value ||
                 is_invocable_function<F, Arg0, Arg1, Arg2>::value
             >()
         ) requires();
@@ -132,8 +132,8 @@ namespace ttl
             typename Arg0, typename Arg1, typename Arg2, typename Arg3
             >
         __decltype(
-            models_or<
-                models<invocable_functor, F, Arg0, Arg1, Arg2, Arg3>::value,
+            models_if<
+                models<invocable_functor, F, Arg0, Arg1, Arg2, Arg3>::value ||
                 is_invocable_function<F, Arg0, Arg1, Arg2, Arg3>::value
             >()
         ) requires();
@@ -143,8 +143,8 @@ namespace ttl
             typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4
             >
         __decltype(
-            models_or<
-                models<invocable_functor, F, Arg0, Arg1, Arg2, Arg3, Arg4>::value,
+            models_if<
+                models<invocable_functor, F, Arg0, Arg1, Arg2, Arg3, Arg4>::value ||
                 is_invocable_function<F, Arg0, Arg1, Arg2, Arg3, Arg4>::value
             >()
         ) requires();
