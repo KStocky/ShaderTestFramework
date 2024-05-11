@@ -9,7 +9,7 @@ Although HLSL does not have a feature like [C++20 Concepts](https://en.cpprefere
 4. [Using composition with Pseudo Concepts](#using-composition-with-pseudo-concepts)
 5. [Using Type-Traits with Pseudo Concepts](#using-type-traits-with-pseudo-concepts)
 6. [Forming disjunctions](#forming-disjunctions)
-7. [Constraining on return types]
+7. [Constraining on the type of expressions](#constraining-on-the-type-of-expressions)
 
 ## Writing a Pseudo Concept
 
@@ -173,6 +173,24 @@ struct FooReturnsFloat
     __decltype(
         ttl::models_if_same<
             float, __decltype(ttl::declval<T>().Foo())
+        >()
+    ) requires();
+};
+
+```
+
+TTL also provides a generalization of [`ttl::models_if_same`](./ModelsIfSame.md) called [`ttl::models_if_pred`](./ModelsIfPred.md) which allows for more general constraints to be placed on the return type of an expression. The following is an example of a concept which is satisfied if a type has a member function called `Foo` which returns either an `int` or a `float`:
+
+```c++
+struct FooReturnsFloatOrInt
+{
+    template<typename T>
+    struct FloatOrInt : ttl::integral_constant<bool, ttl::is_same<T, int>::value || ttl::is_same<T, float>::value>{};
+
+    template<typename T>
+    __decltype(
+        ttl::models_if_pred<
+            FloatOrInt, __decltype(ttl::declval<T>().Foo())
         >()
     ) requires();
 };

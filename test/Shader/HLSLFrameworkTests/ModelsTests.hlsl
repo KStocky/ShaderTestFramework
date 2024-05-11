@@ -209,6 +209,19 @@ namespace ModelsIfPredTests
         ) requires();
     };
 
+    struct FooReturnsFloatOrInt
+    {
+        template<typename T>
+        struct FloatOrInt : ttl::integral_constant<bool, ttl::is_same<T, int>::value || ttl::is_same<T, float>::value>{};
+
+        template<typename T>
+        __decltype(
+            ttl::models_if_pred<
+                FloatOrInt, __decltype(ttl::declval<T>().Foo())
+            >()
+        ) requires();
+    };
+
     struct NoFoo{};
 
     struct VoidFoo
@@ -221,7 +234,17 @@ namespace ModelsIfPredTests
         int Foo();
     };
 
+    struct FloatFoo
+    {
+        float Foo();
+    };
+
     STATIC_ASSERT((!ttl::models<FooReturnsIntConcept, NoFoo>::value));
     STATIC_ASSERT((!ttl::models<FooReturnsIntConcept, VoidFoo>::value));
     STATIC_ASSERT((ttl::models<FooReturnsIntConcept, IntFoo>::value));
+
+    STATIC_ASSERT((ttl::models<FooReturnsFloatOrInt, IntFoo>::value));
+    STATIC_ASSERT((ttl::models<FooReturnsFloatOrInt, FloatFoo>::value));
+    STATIC_ASSERT((!ttl::models<FooReturnsFloatOrInt, NoFoo>::value));
+    STATIC_ASSERT((!ttl::models<FooReturnsFloatOrInt, VoidFoo>::value));
 }
