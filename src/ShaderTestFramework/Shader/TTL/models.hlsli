@@ -119,7 +119,10 @@ namespace ttl
     typename enable_if<Cond>::type models_if();
 
     template<typename T, typename U>
-    typename enable_if<is_same<T, U>::value>::type models_if_same(); 
+    typename enable_if<is_same<T, U>::value>::type models_if_same();
+    
+    template<template<typename> class T, typename U>
+    typename enable_if <T<U>::value>::type models_if_pred();
 
     template<
         typename Concept, 

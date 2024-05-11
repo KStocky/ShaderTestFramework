@@ -195,3 +195,33 @@ namespace ModelsRefinesTests
     STATIC_ASSERT((ttl::models<HasFooAndBarConcept, HasBoth>::value));
     STATIC_ASSERT((!ttl::models<HasFooAndBarConcept, HasNeither>::value));
 }
+
+namespace ModelsIfPredTests
+{
+    struct FooReturnsIntConcept
+    {
+        template<typename T>
+        using is_same_int = ttl::is_same<int, T>;
+
+        template<typename T>
+        __decltype(
+            ttl::models_if_pred<is_same_int, __decltype(ttl::declval<T>().Foo())>()
+        ) requires();
+    };
+
+    struct NoFoo{};
+
+    struct VoidFoo
+    {
+        void Foo();
+    };
+
+    struct IntFoo
+    {
+        int Foo();
+    };
+
+    STATIC_ASSERT((!ttl::models<FooReturnsIntConcept, NoFoo>::value));
+    STATIC_ASSERT((!ttl::models<FooReturnsIntConcept, VoidFoo>::value));
+    STATIC_ASSERT((ttl::models<FooReturnsIntConcept, IntFoo>::value));
+}
