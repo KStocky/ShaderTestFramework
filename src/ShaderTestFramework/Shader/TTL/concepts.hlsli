@@ -15,12 +15,20 @@ namespace ttl_detail
 
 namespace ttl
 {
-    struct equality_comparable
+    struct equality_comparable_with
     {
         template<typename T, typename U>
         __decltype(
             models_if_same<bool, __decltype(declval<T>() == declval<U>())>(),
             models_if_same<bool, __decltype(declval<T>() != declval<U>())>()
+        ) requires();
+    };
+
+    struct equality_comparable
+    {
+        template<typename T>
+        __decltype(
+            models_refines<equality_comparable_with, T, T>()
         ) requires();
     };
 

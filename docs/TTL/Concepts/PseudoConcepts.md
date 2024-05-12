@@ -10,6 +10,7 @@ Although HLSL does not have a feature like [C++20 Concepts](https://en.cpprefere
 5. [Using Type-Traits with Pseudo Concepts](#using-type-traits-with-pseudo-concepts)
 6. [Forming disjunctions](#forming-disjunctions)
 7. [Constraining on the type of expressions](#constraining-on-the-type-of-expressions)
+8. [Pseudo-Concepts provided by TTL](#pseudo-concepts-provided-by-ttl)
 
 ## Writing a Pseudo Concept
 
@@ -65,7 +66,7 @@ struct A
 struct B{};
 
 _Static_assert(ttl::models<TypeWithFoo, A>::value, "Returns true because A has a member function called Foo");
-_Static_assert(ttl::models<TypeWithFoo, B>::value, "Returns false because B does not have a member function called Foo");
+_Static_assert(!ttl::models<TypeWithFoo, B>::value, "Returns false because B does not have a member function called Foo");
 
 ```
 
@@ -196,6 +197,14 @@ struct FooReturnsFloatOrInt
 };
 
 ```
+
+## Pseudo-Concepts provided by TTL
+
+| Concept | Description |
+|---------|-------------|
+|[`equality_comparable`<br>`equality_comparable_with`](./EqualityComparable.md) | Specifies that `operator==` and `operator!=` are defined |
+|[`string_literal`](./StringLiteral.md) | Specifies that a type is a string literal |
+|[`invocable_functor`<br>`invocable`](Invocable.md) | Specifies that callables can be invoked wiht a given set of argument types |
 
 
 [Top](#pseudo-concepts)
