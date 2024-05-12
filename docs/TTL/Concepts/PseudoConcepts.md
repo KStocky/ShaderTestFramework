@@ -65,7 +65,7 @@ struct A
 struct B{};
 
 _Static_assert(ttl::models<TypeWithFoo, A>::value, "Returns true because A has a member function called Foo");
-_Static_assert(ttl::models<TypeWithFoo, B>::value, "Returns false because B does not have a member function called Foo");
+_Static_assert(!ttl::models<TypeWithFoo, B>::value, "Returns false because B does not have a member function called Foo");
 
 ```
 
