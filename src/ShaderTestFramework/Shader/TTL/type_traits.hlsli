@@ -204,6 +204,48 @@ namespace ttl
     template<typename T>
     struct align_of<T, typename enable_if<fundamental_type_traits<T>::is_fundamental>::type> 
         : integral_constant<uint, size_of<typename fundamental_type_traits<T>::base_type>::value>{};
+
+    template<typename T>
+    T declval();
+
+    template<
+        typename T0 = void, typename T1 = void , typename T2 = void, typename T3 = void, typename T4 = void,
+        typename T5 = void, typename T6 = void , typename T7 = void, typename T8 = void, typename T9 = void
+        >
+    using void_t = void;
+
+    template<typename T> struct is_function : false_type {};
+    template<typename RetType> struct is_function<RetType()> : true_type {};
+    template<typename RetType, typename Arg0> struct is_function<RetType(Arg0)> : true_type {};
+    template<typename RetType, typename Arg0, typename Arg1> struct is_function<RetType(Arg0, Arg1)> : true_type {};
+    template<typename RetType, typename Arg0, typename Arg1, typename Arg2> struct is_function<RetType(Arg0, Arg1, Arg2)> : true_type {};
+    template<typename RetType, typename Arg0, typename Arg1, typename Arg2, typename Arg3> struct is_function<RetType(Arg0, Arg1, Arg2, Arg3)> : true_type {};
+    template<typename RetType, typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4> struct is_function<RetType(Arg0, Arg1, Arg2, Arg3, Arg4)> : true_type {};
+    template<typename RetType, typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5> struct is_function<RetType(Arg0, Arg1, Arg2, Arg3, Arg4, Arg5)> : true_type {};
+
+    template<typename T, typename Arg0 = void, typename Arg1 = void, typename Arg2 = void, typename Arg3 = void, typename Arg4 = void, typename Arg5 = void> 
+    struct is_invocable_function : false_type {};
+
+    template<typename RetType> 
+    struct is_invocable_function<RetType()> : true_type {};
+
+    template<typename RetType, typename Arg0> 
+    struct is_invocable_function<RetType(Arg0), Arg0> : true_type {};
+
+    template<typename RetType, typename Arg0, typename Arg1> 
+    struct is_invocable_function<RetType(Arg0, Arg1), Arg0, Arg1> : true_type {};
+
+    template<typename RetType, typename Arg0, typename Arg1, typename Arg2> 
+    struct is_invocable_function<RetType(Arg0, Arg1, Arg2), Arg0, Arg1, Arg2> : true_type {};
+
+    template<typename RetType, typename Arg0, typename Arg1, typename Arg2, typename Arg3> 
+    struct is_invocable_function<RetType(Arg0, Arg1, Arg2, Arg3), Arg0, Arg1, Arg2, Arg3> : true_type {};
+
+    template<typename RetType, typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4> 
+    struct is_invocable_function<RetType(Arg0, Arg1, Arg2, Arg3, Arg4), Arg0, Arg1, Arg2, Arg3, Arg4> : true_type {};
+
+    template<typename RetType, typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5> 
+    struct is_invocable_function<RetType(Arg0, Arg1, Arg2, Arg3, Arg4, Arg5), Arg0, Arg1, Arg2, Arg3, Arg4, Arg5> : true_type {};
 }
 
 #endif
