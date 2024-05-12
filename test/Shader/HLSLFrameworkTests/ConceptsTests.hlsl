@@ -2,7 +2,7 @@
 #include "/Test/TTL/concepts.hlsli"
 #include "/Test/TTL/static_assert.hlsli"
 
-namespace EqualityComparableTests
+namespace EqualityComparableWithTests
 {
     struct A
     {
@@ -61,12 +61,92 @@ namespace EqualityComparableTests
         }
     };
 
-    STATIC_ASSERT((!ttl::models<ttl::equality_comparable, A, A>::value));
-    STATIC_ASSERT((!ttl::models<ttl::equality_comparable, A, B>::value));
-    STATIC_ASSERT((ttl::models<ttl::equality_comparable, B, A>::value));
-    STATIC_ASSERT((!ttl::models<ttl::equality_comparable, C, A>::value));
-    STATIC_ASSERT((!ttl::models<ttl::equality_comparable, D, A>::value));
-    STATIC_ASSERT((!ttl::models<ttl::equality_comparable, E, A>::value));
+    struct F
+    {
+        bool operator==(F In)
+        {
+            return true;
+        }
+
+        bool operator!=(F In)
+        {
+            return false;
+        }
+    };
+
+    STATIC_ASSERT((!ttl::models<ttl::equality_comparable_with, A, A>::value));
+    STATIC_ASSERT((!ttl::models<ttl::equality_comparable_with, A, B>::value));
+    STATIC_ASSERT((ttl::models<ttl::equality_comparable_with, B, A>::value));
+    STATIC_ASSERT((!ttl::models<ttl::equality_comparable_with, C, A>::value));
+    STATIC_ASSERT((!ttl::models<ttl::equality_comparable_with, D, A>::value));
+    STATIC_ASSERT((!ttl::models<ttl::equality_comparable_with, E, A>::value));
+    STATIC_ASSERT((ttl::models<ttl::equality_comparable_with, F, F>::value));
+}
+
+namespace EqualityComparableTests
+{
+    struct A
+    {
+
+    };
+
+    struct B
+    {
+        bool operator==(B In)
+        {
+            return true;
+        }
+
+        bool operator!=(B In)
+        {
+            return false;
+        }
+    };
+
+    struct C
+    {
+        int operator==(C In)
+        {
+            return 1;
+        }
+
+        bool operator!=(C In)
+        {
+            return false;
+        }
+    };
+
+    struct D
+    {
+        bool operator==(D In)
+        {
+            return true;
+        }
+
+        int operator!=(D In)
+        {
+            return 1;
+        }
+    };
+
+    struct E
+    {
+        int operator==(E In)
+        {
+            return 1;
+        }
+
+        int operator!=(E In)
+        {
+            return 1;
+        }
+    };
+
+    STATIC_ASSERT((!ttl::models<ttl::equality_comparable, A>::value));
+    STATIC_ASSERT((ttl::models<ttl::equality_comparable, B>::value));
+    STATIC_ASSERT((!ttl::models<ttl::equality_comparable, C>::value));
+    STATIC_ASSERT((!ttl::models<ttl::equality_comparable, D>::value));
+    STATIC_ASSERT((!ttl::models<ttl::equality_comparable, E>::value));
 }
 
 namespace StringLiteralTests
