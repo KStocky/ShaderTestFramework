@@ -116,16 +116,6 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/TestDataBuffer/ResultsProcessing/NoAssertBuffer.hlsl
     Shader/HLSLFrameworkTests/TestDataBuffer/ResultsProcessing/SectionsWithStrings.hlsl
     Shader/HLSLFrameworkTests/TestDataBuffer/SizeTests.hlsl
-    Shader/HLSLFrameworkTests/TypeTraits/AlignOfTests.hlsl
-    Shader/HLSLFrameworkTests/TypeTraits/ArrayTraitsTests.hlsl
-    Shader/HLSLFrameworkTests/TypeTraits/ContainerTraitsTests.hlsl
-    Shader/HLSLFrameworkTests/TypeTraits/DeclValTests.hlsl
-    Shader/HLSLFrameworkTests/TypeTraits/FundamentalTypeTraitsTests.hlsl
-    Shader/HLSLFrameworkTests/TypeTraits/IsEnumTests.hlsl
-    Shader/HLSLFrameworkTests/TypeTraits/IsFunctionTests.hlsl
-    Shader/HLSLFrameworkTests/TypeTraits/IsInvocableFunctionTests.hlsl
-    Shader/HLSLFrameworkTests/TypeTraits/SizeOfTests.hlsl
-    Shader/HLSLFrameworkTests/TypeTraits/VoidTTests.hlsl
     Shader/HLSLFrameworkTests/BasicShaderTests.hlsl
     Shader/HLSLFrameworkTests/ConceptsTests.hlsl
     Shader/HLSLFrameworkTests/FlattenIndex.hlsl
@@ -134,6 +124,7 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/SectionManagement.hlsl
     Shader/HLSLFrameworkTests/ThreadDimensionTests.hlsl
     Shader/HLSLFrameworkTests/ThreadIdRegistrationTests.hlsl
+    Shader/HLSLFrameworkTests/TypeTraitsTests.hlsl
 )
 
 set(SOURCES
@@ -172,16 +163,6 @@ set(SOURCES
     Private/Framework/HLSLFramework/TestDataBuffer/ResultsProcessing/NoAssertBufferTests.cpp
     Private/Framework/HLSLFramework/TestDataBuffer/ResultsProcessing/SectionsWithStringsTests.cpp
     Private/Framework/HLSLFramework/TestDataBuffer/SizeTests.cpp
-    Private/Framework/HLSLFramework/TypeTraits/AlignOfTests.cpp
-    Private/Framework/HLSLFramework/TypeTraits/ArrayTraitsTests.cpp
-    Private/Framework/HLSLFramework/TypeTraits/ContainerTraitsTests.cpp
-    Private/Framework/HLSLFramework/TypeTraits/DeclValTests.cpp
-    Private/Framework/HLSLFramework/TypeTraits/FundamentalTypeTraitsTests.cpp
-    Private/Framework/HLSLFramework/TypeTraits/IsEnumTests.cpp
-    Private/Framework/HLSLFramework/TypeTraits/IsFunctionTests.cpp
-    Private/Framework/HLSLFramework/TypeTraits/IsInvocableFunctionTests.cpp
-    Private/Framework/HLSLFramework/TypeTraits/SizeOfTests.cpp
-    Private/Framework/HLSLFramework/TypeTraits/VoidTTests.cpp
     Private/Framework/HLSLFramework/BasicShaderTests.cpp
     Private/Framework/HLSLFramework/Bugs.cpp
     Private/Framework/HLSLFramework/ByteReaderTraitsTests.cpp
@@ -196,6 +177,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/StaticAssertTests.cpp
     Private/Framework/HLSLFramework/ThreadDimensionsTests.cpp
     Private/Framework/HLSLFramework/ThreadIdRegistrationTests.cpp
+    Private/Framework/HLSLFramework/TypeTraitsTests.cpp
     Private/Framework/HLSLTypesTests.cpp
     Private/Framework/SectionsInHLSLProofOfConceptTests.cpp
     Private/Framework/ShaderTestFixtureTests.cpp
