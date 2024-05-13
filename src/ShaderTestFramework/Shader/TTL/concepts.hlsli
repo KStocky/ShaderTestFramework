@@ -4,15 +4,6 @@
 
 #include "/Test/TTL/models.hlsli"
 
-namespace ttl_detail
-{
-    template<typename T, uint N>
-    static ttl::integral_constant<uint, N> array_len(T In[N])
-    {
-        return (ttl::integral_constant<uint, N>)0;
-    }
-}
-
 namespace ttl
 {
     struct equality_comparable_with
@@ -36,7 +27,7 @@ namespace ttl
     {
         template<typename T>
         __decltype(
-            models_if<(__decltype(ttl_detail::array_len(declval<T>()))::value > 0)>()
+            models_if<(__decltype(array_len(declval<T>()))::value > 0)>()
         ) requires();
     };
 
