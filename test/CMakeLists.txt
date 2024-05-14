@@ -88,6 +88,7 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/Macros/Scenario.hlsl
     Shader/HLSLFrameworkTests/Macros/Sections.hlsl
     Shader/HLSLFrameworkTests/Macros/SectionVarCreation.hlsl
+    Shader/HLSLFrameworkTests/Macros/Stamp.hlsl
     Shader/HLSLFrameworkTests/Memory/AlignedOffsetTests.hlsl
     Shader/HLSLFrameworkTests/Memory/ZeroTests.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned.hlsl
@@ -151,6 +152,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/Macros/ScenarioTests.cpp
     Private/Framework/HLSLFramework/Macros/SectionsTests.cpp
     Private/Framework/HLSLFramework/Macros/SectionVarCreationTests.cpp
+    Private/Framework/HLSLFramework/Macros/StampTests.cpp
     Private/Framework/HLSLFramework/Memory/AlignedOffsetTests.cpp
     Private/Framework/HLSLFramework/Memory/ZeroTests.cpp
     Private/Framework/HLSLFramework/String/StringByteWriterTests.cpp
