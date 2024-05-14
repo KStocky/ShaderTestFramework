@@ -713,3 +713,28 @@ namespace VoidTTests
     STATIC_ASSERT((!VoidTDetector<A, A, A, A, A, A, A, A, B>::value));
     STATIC_ASSERT((!VoidTDetector<A, A, A, A, A, A, A, A, A, B>::value));
 }
+
+namespace IsArrayTraits
+{
+    using StringLiteralType = __decltype("Hello");
+    using NotArray = int;
+    using Array = int[42];
+
+    STATIC_ASSERT((ttl::is_array<StringLiteralType>::value));
+    STATIC_ASSERT((ttl::is_array<Array>::value));
+    STATIC_ASSERT((!ttl::is_array<NotArray>::value));
+}
+
+namespace ArrayLenTests
+{
+    using StringLiteralType = __decltype(ttl::array_len("Hello"));
+    using NotArray = __decltype(ttl::array_len(1));
+    using Array = __decltype(ttl::array_len((int[42])0));
+
+    template<typename T, uint ExpectedLength>
+    struct Tester : ttl::integral_constant<bool, T::value == ExpectedLength>{};
+
+    STATIC_ASSERT((Tester<StringLiteralType, 6u>::value));
+    STATIC_ASSERT((Tester<Array, 42u>::value));
+    STATIC_ASSERT((Tester<NotArray, 0u>::value));
+}
