@@ -55,19 +55,6 @@ namespace ttl
             }
         }
     };
-
-    template<typename T, uint N>
-    typename enable_if<!is_same<T, string>::value, uint>::type strlen(T In[N])
-    {
-        STATIC_ASSERT(N <= string::MaxNumChars, "Strings with greater than 64 characters are not supported");
-        return N;
-    }
-
-    template<typename T>
-    typename enable_if<is_same<T, string>::value, uint>::type strlen(T In)
-    {
-        return In.Size;
-    }
 }
 
 namespace ttl_detail
@@ -187,6 +174,7 @@ namespace ttl_detail
 #define TO_STRING(InString, InStr)                          \
 do {                                                        \
     using LengthType = __decltype(ttl::array_len(InStr));   \
+    STATIC_ASSERT(LengthType::value <= ttl::string::MaxNumChars, "Strings with greater than 64 characters are not supported"); \
     ttl::zero(InString);                                    \
     TTL_STAMP(64, STAMPER, LengthType::value, InStr, InString)                                  \
 } while(false)                                              \
