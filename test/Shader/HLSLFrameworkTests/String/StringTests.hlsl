@@ -1,4 +1,6 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
+#include "/Test/TTL/concepts.hlsli"
+#include "/Test/TTL/models.hlsli"
 #include "/Test/TTL/string.hlsli"
 
 [RootSignature(SHADER_TEST_RS)]

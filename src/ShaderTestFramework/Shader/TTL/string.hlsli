@@ -2,6 +2,7 @@
 #define TTL_STRING_HEADER
 
 #include "/Test/TTL/byte_writer.hlsli"
+#include "/Test/TTL/macro.hlsli"
 #include "/Test/TTL/memory.hlsli"
 #include "/Test/TTL/static_assert.hlsli"
 #include "/Test/TTL/type_traits.hlsli"
@@ -177,24 +178,18 @@ namespace ttl_detail
 
         return 255;
     }
-
     #undef CHAR_CHECK
 }
 
-#if TTL_ENABLE_STRINGS
-#define TO_STRING(InString, InStr)             \
-do{                                                       \
-    const uint numChars = ttl::strlen(InStr);              \
-    ttl::zero(InString);                                     \
-    for (uint i = 0; i < numChars; ++i)                 \
-    {                                                   \
-        InString.append(ttl_detail::char_to_uint(InStr[i]));      \
-    }                                                   \
-}while(false)
+#define CHAR_STAMP(i, InLength, InStr, OutStr) if (i >= InLength) break; OutStr.append(ttl_detail::char_to_uint(InStr[i]));
+#define STAMPER(InStamper, InN, InLength, InStr, OutStr) InStamper(0, CHAR_STAMP, InLength, InStr, OutStr)
 
-#else
-#define TO_STRING(InString, InStr) ttl::zero(InString)
-#endif
+#define TO_STRING(InString, InStr)                          \
+do {                                                        \
+    using LengthType = __decltype(ttl::array_len(InStr));   \
+    ttl::zero(InString);                                    \
+    TTL_STAMP(64, STAMPER, LengthType::value, InStr, InString)                                  \
+} while(false)                                              \
 
 #define DEFINE_STRING_CREATOR_IMPL(InName, InStr)   \
 struct {                                            \
