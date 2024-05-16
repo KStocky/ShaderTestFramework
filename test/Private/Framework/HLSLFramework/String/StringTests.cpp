@@ -5,7 +5,7 @@
 
 SCENARIO("HLSLFrameworkTests - String - String")
 {
-    auto testName = GENERATE
+    const auto testName = GENERATE
     (
         "GIVEN_EmptyString_WHEN_CharacterAppended_THEN_DataIsAsExpected",
         "GIVEN_EmptyString_WHEN_AttemptingToAppendTwoCharactersAtOnce_THEN_OnlyTheFirstIsAppended",
@@ -17,9 +17,28 @@ SCENARIO("HLSLFrameworkTests - String - String")
         "GIVEN_FullString_WHEN_AppendCalled_THEN_AppendFails"
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/String/StringTests.hlsl")));
-    DYNAMIC_SECTION(testName)
+    const auto [description, flags] = GENERATE
+    (
+        table<std::string, std::wstring>
+        (
+            {
+                std::tuple{ "Optimizations Enabled", L"-O3"},
+                std::tuple{ "Optimizations Disabled", L"-Od"},
+            }
+        )
+    );
+
+    ShaderTestFixture::Desc desc;
+    desc.Source = fs::path("/Tests/String/StringTests.hlsl");
+    desc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
+    desc.CompilationFlags.push_back(flags);
+    ShaderTestFixture fixture(std::move(desc));
+
+    DYNAMIC_SECTION(description)
     {
-        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+        DYNAMIC_SECTION(testName)
+        {
+            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+        }
     }
 }

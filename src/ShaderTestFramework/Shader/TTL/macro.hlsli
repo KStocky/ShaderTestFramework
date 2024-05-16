@@ -27,4 +27,27 @@
 
 #define TTL_JOIN_MACRO(InStem, InSuffix, ...) TTL_JOIN(InStem, InSuffix)(__VA_ARGS__)
 
+#define TTL_STAMP4(n, x, ...) \
+    x(n, ##__VA_ARGS__);                 \
+    x(n + 1, ##__VA_ARGS__);             \
+    x(n + 2, ##__VA_ARGS__);             \
+    x(n + 3, ##__VA_ARGS__)
+#define TTL_STAMP16(n, x, ...) \
+    TTL_STAMP4(n, x, ##__VA_ARGS__);     \
+    TTL_STAMP4(n + 4, x, ##__VA_ARGS__); \
+    TTL_STAMP4(n + 8, x, ##__VA_ARGS__); \
+    TTL_STAMP4(n + 12, x, ##__VA_ARGS__)
+#define TTL_STAMP64(n, x, ...)   \
+    TTL_STAMP16(n, x, ##__VA_ARGS__);      \
+    TTL_STAMP16(n + 16, x, ##__VA_ARGS__); \
+    TTL_STAMP16(n + 32, x, ##__VA_ARGS__); \
+    TTL_STAMP16(n + 48, x, ##__VA_ARGS__)
+#define TTL_STAMP256(n, x, ...)   \
+    TTL_STAMP64(n, x, ##__VA_ARGS__);       \
+    TTL_STAMP64(n + 64, x, ##__VA_ARGS__);  \
+    TTL_STAMP64(n + 128, x, ##__VA_ARGS__); \
+    TTL_STAMP64(n + 192, x, ##__VA_ARGS__)
+
+#define TTL_STAMP(n, x, ...) x(TTL_STAMP##n, n, ##__VA_ARGS__)
+
 #endif

@@ -2,6 +2,12 @@
 #ifndef TTL_TYPE_TRAITS_HEADER
 #define TTL_TYPE_TRAITS_HEADER
 
+namespace ttl_detail
+{
+    template<typename T, uint N>
+    void is_array_helper(T In[N]);
+}
+
 namespace ttl
 {
     template<typename T, T v>
@@ -213,6 +219,21 @@ namespace ttl
         typename T5 = void, typename T6 = void , typename T7 = void, typename T8 = void, typename T9 = void
         >
     using void_t = void;
+
+    template<typename T, typename = void>
+    struct is_array : false_type {};
+
+    template<typename T>
+    struct is_array<T, typename enable_if<array_traits<T>::is_array>::type> : true_type {};
+
+    template<typename T>
+    struct is_array<T, void_t<__decltype(ttl_detail::is_array_helper(declval<T>()))> > : true_type {};
+
+    template<typename T, uint N>
+    integral_constant<uint, N> array_len(T In[N]);
+
+    template<typename T>
+    typename enable_if<!is_array<T>::value, integral_constant<uint, 0> >::type array_len(T In);
 
     template<typename T> struct is_function : false_type {};
     template<typename RetType> struct is_function<RetType()> : true_type {};

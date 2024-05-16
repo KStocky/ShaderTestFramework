@@ -5,7 +5,7 @@
 [numthreads(1,1,1)]
 void GIVEN_EmptyString_WHEN_BytesRequiredQueried_THEN_ZeroReturned()
 {
-    ttl::string buff = ttl::zero<ttl::string>();
+    ttl::string<10> buff = ttl::zero<ttl::string<10> >();
 
     ASSERT(AreEqual, ttl::bytes_required(buff), 0u);
 }
@@ -14,7 +14,7 @@ void GIVEN_EmptyString_WHEN_BytesRequiredQueried_THEN_ZeroReturned()
 [numthreads(1,1,1)]
 void GIVEN_StringWithMultipleOf4Characters_WHEN_BytesRequiredQueried_THEN_BytesRequiredIsSameAsNumberOfChars()
 {
-    ttl::string buff = ttl::zero<ttl::string>();
+    ttl::string<10> buff = ttl::zero<ttl::string<10> >();
 
     buff.append(1);
     buff.append(1);
@@ -28,7 +28,7 @@ void GIVEN_StringWithMultipleOf4Characters_WHEN_BytesRequiredQueried_THEN_BytesR
 [numthreads(1,1,1)]
 void GIVEN_StringWithNonMultipleOf4Characters_WHEN_BytesRequiredQueried_THEN_BytesRequiredIsNextMultipleOf4()
 {
-    ttl::string buff = ttl::zero<ttl::string>();
+    ttl::string<10> buff = ttl::zero<ttl::string<10> >();
 
     buff.append(1);
     buff.append(1);
@@ -43,7 +43,7 @@ void GIVEN_StringWithNonMultipleOf4Characters_WHEN_BytesRequiredQueried_THEN_Byt
 [numthreads(1,1,1)]
 void GIVEN_String_WHEN_AlignmentRequiredQueried_THEN_FourReturned()
 {
-    ttl::string buff = ttl::zero<ttl::string>();
+    ttl::string<10> buff = ttl::zero<ttl::string<10> >();
 
     ASSERT(AreEqual, ttl::alignment_required(buff), 4u);
 }
@@ -57,7 +57,7 @@ void GIVEN_EmptyString_WHEN_WriteCalled_THEN_NothingWritten()
     ttl::zero(vec);
 
     vec[0] = 42;
-    ttl::string buff = ttl::zero<ttl::string>();
+    ttl::string<10> buff = ttl::zero<ttl::string<10> >();
 
     ttl::write_bytes(vec, 0, buff);
 
@@ -72,7 +72,7 @@ void GIVEN_StringWith4Characters_WHEN_WriteCalled_THEN_4CharactersWritten()
     uint vec[20];
     ttl::zero(vec);
 
-    ttl::string buff = ttl::zero<ttl::string>();
+    ttl::string<10> buff = ttl::zero<ttl::string<10> >();
     buff.append(1);
     buff.append(1);
     buff.append(1);
@@ -92,7 +92,7 @@ void GIVEN_StringWith5Characters_WHEN_WriteCalled_THEN_5CharactersWritten()
     uint vec[20];
     ttl::zero(vec);
 
-    ttl::string buff = ttl::zero<ttl::string>();
+    ttl::string<10> buff = ttl::zero<ttl::string<10> >();
     buff.append(1);
     buff.append(1);
     buff.append(1);

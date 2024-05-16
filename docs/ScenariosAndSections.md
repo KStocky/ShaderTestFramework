@@ -269,11 +269,9 @@ As previously mentioned, this mechanism is taken from [Catch2](https://github.co
 
 As noted in [Following the Execution Line by Line](#following-the-execution-line-by-line), `SCENARIO` and `SECTION` take a string as a parameter. This is used in error reporting to better describe where a failed assert comes from. It also gives a nice fluent way of describing test cases. There are a couple of things to note about strings in HLSL:
 
-1. Strings are not actually supported by HLSL. They only work due to exploiting DXC. You can read more about how this works in [Shader Printf in HLSL and DX12](https://therealmjp.github.io/posts/hlsl-printf/) by MJP. The implementation used in STF is pretty much taken wholesale from there. And it is a fantastic article on the topic. Definitely worth a read.
+1. Strings are not actually supported by HLSL. They only work due to exploiting DXC. You can read more about how this works in [Shader Printf in HLSL and DX12](https://therealmjp.github.io/posts/hlsl-printf/) by MJP. The implementation used in STF is based on this article. And it is a fantastic article on the topic. Definitely worth a read.
 
-2. There is a hard limit of 64 characters per string imposed by STF. This was due to finding that if a string was 65 characters or longer, then whether it compiled or not was dependent on the contents of the string. During testing I have found no issues with any string that had 64 characters or fewer. [Link](https://discord.com/channels/590611987420020747/1209044520285507634) to a discord thread talking about this particular issue.
-
-3. Strings are compiled out in debug builds. The compiler will not let any string through in a debug build unfortunately. This is done by defining `TTL_ENABLE_STRINGS` to be `0` when a test is run with optimizations disabled. So if using edit and continue in PIX, you will have to set this define to `0` when disabling optimizations.
+2. Unlike MJPs implementation there is no hard limit of 64 characters, and there is no requirement to run without debug optimizations. Turns out that the issue with the validator during compilation only occurs when processing strings in a dynamic loop. TTL, instead uses macros to produce an unrolled loop. Currently TTL supports up to 256 characters but this can easily be increased by increasing the size of the unrolled loop in [ttl::string](../src/ShaderTestFramework/Shader/TTL/string.hlsli). [Link](https://discord.com/channels/590611987420020747/1209044520285507634) to a discord thread talking about the issues that MJPs implementation leads to.
 
 ## Tracking down failures on a Particular Thread
 

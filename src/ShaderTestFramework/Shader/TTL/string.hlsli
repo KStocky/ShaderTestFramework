@@ -2,16 +2,18 @@
 #define TTL_STRING_HEADER
 
 #include "/Test/TTL/byte_writer.hlsli"
+#include "/Test/TTL/macro.hlsli"
 #include "/Test/TTL/memory.hlsli"
 #include "/Test/TTL/static_assert.hlsli"
 #include "/Test/TTL/type_traits.hlsli"
 
 namespace ttl
 {
+    template<uint InMaxChars>
     struct string
     {
-        static const uint MaxNumChars = 64;
-        uint Data[MaxNumChars / sizeof(uint)];
+        static const uint MaxNumChars = InMaxChars;
+        uint Data[(MaxNumChars + sizeof(uint) - 1) / sizeof(uint)];
         uint Size;
 
         void append(uint InChar)
@@ -27,23 +29,23 @@ namespace ttl
         }
     };
     
-    template<>
-    struct byte_writer<string>
+    template<uint N>
+    struct byte_writer<string<N> >
     {
         static const bool has_writer = true;
 
-        static uint bytes_required(string In)
+        static uint bytes_required(string<N> In)
         {
             return ttl::aligned_offset(In.Size, 4u);
         }
 
-        static uint alignment_required(string In)
+        static uint alignment_required(string<N> In)
         {
             return ttl::align_of<uint>::value;
         }
 
         template<typename U>
-        static void write(inout container_wrapper<U> InContainer, const uint InIndex, const string In)
+        static void write(inout container_wrapper<U> InContainer, const uint InIndex, const string<N> In)
         {
             const uint size = bytes_required(In) / ttl::size_of<uint>::value;
             static const bool isByteAddress = ttl::container_traits<U>::is_byte_address;
@@ -54,19 +56,6 @@ namespace ttl
             }
         }
     };
-
-    template<typename T, uint N>
-    typename enable_if<!is_same<T, string>::value, uint>::type strlen(T In[N])
-    {
-        STATIC_ASSERT(N <= string::MaxNumChars, "Strings with greater than 64 characters are not supported");
-        return N;
-    }
-
-    template<typename T>
-    typename enable_if<is_same<T, string>::value, uint>::type strlen(T In)
-    {
-        return In.Size;
-    }
 }
 
 namespace ttl_detail
@@ -81,7 +70,7 @@ namespace ttl_detail
         CHAR_CHECK(InChar, '\n', 10);
         CHAR_CHECK(InChar, ' ', 32);
         CHAR_CHECK(InChar, '!', 33);
-        CHAR_CHECK(InChar, '\"', 33);
+        CHAR_CHECK(InChar, '"', 34);
         CHAR_CHECK(InChar, '#', 35);
         CHAR_CHECK(InChar, '$', 36);
         CHAR_CHECK(InChar, '%', 37);
@@ -177,35 +166,19 @@ namespace ttl_detail
 
         return 255;
     }
-
     #undef CHAR_CHECK
 }
 
-#if TTL_ENABLE_STRINGS
-#define TO_STRING(InString, InStr)             \
-do{                                                       \
-    const uint numChars = ttl::strlen(InStr);              \
-    ttl::zero(InString);                                     \
-    for (uint i = 0; i < numChars; ++i)                 \
-    {                                                   \
-        InString.append(ttl_detail::char_to_uint(InStr[i]));      \
-    }                                                   \
-}while(false)
+#define CHAR_STAMP(i, InLength, InStr, OutStr) if (i >= InLength) break; OutStr.append(ttl_detail::char_to_uint(InStr[i]));
+#define STAMPER(InStamper, InN, InLength, InStr, OutStr) InStamper(0, CHAR_STAMP, InLength, InStr, OutStr)
 
-#else
-#define TO_STRING(InString, InStr) ttl::zero(InString)
-#endif
-
-#define DEFINE_STRING_CREATOR_IMPL(InName, InStr)   \
-struct {                                            \
-ttl::string operator()(){                           \
-ttl::string ret;                                    \
-TO_STRING(ret, InStr);                              \
-return ret;                                         \
-}                                                   \
-} InName
-
-
-#define DEFINE_STRING_CREATOR(InName, InStr) DEFINE_STRING_CREATOR_IMPL(InName, InStr)
+#define CREATE_STRING(OutStr, InStrLiteral)                                                                                          \
+STATIC_ASSERT((__decltype(ttl::array_len(InStrLiteral))::value <= 256), "Strings with greater than 256 characters are not supported"); \
+ttl::string<__decltype(ttl::array_len(InStrLiteral))::value> OutStr;                                                                 \
+ttl::zero(OutStr);                                                                                                                   \
+do {                                                                                                                                 \
+    using LengthType = __decltype(ttl::array_len(InStrLiteral));                                                                     \
+    TTL_STAMP(256, STAMPER, LengthType::value, InStrLiteral, OutStr)                                                                 \
+} while(false)   
 
 #endif
