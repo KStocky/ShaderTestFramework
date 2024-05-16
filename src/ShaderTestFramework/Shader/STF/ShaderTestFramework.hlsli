@@ -149,7 +149,8 @@ namespace ShaderTestPrivate
         }
     }
 
-    uint2 AddStringData(ttl::string In)
+    template<uint N>
+    uint2 AddStringData(ttl::string<N> In)
     {
         const uint size = ttl::aligned_offset(In.Size, 4u);
         uint offset = 0;
@@ -183,7 +184,8 @@ namespace ShaderTestPrivate
         return oldIndex == InId;
     }
 
-    void AddGlobalString(const uint InId, ttl::string In)
+    template<uint N>
+    void AddGlobalString(const uint InId, ttl::string<N> In)
     {
         const uint stringIndex = InId;
         if (!ShouldWriteGlobalData(NumStringsIndex, InId))
@@ -328,9 +330,9 @@ namespace STF
 STF_DECLARE_TEST_FUNC(InID)
 
 #define STF_SCENARIO_IMPL(InName, InScenarioId)                                                                                   \
-DEFINE_STRING_CREATOR(TTL_JOIN(scenarioNameCreator, InScenarioId), InName);                                                         \
+CREATE_STRING(TTL_JOIN(scenarioNameString, InScenarioId), InName);                                                         \
 static uint TTL_JOIN(scenarioNameId, InScenarioId) = ShaderTestPrivate::Scratch.NextStringID++; \
-ShaderTestPrivate::AddGlobalString(TTL_JOIN(scenarioNameId, InScenarioId), TTL_JOIN(scenarioNameCreator, InScenarioId)());    \
+ShaderTestPrivate::AddGlobalString(TTL_JOIN(scenarioNameId, InScenarioId), TTL_JOIN(scenarioNameString, InScenarioId));    \
 ShaderTestPrivate::OnFirstEntryOfSectionFunctor TTL_JOIN(onFirstEntry, InScenarioId);                                                                       \
 TTL_JOIN(onFirstEntry, InScenarioId).StringId = TTL_JOIN(scenarioNameId, InScenarioId);                                                                     \
 ShaderTestPrivate::Scratch.Init();                                                                                                  \
@@ -339,9 +341,9 @@ while(ShaderTestPrivate::Scratch.TryLoopScenario(TTL_JOIN(onFirstEntry, InScenar
 #define SCENARIO(InName) STF_SCENARIO_IMPL(InName, __LINE__)
 
 #define STF_SECTION_IMPL(InName, InID) STF_CREATE_SECTION_VAR_IMPL(InID);                                       \
-DEFINE_STRING_CREATOR(TTL_JOIN(sectionNameCreator, InID), InName);                                              \
+CREATE_STRING(TTL_JOIN(sectionNameString, InID), InName);                                              \
 static uint TTL_JOIN(sectionNameId, InID) = ShaderTestPrivate::Scratch.NextStringID++; \
-ShaderTestPrivate::AddGlobalString(TTL_JOIN(sectionNameId, InID), TTL_JOIN(sectionNameCreator, InID)()); \
+ShaderTestPrivate::AddGlobalString(TTL_JOIN(sectionNameId, InID), TTL_JOIN(sectionNameString, InID)); \
 ShaderTestPrivate::OnFirstEntryOfSectionFunctor TTL_JOIN(onFirstEntry, InID);                                   \
 TTL_JOIN(onFirstEntry, InID).StringId = TTL_JOIN(sectionNameId, InID);                                          \
 while (ShaderTestPrivate::Scratch.TryEnterSection(TTL_JOIN(onFirstEntry, InID), STF_GET_SECTION_VAR_NAME(InID)))

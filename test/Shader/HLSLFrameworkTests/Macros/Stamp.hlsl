@@ -106,6 +106,5 @@ void StampTests()
             #undef ADD_TO_VALUE
             #undef STAMP_ADD
         }
-        
     }
 }

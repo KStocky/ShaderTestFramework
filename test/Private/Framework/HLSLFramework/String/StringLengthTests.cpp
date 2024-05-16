@@ -15,7 +15,7 @@ SCENARIO("HLSLFrameworkTests - String - StrLen")
         table<std::string, std::vector<std::string>>
         (
             {
-                std::tuple{"GIVEN_StringCreatorWithOver64Characters_THEN_FailsCompilation", std::vector<std::string>{"Strings with greater than 64 characters are not supported"}}
+                std::tuple{"GIVEN_StringCreatorWithOver64Characters_THEN_FailsCompilation", std::vector<std::string>{"static_assert failed", "Strings with greater than 256 characters are not supported"}}
             }
         )
     );
