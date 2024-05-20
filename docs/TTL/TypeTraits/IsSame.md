@@ -41,7 +41,7 @@ Inherited from [`ttl::integral_constant`](./IntegralConstant.md)
 
 | Name                    | Value |
 |-------------------------|-------|
-| `static const bool value`  | `true` if `T` is a function type, `false` otherwise   |
+| `static const bool value`  | `true` if `T` and `U` are the same type, `false` otherwise   |
 
 
 ## Example
