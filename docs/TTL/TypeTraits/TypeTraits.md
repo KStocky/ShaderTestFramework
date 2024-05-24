@@ -32,6 +32,7 @@ The TTL (Test Template Library) provides a number of type traits in the [`type_t
 
 | | |
 |-|-|
+| [`enable_if`](./EnableIf.md) | conditionally removes a function overload or template specialization from overload resolution  |
 | [`void_t`](./VoidT.md) | alias template that maps a sequence of types to void |
 
 ## Functions
