@@ -16,6 +16,7 @@ The TTL (Test Template Library) provides a number of type traits in the [`type_t
 
 | | |
 |-|-|
+| [`array_traits`](./ArrayTraits.md) | Provides information on the size and element types of arrays |
 | [`is_array`](./IsArray.md) | checks if a type is an array type |
 | [`is_function`](./IsFunction.md) | checks if a type is a function type |
 
