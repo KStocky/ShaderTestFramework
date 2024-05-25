@@ -37,10 +37,10 @@ struct container_traits
 | Name                    | Value |
 |-------------------------|-------|
 | `static const bool is_container`  | `true` if `T` is a container, `false` otherwise   |
-| `static const uint is_writable`  | `true` if `T`'s elements can be written to, `false` otherwise   |
-| `static const uint is_byte_address`  | `true` if `T` is a byte address buffer, `false` otherwise   |
-| `static const uint is_structured`  | `true` if `T` is a structured buffer, `false` otherwise   |
-| `static const uint is_resource`  | `true` if `T` is a resource, `false` otherwise (i.e. is an array)   |
+| `static const bool is_writable`  | `true` if `T`'s elements can be written to, `false` otherwise   |
+| `static const bool is_byte_address`  | `true` if `T` is a byte address buffer, `false` otherwise   |
+| `static const bool is_structured`  | `true` if `T` is a structured buffer, `false` otherwise   |
+| `static const bool is_resource`  | `true` if `T` is a resource, `false` otherwise (i.e. is an array)   |
 
 ## Example
 
