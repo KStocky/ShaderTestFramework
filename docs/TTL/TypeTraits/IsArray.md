@@ -51,10 +51,6 @@ Inherited from [`ttl::integral_constant`](./IntegralConstant.md)
 
 #include "/Test/TTL/type_traits.hlsli"
 
-_Static_assert(ttl::is_array<A, A>::value, "Returns true because both arguments are A");
-_Static_assert(ttl::is_array<A, Alias>::value, "Returns true because we are comparing an alias to A and A");
-_Static_assert(!ttl::is_array<A, B>::value, "Returns false because A and B are different types");
-
 using StringLiteralType = __decltype("Hello");
 using NotArray = int;
 using Array = int[42];
