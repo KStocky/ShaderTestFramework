@@ -21,6 +21,7 @@ The TTL (Test Template Library) provides a number of type traits in the [`type_t
 | [`fundamental_type_traits`](./FundamentalTypeTraits.md) | Provides information on the properties of fundamental types |
 | [`is_array`](./IsArray.md) | checks if a type is an array type |
 | [`is_function`](./IsFunction.md) | checks if a type is a function type |
+| [`is_or_has_enum`](./IsOrHasEnum.md) | checks if a type is an enumeration type or contains an enumeration type |
 
 
 ### Type relationships
