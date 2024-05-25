@@ -214,13 +214,22 @@ namespace ttl
     struct is_or_has_enum<T, typename enable_if<sizeof(T) != 0>::type> : false_type{};
 }
 
+namespace ttl_detail
+{
+    template<typename T>
+    struct wrapper
+    {
+        T dummy;
+    };
+
+    template<typename T>
+    struct size_of_helper : wrapper<T>{};
+}
+
 namespace ttl
 {
     template<typename T, typename = void>
-    struct size_of : integral_constant<uint, sizeof(T)>{};
-
-    template<typename T>
-    struct size_of<T, typename enable_if<is_or_has_enum<T>::value>::type> : integral_constant<uint, 4>{};
+    struct size_of : integral_constant<uint, sizeof(ttl_detail::size_of_helper<T>)>{};
 }
 
 namespace ttl
@@ -270,6 +279,11 @@ namespace ttl
             !ttl::fundamental_type_traits<Base>::is_fundamental &&
             !ttl::fundamental_type_traits<Derived>::is_fundamental
         >{};
+}
+
+namespace ttl_detail
+{
+    
 }
 
 namespace ttl_detail
