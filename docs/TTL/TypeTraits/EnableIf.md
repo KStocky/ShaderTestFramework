@@ -76,4 +76,4 @@ _Static_assert(A<__decltype(Foo)>::value == 2, "value is 2 because Foo is a func
 ```
 ---
 
-[Top](#ttlis_same)
+[Top](#ttlenable_if)
