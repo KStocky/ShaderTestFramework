@@ -744,3 +744,20 @@ namespace ArrayLenTests
     STATIC_ASSERT((Tester<Array, 42u>::value));
     STATIC_ASSERT((Tester<NotArray, 0u>::value));
 }
+
+namespace IsBaseOfTests
+{
+    struct A{};
+    struct B : A{};
+    struct C : B{};
+
+    struct D{};
+
+    _Static_assert(ttl::is_base_of<A, B>::value, "");
+    _Static_assert(ttl::is_base_of<A, C>::value, "");
+    _Static_assert(ttl::is_base_of<A, A>::value, "");
+
+    _Static_assert(!ttl::is_base_of<int, int>::value, "");
+    _Static_assert(!ttl::is_base_of<A, D>::value, "");
+    _Static_assert(!ttl::is_base_of<int, A>::value, "");
+}

@@ -250,6 +250,30 @@ namespace ttl
 
 namespace ttl_detail
 {
+    template<typename T>
+    void test_conv(T);
+
+    template<typename Base, typename Derived, typename = void>
+    struct is_base_of_helper : ttl::false_type {};
+
+    template<typename Base, typename Derived>
+    struct is_base_of_helper<Base, Derived, __decltype(test_conv<Base>(ttl::declval<Derived>())) > : ttl::true_type{};
+}
+
+namespace ttl
+{
+    template<typename Base, typename Derived>
+    struct is_base_of : 
+        integral_constant<
+            bool,
+            ttl_detail::is_base_of_helper<Base, Derived>::value &&
+            !ttl::fundamental_type_traits<Base>::is_fundamental &&
+            !ttl::fundamental_type_traits<Derived>::is_fundamental
+        >{};
+}
+
+namespace ttl_detail
+{
     template<typename T, uint N>
     void is_array_helper(T In[N]);
 }
