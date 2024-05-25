@@ -541,11 +541,17 @@ namespace IsEnumTests
     {
         int D;
     };
-
-    STATIC_ASSERT((ttl::is_enum<A>::value));
-    STATIC_ASSERT((ttl::is_enum<B>::value));
-    STATIC_ASSERT((!ttl::is_enum<C>::value));
-    STATIC_ASSERT((!ttl::is_enum<uint>::value));
+                                                                                           
+    struct D
+    {
+        B data;
+    };
+                                                                                             
+    STATIC_ASSERT((ttl::is_or_has_enum<A>::value));
+    STATIC_ASSERT((ttl::is_or_has_enum<B>::value));
+    STATIC_ASSERT((!ttl::is_or_has_enum<C>::value));
+    STATIC_ASSERT((!ttl::is_or_has_enum<uint>::value));
+    STATIC_ASSERT((ttl::is_or_has_enum<D>::value));
 }
 
 namespace IsFunctionTests
