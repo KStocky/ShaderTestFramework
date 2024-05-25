@@ -2,12 +2,6 @@
 #ifndef TTL_TYPE_TRAITS_HEADER
 #define TTL_TYPE_TRAITS_HEADER
 
-namespace ttl_detail
-{
-    template<typename T, uint N>
-    void is_array_helper(T In[N]);
-}
-
 namespace ttl
 {
     template<typename T, T v>
@@ -20,10 +14,16 @@ namespace ttl
     
     using true_type = integral_constant<bool, true>;
     using false_type = integral_constant<bool, false>;
+}
 
+namespace ttl
+{
     template<typename T, T Ignore, T Pick>
     struct pick_right : integral_constant<T, Pick>{};
-    
+}
+
+namespace ttl
+{
     template<typename T, typename U>
     struct is_same : false_type
     {
@@ -33,7 +33,10 @@ namespace ttl
     struct is_same<T, T> : true_type 
     {
     };
-    
+}
+
+namespace ttl
+{
     template<bool InCond, typename T = void>
     struct enable_if
     {
@@ -44,7 +47,10 @@ namespace ttl
     {
         using type = T;  
     };
+}
 
+namespace ttl
+{
     template<typename T>
     struct array_traits
     {
@@ -60,7 +66,10 @@ namespace ttl
         static const uint size = Size;
         using element_type = T;
     };
+}
 
+namespace ttl
+{
     template<typename T>
     struct container_traits
     {
@@ -156,7 +165,10 @@ namespace ttl
         using element_type = uint;
         using type = RWByteAddressBuffer;
     };
+}
 
+namespace ttl
+{
     template<typename T>
     struct fundamental_type_traits
     {
@@ -190,36 +202,60 @@ namespace ttl
 
     template<typename T, uint InDim> struct fundamental_type_traits<vector<T, InDim> > : fundamental_type_traits_base<T, InDim, 1>{};
     template<typename T, uint InDim0, uint InDim1> struct fundamental_type_traits<matrix<T, InDim0, InDim1> > : fundamental_type_traits_base<T, InDim0, InDim1>{};
+}
 
+namespace ttl
+{
     // Depends on https://github.com/microsoft/DirectXShaderCompiler/issues/5553
     template<typename T, typename = void>
     struct is_or_has_enum : true_type{};
 
     template<typename T>
     struct is_or_has_enum<T, typename enable_if<sizeof(T) != 0>::type> : false_type{};
+}
 
+namespace ttl
+{
     template<typename T, typename = void>
     struct size_of : integral_constant<uint, sizeof(T)>{};
 
     template<typename T>
     struct size_of<T, typename enable_if<is_or_has_enum<T>::value>::type> : integral_constant<uint, 4>{};
+}
 
+namespace ttl
+{
     template<typename T, typename = void>
     struct align_of : integral_constant<uint, (size_of<T>::value % 8u == 0) ? pick_right<uint, size_of<T>::value, 8>::value : ((size_of<T>::value % 4u == 0) ? 4u : 2u) >{};
 
     template<typename T>
     struct align_of<T, typename enable_if<fundamental_type_traits<T>::is_fundamental>::type> 
         : integral_constant<uint, size_of<typename fundamental_type_traits<T>::base_type>::value>{};
+}
 
+namespace ttl
+{
     template<typename T>
     T declval();
+}
 
+namespace ttl
+{
     template<
         typename T0 = void, typename T1 = void , typename T2 = void, typename T3 = void, typename T4 = void,
         typename T5 = void, typename T6 = void , typename T7 = void, typename T8 = void, typename T9 = void
         >
     using void_t = void;
+}
 
+namespace ttl_detail
+{
+    template<typename T, uint N>
+    void is_array_helper(T In[N]);
+}
+
+namespace ttl
+{
     template<typename T, typename = void>
     struct is_array : false_type {};
 
@@ -228,13 +264,19 @@ namespace ttl
 
     template<typename T>
     struct is_array<T, void_t<__decltype(ttl_detail::is_array_helper(declval<T>()))> > : true_type {};
+}
 
+namespace ttl
+{
     template<typename T, uint N>
     integral_constant<uint, N> array_len(T In[N]);
 
     template<typename T>
     typename enable_if<!is_array<T>::value, integral_constant<uint, 0> >::type array_len(T In);
+}
 
+namespace ttl
+{
     template<typename T> struct is_function : false_type {};
     template<typename RetType> struct is_function<RetType()> : true_type {};
     template<typename RetType, typename Arg0> struct is_function<RetType(Arg0)> : true_type {};
@@ -244,6 +286,10 @@ namespace ttl
     template<typename RetType, typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4> struct is_function<RetType(Arg0, Arg1, Arg2, Arg3, Arg4)> : true_type {};
     template<typename RetType, typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5> struct is_function<RetType(Arg0, Arg1, Arg2, Arg3, Arg4, Arg5)> : true_type {};
 
+}
+
+namespace ttl
+{
     template<typename T, typename Arg0 = void, typename Arg1 = void, typename Arg2 = void, typename Arg3 = void, typename Arg4 = void, typename Arg5 = void> 
     struct is_invocable_function : false_type {};
 
