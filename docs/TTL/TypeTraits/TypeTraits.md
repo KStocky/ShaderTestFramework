@@ -29,6 +29,7 @@ The TTL (Test Template Library) provides a number of type traits in the [`type_t
 | | |
 |-|-|
 | [`is_same`](./IsSame.md) | checks if two types are the same |
+| [`is_base_of`](./IsBaseOf.md) | checks if a type is derived from the other type |
 | [`is_invocable_function`](./IsInvocableFunction.md) | checks if a function can be called with the given argument types |
 
 
