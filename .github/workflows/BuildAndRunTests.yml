@@ -1,4 +1,4 @@
-name: Build-And-Run-Tests
+name: Build And Run Tests
 
 run-name: "${{github.actor}}: ${{github.event.head_commit.message || github.event.pull_request.title}}"
 
