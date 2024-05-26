@@ -32,16 +32,14 @@ namespace AlignOfTests
         int D;
     };
 
-    struct ReportedAlignment
+    struct LargeWithMultipleAlignments
     {
-        float A;
-        float B;
+        int64_t A;
+        int32_t B;
+        int32_t C;
+        int32_t D;
+        int16_t E;
     };
-}
-
-namespace ttl
-{
-    template<> struct align_of<AlignOfTests::ReportedAlignment> : integral_constant<uint, 4>{};
 }
 
 namespace AlignOfTests
@@ -61,9 +59,13 @@ namespace AlignOfTests
 
     STATIC_ASSERT(2u == ttl::align_of<UnknownAlignmentGreaterThan8Multiple2>::value);
     STATIC_ASSERT(4u == ttl::align_of<UnknownAlignmentGreaterThan8Multiple4>::value);
-    STATIC_ASSERT(8u == ttl::align_of<UnknownAlignmentGreaterThan8Multiple8>::value);
+    STATIC_ASSERT(4u == ttl::align_of<UnknownAlignmentGreaterThan8Multiple8>::value);
 
-    STATIC_ASSERT(4u == ttl::align_of<ReportedAlignment>::value);
+    _Static_assert(8u == ttl::align_of<LargeWithMultipleAlignments>::value, "");
+
+    _Static_assert(2u == ttl::align_of<int16_t[10]>::value, "");
+    _Static_assert(4u == ttl::align_of<int32_t[10]>::value, "");
+    _Static_assert(8u == ttl::align_of<int64_t[10]>::value, "");
 }
 
 namespace ArrayTraitsTests

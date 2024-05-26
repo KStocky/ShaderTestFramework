@@ -232,14 +232,20 @@ namespace ttl
     struct size_of : integral_constant<uint, sizeof(ttl_detail::size_of_helper<T>)>{};
 }
 
+namespace ttl_detail
+{
+    template<typename T>
+    struct offset_lowest_align_wrapper
+    {
+        T first;
+        int16_t second;
+    };
+}
+
 namespace ttl
 {
-    template<typename T, typename = void>
-    struct align_of : integral_constant<uint, (size_of<T>::value % 8u == 0) ? pick_right<uint, size_of<T>::value, 8>::value : ((size_of<T>::value % 4u == 0) ? 4u : 2u) >{};
-
     template<typename T>
-    struct align_of<T, typename enable_if<fundamental_type_traits<T>::is_fundamental>::type> 
-        : integral_constant<uint, size_of<typename fundamental_type_traits<T>::base_type>::value>{};
+    struct align_of : integral_constant<uint, size_of<ttl_detail::offset_lowest_align_wrapper<T> >::value - size_of<T>::value>{};
 }
 
 namespace ttl
