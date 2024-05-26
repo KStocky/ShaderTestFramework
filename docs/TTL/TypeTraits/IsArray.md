@@ -1,10 +1,12 @@
 [Reference](../../ShaderTestFramework.md) -> [Test Template Library](../TTL.md) -> [Type Traits](./TypeTraitsHeader.md)
 
-# ttl::is_same
+# ttl::is_array
 
-If `T` and `U` name the same type, provides the member constant `value` equal to `true`. Otherwise `value` is `false`. 
+`ttl::is_array` is a UnaryTypeTrait.
 
-If the program adds specializations for `ttl::is_same`, the behavior is undefined. 
+Checks whether `T` is an array type. Provides the member constant `value` which is equal to `true`, if `T` is an array type. Otherwise, `value` is equal to `false`.
+
+If the program adds specializations for `ttl::is_array` the behavior is undefined. 
 
 **Contents**
 1. [Header](#header)
@@ -21,14 +23,13 @@ If the program adds specializations for `ttl::is_same`, the behavior is undefine
 ## Declaration
 
 ```c++
-template<typename T, typename U>
-struct is_same
+template<typename T>
+struct is_array
 ```
 
 ## Template Parameters
 
-1. `T` -> First type to compare.
-2. `U` -> Second type to compare.
+1. `T` -> a type to check.
 
 ## Nested Types
 
@@ -43,7 +44,7 @@ Inherited from [`ttl::integral_constant`](./IntegralConstant.md)
 
 | Name                    | Value |
 |-------------------------|-------|
-| `static const bool value`  | `true` if `T` and `U` are the same type, `false` otherwise   |
+| `static const bool value`  | `true` if `T` is an array type, `false` otherwise   |
 
 
 ## Example
@@ -52,16 +53,15 @@ Inherited from [`ttl::integral_constant`](./IntegralConstant.md)
 
 #include "/Test/TTL/type_traits.hlsli"
 
-struct A{};
-struct B{};
+using StringLiteralType = __decltype("Hello");
+using NotArray = int;
+using Array = int[42];
 
-using Alias = A;
-
-_Static_assert(ttl::is_same<A, A>::value, "Returns true because both arguments are A");
-_Static_assert(ttl::is_same<A, Alias>::value, "Returns true because we are comparing an alias to A and A");
-_Static_assert(!ttl::is_same<A, B>::value, "Returns false because A and B are different types");
+_Static_assert(ttl::is_array<StringLiteralType>::value, "Returns true because a string literal is an array type");
+_Static_assert(ttl::is_array<Array>::value, "Returns true because built in arrays are array types");
+_Static_assert(!ttl::is_array<NotArray>::value, "Returns false because int is not an array type");
 
 ```
 ---
 
-[Top](#ttlis_same)
+[Top](#ttlis_array)

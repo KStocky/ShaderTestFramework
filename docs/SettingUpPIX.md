@@ -1,3 +1,5 @@
+[Reference](./ShaderTestFramework.md)
+
 # Setting Up PIX
 
 You can download PIX for free from [here](https://devblogs.microsoft.com/pix/download/). Shader Test Framework is able to take PIX captures of tests. By default the framework will use [WARP](https://learn.microsoft.com/en-us/windows/win32/direct3darticles/directx-warp) to run the tests. This is to ensure that they will run on most hardware. The issue with this is that captures taken using WARP can not be analyzed in PIX out of the box there is an extra step to take.

@@ -1,3 +1,5 @@
+[Reference](../ShaderTestFramework.md) -> [Test Template Library](./TTL.md)
+
 # ttl::caster
 
 Despite [Announcing HLSL 2021](https://devblogs.microsoft.com/directx/announcing-hlsl-2021/) claiming that conversion operators work in HLSL 2021, they do not. [Bug](https://github.com/microsoft/DirectXShaderCompiler/issues/6081). To workaround this, the Shader Test Framework provides `ttl::caster` as a templated struct which can be specialized to provide a conversion function. This provides a unified interface for doing user defined conversions for test writers.
@@ -46,7 +48,7 @@ struct caster;
 
 ## Examples
 
-One of the more compelling reasons for providing a `ttl::caster` specialization for your type is to provide a cast to `bool`. This will allow test writers to use the `IsTrue` and `IsFalse` assertions with that data type. An example of this can be found in [TypeWithCastToBool.hlsl](../examples/Ex7_Casters/ShaderCode/TypeWithCastToBool.hlsl). To run this example run the [Ex7_Casters](../examples/Ex7_Casters/) example. The following is the relevant HLSL:
+One of the more compelling reasons for providing a `ttl::caster` specialization for your type is to provide a cast to `bool`. This will allow test writers to use the `IsTrue` and `IsFalse` assertions with that data type. An example of this can be found in [TypeWithCastToBool.hlsl](../../examples/Ex7_Casters/ShaderCode/TypeWithCastToBool.hlsl). To run this example run the [Ex7_Casters](../../examples/Ex7_Casters/) example. The following is the relevant HLSL:
 
 ```c++
 struct MyType

@@ -1,3 +1,5 @@
+[Reference](../ShaderTestFramework.md)
+
 # Byte Readers and Writers
 
 The HLSL and C++ sides of the framework need to be able to communicate how to interpret failing assert data so that failing asserts can be printed out in an understandable way. Shader Test Framework provides byte readers and byte writers to help users write tests that will produce well formatted error messages when asserts fail. Byte Readers are implemented in C++ and ByteWriters are implemented in HLSL.
@@ -85,12 +87,12 @@ This demonstrates that both matrices and boolean values are properly formatted.
 
 ### The Default Byte Reader
 
-The default Byte Reader will handle formatting asserts for any type that does not have an associated Byte Reader. To see an example of the default byte reader in action, uncomment the following line in [FailingAssertWithoutByteReader.hlsl](../examples/Ex6_ByteReadersAndWriters/ShaderCode/FailingAssertWithoutByteReader.hlsl).
+The default Byte Reader will handle formatting asserts for any type that does not have an associated Byte Reader. To see an example of the default byte reader in action, uncomment the following line in [FailingAssertWithoutByteReader.hlsl](../../examples/Ex6_ByteReadersAndWriters/ShaderCode/FailingAssertWithoutByteReader.hlsl).
 ```c++
 //ASSERT(AreEqual, test1, test2);
 ```
 
-Then run `Example6Tests - Failing test with no Byte Reader` in the [Ex6_ByteReadersAndWriters](../examples/Ex6_ByteReadersAndWriters/) example project. Doing this should yield the following error message:
+Then run `Example6Tests - Failing test with no Byte Reader` in the [Ex6_ByteReadersAndWriters](../../examples/Ex6_ByteReadersAndWriters/) example project. Doing this should yield the following error message:
 
 ```
 There were 0 successful asserts and 1 failed assertions
@@ -103,13 +105,13 @@ Since the default byte reader has no type information to go on, it simply output
 
 ### Creating a Byte Reader
 
-In the event that test writers wish to provide better error reporting than what the default byte reader can give, test writers are able to create their own byte readers. [FailingAssertWithByteReader.hlsl](../examples/Ex6_ByteReadersAndWriters/ShaderCode/FailingAssertWithByteReader.hlsl) is a modification of the previous example that has had a byte reader implemented. Like in the previous example uncomment this line:
+In the event that test writers wish to provide better error reporting than what the default byte reader can give, test writers are able to create their own byte readers. [FailingAssertWithByteReader.hlsl](../../examples/Ex6_ByteReadersAndWriters/ShaderCode/FailingAssertWithByteReader.hlsl) is a modification of the previous example that has had a byte reader implemented. Like in the previous example uncomment this line:
 
 ```c++
 //ASSERT(AreEqual, test1, test2);
 ```
 
-Then run `Example6Tests - Failing test with Byte Reader` in the [Ex6_ByteReadersAndWriters](../examples/Ex6_ByteReadersAndWriters/) example project. Doing this should yield the following error message:
+Then run `Example6Tests - Failing test with Byte Reader` in the [Ex6_ByteReadersAndWriters](../../examples/Ex6_ByteReadersAndWriters/) example project. Doing this should yield the following error message:
 
 ```
 There were 0 successful asserts and 1 failed assertions
@@ -122,7 +124,7 @@ As you can see, the error has been formatted using the information about the typ
 
 #### Step 1: Registering a Byte Reader with the fixture
 
-The above example's byte reader is registered in the following lines of [ByteReadersAndWriters.cpp](../examples/Ex6_ByteReadersAndWriters/ByteReadersAndWriters.cpp):
+The above example's byte reader is registered in the following lines of [ByteReadersAndWriters.cpp](../../examples/Ex6_ByteReadersAndWriters/ByteReadersAndWriters.cpp):
 
 ```c++
 fixture.RegisterByteReader("MY_TYPE_READER_ID",
@@ -155,7 +157,7 @@ Test writers need to be able to tell the framework what HLSL types use what Byte
 
 `static const uint16_t ReaderId`
 
-The value of this should be set to the value of the name of the reader that was used when calling `RegisterByteReader`. The shader test framework provides a convenience base struct to make this easier. You can see this in [FailingAssertWithByteReader.hlsl](../examples/Ex6_ByteReadersAndWriters/ShaderCode/FailingAssertWithByteReader.hlsl).
+The value of this should be set to the value of the name of the reader that was used when calling `RegisterByteReader`. The shader test framework provides a convenience base struct to make this easier. You can see this in [FailingAssertWithByteReader.hlsl](../../examples/Ex6_ByteReadersAndWriters/ShaderCode/FailingAssertWithByteReader.hlsl).
 
 ```c++
 namespace STF
@@ -176,7 +178,7 @@ There can be cases where you have a family of types that can be formatted in a v
 1. Providing formatting for a templated type that has a number of specializations
 2. Arrays of a type
 
-In this example we will be demonstrating the second of the situations above. The HLSL for this example can be found in [FailingAssertWithMultiTypeByteReader.hlsl](../examples/Ex6_ByteReadersAndWriters/ShaderCode/FailingAssertWithMultiTypeByteReader.hlsl). The C++ is in the `Example6Tests - Failing test with MultiType Byte Reader` scenario in [ByteReadersAndWriters.cpp](../examples/Ex6_ByteReadersAndWriters/ByteReadersAndWriters.cpp)
+In this example we will be demonstrating the second of the situations above. The HLSL for this example can be found in [FailingAssertWithMultiTypeByteReader.hlsl](../../examples/Ex6_ByteReadersAndWriters/ShaderCode/FailingAssertWithMultiTypeByteReader.hlsl). The C++ is in the `Example6Tests - Failing test with MultiType Byte Reader` scenario in [ByteReadersAndWriters.cpp](../../examples/Ex6_ByteReadersAndWriters/ByteReadersAndWriters.cpp)
 
 If we uncomment the assert from this example and run the example we will get the following output:
 
@@ -242,7 +244,7 @@ To create a Byte Writer of a type, `T`, then specialize `ttl::byte_writer` for y
 
 1. `static uint bytes_required(T)` -> This function will take an object of type, `T`, and return the number of bytes that that particular object will require to store its value.
 2. `static uint alignment_required(T)` -> This function will report the necessary alignment.
-3. `template<typename U> static void write(inout ttl::container_wrapper<U> ContainerToWriteTo, uint IndexToStartWritingAt, T ObjectToWrite)` -> This function will do the actual writing of the data to a container wrapped in a [`ttl::container_wrapper`](./ContainerWrapper.md) NOTE: It is very important that `ContainerToWriteTo` is marked as `inout` to ensure that it is returned from the function.
+3. `template<typename U> static void write(inout ttl::container_wrapper<U> ContainerToWriteTo, uint IndexToStartWritingAt, T ObjectToWrite)` -> This function will do the actual writing of the data to a container wrapped in a [`ttl::container_wrapper`](../TTL/ContainerWrapper.md) NOTE: It is very important that `ContainerToWriteTo` is marked as `inout` to ensure that it is returned from the function.
 
 They are also required to have the following member:
 ```c++
@@ -251,7 +253,7 @@ static const bool has_writer = true;
 
 #### Byte Writers in HLSL 
 
-You can find an example of this in [FailingAssertWithByteWriter.hlsl](../examples/Ex6_ByteReadersAndWriters/ShaderCode/FailingAssertWithByteWriter.hlsl). This example is run from the `Example6Tests - Failing test with Byte Writer` scenario in [ByteReadersAndWriters.cpp](../examples/Ex6_ByteReadersAndWriters/ByteReadersAndWriters.cpp). Before running the example make sure to uncomment the ASSERT so that the test actually fails and you see the failed assert info.
+You can find an example of this in [FailingAssertWithByteWriter.hlsl](../../examples/Ex6_ByteReadersAndWriters/ShaderCode/FailingAssertWithByteWriter.hlsl). This example is run from the `Example6Tests - Failing test with Byte Writer` scenario in [ByteReadersAndWriters.cpp](../../examples/Ex6_ByteReadersAndWriters/ByteReadersAndWriters.cpp). Before running the example make sure to uncomment the ASSERT so that the test actually fails and you see the failed assert info.
 
 This example has the following type:
 

@@ -1,3 +1,5 @@
+[Reference](../../ShaderTestFramework.md) -> [Test Template Library](../TTL.md) -> [Type Traits](./TypeTraitsHeader.md)
+
 # ttl::declval
 
 "Returns" a value of type `T`, making it possible to use member functions and pass objects of this type in the operand of the `__decltype` specifier
