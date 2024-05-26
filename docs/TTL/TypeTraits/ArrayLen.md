@@ -1,3 +1,5 @@
+[Reference](../../ShaderTestFramework.md) -> [Test Template Library](../TTL.md) -> [Type Traits](./TypeTraitsHeader.md)
+
 # ttl::array_len
 
 "Returns" a value of type [`ttl::integral_constant<uint, N>`](./IntegralConstant.md) that represents the length of the array passed.

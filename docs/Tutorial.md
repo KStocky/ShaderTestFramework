@@ -1,4 +1,5 @@
-<a id="top"></a>
+[Reference](./ShaderTestFramework.md)
+
 # Tutorial
 
 **Contents**<br>
@@ -29,7 +30,7 @@
 
 ## Getting Shader Test Framework
 
-The installation guide can be found [here](InstallationGuide.md)
+The installation guide can be found [here](./InstallationGuide.md)
 
 ## Writing tests
 
@@ -258,11 +259,11 @@ There is currently a bug in PIX Edit and Continue which means that PIX will fail
 
 ## Working with Shader Files using Virtual Shader Directories
 
-Up until now, we have been writing HLSL code directly in our C++ in strings. However, this does not scale and is not practical. We do not want to have to recompile our test suite whenever we are simply iterating on our HLSL code. Therefore it is recommended that users of STF write their HLSL code in HLSL files, and use STF's asset dependency and virtual shader directories facilities. An example of how this can be done is in ([Ex2_VirtualShaderDirectories](../examples/Ex2_VirtualShaderPaths)) and a much more in-depth tutorial on this part of the framework can be found in [VirtualShaderDirectories](./VirtualShaderDirectories.md).
+Up until now, we have been writing HLSL code directly in our C++ in strings. However, this does not scale and is not practical. We do not want to have to recompile our test suite whenever we are simply iterating on our HLSL code. Therefore it is recommended that users of STF write their HLSL code in HLSL files, and use STF's asset dependency and virtual shader directories facilities. An example of how this can be done is in ([Ex2_VirtualShaderDirectories](../examples/Ex2_VirtualShaderPaths)) and a much more in-depth tutorial on this part of the framework can be found in [VirtualShaderDirectories](./STF/VirtualShaderDirectories.md).
 
 ## SCENARIOs and SECTIONs
 
-Shader Test Framework provides a mechanism to help test writers, write tests that both minimise code repetition and also ensure that their tests are easy to reason about and follow. They are very similar to [Catch2](https://github.com/catchorg/Catch2/)s TEST_CASEs and SECTIONs, and look like the following:
+Shader Test Framework provides a mechanism to help test writers, write tests that both minimise code repetition and also ensure that their tests are easy to reason about and follow. They are very similar to [Catch2](https://github.com/catchorg/Catch2/)s `TEST_CASE`s and `SECTION`s, and look like the following:
 ```c++
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
@@ -304,17 +305,17 @@ void OptionalTestsWithScenariosAndSections()
 }
 ```
 
-Please refer to [Scenarios and Sections](./ScenariosAndSections.md) for more details on how they work, and the rationale behind them.
+Please refer to [Scenarios and Sections](./STF/ScenariosAndSections.md) for more details on how they work, and the rationale behind them.
 
 ## Assertions
 
-Shader Test Framework provides the standard assertions that one might expect from a testing framework, `STF::IsTrue`, `STF::IsFalse`, `STF::AreEqual`, and `STF::NotEqual`. To read more about the other assertion features that Shader Test Framework provides, the [Asserts](./Asserts.md) documentation is the place to go.
+Shader Test Framework provides the standard assertions that one might expect from a testing framework, `STF::IsTrue`, `STF::IsFalse`, `STF::AreEqual`, and `STF::NotEqual`. To read more about the other assertion features that Shader Test Framework provides, the [Asserts](./STF/Asserts.md) documentation is the place to go.
 
 ## Compile Time Tests
 
 With HLSL2021, we might find ourselves writing template metafunctions that we want to test. Since templates are evaluated at compile time, then it would be a waste to write run-time tests for these functions. Instead, Shader Test Framework provides a way to write Compile Time Tests. The following docs should help to better understand how to write these types of tests:
-1. [Compile Time Tests](./CompileTimeTests.md)
-2. [`STATIC_ASSERT`](./StaticAssert.md)
+1. [Compile Time Tests](./STF/CompileTimeTests.md)
+2. [`STATIC_ASSERT`](./TTL/StaticAssert.md)
 
 ---
 

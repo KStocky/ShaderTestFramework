@@ -1,3 +1,5 @@
+[Reference](../../ShaderTestFramework.md) -> [Test Template Library](../TTL.md) -> [Models](./ModelsHeader.md)
+
 # ttl::models_refines
 
 A utility function to be used within the definition of a [pseudo concept](./PseudoConcepts.md). `ttl::models_refines` enables a pseudo concept to include another pseudo concept via composition.

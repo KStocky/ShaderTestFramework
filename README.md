@@ -22,43 +22,16 @@ $ cmake ..
 $ cmake --build .
 ```
 
-From there you can have a play with the examples. 
+From there you can have a play with the [examples](./examples).
 
 There is also a much more in depth [tutorial](docs/Tutorial.md). This describes the requirements in detail, then takes you through how to include the framework in your project, and then how to write tests for your shader code.
 
-## Example test
-
-```c++
-
-SCENARIO("MinimalShaderTestExample")
-{
-    ShaderTestFixture::Desc desc{};
-    desc.Source = std::string{
-        R"(
-            // Include the test framework
-            #include "/Test/STF/ShaderTestFramework.hlsli"
-
-            [RootSignature(SHADER_TEST_RS)]
-            [numthreads(1, 1, 1)]
-            void MinimalTestEntryFunction()
-            {
-                STF::AreEqual(42, 42);
-            }
-        )"
-    };
-    ShaderTestFixture fixture(std::move(desc));
-
-    REQUIRE(fixture.RunTest("MinimalTestEntryFunction", 1, 1, 1));
-}
-
-```
-
-## Example Catch2 Style HLSL Test
+## Example Shader Unit Test
 
 ```c++
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
-void OptionalTestsWithScenariosAndSections()
+void OptionalTests()
 {
     SCENARIO("GIVEN An Optional that is reset")
     {
@@ -67,13 +40,13 @@ void OptionalTestsWithScenariosAndSections()
 
         SECTION("THEN IsValid returns false")
         {
-            STF::IsFalse(opt.IsValid);
+            ASSERT(IsFalse, opt.IsValid);
         }
 
         SECTION("THEN GetOrDefault returns default value")
         {
             const int expectedValue = 42;
-            STF::AreEqual(expectedValue, opt.GetOrDefault(expectedValue));
+            ASSERT(AreEqual, expectedValue, opt.GetOrDefault(expectedValue));
         }
 
         SECTION("WHEN value is set")
@@ -83,15 +56,21 @@ void OptionalTestsWithScenariosAndSections()
 
             SECTION("THEN IsValid returns true")
             {
-                STF::IsTrue(opt.IsValid);
+                ASSERT(IsTrue, opt.IsValid);
             }
 
             SECTION("THEN GetOrDefault returns set value")
             {
                 const int defaultValue = 24;
-                STF::AreEqual( expectedValue, opt.GetOrDefault(defaultValue));
+                ASSERT(AreEqual, expectedValue, opt.GetOrDefault(defaultValue));
             }
         }
     }
 }
 ```
+
+## How to use
+
+- [Tutorial](./docs/Tutorial.md)
+- [Reference](./docs/ShaderTestFramework.md)
+- [Example Repository](https://github.com/KStocky/ShaderTestFrameworkExamples)

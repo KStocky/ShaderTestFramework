@@ -1,6 +1,8 @@
+[Reference](../ShaderTestFramework.md)
+
 # Compile Time Tests
 
-Sometimes we only want to write tests which check if a shader compiles or not. In these cases there is no need to actually dispatch the shader test. The very fact that it compiled is good enough for us. That is where Compile Time Tests come in. Throughout this topic, we will be referring to ([Ex5_CompileTimeTests](../examples/Ex5_CompileTimeTests))
+Sometimes we only want to write tests which check if a shader compiles or not. In these cases there is no need to actually dispatch the shader test. The very fact that it compiled is good enough for us. That is where Compile Time Tests come in. Throughout this topic, we will be referring to ([Ex5_CompileTimeTests](../../examples/Ex5_CompileTimeTests))
 
 **Contents**
 
@@ -15,7 +17,7 @@ Sometimes we only want to write tests which check if a shader compiles or not. I
 
 The following are some cases where you might consider a compile time test over a standard test:
 
-1. You are writing tests for some template meta programming code - In this case, all of your asserts could likely be performed by [STATIC_ASSERT](./StaticAssert.md). If your shader compiles and `STATIC_ASSERTS` are present in the shader, then that means all of the `STATIC_ASSERT`s passed
+1. You are writing tests for some template meta programming code - In this case, all of your asserts could likely be performed by [STATIC_ASSERT](../TTL/StaticAssert.md). If your shader compiles and `STATIC_ASSERTS` are present in the shader, then that means all of the `STATIC_ASSERT`s passed
 
 2. Testing out language features - Sometimes it can be beneficial to have tests for HLSL code just to see if they are valid HLSL. This is particularly useful if you want to provide minimal repro code to demonstrate a bug with DXC.
 
@@ -25,7 +27,7 @@ Writing compile time tests are different from regular run time tests differs bot
 
 ### C++
 
-The following code from [CompileTimeTests.cpp](../examples/Ex5_CompileTimeTests/CompileTimeTests.cpp) demonstrates how to run a compile time test:
+The following code from [CompileTimeTests.cpp](../../examples/Ex5_CompileTimeTests/CompileTimeTests.cpp) demonstrates how to run a compile time test:
 
 ```c++
 #include <Framework/ShaderTestFixture.h>
@@ -69,7 +71,7 @@ This type trait takes 3 template arguments.
 2. `typename IfTrue` - The type returned in `Type` when the `Condition` is `true`.
 3. `typename IfFalse` - The type returned in `Type` when the `Condition` is `false`. 
 
-The implementation can be found in [ConditionalType.hlsli](../examples/Ex5_CompileTimeTests/ShaderCode/ConditionalType.hlsli). To test this type trait we might want to write a couple of asserts to make sure that the expected type is returned when the condition is true and false. The following is how we might do that.
+The implementation can be found in [ConditionalType.hlsli](../../examples/Ex5_CompileTimeTests/ShaderCode/ConditionalType.hlsli). To test this type trait we might want to write a couple of asserts to make sure that the expected type is returned when the condition is true and false. The following is how we might do that.
 
 ```c++
 #include "/Shader/ConditionalType.hlsli"

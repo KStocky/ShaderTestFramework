@@ -1,3 +1,5 @@
+[Reference](../../ShaderTestFramework.md) -> [Test Template Library](../TTL.md) -> [Type Traits](./TypeTraitsHeader.md)
+
 # ttl::is_invocable_function
 
 Checks whether `T` is a function type that can be called with the supplied argument types. Structs with overloaded operator() don't count as function types. Provides the member constant `value` which is equal to `true`, if `T` is a function type that can be invoked with the supplied argument types. Otherwise, `value` is equal to `false`.

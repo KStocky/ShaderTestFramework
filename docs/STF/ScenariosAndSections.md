@@ -1,3 +1,5 @@
+[Reference](../ShaderTestFramework.md)
+
 # Scenarios and Sections
 
 **Contents**
@@ -12,7 +14,7 @@
 
 ## An Introduction to Scenarios and Sections
 
-Just like [Catch2](https://github.com/catchorg/Catch2), STF is able to use scenarios and sections to define tests. Using Scenarios and Sections allows test writers to reuse test setup code in a simple to understand manner. Throughout this topic, we will be referring to ([Ex3_ScenariosAndSections](../examples/Ex2_ScenariosAndSections)).
+Just like [Catch2](https://github.com/catchorg/Catch2), STF is able to use scenarios and sections to define tests. Using Scenarios and Sections allows test writers to reuse test setup code in a simple to understand manner. Throughout this topic, we will be referring to ([Ex3_ScenariosAndSections](../../examples/Ex2_ScenariosAndSections)).
 
 NOTE: All threads in a dispatch MUST have the same control flow through a SCENARIO. This is because there isn't support for logging section information on a per thread basis. STF assumes all threads will follow the set control flow through the test. 
 
@@ -53,11 +55,11 @@ struct Optional
 };
 ```
 
-It is essentially a very basic implementation of an optional type such as [std::optional](https://en.cppreference.com/w/cpp/utility/optional) but in HLSL. We might use this to return a value from a function that might not be valid. The main thing about this basic class is that it is complex enough to write a somewhat substantial test suite for, which should help to demonstrate the usefullness of Scenarios and Sections. You can find the implementation of this class in [Optional.hlsli](../examples/Ex2_ScenariosAndSections/Optional.hlsli)
+It is essentially a very basic implementation of an optional type such as [std::optional](https://en.cppreference.com/w/cpp/utility/optional) but in HLSL. We might use this to return a value from a function that might not be valid. The main thing about this basic class is that it is complex enough to write a somewhat substantial test suite for, which should help to demonstrate the usefullness of Scenarios and Sections. You can find the implementation of this class in [Optional.hlsli](../../examples/Ex2_ScenariosAndSections/Optional.hlsli)
 
 ## Testing Optional\<T> without Scenarios And Sections
 
-The following tests can be found in [OptionalTests.hlsl](../examples/Ex2_ScenariosAndSections/OptionalTests.hlsl).
+The following tests can be found in [OptionalTests.hlsl](../../examples/Ex2_ScenariosAndSections/OptionalTests.hlsl).
 
 The first test we might write for this class could be something like the following:
 
@@ -271,7 +273,7 @@ As noted in [Following the Execution Line by Line](#following-the-execution-line
 
 1. Strings are not actually supported by HLSL. They only work due to exploiting DXC. You can read more about how this works in [Shader Printf in HLSL and DX12](https://therealmjp.github.io/posts/hlsl-printf/) by MJP. The implementation used in STF is based on this article. And it is a fantastic article on the topic. Definitely worth a read.
 
-2. Unlike MJPs implementation there is no hard limit of 64 characters, and there is no requirement to run without debug optimizations. Turns out that the issue with the validator during compilation only occurs when processing strings in a dynamic loop. TTL, instead uses macros to produce an unrolled loop. Currently TTL supports up to 256 characters but this can easily be increased by increasing the size of the unrolled loop in [ttl::string](../src/ShaderTestFramework/Shader/TTL/string.hlsli). [Link](https://discord.com/channels/590611987420020747/1209044520285507634) to a discord thread talking about the issues that MJPs implementation leads to.
+2. Unlike MJPs implementation there is no hard limit of 64 characters, and there is no requirement to run without debug optimizations. Turns out that the issue with the validator during compilation only occurs when processing strings in a dynamic loop. TTL, instead uses macros to produce an unrolled loop. Currently TTL supports up to 256 characters but this can easily be increased by increasing the size of the unrolled loop in [ttl::string](../../src/ShaderTestFramework/Shader/TTL/string.hlsli). [Link](https://discord.com/channels/590611987420020747/1209044520285507634) to a discord thread talking about the issues that MJPs implementation leads to.
 
 ## Tracking down failures on a Particular Thread
 

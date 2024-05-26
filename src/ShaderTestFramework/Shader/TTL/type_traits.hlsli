@@ -289,11 +289,6 @@ namespace ttl
 
 namespace ttl_detail
 {
-    
-}
-
-namespace ttl_detail
-{
     template<typename T, uint N>
     void is_array_helper(T In[N]);
 }
