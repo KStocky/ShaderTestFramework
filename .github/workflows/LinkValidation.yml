@@ -19,6 +19,6 @@ jobs:
         steps:
         - uses: actions/checkout@v4
         - name: Run linkspector
-        uses: umbrelladocs/action-linkspector@v1
-        with:
+          uses: umbrelladocs/action-linkspector@v1
+          with:
             fail_on_error: true
