@@ -1,0 +1,18 @@
+name: LinkValidation
+
+run-name: "${{github.actor}}: ${{github.event.head_commit.message}}"
+
+on:
+    push:
+        paths:
+        - '**.md'
+jobs:
+  check-links:
+    name: Link Validator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run linkspector
+        uses: umbrelladocs/action-linkspector@v1
+        with:
+          fail_on_error: true
