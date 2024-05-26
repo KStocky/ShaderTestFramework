@@ -35,12 +35,17 @@ TTL_STAMP(n, x, ...)
 
 ## Parameters of `x`
 
+This macro is defined by the user to kick off the stamping of another function like macro
+
 | Parameter | Description |
 |-----------|-------------|
 | `InStamper` | The stamping out function |
 | `InN`       | The number of times to stamp the instance out. |
+| `...` | The additional arguments to pass to `InStamp` |
 
 ## Parameters of `InStamper`
+
+This macro is defined by the library. It is only meant to be accepted by `x` and then invoked by `x`
 
 | Parameter | Description |
 |-----------|-------------|
@@ -49,6 +54,8 @@ TTL_STAMP(n, x, ...)
 | `...` | The additional arguments to pass to `InStamp` |
 
 ## Parameters of `InStamp`
+
+This macro is defined by the user. This is the actual macro that will get stamped out `n` times.
 
 | Parameter | Description |
 |-----------|-------------|
