@@ -2,7 +2,7 @@
 
 # ttl::models_refines
 
-A utility function to be used within the definition of a [pseudo concept](./PseudoConcepts.md). `ttl::models_refines` enables a pseudo concept to include another pseudo concept via composition.
+A utility function to be used within the definition of a [pseudo concept](../PseudoConcepts.md). `ttl::models_refines` enables a pseudo concept to include another pseudo concept via composition.
 
 Note: `ttl::models_refines` is not defined, so it only allowed to be used in an unevaluated context such as within a `__decltype` expression.
 

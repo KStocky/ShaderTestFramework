@@ -1,6 +1,8 @@
+[Reference](../../ShaderTestFramework.md) -> [Test Template Library](../TTL.md) -> [Models](./ModelsHeader.md)
+
 # ttl::models_if_pred
 
-A utility function to be used within the definition of a [pseudo concept](./PseudoConcepts.md). `ttl::models_if_pred` takes template template argument which takes a single template argument. `ttl::models_if_pred` succeeds if the template template argument provides a `value` member constant that evaluates to `true`. The function is ill-formed otherwise. It is a generalization of [`ttl::models_if_same`](./ModelsIfSame.md).
+A utility function to be used within the definition of a [pseudo concept](../PseudoConcepts.md). `ttl::models_if_pred` takes template template argument which takes a single template argument. `ttl::models_if_pred` succeeds if the template template argument provides a `value` member constant that evaluates to `true`. The function is ill-formed otherwise. It is a generalization of [`ttl::models_if_same`](./ModelsIfSame.md).
 
 Note: `ttl::models_if_pred` is not defined, so it only allowed to be used in an unevaluated context such as within a `__decltype` expression.
 
