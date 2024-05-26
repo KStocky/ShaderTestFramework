@@ -36,15 +36,15 @@ struct size_of
 Inherited from [`ttl::integral_constant`](./IntegralConstant.md)
 | Name | Definition |
 |---------------|----------------------------|
-| `value_type`  | `bool`                        |
-| `type`        | `integral_constant<bool, value>;` |
+| `value_type`  | `uint`                        |
+| `type`        | `integral_constant<uint, value>;` |
 
 ## Member Constants
 Inherited from [`ttl::integral_constant`](./IntegralConstant.md)
 
 | Name                    | Value |
 |-------------------------|-------|
-| `static const uint value`  | The size in bytes of the type `T` |
+| `static const uint value`  | The size, in bytes, of the type `T` |
 
 
 ## Example
