@@ -25,6 +25,7 @@ on:
       - '**.hlsl'
       - '**CMakeLists.txt'
       - '**.cmake'
+      - '**.md'
       - '.github/workflows/**'
 jobs:
     Build-And-Test:
