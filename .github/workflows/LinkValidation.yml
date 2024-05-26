@@ -7,18 +7,8 @@ on:
         paths:
         - '**.md'
 jobs:
-    Link-Validator1:
+    Link Validator:
         runs-on: ubuntu-latest
         steps:
         - uses: actions/checkout@master
         - uses: gaurav-nelson/github-action-markdown-link-check@v1
-    
-    Link-Validator2:
-        name: Link Validator
-        runs-on: ubuntu-latest
-        steps:
-        - uses: actions/checkout@v4
-        - name: Run linkspector
-          uses: umbrelladocs/action-linkspector@v1
-          with:
-            fail_on_error: true
