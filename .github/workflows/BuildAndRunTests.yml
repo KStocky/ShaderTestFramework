@@ -11,7 +11,7 @@ on:
       - '**.hlsl'
       - '**CMakeLists.txt'
       - '**.cmake'
-      - '.github/workflows/**'
+      - '**BuildAndRunTests.yml'
 
   pull_request:
     types: [opened, reopened, synchronize]
@@ -26,7 +26,7 @@ on:
       - '**CMakeLists.txt'
       - '**.cmake'
       - '**.md'
-      - '.github/workflows/**'
+      - '**BuildAndRunTests.yml'
 jobs:
     Build-And-Test:
         runs-on: windows-latest
