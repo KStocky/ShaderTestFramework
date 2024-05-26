@@ -22,7 +22,7 @@ The first 4 of these assertions can be used by any vector form of uint, int, flo
 
 ## The ASSERT Macro
 
-To improve the provided assertion functions, Shader Test Framework, also provides the `ASSERT` macro. This macro can be used with any of the above assertion functions. e.g. you can either write `STF::IsTrue(condition)` OR `ASSERT(IsTrue, condition)` to assert that a variable called `condition` is true. To demonstrate the usefulness of this macro, let's have a look at running the tests in ([AssertTests.hlsl](../../examples/Ex4_Asserts/AssertTests.hlsl)). If only the `FailingStandardAsserts` are run:
+To improve the provided assertion functions, Shader Test Framework, also provides the `ASSERT` macro. This macro can be used with any of the above assertion functions. e.g. you can either write `STF::IsTrue(condition)` OR `ASSERT(IsTrue, condition)` to assert that a variable called `condition` is true. To demonstrate the usefulness of this macro, let's have a look at running the tests in ([AssertTests.hlsl](../../examples/Ex4_Asserts/ShaderCode/AssertTests.hlsl)). If only the `FailingStandardAsserts` are run:
 
 ```c++
 [RootSignature(SHADER_TEST_RS)]
