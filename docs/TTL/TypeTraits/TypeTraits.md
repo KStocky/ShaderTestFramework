@@ -24,6 +24,7 @@ The TTL (Test Template Library) provides a number of type traits in the [`type_t
 
 | | |
 |-|-|
+| [`align_of`](./AlignOf.md) | obtains the alignment of a type |
 | [`array_traits`](./ArrayTraits.md) | Provides information on the size and element types of arrays |
 | [`container_traits`](./ContainerTraits.md) | Provides information on the properties of resource buffers and arrays |
 | [`fundamental_type_traits`](./FundamentalTypeTraits.md) | Provides information on the properties of fundamental types |
