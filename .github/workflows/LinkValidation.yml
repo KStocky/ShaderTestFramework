@@ -6,6 +6,7 @@ on:
     push:
         paths:
         - '**.md'
+        - '**/LinkValidation.yml'
 jobs:
     Link Validator:
         runs-on: ubuntu-latest
