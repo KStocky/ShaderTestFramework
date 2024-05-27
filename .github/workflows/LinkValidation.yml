@@ -1,0 +1,23 @@
+name: Link Validation
+
+run-name: "${{github.actor}}: ${{github.event.head_commit.message}}"
+
+on:
+    push:
+        paths:
+        - '**.md'
+        - '**/LinkValidation.yml'
+    pull_request:
+        types: [opened, reopened, synchronize]
+        branches:
+            - "main"
+            
+        paths-ignore:
+        - '**.md'
+        - '**/LinkValidation.yml'
+jobs:
+    LinkValidator:
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@master
+        - uses: gaurav-nelson/github-action-markdown-link-check@v1

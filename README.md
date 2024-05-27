@@ -1,6 +1,7 @@
 # ShaderTestFramework
 
 ![Tests](https://github.com/KStocky/ShaderTestFramework/actions/workflows/BuildAndRunTests.yml/badge.svg)
+![Link Validation](https://github.com/KStocky/ShaderTestFramework/actions/workflows/LinkValidation.yml/badge.svg)
 
 **Shader code is code. We should test it**
 

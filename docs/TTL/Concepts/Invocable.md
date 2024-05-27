@@ -1,8 +1,8 @@
-[Reference](../ShaderTestFramework.md) -> [Test Template Library](./TTL.md) -> [Concepts](./ConceptsHeader.md)
+[Reference](../../ShaderTestFramework.md) -> [Test Template Library](../TTL.md) -> [Concepts](./ConceptsHeader.md)
 
 # ttl::invocable_functor, ttl::invocable
 
-These are [pseudo-concepts](./PseudoConcepts.md) for use with [`ttl::models`](./Models.md).
+These are [pseudo-concepts](../PseudoConcepts.md) for use with [`ttl::models`](../Models/Models.md).
 
 **Contents**
 1. [Header](#header)

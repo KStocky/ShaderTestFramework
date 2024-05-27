@@ -1,4 +1,4 @@
-name: Build-And-Run-Tests
+name: Build And Run Tests
 
 run-name: "${{github.actor}}: ${{github.event.head_commit.message || github.event.pull_request.title}}"
 
@@ -11,7 +11,7 @@ on:
       - '**.hlsl'
       - '**CMakeLists.txt'
       - '**.cmake'
-      - '.github/workflows/**'
+      - '**BuildAndRunTests.yml'
 
   pull_request:
     types: [opened, reopened, synchronize]
@@ -25,7 +25,7 @@ on:
       - '**.hlsl'
       - '**CMakeLists.txt'
       - '**.cmake'
-      - '.github/workflows/**'
+      - '**BuildAndRunTests.yml'
 jobs:
     Build-And-Test:
         runs-on: windows-latest

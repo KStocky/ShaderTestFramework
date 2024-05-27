@@ -37,7 +37,7 @@ As there is a default byte reader that will catch all types, there is never any 
 
 ### The Fundamental Byte Reader
 
-As mentioned, Shader Test Framework provides a byte reader that covers all fundamental types. This ensures that any test writer can get well formatted assert messages provided that they are asserting on primitive types. You can see them in action by uncommenting the function call in [FailingFundamentalTypeTests.hlsl](../examples/Ex6_ByteReadersAndWriters/ShaderCode/FailingFundamentalTypeTests.hlsl) and then running the [ByteReadersAndWriters](../examples/Ex6_ByteReadersAndWriters) example. Doing that should result in a failing test run with the following output:
+As mentioned, Shader Test Framework provides a byte reader that covers all fundamental types. This ensures that any test writer can get well formatted assert messages provided that they are asserting on primitive types. You can see them in action by uncommenting the function call in [FailingFundamentalTypeTests.hlsl](../../examples/Ex6_ByteReadersAndWriters/ShaderCode/FailingFundamentalTypeTests.hlsl) and then running the [ByteReadersAndWriters](../../examples/Ex6_ByteReadersAndWriters) example. Doing that should result in a failing test run with the following output:
 
 ```
 ByteReadersAndWriters.cpp line 24: Failed

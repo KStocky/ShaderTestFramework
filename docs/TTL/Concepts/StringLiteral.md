@@ -1,8 +1,8 @@
-[Reference](../ShaderTestFramework.md) -> [Test Template Library](./TTL.md) -> [Concepts](./ConceptsHeader.md)
+[Reference](../../ShaderTestFramework.md) -> [Test Template Library](../TTL.md) -> [Concepts](./ConceptsHeader.md)
 
 # ttl::string_literal
 
-This is a [pseudo-concept](./PseudoConcepts.md) for use with [`ttl::models`](./Models.md).
+This is a [pseudo-concept](../PseudoConcepts.md) for use with [`ttl::models`](../Models/Models.md).
 
 **Contents**
 1. [Header](#header)

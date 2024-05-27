@@ -2,7 +2,7 @@
 
 # ttl::models_if
 
-A utility function to be used within the definition of a [pseudo concept](./PseudoConcepts.md). `ttl::models_if` will evaluate a compile time `bool` expression, such as a type trait. It will succeed if the expression evaluates to `true`.
+A utility function to be used within the definition of a [pseudo concept](../PseudoConcepts.md). `ttl::models_if` will evaluate a compile time `bool` expression, such as a type trait. It will succeed if the expression evaluates to `true`.
 
 Note: `ttl::models_if` is not defined, so it only allowed to be used in an unevaluated context such as within a `__decltype` expression.
 

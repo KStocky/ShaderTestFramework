@@ -2,7 +2,7 @@
 
 # ttl::models_if_same
 
-A utility function to be used within the definition of a [pseudo concept](./PseudoConcepts.md). `ttl::models_if_same` is similar to [`ttl::is_same`](../TypeTraits/IsSame.md) in that it compares two types. If the two types, `T` and `U`, are the same, this function will be well defined, otherwise this function will be ill-formed. [`ttl::models_if_pred`](./ModelsIfPred.md) is a generalization of `ttl::models_if_same`
+A utility function to be used within the definition of a [pseudo concept](../PseudoConcepts.md). `ttl::models_if_same` is similar to [`ttl::is_same`](../TypeTraits/IsSame.md) in that it compares two types. If the two types, `T` and `U`, are the same, this function will be well defined, otherwise this function will be ill-formed. [`ttl::models_if_pred`](./ModelsIfPred.md) is a generalization of `ttl::models_if_same`
 
 Note: `ttl::models_if_same` is not defined, so it only allowed to be used in an unevaluated context such as within a `__decltype` expression.
 
