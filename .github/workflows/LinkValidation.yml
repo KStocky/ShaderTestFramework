@@ -7,6 +7,14 @@ on:
         paths:
         - '**.md'
         - '**/LinkValidation.yml'
+    pull_request:
+        types: [opened, reopened, synchronize]
+        branches:
+            - "main"
+            
+        paths-ignore:
+        - '**.md'
+        - '**/LinkValidation.yml'
 jobs:
     LinkValidator:
         runs-on: ubuntu-latest
