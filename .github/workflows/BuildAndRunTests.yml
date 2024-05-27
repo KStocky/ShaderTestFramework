@@ -25,7 +25,6 @@ on:
       - '**.hlsl'
       - '**CMakeLists.txt'
       - '**.cmake'
-      - '**.md'
       - '**BuildAndRunTests.yml'
 jobs:
     Build-And-Test:
