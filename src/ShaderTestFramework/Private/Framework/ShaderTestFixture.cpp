@@ -250,7 +250,7 @@ PipelineState ShaderTestFixture::CreatePipelineState(const RootSignature& InRoot
     desc.CachedPSO.pCachedBlob = nullptr;
     desc.CS.BytecodeLength = InShader->GetBufferSize();
     desc.CS.pShaderBytecode = InShader->GetBufferPointer();
-    desc.Flags = m_IsWarp ? D3D12_PIPELINE_STATE_FLAG_TOOL_DEBUG : D3D12_PIPELINE_STATE_FLAG_NONE;
+    desc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
     desc.NodeMask = 0;
     desc.pRootSignature = InRootSig;
     return m_Device.CreatePipelineState(desc);
