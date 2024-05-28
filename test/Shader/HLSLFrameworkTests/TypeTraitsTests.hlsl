@@ -44,28 +44,33 @@ namespace AlignOfTests
 
 namespace AlignOfTests
 {
-    STATIC_ASSERT(2u == ttl::align_of<int16_t>::value);
-    STATIC_ASSERT(4u == ttl::align_of<int32_t>::value);
-    STATIC_ASSERT(8u == ttl::align_of<int64_t>::value);
-    STATIC_ASSERT(4u == ttl::align_of<bool>::value);
+    _Static_assert(2u == ttl::align_of<int16_t>::value);
+    _Static_assert(4u == ttl::align_of<int32_t>::value);
+    _Static_assert(8u == ttl::align_of<int64_t>::value);
+    _Static_assert(4u == ttl::align_of<bool>::value);
 
-    STATIC_ASSERT(2u == ttl::align_of<int16_t3>::value);
-    STATIC_ASSERT(8u == ttl::align_of<int64_t4>::value);
+    _Static_assert(2u == ttl::align_of<int16_t3>::value);
+    _Static_assert(8u == ttl::align_of<int64_t4>::value);
 
-    STATIC_ASSERT(2u == ttl::align_of<int16_t3x4>::value);
-    STATIC_ASSERT(8u == ttl::align_of<int64_t4x2>::value);
+    _Static_assert(2u == ttl::align_of<int16_t3x4>::value);
+    _Static_assert(8u == ttl::align_of<int64_t4x2>::value);
 
-    STATIC_ASSERT((uint)sizeof(UnknownAlignmentLessThan8) == ttl::align_of<UnknownAlignmentLessThan8>::value);
+    _Static_assert((uint)sizeof(UnknownAlignmentLessThan8) == ttl::align_of<UnknownAlignmentLessThan8>::value);
 
-    STATIC_ASSERT(2u == ttl::align_of<UnknownAlignmentGreaterThan8Multiple2>::value);
-    STATIC_ASSERT(4u == ttl::align_of<UnknownAlignmentGreaterThan8Multiple4>::value);
-    STATIC_ASSERT(4u == ttl::align_of<UnknownAlignmentGreaterThan8Multiple8>::value);
+    _Static_assert(2u == ttl::align_of<UnknownAlignmentGreaterThan8Multiple2>::value);
+    _Static_assert(4u == ttl::align_of<UnknownAlignmentGreaterThan8Multiple4>::value);
+    _Static_assert(4u == ttl::align_of<UnknownAlignmentGreaterThan8Multiple8>::value);
 
-    _Static_assert(8u == ttl::align_of<LargeWithMultipleAlignments>::value, "");
+    _Static_assert(8u == ttl::align_of<LargeWithMultipleAlignments>::value);
 
-    _Static_assert(2u == ttl::align_of<int16_t[10]>::value, "");
-    _Static_assert(4u == ttl::align_of<int32_t[10]>::value, "");
-    _Static_assert(8u == ttl::align_of<int64_t[10]>::value, "");
+    _Static_assert(2u == ttl::align_of<int16_t[10]>::value);
+    _Static_assert(4u == ttl::align_of<int32_t[10]>::value);
+    _Static_assert(8u == ttl::align_of<int64_t[10]>::value);
+
+    _Static_assert(2u == ttl::align_of_v<int16_t>);
+    _Static_assert(4u == ttl::align_of_v<int32_t>);
+    _Static_assert(8u == ttl::align_of_v<int64_t>);
+    _Static_assert(4u == ttl::align_of_v<bool>);
 }
 
 namespace ArrayTraitsTests

@@ -258,6 +258,9 @@ namespace ttl
 {
     template<typename T>
     struct align_of : integral_constant<uint, size_of<ttl_detail::offset_lowest_align_wrapper<T> >::value - size_of<T>::value>{};
+
+    template<typename T>
+    static const uint align_of_v = align_of<T>::value;
 }
 
 namespace ttl
