@@ -10,10 +10,10 @@ If the program adds specializations for `ttl::is_same`, the behavior is undefine
 1. [Header](#header)
 2. [Declaration](#declaration)
 3. [Helper variable template](#helper-variable-template)
-3. [Template Parameters](#template-parameters)
-4. [Nested Types](#nested-types)
-5. [Member Constants](#member-constants)
-6. [Example](#example)
+4. [Template Parameters](#template-parameters)
+5. [Nested Types](#nested-types)
+6. [Member Constants](#member-constants)
+7. [Example](#example)
 
 ## Header
 
