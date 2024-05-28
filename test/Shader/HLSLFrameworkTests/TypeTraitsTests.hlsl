@@ -584,15 +584,25 @@ namespace IsFunctionTests
     void FourParamFunction(ParamType, ParamType, ParamType, ParamType){}
     void FiveParamFunction(ParamType, ParamType, ParamType, ParamType, ParamType){}
 
-    STATIC_ASSERT((ttl::is_function<__decltype(ZeroParamFunction)>::value));
-    STATIC_ASSERT((ttl::is_function<__decltype(OneParamFunction)>::value));
-    STATIC_ASSERT((ttl::is_function<__decltype(TwoParamFunction)>::value));
-    STATIC_ASSERT((ttl::is_function<__decltype(ThreeParamFunction)>::value));
-    STATIC_ASSERT((ttl::is_function<__decltype(FourParamFunction)>::value));
-    STATIC_ASSERT((ttl::is_function<__decltype(FiveParamFunction)>::value));
+    _Static_assert(ttl::is_function<__decltype(ZeroParamFunction)>::value);
+    _Static_assert(ttl::is_function<__decltype(OneParamFunction)>::value);
+    _Static_assert(ttl::is_function<__decltype(TwoParamFunction)>::value);
+    _Static_assert(ttl::is_function<__decltype(ThreeParamFunction)>::value);
+    _Static_assert(ttl::is_function<__decltype(FourParamFunction)>::value);
+    _Static_assert(ttl::is_function<__decltype(FiveParamFunction)>::value);
 
-    STATIC_ASSERT((!ttl::is_function<Functor>::value));
-    STATIC_ASSERT((!ttl::is_function<ParamType>::value));
+    _Static_assert(!ttl::is_function<Functor>::value);
+    _Static_assert(!ttl::is_function<ParamType>::value);
+
+    _Static_assert(ttl::is_function_v<__decltype(ZeroParamFunction)>);
+    _Static_assert(ttl::is_function_v<__decltype(OneParamFunction)>);
+    _Static_assert(ttl::is_function_v<__decltype(TwoParamFunction)>);
+    _Static_assert(ttl::is_function_v<__decltype(ThreeParamFunction)>);
+    _Static_assert(ttl::is_function_v<__decltype(FourParamFunction)>);
+    _Static_assert(ttl::is_function_v<__decltype(FiveParamFunction)>);
+
+    _Static_assert(!ttl::is_function_v<Functor>);
+    _Static_assert(!ttl::is_function_v<ParamType>);
 }
 
 namespace IsInvocableFunctionTests

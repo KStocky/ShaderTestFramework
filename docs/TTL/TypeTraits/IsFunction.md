@@ -6,11 +6,12 @@
 
 Checks whether `T` is a function type. Structs with overloaded operator() don't count as function types. Provides the member constant `value` which is equal to `true`, if `T` is a function type. Otherwise, `value` is equal to `false`.
 
-If the program adds specializations for `ttl::is_function`, the behavior is undefined. 
+If the program adds specializations for `ttl::is_function` or `ttl::is_function_v`, the behavior is undefined. 
 
 **Contents**
 1. [Header](#header)
 2. [Declaration](#declaration)
+3. [Helper variable template](#helper-variable-template)
 3. [Template Parameters](#template-parameters)
 4. [Specializations](#specializations)
 5. [Nested Types](#nested-types)
@@ -26,6 +27,13 @@ If the program adds specializations for `ttl::is_function`, the behavior is unde
 ```c++
 template<typename T>
 struct is_function;
+```
+
+## Helper variable template
+
+```c++
+template<typename T>
+static const bool is_function = is_function<T>::value;
 ```
 
 ## Template Parameters
