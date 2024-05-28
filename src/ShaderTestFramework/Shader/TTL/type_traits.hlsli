@@ -33,6 +33,9 @@ namespace ttl
     struct is_same<T, T> : true_type 
     {
     };
+
+    template<typename T, typename U>
+    static const bool is_same_v = is_same<T, U>::value;
 }
 
 namespace ttl

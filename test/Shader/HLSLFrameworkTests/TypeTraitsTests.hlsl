@@ -637,6 +637,22 @@ namespace IsInvocableFunctionTests
     STATIC_ASSERT((!ttl::is_invocable_function<__decltype(FiveParamFunction), NotParamType, NotParamType, NotParamType, NotParamType, NotParamType>::value));
 }
 
+namespace IsSameTests
+{
+    struct A{};
+    struct B{};
+
+    using Alias = A;
+
+    _Static_assert(ttl::is_same<A, A>::value, "Returns true because both arguments are A");
+    _Static_assert(ttl::is_same<A, Alias>::value, "Returns true because we are comparing an alias to A and A");
+    _Static_assert(!ttl::is_same<A, B>::value, "Returns false because A and B are different types");
+
+    _Static_assert(ttl::is_same_v<A, A>, "Returns true because both arguments are A");
+    _Static_assert(ttl::is_same_v<A, Alias>, "Returns true because we are comparing an alias to A and A");
+    _Static_assert(!ttl::is_same_v<A, B>, "Returns false because A and B are different types");
+}
+
 namespace SizeOfTests
 {
     enum A
