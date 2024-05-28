@@ -4,7 +4,7 @@
 
 If `T` and `U` name the same type, provides the member constant `value` equal to `true`. Otherwise `value` is `false`. 
 
-If the program adds specializations for `ttl::is_same`, the behavior is undefined. 
+If the program adds specializations for `ttl::is_same` or `ttl::is_same_v`, the behavior is undefined. 
 
 **Contents**
 1. [Header](#header)

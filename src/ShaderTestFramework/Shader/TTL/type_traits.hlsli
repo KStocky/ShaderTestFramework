@@ -239,6 +239,9 @@ namespace ttl
 {
     template<typename T, typename = void>
     struct size_of : integral_constant<uint, sizeof(ttl_detail::size_of_helper<T>)>{};
+
+    template<typename T>
+    static const uint size_of_v = size_of<T>::value;
 }
 
 namespace ttl_detail

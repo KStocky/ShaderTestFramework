@@ -12,7 +12,7 @@ This metafunction is a convenient way to leverage SFINAE, in particular for cond
 - as a return type (not applicable to constructors and destructors),
 - as a class template or function template parameter. 
 
-If the program adds specializations for `ttl::enable_if`, the behavior is undefined. 
+If the program adds specializations for `ttl::enable_if` or `ttl::enable_if_t`, the behavior is undefined. 
 
 **Contents**
 1. [Header](#header)

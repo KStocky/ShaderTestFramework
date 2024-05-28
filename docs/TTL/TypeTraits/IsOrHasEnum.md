@@ -6,7 +6,7 @@
 
 Checks whether `T` is or contains an enumeration type. Provides the member constant `value` which is equal to `true`, if `T` is or contains an enumeration type. Otherwise, value is equal to false.
 
-If the program adds specializations for `ttl::is_or_has_enum`, the behavior is undefined.
+If the program adds specializations for `ttl::is_or_has_enum` or `ttl::is_or_has_enum_v`, the behavior is undefined.
 
 It should be noted that this works due to this bug in DXC, [link](https://github.com/microsoft/DirectXShaderCompiler/issues/5553). When (if) this bug is fixed this type trait will no longer be able to implemented in the current way.
 

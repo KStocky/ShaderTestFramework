@@ -688,17 +688,29 @@ namespace SizeOfTests
         float4 data3;
     };
 
-    _Static_assert(4u == ttl::size_of<A>::value, "");
-    _Static_assert(4u == ttl::size_of<B>::value, "");
-    _Static_assert(4u == ttl::size_of<C>::value, "");
-    _Static_assert(4u == ttl::size_of<uint>::value, "");
-    _Static_assert(8u == ttl::size_of<uint64_t>::value, "");
-    _Static_assert(2u == ttl::size_of<uint16_t>::value, "");
-    _Static_assert(24u == ttl::size_of<uint64_t3>::value, "");
-    _Static_assert(8u == ttl::size_of<uint16_t4>::value, "");
+    _Static_assert(4u == ttl::size_of<A>::value);
+    _Static_assert(4u == ttl::size_of<B>::value);
+    _Static_assert(4u == ttl::size_of<C>::value);
+    _Static_assert(4u == ttl::size_of<uint>::value);
+    _Static_assert(8u == ttl::size_of<uint64_t>::value);
+    _Static_assert(2u == ttl::size_of<uint16_t>::value);
+    _Static_assert(24u == ttl::size_of<uint64_t3>::value);
+    _Static_assert(8u == ttl::size_of<uint16_t4>::value);
 
-    _Static_assert(4u == ttl::size_of<D>::value, "");
-    _Static_assert(24u == ttl::size_of<E>::value, "");
+    _Static_assert(4u == ttl::size_of<D>::value);
+    _Static_assert(24u == ttl::size_of<E>::value);
+
+    _Static_assert(4u == ttl::size_of_v<A>);
+    _Static_assert(4u == ttl::size_of_v<B>);
+    _Static_assert(4u == ttl::size_of_v<C>);
+    _Static_assert(4u == ttl::size_of_v<uint>);
+    _Static_assert(8u == ttl::size_of_v<uint64_t>);
+    _Static_assert(2u == ttl::size_of_v<uint16_t>);
+    _Static_assert(24u == ttl::size_of_v<uint64_t3>);
+    _Static_assert(8u == ttl::size_of_v<uint16_t4>);
+
+    _Static_assert(4u == ttl::size_of_v<D>);
+    _Static_assert(24u == ttl::size_of_v<E>);
 }
 
 namespace EnableIfTests
