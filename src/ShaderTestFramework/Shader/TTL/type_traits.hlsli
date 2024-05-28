@@ -300,6 +300,9 @@ namespace ttl
             !ttl::fundamental_type_traits<Base>::is_fundamental &&
             !ttl::fundamental_type_traits<Derived>::is_fundamental
         >{};
+
+    template<typename Base, typename Derived>
+    static const bool is_base_of_v = is_base_of<Base, Derived>::value;
 }
 
 namespace ttl_detail

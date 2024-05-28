@@ -838,11 +838,19 @@ namespace IsBaseOfTests
 
     struct D{};
 
-    _Static_assert(ttl::is_base_of<A, B>::value, "");
-    _Static_assert(ttl::is_base_of<A, C>::value, "");
-    _Static_assert(ttl::is_base_of<A, A>::value, "");
+    _Static_assert(ttl::is_base_of<A, B>::value);
+    _Static_assert(ttl::is_base_of<A, C>::value);
+    _Static_assert(ttl::is_base_of<A, A>::value);
 
-    _Static_assert(!ttl::is_base_of<int, int>::value, "");
-    _Static_assert(!ttl::is_base_of<A, D>::value, "");
-    _Static_assert(!ttl::is_base_of<int, A>::value, "");
+    _Static_assert(!ttl::is_base_of<int, int>::value);
+    _Static_assert(!ttl::is_base_of<A, D>::value);
+    _Static_assert(!ttl::is_base_of<int, A>::value);
+
+    _Static_assert(ttl::is_base_of_v<A, B>);
+    _Static_assert(ttl::is_base_of_v<A, C>);
+    _Static_assert(ttl::is_base_of_v<A, A>);
+
+    _Static_assert(!ttl::is_base_of_v<int, int>);
+    _Static_assert(!ttl::is_base_of_v<A, D>);
+    _Static_assert(!ttl::is_base_of_v<int, A>);
 }
