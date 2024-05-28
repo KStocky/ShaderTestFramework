@@ -184,6 +184,8 @@ CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName
     ShaderCompilationJobDesc job;
     job.AdditionalFlags = m_CompilationFlags;
     job.AdditionalFlags.emplace_back(L"-enable-16bit-types");
+    job.AdditionalFlags.emplace_back(L"-Wno-c++14-extensions");
+    job.AdditionalFlags.emplace_back(L"-Wno-c++1z-extensions");
     job.EntryPoint = InName;
     job.ShaderModel = m_ShaderModel;
     job.ShaderType = InType;
