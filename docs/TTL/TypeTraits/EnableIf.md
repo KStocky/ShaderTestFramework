@@ -17,9 +17,10 @@ If the program adds specializations for `ttl::enable_if`, the behavior is undefi
 **Contents**
 1. [Header](#header)
 2. [Declaration](#declaration)
-3. [Template Parameters](#template-parameters)
-4. [Member Types](#member-types)
-5. [Example](#example)
+3. [Helper types](#helper-types)
+4. [Template Parameters](#template-parameters)
+5. [Member Types](#member-types)
+6. [Example](#example)
 
 ## Header
 
@@ -30,6 +31,13 @@ If the program adds specializations for `ttl::enable_if`, the behavior is undefi
 ```c++
 template<bool InCond, typename T = void>
 struct enable_if
+```
+
+## Helper types
+
+```c++
+template<bool InCond, typename T = void>
+using enable_if_t = typename enable_if<InCond, T>::type;
 ```
 
 ## Template Parameters

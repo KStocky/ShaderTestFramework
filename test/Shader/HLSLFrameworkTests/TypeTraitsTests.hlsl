@@ -695,6 +695,35 @@ namespace SizeOfTests
     _Static_assert(24u == ttl::size_of<E>::value, "");
 }
 
+namespace EnableIfTests
+{
+    void Foo()
+    {
+    }
+
+    template<typename T, typename = void>
+    struct A
+    {
+        static const uint value = 0;
+    };
+
+    template<typename T>
+    struct A<T, typename ttl::enable_if<ttl::is_array<T>::value>::type>
+    {
+        static const uint value = 1;
+    };
+
+    template<typename T>
+    struct A<T, ttl::enable_if_t<ttl::is_function<T>::value> >
+    {
+        static const uint value = 2;
+    };
+
+    _Static_assert(A<int>::value == 0, "value is 0 because int is neither an array or a function so it takes the primary template");
+    _Static_assert(A<float[42]>::value == 1, "value is 1 because float[42] is an array so it takes the first specialization");
+    _Static_assert(A<__decltype(Foo)>::value == 2, "value is 2 because Foo is a function so it takes the second specialization");
+}
+
 namespace VoidTTests
 {
     struct A

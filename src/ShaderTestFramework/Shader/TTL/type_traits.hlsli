@@ -50,6 +50,9 @@ namespace ttl
     {
         using type = T;  
     };
+
+    template<bool InCond, typename T = void>
+    using enable_if_t = typename enable_if<InCond, T>::type;
 }
 
 namespace ttl
