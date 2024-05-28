@@ -811,9 +811,13 @@ namespace IsArrayTraits
     using NotArray = int;
     using Array = int[42];
 
-    STATIC_ASSERT((ttl::is_array<StringLiteralType>::value));
-    STATIC_ASSERT((ttl::is_array<Array>::value));
-    STATIC_ASSERT((!ttl::is_array<NotArray>::value));
+    _Static_assert(ttl::is_array<StringLiteralType>::value);
+    _Static_assert(ttl::is_array<Array>::value);
+    _Static_assert(!ttl::is_array<NotArray>::value);
+
+    _Static_assert(ttl::is_array_v<StringLiteralType>);
+    _Static_assert(ttl::is_array_v<Array>);
+    _Static_assert(!ttl::is_array_v<NotArray>);
 }
 
 namespace ArrayLenTests

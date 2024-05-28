@@ -321,6 +321,9 @@ namespace ttl
 
     template<typename T>
     struct is_array<T, void_t<__decltype(ttl_detail::is_array_helper(declval<T>()))> > : true_type {};
+
+    template<typename T>
+    static const bool is_array_v = is_array<T>::value;
 }
 
 namespace ttl
