@@ -13,10 +13,11 @@ It should be noted that this works due to this bug in DXC, [link](https://github
 **Contents**
 1. [Header](#header)
 2. [Declaration](#declaration)
-3. [Template Parameters](#template-parameters)
-4. [Nested Types](#nested-types)
-5. [Member Constants](#member-constants)
-6. [Example](#example)
+3. [Helper variable template](#helper-variable-template)
+4. [Template Parameters](#template-parameters)
+5. [Nested Types](#nested-types)
+6. [Member Constants](#member-constants)
+7. [Example](#example)
 
 ## Header
 
@@ -27,6 +28,13 @@ It should be noted that this works due to this bug in DXC, [link](https://github
 ```c++
 template<typename T>
 struct is_or_has_enum
+```
+
+## Helper variable template
+
+```c++
+template<typename T>
+static const bool is_or_has_enum_v = is_or_has_enum<T>::value;
 ```
 
 ## Template Parameters

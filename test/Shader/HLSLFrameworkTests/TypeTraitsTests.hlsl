@@ -527,7 +527,7 @@ namespace FundamentalTypeTraitsTests
     }
 }
 
-namespace IsEnumTests
+namespace IsOrHasEnumTests
 {
     enum A
     {
@@ -549,11 +549,17 @@ namespace IsEnumTests
         B data;
     };
                                                                                              
-    STATIC_ASSERT((ttl::is_or_has_enum<A>::value));
-    STATIC_ASSERT((ttl::is_or_has_enum<B>::value));
-    STATIC_ASSERT((!ttl::is_or_has_enum<C>::value));
-    STATIC_ASSERT((!ttl::is_or_has_enum<uint>::value));
-    STATIC_ASSERT((ttl::is_or_has_enum<D>::value));
+    _Static_assert(ttl::is_or_has_enum<A>::value);
+    _Static_assert(ttl::is_or_has_enum<B>::value);
+    _Static_assert(!ttl::is_or_has_enum<C>::value);
+    _Static_assert(!ttl::is_or_has_enum<uint>::value);
+    _Static_assert(ttl::is_or_has_enum<D>::value);
+
+    _Static_assert(ttl::is_or_has_enum_v<A>);
+    _Static_assert(ttl::is_or_has_enum_v<B>);
+    _Static_assert(!ttl::is_or_has_enum_v<C>);
+    _Static_assert(!ttl::is_or_has_enum_v<uint>);
+    _Static_assert(ttl::is_or_has_enum_v<D>);
 }
 
 namespace IsFunctionTests

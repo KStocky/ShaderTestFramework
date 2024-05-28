@@ -218,6 +218,9 @@ namespace ttl
 
     template<typename T>
     struct is_or_has_enum<T, typename enable_if<sizeof(T) != 0>::type> : false_type{};
+
+    template<typename T>
+    static const bool is_or_has_enum_v = is_or_has_enum<T>::value;
 }
 
 namespace ttl_detail
