@@ -650,38 +650,78 @@ namespace IsInvocableFunctionTests
     _Static_assert(ttl::is_invocable_function<__decltype(FourParamFunction), ParamType, ParamType, ParamType, ParamType>::value);
     _Static_assert(ttl::is_invocable_function<__decltype(FiveParamFunction), ParamType, ParamType, ParamType, ParamType, ParamType>::value);
 
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(OneParamFunction)>::value));
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(TwoParamFunction)>::value));
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(ThreeParamFunction)>::value));
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(FourParamFunction)>::value));
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(FiveParamFunction)>::value));
+    _Static_assert(!ttl::is_invocable_function<__decltype(OneParamFunction)>::value);
+    _Static_assert(!ttl::is_invocable_function<__decltype(TwoParamFunction)>::value);
+    _Static_assert(!ttl::is_invocable_function<__decltype(ThreeParamFunction)>::value);
+    _Static_assert(!ttl::is_invocable_function<__decltype(FourParamFunction)>::value);
+    _Static_assert(!ttl::is_invocable_function<__decltype(FiveParamFunction)>::value);
 
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(ZeroParamFunction), NotParamType>::value));
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(OneParamFunction), NotParamType>::value));
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(TwoParamFunction), NotParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(ThreeParamFunction), NotParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(FourParamFunction), NotParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(FiveParamFunction), NotParamType, ParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert(!ttl::is_invocable_function<__decltype(ZeroParamFunction), NotParamType>::value);
+    _Static_assert(!ttl::is_invocable_function<__decltype(OneParamFunction), NotParamType>::value);
+    _Static_assert(!ttl::is_invocable_function<__decltype(TwoParamFunction), NotParamType, ParamType>::value);
+    _Static_assert(!ttl::is_invocable_function<__decltype(ThreeParamFunction), NotParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::is_invocable_function<__decltype(FourParamFunction), NotParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::is_invocable_function<__decltype(FiveParamFunction), NotParamType, ParamType, ParamType, ParamType, ParamType>::value);
 
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(TwoParamFunction), ParamType, NotParamType>::value));
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(ThreeParamFunction), ParamType, NotParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(FourParamFunction), ParamType, NotParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(FiveParamFunction), ParamType, NotParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert(!ttl::is_invocable_function<__decltype(TwoParamFunction), ParamType, NotParamType>::value);
+    _Static_assert(!ttl::is_invocable_function<__decltype(ThreeParamFunction), ParamType, NotParamType, ParamType>::value);
+    _Static_assert(!ttl::is_invocable_function<__decltype(FourParamFunction), ParamType, NotParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::is_invocable_function<__decltype(FiveParamFunction), ParamType, NotParamType, ParamType, ParamType, ParamType>::value);
 
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(ThreeParamFunction), ParamType, ParamType, NotParamType>::value));
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(FourParamFunction), ParamType, ParamType, NotParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(FiveParamFunction), ParamType, ParamType, NotParamType, ParamType, ParamType>::value));
+    _Static_assert(!ttl::is_invocable_function<__decltype(ThreeParamFunction), ParamType, ParamType, NotParamType>::value);
+    _Static_assert(!ttl::is_invocable_function<__decltype(FourParamFunction), ParamType, ParamType, NotParamType, ParamType>::value);
+    _Static_assert(!ttl::is_invocable_function<__decltype(FiveParamFunction), ParamType, ParamType, NotParamType, ParamType, ParamType>::value);
 
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(FourParamFunction), ParamType, ParamType, ParamType, NotParamType>::value));
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(FiveParamFunction), ParamType, ParamType, ParamType, NotParamType, ParamType>::value));
+    _Static_assert(!ttl::is_invocable_function<__decltype(FourParamFunction), ParamType, ParamType, ParamType, NotParamType>::value);
+    _Static_assert(!ttl::is_invocable_function<__decltype(FiveParamFunction), ParamType, ParamType, ParamType, NotParamType, ParamType>::value);
 
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(FiveParamFunction), ParamType, ParamType, ParamType, ParamType, NotParamType>::value));
+    _Static_assert(!ttl::is_invocable_function<__decltype(FiveParamFunction), ParamType, ParamType, ParamType, ParamType, NotParamType>::value);
 
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(OneParamFunction), NotParamType>::value));
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(TwoParamFunction), NotParamType, NotParamType>::value));
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(ThreeParamFunction), NotParamType, NotParamType, NotParamType>::value));
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(FourParamFunction), NotParamType, NotParamType, NotParamType, NotParamType>::value));
-    STATIC_ASSERT((!ttl::is_invocable_function<__decltype(FiveParamFunction), NotParamType, NotParamType, NotParamType, NotParamType, NotParamType>::value));
+    _Static_assert(!ttl::is_invocable_function<__decltype(OneParamFunction), NotParamType>::value);
+    _Static_assert(!ttl::is_invocable_function<__decltype(TwoParamFunction), NotParamType, NotParamType>::value);
+    _Static_assert(!ttl::is_invocable_function<__decltype(ThreeParamFunction), NotParamType, NotParamType, NotParamType>::value);
+    _Static_assert(!ttl::is_invocable_function<__decltype(FourParamFunction), NotParamType, NotParamType, NotParamType, NotParamType>::value);
+    _Static_assert(!ttl::is_invocable_function<__decltype(FiveParamFunction), NotParamType, NotParamType, NotParamType, NotParamType, NotParamType>::value);
+
+    _Static_assert(ttl::is_invocable_function_v<__decltype(ZeroParamFunction)>);
+    _Static_assert(ttl::is_invocable_function_v<__decltype(OneParamFunction), ParamType>);
+    _Static_assert(ttl::is_invocable_function_v<__decltype(TwoParamFunction), ParamType, ParamType>);
+    _Static_assert(ttl::is_invocable_function_v<__decltype(ThreeParamFunction), ParamType, ParamType, ParamType>);
+    _Static_assert(ttl::is_invocable_function_v<__decltype(FourParamFunction), ParamType, ParamType, ParamType, ParamType>);
+    _Static_assert(ttl::is_invocable_function_v<__decltype(FiveParamFunction), ParamType, ParamType, ParamType, ParamType, ParamType>);
+
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(OneParamFunction)>);
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(TwoParamFunction)>);
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(ThreeParamFunction)>);
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(FourParamFunction)>);
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(FiveParamFunction)>);
+
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(ZeroParamFunction), NotParamType>);
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(OneParamFunction), NotParamType>);
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(TwoParamFunction), NotParamType, ParamType>);
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(ThreeParamFunction), NotParamType, ParamType, ParamType>);
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(FourParamFunction), NotParamType, ParamType, ParamType, ParamType>);
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(FiveParamFunction), NotParamType, ParamType, ParamType, ParamType, ParamType>);
+
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(TwoParamFunction), ParamType, NotParamType>);
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(ThreeParamFunction), ParamType, NotParamType, ParamType>);
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(FourParamFunction), ParamType, NotParamType, ParamType, ParamType>);
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(FiveParamFunction), ParamType, NotParamType, ParamType, ParamType, ParamType>);
+
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(ThreeParamFunction), ParamType, ParamType, NotParamType>);
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(FourParamFunction), ParamType, ParamType, NotParamType, ParamType>);
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(FiveParamFunction), ParamType, ParamType, NotParamType, ParamType, ParamType>);
+
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(FourParamFunction), ParamType, ParamType, ParamType, NotParamType>);
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(FiveParamFunction), ParamType, ParamType, ParamType, NotParamType, ParamType>);
+
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(FiveParamFunction), ParamType, ParamType, ParamType, ParamType, NotParamType>);
+
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(OneParamFunction), NotParamType>);
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(TwoParamFunction), NotParamType, NotParamType>);
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(ThreeParamFunction), NotParamType, NotParamType, NotParamType>);
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(FourParamFunction), NotParamType, NotParamType, NotParamType, NotParamType>);
+    _Static_assert(!ttl::is_invocable_function_v<__decltype(FiveParamFunction), NotParamType, NotParamType, NotParamType, NotParamType, NotParamType>);
 }
 
 namespace IsSameTests

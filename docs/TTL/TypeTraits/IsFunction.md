@@ -33,7 +33,7 @@ struct is_function;
 
 ```c++
 template<typename T>
-static const bool is_function = is_function<T>::value;
+static const bool is_function_v = is_function<T>::value;
 ```
 
 ## Template Parameters

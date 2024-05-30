@@ -393,6 +393,20 @@ namespace ttl
 
     template<typename RetType, typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5> 
     struct is_invocable_function<RetType(Arg0, Arg1, Arg2, Arg3, Arg4, Arg5), Arg0, Arg1, Arg2, Arg3, Arg4, Arg5> : true_type {};
+
+    template<bool InCond, typename T1, typename T2>
+    using conditional_t = typename conditional<InCond, T1, T2>::type;
+
+    template<typename T, typename Arg0 = void, typename Arg1 = void, typename Arg2 = void, typename Arg3 = void, typename Arg4 = void, typename Arg5 = void> 
+    static const bool is_invocable_function_v = 
+        conditional_t<is_same_v<Arg0, void>, is_invocable_function<T>,
+        conditional_t<is_same_v<Arg1, void>, is_invocable_function<T, Arg0>, 
+        conditional_t<is_same_v<Arg2, void>, is_invocable_function<T, Arg0, Arg1>,
+        conditional_t<is_same_v<Arg3, void>, is_invocable_function<T, Arg0, Arg1, Arg2>,
+        conditional_t<is_same_v<Arg4, void>, is_invocable_function<T, Arg0, Arg1, Arg2, Arg3>,
+        conditional_t<is_same_v<Arg4, void>, is_invocable_function<T, Arg0, Arg1, Arg2, Arg3, Arg4>,
+                                             is_invocable_function<T, Arg0, Arg1, Arg2, Arg3, Arg4, Arg5>
+        > > > > > >::value;
 }
 
 #endif

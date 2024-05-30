@@ -4,6 +4,8 @@
 
 Checks whether `T` is a function type that can be called with the supplied argument types. Structs with overloaded operator() don't count as function types. Provides the member constant `value` which is equal to `true`, if `T` is a function type that can be invoked with the supplied argument types. Otherwise, `value` is equal to `false`.
 
+If the program adds specializations for `ttl::is_invocable_function` or `ttl::is_invocable_function_v`, the behavior is undefined. 
+
 **Contents**
 1. [Header](#header)
 2. [Declaration](#declaration)
@@ -22,6 +24,13 @@ Checks whether `T` is a function type that can be called with the supplied argum
 ```c++
 template<typename T, typename Arg0 = void, typename Arg1 = void, typename Arg2 = void, typename Arg3 = void, typename Arg4 = void, typename Arg5 = void> 
 struct is_invocable_function;
+```
+
+## Helper variable template
+
+```c++
+template<typename T, typename Arg0 = void, typename Arg1 = void, typename Arg2 = void, typename Arg3 = void, typename Arg4 = void, typename Arg5 = void>
+static const bool is_invocable_function_v = is_invocable_function<T>::value;
 ```
 
 ## Template Parameters
