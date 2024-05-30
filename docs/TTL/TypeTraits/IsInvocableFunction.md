@@ -9,11 +9,12 @@ If the program adds specializations for `ttl::is_invocable_function` or `ttl::is
 **Contents**
 1. [Header](#header)
 2. [Declaration](#declaration)
-3. [Template Parameters](#template-parameters)
-4. [Specializations](#specializations)
-5. [Nested Types](#nested-types)
-6. [Member Constants](#member-constants)
-7. [Example](#example)
+3. [Helper variable template](#helper-variable-template)
+4. [Template Parameters](#template-parameters)
+5. [Specializations](#specializations)
+6. [Nested Types](#nested-types)
+7. [Member Constants](#member-constants)
+8. [Example](#example)
 
 ## Header
 
