@@ -181,6 +181,32 @@ namespace ArrayTraitsTests
     }
 }
 
+namespace ConditionalTests
+{
+    struct A{};
+    struct B{};
+
+    using TrueAB = ttl::conditional<true, A, B>::type;
+    using FalseAB = ttl::conditional<false, A, B>::type;
+    using TrueBA = ttl::conditional<true, B, A>::type;
+    using FalseBA = ttl::conditional<false, B, A>::type;
+
+    _Static_assert(ttl::is_same_v<TrueAB, A>);
+    _Static_assert(ttl::is_same_v<FalseAB, B>);
+    _Static_assert(ttl::is_same_v<TrueBA, B>);
+    _Static_assert(ttl::is_same_v<FalseBA, A>);
+
+    using TrueABv = ttl::conditional_t<true, A, B>;
+    using FalseABv = ttl::conditional_t<false, A, B>;
+    using TrueBAv = ttl::conditional_t<true, B, A>;
+    using FalseBAv = ttl::conditional_t<false, B, A>;
+
+    _Static_assert(ttl::is_same_v<TrueABv, A>);
+    _Static_assert(ttl::is_same_v<FalseABv, B>);
+    _Static_assert(ttl::is_same_v<TrueBAv, B>);
+    _Static_assert(ttl::is_same_v<FalseBAv, A>);
+}
+
 namespace ContainerTraitsTests
 {
     namespace GIVEN_BuiltInArray_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
@@ -617,12 +643,12 @@ namespace IsInvocableFunctionTests
     void FourParamFunction(ParamType, ParamType, ParamType, ParamType){}
     void FiveParamFunction(ParamType, ParamType, ParamType, ParamType, ParamType){}
 
-    STATIC_ASSERT((ttl::is_invocable_function<__decltype(ZeroParamFunction)>::value));
-    STATIC_ASSERT((ttl::is_invocable_function<__decltype(OneParamFunction), ParamType>::value));
-    STATIC_ASSERT((ttl::is_invocable_function<__decltype(TwoParamFunction), ParamType, ParamType>::value));
-    STATIC_ASSERT((ttl::is_invocable_function<__decltype(ThreeParamFunction), ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((ttl::is_invocable_function<__decltype(FourParamFunction), ParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((ttl::is_invocable_function<__decltype(FiveParamFunction), ParamType, ParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert(ttl::is_invocable_function<__decltype(ZeroParamFunction)>::value);
+    _Static_assert(ttl::is_invocable_function<__decltype(OneParamFunction), ParamType>::value);
+    _Static_assert(ttl::is_invocable_function<__decltype(TwoParamFunction), ParamType, ParamType>::value);
+    _Static_assert(ttl::is_invocable_function<__decltype(ThreeParamFunction), ParamType, ParamType, ParamType>::value);
+    _Static_assert(ttl::is_invocable_function<__decltype(FourParamFunction), ParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(ttl::is_invocable_function<__decltype(FiveParamFunction), ParamType, ParamType, ParamType, ParamType, ParamType>::value);
 
     STATIC_ASSERT((!ttl::is_invocable_function<__decltype(OneParamFunction)>::value));
     STATIC_ASSERT((!ttl::is_invocable_function<__decltype(TwoParamFunction)>::value));
