@@ -6,17 +6,18 @@
 
 Provides the member constant `value` equal to the size of the type `T`, as if obtained by a `sizeof` expression.
 
-If the program adds specializations for `ttl::size_of`, the behavior is undefined.
+If the program adds specializations for `ttl::size_of` or `ttl::size_of_v`, the behavior is undefined.
 
 NOTE: It is recommended to prefer this type trait over the `sizeof` operator due to this [bug](https://github.com/microsoft/DirectXShaderCompiler/issues/5553). `ttl::size_of` will succeessfully return the size of every type, whereas, `sizeof` will fail when `T` is an enumeration or contains an enumeration.
 
 **Contents**
 1. [Header](#header)
 2. [Declaration](#declaration)
-3. [Template Parameters](#template-parameters)
-4. [Nested Types](#nested-types)
-5. [Member Constants](#member-constants)
-6. [Example](#example)
+3. [Helper variable template](#helper-variable-template)
+4. [Template Parameters](#template-parameters)
+5. [Nested Types](#nested-types)
+6. [Member Constants](#member-constants)
+7. [Example](#example)
 
 ## Header
 
@@ -27,6 +28,13 @@ NOTE: It is recommended to prefer this type trait over the `sizeof` operator due
 ```c++
 template<typename T>
 struct size_of
+```
+
+## Helper variable template
+
+```c++
+template<typename T>
+static const uint size_of_v = size_of<T>::value;
 ```
 
 ## Template Parameters

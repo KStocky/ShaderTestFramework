@@ -12,14 +12,15 @@ This metafunction is a convenient way to leverage SFINAE, in particular for cond
 - as a return type (not applicable to constructors and destructors),
 - as a class template or function template parameter. 
 
-If the program adds specializations for `ttl::enable_if`, the behavior is undefined. 
+If the program adds specializations for `ttl::enable_if` or `ttl::enable_if_t`, the behavior is undefined. 
 
 **Contents**
 1. [Header](#header)
 2. [Declaration](#declaration)
-3. [Template Parameters](#template-parameters)
-4. [Member Types](#member-types)
-5. [Example](#example)
+3. [Helper types](#helper-types)
+4. [Template Parameters](#template-parameters)
+5. [Member Types](#member-types)
+6. [Example](#example)
 
 ## Header
 
@@ -30,6 +31,13 @@ If the program adds specializations for `ttl::enable_if`, the behavior is undefi
 ```c++
 template<bool InCond, typename T = void>
 struct enable_if
+```
+
+## Helper types
+
+```c++
+template<bool InCond, typename T = void>
+using enable_if_t = typename enable_if<InCond, T>::type;
 ```
 
 ## Template Parameters

@@ -18,6 +18,24 @@ namespace ttl
 
 namespace ttl
 {
+    template<bool InCond, typename T1, typename T2>
+    struct conditional
+    {
+        using type = T1;
+    };
+
+    template<typename T1, typename T2>
+    struct conditional<false, T1, T2>
+    {
+        using type = T2;
+    };
+
+    template<bool InCond, typename T1, typename T2>
+    using conditional_t = typename conditional<InCond, T1, T2>::type;
+}
+
+namespace ttl
+{
     template<typename T, T Ignore, T Pick>
     struct pick_right : integral_constant<T, Pick>{};
 }
@@ -33,6 +51,9 @@ namespace ttl
     struct is_same<T, T> : true_type 
     {
     };
+
+    template<typename T, typename U>
+    static const bool is_same_v = is_same<T, U>::value;
 }
 
 namespace ttl
@@ -47,6 +68,9 @@ namespace ttl
     {
         using type = T;  
     };
+
+    template<bool InCond, typename T = void>
+    using enable_if_t = typename enable_if<InCond, T>::type;
 }
 
 namespace ttl
@@ -211,7 +235,10 @@ namespace ttl
     struct is_or_has_enum : true_type{};
 
     template<typename T>
-    struct is_or_has_enum<T, typename enable_if<sizeof(T) != 0>::type> : false_type{};
+    struct is_or_has_enum<T, enable_if_t<sizeof(T) != 0> > : false_type{};
+
+    template<typename T>
+    static const bool is_or_has_enum_v = is_or_has_enum<T>::value;
 }
 
 namespace ttl_detail
@@ -230,6 +257,9 @@ namespace ttl
 {
     template<typename T, typename = void>
     struct size_of : integral_constant<uint, sizeof(ttl_detail::size_of_helper<T>)>{};
+
+    template<typename T>
+    static const uint size_of_v = size_of<T>::value;
 }
 
 namespace ttl_detail
@@ -246,6 +276,9 @@ namespace ttl
 {
     template<typename T>
     struct align_of : integral_constant<uint, size_of<ttl_detail::offset_lowest_align_wrapper<T> >::value - size_of<T>::value>{};
+
+    template<typename T>
+    static const uint align_of_v = align_of<T>::value;
 }
 
 namespace ttl
@@ -285,6 +318,9 @@ namespace ttl
             !ttl::fundamental_type_traits<Base>::is_fundamental &&
             !ttl::fundamental_type_traits<Derived>::is_fundamental
         >{};
+
+    template<typename Base, typename Derived>
+    static const bool is_base_of_v = is_base_of<Base, Derived>::value;
 }
 
 namespace ttl_detail
@@ -299,10 +335,13 @@ namespace ttl
     struct is_array : false_type {};
 
     template<typename T>
-    struct is_array<T, typename enable_if<array_traits<T>::is_array>::type> : true_type {};
+    struct is_array<T, enable_if_t<array_traits<T>::is_array> > : true_type {};
 
     template<typename T>
     struct is_array<T, void_t<__decltype(ttl_detail::is_array_helper(declval<T>()))> > : true_type {};
+
+    template<typename T>
+    static const bool is_array_v = is_array<T>::value;
 }
 
 namespace ttl
@@ -311,7 +350,7 @@ namespace ttl
     integral_constant<uint, N> array_len(T In[N]);
 
     template<typename T>
-    typename enable_if<!is_array<T>::value, integral_constant<uint, 0> >::type array_len(T In);
+    enable_if_t<!is_array<T>::value, integral_constant<uint, 0> > array_len(T In);
 }
 
 namespace ttl
@@ -325,6 +364,8 @@ namespace ttl
     template<typename RetType, typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4> struct is_function<RetType(Arg0, Arg1, Arg2, Arg3, Arg4)> : true_type {};
     template<typename RetType, typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5> struct is_function<RetType(Arg0, Arg1, Arg2, Arg3, Arg4, Arg5)> : true_type {};
 
+    template<typename T>
+    static const bool is_function_v = is_function<T>::value;
 }
 
 namespace ttl
@@ -352,6 +393,29 @@ namespace ttl
 
     template<typename RetType, typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5> 
     struct is_invocable_function<RetType(Arg0, Arg1, Arg2, Arg3, Arg4, Arg5), Arg0, Arg1, Arg2, Arg3, Arg4, Arg5> : true_type {};
+
+    template<bool InCond, typename T1, typename T2>
+    using conditional_t = typename conditional<InCond, T1, T2>::type;
+
+    template<typename T, typename Arg0 = void, typename Arg1 = void, typename Arg2 = void, typename Arg3 = void, typename Arg4 = void, typename Arg5 = void> 
+    static const bool is_invocable_function_v = 
+        conditional_t<is_same_v<Arg0, void>, is_invocable_function<T>,
+        conditional_t<is_same_v<Arg1, void>, is_invocable_function<T, Arg0>, 
+        conditional_t<is_same_v<Arg2, void>, is_invocable_function<T, Arg0, Arg1>,
+        conditional_t<is_same_v<Arg3, void>, is_invocable_function<T, Arg0, Arg1, Arg2>,
+        conditional_t<is_same_v<Arg4, void>, is_invocable_function<T, Arg0, Arg1, Arg2, Arg3>,
+        conditional_t<is_same_v<Arg4, void>, is_invocable_function<T, Arg0, Arg1, Arg2, Arg3, Arg4>,
+                                             is_invocable_function<T, Arg0, Arg1, Arg2, Arg3, Arg4, Arg5>
+        > > > > > >::value;
+}
+
+namespace ttl
+{
+    template<typename T>
+    struct always_false : false_type{};
+
+    template<typename T>
+    static const bool always_false_v = always_false<T>::value;
 }
 
 #endif

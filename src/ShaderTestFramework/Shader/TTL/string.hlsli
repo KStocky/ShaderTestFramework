@@ -4,7 +4,6 @@
 #include "/Test/TTL/byte_writer.hlsli"
 #include "/Test/TTL/macro.hlsli"
 #include "/Test/TTL/memory.hlsli"
-#include "/Test/TTL/static_assert.hlsli"
 #include "/Test/TTL/type_traits.hlsli"
 
 namespace ttl
@@ -173,7 +172,7 @@ namespace ttl_detail
 #define STAMPER(InStamper, InN, InLength, InStr, OutStr) InStamper(0, CHAR_STAMP, InLength, InStr, OutStr)
 
 #define CREATE_STRING(OutStr, InStrLiteral)                                                                                          \
-STATIC_ASSERT((__decltype(ttl::array_len(InStrLiteral))::value <= 256), "Strings with greater than 256 characters are not supported"); \
+_Static_assert((__decltype(ttl::array_len(InStrLiteral))::value <= 256), "Strings with greater than 256 characters are not supported"); \
 ttl::string<__decltype(ttl::array_len(InStrLiteral))::value> OutStr;                                                                 \
 ttl::zero(OutStr);                                                                                                                   \
 do {                                                                                                                                 \

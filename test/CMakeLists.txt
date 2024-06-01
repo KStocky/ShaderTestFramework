@@ -99,11 +99,6 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/ProofOfConcept/SectionTest.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/StringsAndTemplates.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/VariadicMacroOverloading.hlsl
-    Shader/HLSLFrameworkTests/StaticAssert/ConditionNoMessage.hlsl
-    Shader/HLSLFrameworkTests/StaticAssert/ConditionWithMessage.hlsl
-    Shader/HLSLFrameworkTests/StaticAssert/NonTemplatedStructMember.hlsl
-    Shader/HLSLFrameworkTests/StaticAssert/TemplatedStructMember.hlsl
-    Shader/HLSLFrameworkTests/StaticAssert/TemplatedStructMemberInstantiated.hlsl
     Shader/HLSLFrameworkTests/String/StringLengthTests/GIVEN_StringCreatorWithOver64Characters_THEN_FailsCompilation.hlsl
     Shader/HLSLFrameworkTests/String/StringByteWriterTests.hlsl
     Shader/HLSLFrameworkTests/String/StringTests.hlsl
@@ -173,7 +168,6 @@ set(SOURCES
     Private/Framework/HLSLFramework/SectionHierarchyByteWriterTests.cpp
     Private/Framework/HLSLFramework/ProofOfConceptTests.cpp
     Private/Framework/HLSLFramework/SectionManagementTests.cpp
-    Private/Framework/HLSLFramework/StaticAssertTests.cpp
     Private/Framework/HLSLFramework/ThreadDimensionsTests.cpp
     Private/Framework/HLSLFramework/ThreadIdRegistrationTests.cpp
     Private/Framework/HLSLFramework/TypeTraitsTests.cpp

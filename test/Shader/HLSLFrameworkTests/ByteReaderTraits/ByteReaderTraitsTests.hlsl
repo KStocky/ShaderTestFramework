@@ -1,5 +1,4 @@
 #include "/Test/STF/ByteReaderTraits.hlsli"
-#include "/Test/TTL/static_assert.hlsli"
 
 namespace CustomByteReaderTraitsTests
 {
@@ -30,14 +29,14 @@ namespace STF
 
 namespace CustomByteReaderTraitsTests
 {
-    STATIC_ASSERT(STF::ByteReaderTraits<TypeWithoutReaderTraits>::ReaderId == 0);
-    STATIC_ASSERT(STF::ByteReaderTraits<TypeWithoutReaderTraits>::TypeId == 0);
+    _Static_assert(STF::ByteReaderTraits<TypeWithoutReaderTraits>::ReaderId == 0);
+    _Static_assert(STF::ByteReaderTraits<TypeWithoutReaderTraits>::TypeId == 0);
 
-    STATIC_ASSERT(STF::ByteReaderTraits<TypeWithReaderTraitsNoTypeId>::ReaderId == TypeWithReaderTraitsNoTypeId::ReaderId);
-    STATIC_ASSERT(STF::ByteReaderTraits<TypeWithReaderTraitsNoTypeId>::TypeId == 0);
+    _Static_assert(STF::ByteReaderTraits<TypeWithReaderTraitsNoTypeId>::ReaderId == TypeWithReaderTraitsNoTypeId::ReaderId);
+    _Static_assert(STF::ByteReaderTraits<TypeWithReaderTraitsNoTypeId>::TypeId == 0);
 
-    STATIC_ASSERT(STF::ByteReaderTraits<TypeWithReaderTraitsAndTypeId>::ReaderId == TypeWithReaderTraitsAndTypeId::ReaderId);
-    STATIC_ASSERT(STF::ByteReaderTraits<TypeWithReaderTraitsAndTypeId>::TypeId == TypeWithReaderTraitsAndTypeId::TypeId);
+    _Static_assert(STF::ByteReaderTraits<TypeWithReaderTraitsAndTypeId>::ReaderId == TypeWithReaderTraitsAndTypeId::ReaderId);
+    _Static_assert(STF::ByteReaderTraits<TypeWithReaderTraitsAndTypeId>::TypeId == TypeWithReaderTraitsAndTypeId::TypeId);
 }
 
 namespace PackedFundamentalTypeInfoTests
@@ -45,17 +44,17 @@ namespace PackedFundamentalTypeInfoTests
     template<typename T, uint ExpectedTypeVal, uint ExpectedNumBits, uint ExpectedNumColumns, uint ExpectedNumRows>
     void Test()
     {
-        STATIC_ASSERT(STF::PackedFundamentalTypeInfo<T>::TypeVal == ExpectedTypeVal);
-        STATIC_ASSERT(STF::PackedFundamentalTypeInfo<T>::PackedTypeVal == ExpectedTypeVal);
+        _Static_assert(STF::PackedFundamentalTypeInfo<T>::TypeVal == ExpectedTypeVal);
+        _Static_assert(STF::PackedFundamentalTypeInfo<T>::PackedTypeVal == ExpectedTypeVal);
 
-        STATIC_ASSERT(STF::PackedFundamentalTypeInfo<T>::NumBitsVal == ExpectedNumBits);
-        STATIC_ASSERT((STF::PackedFundamentalTypeInfo<T>::PackedNumBitsVal >> 2) == ExpectedNumBits);
+        _Static_assert(STF::PackedFundamentalTypeInfo<T>::NumBitsVal == ExpectedNumBits);
+        _Static_assert((STF::PackedFundamentalTypeInfo<T>::PackedNumBitsVal >> 2) == ExpectedNumBits);
 
-        STATIC_ASSERT(STF::PackedFundamentalTypeInfo<T>::NumColumns == ExpectedNumColumns);
-        STATIC_ASSERT((STF::PackedFundamentalTypeInfo<T>::PackedNumColumns >> 4) == ExpectedNumColumns);
+        _Static_assert(STF::PackedFundamentalTypeInfo<T>::NumColumns == ExpectedNumColumns);
+        _Static_assert((STF::PackedFundamentalTypeInfo<T>::PackedNumColumns >> 4) == ExpectedNumColumns);
 
-        STATIC_ASSERT(STF::PackedFundamentalTypeInfo<T>::NumRows == ExpectedNumRows);
-        STATIC_ASSERT((STF::PackedFundamentalTypeInfo<T>::PackedNumRows >> 6) == ExpectedNumRows);
+        _Static_assert(STF::PackedFundamentalTypeInfo<T>::NumRows == ExpectedNumRows);
+        _Static_assert((STF::PackedFundamentalTypeInfo<T>::PackedNumRows >> 6) == ExpectedNumRows);
     }
 
     void ScalarTests()
@@ -146,10 +145,10 @@ namespace FundamentalByteReaderTraitsTests
         static const uint16_t ActualTypeId = STF::ByteReaderTraits<Type>::TypeId;
         using ExpectedInfo = STF::PackedFundamentalTypeInfo<Type>;
 
-        STATIC_ASSERT((ActualTypeId & 3) == ExpectedInfo::TypeVal);
-        STATIC_ASSERT(((ActualTypeId >> 2) & 3) == ExpectedInfo::NumBitsVal);
-        STATIC_ASSERT(((ActualTypeId >> 4) & 3) == ExpectedInfo::NumColumns);
-        STATIC_ASSERT(((ActualTypeId >> 6) & 3) == ExpectedInfo::NumRows); 
+        _Static_assert((ActualTypeId & 3) == ExpectedInfo::TypeVal);
+        _Static_assert(((ActualTypeId >> 2) & 3) == ExpectedInfo::NumBitsVal);
+        _Static_assert(((ActualTypeId >> 4) & 3) == ExpectedInfo::NumColumns);
+        _Static_assert(((ActualTypeId >> 6) & 3) == ExpectedInfo::NumRows); 
     }
 
     void ScalarTests()

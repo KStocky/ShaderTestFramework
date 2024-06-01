@@ -4,15 +4,16 @@
 
 If `T` and `U` name the same type, provides the member constant `value` equal to `true`. Otherwise `value` is `false`. 
 
-If the program adds specializations for `ttl::is_same`, the behavior is undefined. 
+If the program adds specializations for `ttl::is_same` or `ttl::is_same_v`, the behavior is undefined. 
 
 **Contents**
 1. [Header](#header)
 2. [Declaration](#declaration)
-3. [Template Parameters](#template-parameters)
-4. [Nested Types](#nested-types)
-5. [Member Constants](#member-constants)
-6. [Example](#example)
+3. [Helper variable template](#helper-variable-template)
+4. [Template Parameters](#template-parameters)
+5. [Nested Types](#nested-types)
+6. [Member Constants](#member-constants)
+7. [Example](#example)
 
 ## Header
 
@@ -23,6 +24,13 @@ If the program adds specializations for `ttl::is_same`, the behavior is undefine
 ```c++
 template<typename T, typename U>
 struct is_same
+```
+
+## Helper variable template
+
+```c++
+template<typename T, typename U>
+static const bool is_same_v = is_same<T, U>::value;
 ```
 
 ## Template Parameters
@@ -59,7 +67,9 @@ using Alias = A;
 
 _Static_assert(ttl::is_same<A, A>::value, "Returns true because both arguments are A");
 _Static_assert(ttl::is_same<A, Alias>::value, "Returns true because we are comparing an alias to A and A");
-_Static_assert(!ttl::is_same<A, B>::value, "Returns false because A and B are different types");
+
+// variable template
+_Static_assert(!ttl::is_same_v<A, B>, "Returns false because A and B are different types");
 
 ```
 ---

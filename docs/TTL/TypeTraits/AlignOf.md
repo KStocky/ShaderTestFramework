@@ -6,15 +6,16 @@
 
 Provides the member constant `value` equal to the alignment of the type `T`.
 
-If the program adds specializations for `ttl::align_of`, the behavior is undefined.
+If the program adds specializations for `ttl::align_of` or `ttl::align_of_v`, the behavior is undefined.
 
 **Contents**
 1. [Header](#header)
 2. [Declaration](#declaration)
-3. [Template Parameters](#template-parameters)
-4. [Nested Types](#nested-types)
-5. [Member Constants](#member-constants)
-6. [Example](#example)
+3. [Helper variable template](#helper-variable-template)
+4. [Template Parameters](#template-parameters)
+5. [Nested Types](#nested-types)
+6. [Member Constants](#member-constants)
+7. [Example](#example)
 
 ## Header
 
@@ -25,6 +26,13 @@ If the program adds specializations for `ttl::align_of`, the behavior is undefin
 ```c++
 template<typename T>
 struct align_of
+```
+
+## Helper variable template
+
+```c++
+template<typename T>
+static const uint align_of_v = size_of<T>::value;
 ```
 
 ## Template Parameters
@@ -89,7 +97,7 @@ _Static_assert(4u == ttl::align_of<B>::value, "Alignment is 4");
 _Static_assert(8u == ttl::align_of<C>::value, "Alignment is 8");
 _Static_assert(8u == ttl::align_of<D>::value, "Alignment is 8");
 
-_Static_assert(4u == ttl::align_of<int[8]>::value, "Alignment is 4");
+_Static_assert(4u == ttl::align_of_v<int[8]>, "Alignment is 4");
 
 
 ```

@@ -6,17 +6,18 @@
 
 If `Derived` is derived from `Base` or if both are the same struct, provides the member constant `value` equal to `true`. Otherwise `value` is `false`.
 
-If the program adds specializations for `ttl::is_base_of`, the behavior is undefined.
+If the program adds specializations for `ttl::is_base_of` or `ttl::is_base_of_v`, the behavior is undefined.
 
 NOTE: Although no struct is its own base, `ttl::is_base_of<T, T>::value` is `true` because the intent of the trait is to model the "is-a" relationship, and `T` is a `T`. Despite that, `ttl::is_base_of<int, int>::value` is `false` because only structs participate in the relationship that this trait models.
 
 **Contents**
 1. [Header](#header)
 2. [Declaration](#declaration)
-3. [Template Parameters](#template-parameters)
-4. [Nested Types](#nested-types)
-5. [Member Constants](#member-constants)
-6. [Example](#example)
+3. [Helper variable template](#helper-variable-template)
+4. [Template Parameters](#template-parameters)
+5. [Nested Types](#nested-types)
+6. [Member Constants](#member-constants)
+7. [Example](#example)
 
 ## Header
 
@@ -27,6 +28,13 @@ NOTE: Although no struct is its own base, `ttl::is_base_of<T, T>::value` is `tru
 ```c++
 template<typename T>
 struct is_base_of
+```
+
+## Helper variable template
+
+```c++
+template<typename Base, typename Derived>
+static const bool is_base_of_v = is_base_of<Base, Derived>::value;
 ```
 
 ## Template Parameters

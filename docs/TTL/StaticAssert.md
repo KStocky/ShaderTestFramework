@@ -2,132 +2,36 @@
 
 # Static Assert
 
-Shader Test Framework provides a static assert facility that works like [static_assert](https://en.cppreference.com/w/cpp/language/static_assert) from C++. This can be useful for writing tests for code that is known at compile time e.g. template meta programming.
+The constant boolean expression is evaluated at compile time. If it evalulates to `false`, a compile-time error occurs and if a display message is provided by the `_Static_assert` it is displayed as part of the compilation error.
+Otherwise, if expression evaluates to `true`, nothing happens; no code is emitted.  This can be useful for writing tests for code that is known at compile time e.g. template meta programming.
 
 **Contents**
 1. [Header](#header)
 2. [Syntax](#syntax)
-3. [Notes](#notes)<br>
-    a. [1. Where `STATIC_ASSERT` can be used](#1-where-static_assert-can-be-used)<br>
-    b. [2. Conditions with commas](#2-conditions-with-commas)<br>
-    c. [3. ttl::always_false<T>](#3-ttlalways_false)<br>
-    d. [4. `STATIC_ASSERT` wraps `_Static_assert`](#4-static_assert-wraps-_static_assert)
-4. [Examples](#examples)<br>
-
-## Header
-
-`/Test/TTL/static_assert.hlsli`
+3. [Example](#example)<br>
 
 ## Syntax
 
-1. `STATIC_ASSERT(condition);` - If `condition` is false, compilation of the shader will fail at this statement. Otherwise, compilation will continue.
-2. `STATIC_ASSERT(condition, string_literal_message);` - If `condition` is false, compilation of the shader will fail at this statement, and the message will be displayed in the shader compilation errors. Otherwise, compilation will continue.
+1. `_Static_assert(condition);` - If `condition` is `false`, compilation of the shader will fail at this statement. Otherwise, compilation will continue.
+2. `_Static_assert(condition, string_literal_message);` - If `condition` is `false`, compilation of the shader will fail at this statement, and the message will be displayed in the shader compilation errors. Otherwise, compilation will continue.
 
-## Notes
 
-### 1. Where `STATIC_ASSERT` can be used
-`STATIC_ASSERT` can be used in every context that [static_assert](https://en.cppreference.com/w/cpp/language/static_assert) can. Some of these contexts are listed below:
-
-1. Global/Namespace scope
-2. In structs
-3. In Functions
-
-### 2. Conditions with commas
-
-Since `STATIC_ASSERT` is implemented as a macro, every comma is interpretted as a macro argument delimiter. A common occurance of having a comma in your condition is if the condtion is using a type trait like `ttl::is_same<T, U>`. To avoid compilation errors due to this surround the condition with parentheses.
-
-### 3. `ttl::always_false<T>`
-
-Just like with [static_assert](https://en.cppreference.com/w/cpp/language/static_assert), `STATIC_ASSERT(false)` within a template will always fail to compile regardless of if the template has been instantiated or not. This issue is discussed in [Allowing static_assert(false)](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2593r0.html). To get around this issue, `ttl::always_false<T>` can be used to ensure that if a templated is instantiated that compilation will fail.
-
-### 4. `STATIC_ASSERT` wraps `_Static_assert`
-
-DXC provides `_Static_assert` as an intrinsic. By all means use this intrinsic directly, instead of `STATIC_ASSERT`. According to one of the devs ([Link](https://discord.com/channels/590611987420020747/996417435374714920/1235339227344932996)), it ain't going anywhere. The one nice thing that `STATIC_ASSERT` provides that `_Static_assert` does not, is the ability to not provide an error message as an argument.
-
-## Examples
-
-1. Without a string message
+## Example
 
 ```c++
-#include "/Test/TTL/static_assert.hlsli"
-
-// This will pass
-STATIC_ASSERT(42 > 34);
-
-```
-
-2. Failing without a string message
-
-```c++
-#include "/Test/TTL/static_assert.hlsli"
-
-// This will fail
-STATIC_ASSERT(42 < 34);
-
-```
-This will fail with the following error message
-
-```
-Expanded: `hlsl.hlsl:5:1: error: invalid value, valid range is between 1 and 4 inclusive
-STATIC_ASSERT(42 < 34);
-^
-.//Test/TTL/static_assert.hlsli:7:65: note: expanded from macro 'STATIC_ASSERT'
-#define STATIC_ASSERT(Expression, ...) static const vector<int, !!(Expression)> CONCAT_STATIC_ASSERT(ASSERT_VAR_, __COUNTER__)
-```
-
-3. Failing with a string message
-
-```c++
-#include "/Test/TTL/static_assert.hlsli"
-
-// This will fail
-STATIC_ASSERT(42 < 34, "Oops");
-
-```
-
-This will fail with the following message
-
-```
-`hlsl.hlsl:5:1: error: invalid value, valid range is between 1 and 4 inclusive
-STATIC_ASSERT(42 < 34, "Oops");
-^
-.//Test/TTL/static_assert.hlsli:7:65: note: expanded from macro 'STATIC_ASSERT'
-#define STATIC_ASSERT(Expression, ...) static const vector<int, !!(Expression)> CONCAT_STATIC_ASSERT(ASSERT_VAR_, __COUNTER__)
-```
-
-4. Condition with a comma
-
-```c++
-#include "/Test/TTL/static_assert.hlsli"
-#include "/Test/TTL/type_traits.hlsli"
-
-// Note the extra parentheses around the condition
-STATIC_ASSERT((ttl::is_same<int, int>::value));
-
-```
-
-4. Static assert when a particular template is instantiated
-
-```c++
-#include "/Test/TTL/static_assert.hlsli"
-#include "/Test/TTL/type_traits.hlsli"
 
 template<typename T>
-struct OnlyValidForFloat
-{
-    // To ensure that this will only be activated if this template is instantiated we must use ttl::always_false
-    // Otherwise, this will fail compilation even if it is never instantiated.
-    STATIC_ASSERT(ttl::always_false<T>::value, "Invalid use of this template! You should only instantiate it with a float");
-};
+static const bool is_int = false;
 
 template<>
-struct OnlyValidForFloat<float>
-{
+static const bool is_int<int> = true;
 
-};
+_Static_assert(42 > 34);
+
+_Static_assert(is_int<float>, "This will fail compilation and show this message because float is not an int");
+_Static_assert(is_int<int>, "This will succeed compilation and be ignored");
 
 ```
-
 ---
 
 [Top](#static-assert)
