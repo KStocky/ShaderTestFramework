@@ -235,7 +235,7 @@ namespace ttl
     struct is_or_has_enum : true_type{};
 
     template<typename T>
-    struct is_or_has_enum<T, typename enable_if<sizeof(T) != 0>::type> : false_type{};
+    struct is_or_has_enum<T, enable_if_t<sizeof(T) != 0> > : false_type{};
 
     template<typename T>
     static const bool is_or_has_enum_v = is_or_has_enum<T>::value;
@@ -335,7 +335,7 @@ namespace ttl
     struct is_array : false_type {};
 
     template<typename T>
-    struct is_array<T, typename enable_if<array_traits<T>::is_array>::type> : true_type {};
+    struct is_array<T, enable_if_t<array_traits<T>::is_array> > : true_type {};
 
     template<typename T>
     struct is_array<T, void_t<__decltype(ttl_detail::is_array_helper(declval<T>()))> > : true_type {};
@@ -350,7 +350,7 @@ namespace ttl
     integral_constant<uint, N> array_len(T In[N]);
 
     template<typename T>
-    typename enable_if<!is_array<T>::value, integral_constant<uint, 0> >::type array_len(T In);
+    enable_if_t<!is_array<T>::value, integral_constant<uint, 0> > array_len(T In);
 }
 
 namespace ttl

@@ -107,7 +107,7 @@ namespace ShaderTestPrivate
     };
 
     template<typename T>
-    struct ByteReaderTraitsEval<T, typename ttl::enable_if<STF::ByteReaderTraits<T>::TypeId != 0>::type> : STF::ByteReaderTraits<T>{};
+    struct ByteReaderTraitsEval<T, ttl::enable_if_t<STF::ByteReaderTraits<T>::TypeId != 0> > : STF::ByteReaderTraits<T>{};
     
     template<typename T>
     void AddError(T In1, T In2, int InId)
@@ -215,7 +215,7 @@ namespace ShaderTestPrivate
 
         if (sectionIndex < Sections.Num())
         {
-            const uint bufferAddress = Sections.BeginMeta() + sectionIndex * ttl::size_of<SectionInfoMetaData>::value;
+            const uint bufferAddress = Sections.BeginMeta() + sectionIndex * ttl::size_of_v<SectionInfoMetaData>;
             GetTestDataBuffer().Store(bufferAddress, InSectionInfo);
         }
     }
@@ -252,7 +252,7 @@ namespace STF
 namespace STF
 {
     template<typename T, typename U>
-    typename ttl::enable_if<ttl::is_same<T, U>::value>::type AreEqual(const T InA, const U InB, int InId = -1)
+    ttl::enable_if_t<ttl::is_same_v<T, U> > AreEqual(const T InA, const U InB, int InId = -1)
     {
         if (all(InA == InB))
         {
@@ -265,7 +265,7 @@ namespace STF
     }
     
     template<typename T, typename U>
-    typename ttl::enable_if<ttl::is_same<T, U>::value>::type NotEqual(const T InA, const U InB, int InId = -1)
+    ttl::enable_if_t<ttl::is_same_v<T, U> > NotEqual(const T InA, const U InB, int InId = -1)
     {
         if (any(InA != InB))
         {

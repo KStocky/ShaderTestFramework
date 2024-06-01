@@ -197,13 +197,13 @@ namespace ttl
 
         static uint alignment_required(SectionHierarchy In)
         {
-            return ttl::align_of<uint>::value;
+            return ttl::align_of_v<uint>;
         }
 
         template<typename U>
         static void write(inout container_wrapper<U> InContainer, const uint InIndex, const SectionHierarchy In)
         {
-            const uint numUints = bytes_required(In) / ttl::size_of<uint>::value;
+            const uint numUints = bytes_required(In) / ttl::size_of_v<uint>;
             static const bool isByteAddress = ttl::container_traits<U>::is_byte_address;
             static const uint storeIndexModifier = isByteAddress ? 4 : 1;
 
@@ -243,9 +243,6 @@ namespace ttl
             return false;
         }
     };
-
-    template<>
-    struct size_of<ShaderTestPrivate::PerThreadScratchData> : integral_constant<uint, (8 * 32) + 16>{};
 }
 
 #endif

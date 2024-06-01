@@ -47,12 +47,12 @@ namespace STF
     struct PackedFundamentalTypeInfo;
 
     template<typename T>
-    struct PackedFundamentalTypeInfo<T, typename ttl::enable_if<ttl::fundamental_type_traits<T>::is_fundamental>::type>
+    struct PackedFundamentalTypeInfo<T, ttl::enable_if_t<ttl::fundamental_type_traits<T>::is_fundamental> >
     {
         using Traits = ttl::fundamental_type_traits<T>;
 
         template<typename U>
-        struct NumBitsToVal : STFPrivate::NumBitsToValBase<ttl::size_of<U>::value>{};
+        struct NumBitsToVal : STFPrivate::NumBitsToValBase<ttl::size_of_v<U> >{};
         
         static const uint16_t TypeVal = STFPrivate::TypeToVal<typename Traits::base_type>::value & 3;
         static const uint16_t NumBitsVal = NumBitsToVal<typename Traits::base_type>::value & 3;
@@ -69,7 +69,7 @@ namespace STF
 namespace STF
 {
     template<typename T>
-    struct ByteReaderTraits<T, typename ttl::enable_if<ttl::fundamental_type_traits<T>::is_fundamental>::type>
+    struct ByteReaderTraits<T, ttl::enable_if_t<ttl::fundamental_type_traits<T>::is_fundamental> >
     {
         using PackedInfo = PackedFundamentalTypeInfo<T>;
         static const uint16_t ReaderId = READER_ID_FUNDAMENTAL;
