@@ -409,4 +409,13 @@ namespace ttl
         > > > > > >::value;
 }
 
+namespace ttl
+{
+    template<typename T>
+    struct always_false : false_type{};
+
+    template<typename T>
+    static const bool always_false_v = always_false<T>::value;
+}
+
 #endif

@@ -934,3 +934,18 @@ namespace IsBaseOfTests
     _Static_assert(!ttl::is_base_of_v<A, D>);
     _Static_assert(!ttl::is_base_of_v<int, A>);
 }
+
+namespace AlwaysFalseTests
+{
+    struct A{};
+
+    _Static_assert(!ttl::always_false<A>::value);
+    _Static_assert(!ttl::always_false<int>::value);
+    _Static_assert(!ttl::always_false<void>::value);
+    _Static_assert(!ttl::always_false<float>::value);
+
+    _Static_assert(!ttl::always_false_v<A>);
+    _Static_assert(!ttl::always_false_v<int>);
+    _Static_assert(!ttl::always_false_v<void>);
+    _Static_assert(!ttl::always_false_v<float>);
+}

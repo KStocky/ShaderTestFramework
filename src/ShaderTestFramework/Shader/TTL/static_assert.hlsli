@@ -8,10 +8,6 @@
 #define STATIC_ASSERT_IF_1(InExpression, InMessage) _Static_assert(InExpression, InMessage)
 #define STATIC_ASSERT(InExpression, ...) TTL_JOIN_MACRO(STATIC_ASSERT_IF_, TTL_NUM_ARGS(__VA_ARGS__), InExpression, ##__VA_ARGS__)
 
-namespace ttl
-{
-    template<typename T>
-    struct always_false : false_type{};
-}
+
 
 #endif
