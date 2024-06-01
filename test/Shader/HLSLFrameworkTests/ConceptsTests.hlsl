@@ -1,6 +1,5 @@
 
 #include "/Test/TTL/concepts.hlsli"
-#include "/Test/TTL/static_assert.hlsli"
 
 namespace EqualityComparableWithTests
 {
@@ -74,13 +73,13 @@ namespace EqualityComparableWithTests
         }
     };
 
-    STATIC_ASSERT((!ttl::models<ttl::equality_comparable_with, A, A>::value));
-    STATIC_ASSERT((!ttl::models<ttl::equality_comparable_with, A, B>::value));
-    STATIC_ASSERT((ttl::models<ttl::equality_comparable_with, B, A>::value));
-    STATIC_ASSERT((!ttl::models<ttl::equality_comparable_with, C, A>::value));
-    STATIC_ASSERT((!ttl::models<ttl::equality_comparable_with, D, A>::value));
-    STATIC_ASSERT((!ttl::models<ttl::equality_comparable_with, E, A>::value));
-    STATIC_ASSERT((ttl::models<ttl::equality_comparable_with, F, F>::value));
+    _Static_assert(!ttl::models<ttl::equality_comparable_with, A, A>::value);
+    _Static_assert(!ttl::models<ttl::equality_comparable_with, A, B>::value);
+    _Static_assert(ttl::models<ttl::equality_comparable_with, B, A>::value);
+    _Static_assert(!ttl::models<ttl::equality_comparable_with, C, A>::value);
+    _Static_assert(!ttl::models<ttl::equality_comparable_with, D, A>::value);
+    _Static_assert(!ttl::models<ttl::equality_comparable_with, E, A>::value);
+    _Static_assert(ttl::models<ttl::equality_comparable_with, F, F>::value);
 }
 
 namespace EqualityComparableTests
@@ -142,11 +141,11 @@ namespace EqualityComparableTests
         }
     };
 
-    STATIC_ASSERT((!ttl::models<ttl::equality_comparable, A>::value));
-    STATIC_ASSERT((ttl::models<ttl::equality_comparable, B>::value));
-    STATIC_ASSERT((!ttl::models<ttl::equality_comparable, C>::value));
-    STATIC_ASSERT((!ttl::models<ttl::equality_comparable, D>::value));
-    STATIC_ASSERT((!ttl::models<ttl::equality_comparable, E>::value));
+    _Static_assert(!ttl::models<ttl::equality_comparable, A>::value);
+    _Static_assert(ttl::models<ttl::equality_comparable, B>::value);
+    _Static_assert(!ttl::models<ttl::equality_comparable, C>::value);
+    _Static_assert(!ttl::models<ttl::equality_comparable, D>::value);
+    _Static_assert(!ttl::models<ttl::equality_comparable, E>::value);
 }
 
 namespace StringLiteralTests
@@ -155,10 +154,10 @@ namespace StringLiteralTests
     {
     };
 
-    STATIC_ASSERT((!ttl::models<ttl::string_literal, A[6]>::value));
-    STATIC_ASSERT((!ttl::models<ttl::string_literal, A>::value));
+    _Static_assert(!ttl::models<ttl::string_literal, A[6]>::value);
+    _Static_assert(!ttl::models<ttl::string_literal, A>::value);
 
-    STATIC_ASSERT((ttl::models<ttl::string_literal, __decltype("Hello")>::value));
+    _Static_assert(ttl::models<ttl::string_literal, __decltype("Hello")>::value);
 }
 
 namespace InvocableFunctorTests
@@ -197,59 +196,59 @@ namespace InvocableFunctorTests
         void operator()(ParamType, ParamType, ParamType, ParamType, ParamType){}
     };
 
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, NotInvocableFunctor>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, NotInvocableFunctor, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, NotInvocableFunctor, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, NotInvocableFunctor, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, NotInvocableFunctor, ParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, NotInvocableFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert(!ttl::models<ttl::invocable_functor, NotInvocableFunctor>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, NotInvocableFunctor, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, NotInvocableFunctor, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, NotInvocableFunctor, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, NotInvocableFunctor, ParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, NotInvocableFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value);
 
-    STATIC_ASSERT(( ttl::models<ttl::invocable_functor, ZeroParamFunctor>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, ZeroParamFunctor, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, ZeroParamFunctor, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, ZeroParamFunctor, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, ZeroParamFunctor, ParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, ZeroParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert( ttl::models<ttl::invocable_functor, ZeroParamFunctor>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, ZeroParamFunctor, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, ZeroParamFunctor, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, ZeroParamFunctor, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, ZeroParamFunctor, ParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, ZeroParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value);
 
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, OneParamFunctor>::value));
-    STATIC_ASSERT((ttl::models<ttl::invocable_functor, OneParamFunctor, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, OneParamFunctor, NotParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, OneParamFunctor, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, OneParamFunctor, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, OneParamFunctor, ParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, OneParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert(!ttl::models<ttl::invocable_functor, OneParamFunctor>::value);
+    _Static_assert(ttl::models<ttl::invocable_functor, OneParamFunctor, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, OneParamFunctor, NotParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, OneParamFunctor, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, OneParamFunctor, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, OneParamFunctor, ParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, OneParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value);
 
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, TwoParamFunctor>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, TwoParamFunctor, ParamType>::value));
-    STATIC_ASSERT((ttl::models<ttl::invocable_functor, TwoParamFunctor, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, TwoParamFunctor, NotParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, TwoParamFunctor, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, TwoParamFunctor, ParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, TwoParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert(!ttl::models<ttl::invocable_functor, TwoParamFunctor>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, TwoParamFunctor, ParamType>::value);
+    _Static_assert(ttl::models<ttl::invocable_functor, TwoParamFunctor, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, TwoParamFunctor, NotParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, TwoParamFunctor, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, TwoParamFunctor, ParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, TwoParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value);
 
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, ThreeParamFunctor>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, ThreeParamFunctor, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, ThreeParamFunctor, ParamType, ParamType>::value));
-    STATIC_ASSERT((ttl::models<ttl::invocable_functor, ThreeParamFunctor, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, ThreeParamFunctor, NotParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, ThreeParamFunctor, ParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, ThreeParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert(!ttl::models<ttl::invocable_functor, ThreeParamFunctor>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, ThreeParamFunctor, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, ThreeParamFunctor, ParamType, ParamType>::value);
+    _Static_assert(ttl::models<ttl::invocable_functor, ThreeParamFunctor, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, ThreeParamFunctor, NotParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, ThreeParamFunctor, ParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, ThreeParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value);
 
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, FourParamFunctor>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, FourParamFunctor, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, FourParamFunctor, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, FourParamFunctor, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((ttl::models<ttl::invocable_functor, FourParamFunctor, ParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, FourParamFunctor, NotParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, FourParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert(!ttl::models<ttl::invocable_functor, FourParamFunctor>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, FourParamFunctor, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, FourParamFunctor, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, FourParamFunctor, ParamType, ParamType, ParamType>::value);
+    _Static_assert(ttl::models<ttl::invocable_functor, FourParamFunctor, ParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, FourParamFunctor, NotParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, FourParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value);
 
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, FiveParamFunctor>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, FiveParamFunctor, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, FiveParamFunctor, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, FiveParamFunctor, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, FiveParamFunctor, ParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((ttl::models<ttl::invocable_functor, FiveParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable_functor, FiveParamFunctor, NotParamType, ParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert(!ttl::models<ttl::invocable_functor, FiveParamFunctor>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, FiveParamFunctor, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, FiveParamFunctor, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, FiveParamFunctor, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, FiveParamFunctor, ParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(ttl::models<ttl::invocable_functor, FiveParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable_functor, FiveParamFunctor, NotParamType, ParamType, ParamType, ParamType, ParamType>::value);
 }
 
 namespace InvocableTests
@@ -295,98 +294,98 @@ namespace InvocableTests
         void operator()(ParamType, ParamType, ParamType, ParamType, ParamType){}
     };
 
-    STATIC_ASSERT((!ttl::models<ttl::invocable, NotInvocableFunctor>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, NotInvocableFunctor, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, NotInvocableFunctor, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, NotInvocableFunctor, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, NotInvocableFunctor, ParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, NotInvocableFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert(!ttl::models<ttl::invocable, NotInvocableFunctor>::value);
+    _Static_assert(!ttl::models<ttl::invocable, NotInvocableFunctor, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, NotInvocableFunctor, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, NotInvocableFunctor, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, NotInvocableFunctor, ParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, NotInvocableFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value);
 
-    STATIC_ASSERT((ttl::models<ttl::invocable, ZeroParamFunctor>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, ZeroParamFunctor, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, ZeroParamFunctor, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, ZeroParamFunctor, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, ZeroParamFunctor, ParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, ZeroParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert(ttl::models<ttl::invocable, ZeroParamFunctor>::value);
+    _Static_assert(!ttl::models<ttl::invocable, ZeroParamFunctor, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, ZeroParamFunctor, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, ZeroParamFunctor, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, ZeroParamFunctor, ParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, ZeroParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value);
     
-    STATIC_ASSERT((!ttl::models<ttl::invocable, OneParamFunctor>::value));
-    STATIC_ASSERT((ttl::models<ttl::invocable, OneParamFunctor, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, OneParamFunctor, NotParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, OneParamFunctor, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, OneParamFunctor, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, OneParamFunctor, ParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, OneParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert(!ttl::models<ttl::invocable, OneParamFunctor>::value);
+    _Static_assert(ttl::models<ttl::invocable, OneParamFunctor, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, OneParamFunctor, NotParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, OneParamFunctor, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, OneParamFunctor, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, OneParamFunctor, ParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, OneParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value);
     
-    STATIC_ASSERT((!ttl::models<ttl::invocable, TwoParamFunctor>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, TwoParamFunctor, ParamType>::value));
-    STATIC_ASSERT((ttl::models<ttl::invocable, TwoParamFunctor, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, TwoParamFunctor, NotParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, TwoParamFunctor, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, TwoParamFunctor, ParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, TwoParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert(!ttl::models<ttl::invocable, TwoParamFunctor>::value);
+    _Static_assert(!ttl::models<ttl::invocable, TwoParamFunctor, ParamType>::value);
+    _Static_assert(ttl::models<ttl::invocable, TwoParamFunctor, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, TwoParamFunctor, NotParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, TwoParamFunctor, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, TwoParamFunctor, ParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, TwoParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value);
     
-    STATIC_ASSERT((!ttl::models<ttl::invocable, ThreeParamFunctor>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, ThreeParamFunctor, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, ThreeParamFunctor, ParamType, ParamType>::value));
-    STATIC_ASSERT((ttl::models<ttl::invocable, ThreeParamFunctor, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, ThreeParamFunctor, NotParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, ThreeParamFunctor, ParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, ThreeParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert(!ttl::models<ttl::invocable, ThreeParamFunctor>::value);
+    _Static_assert(!ttl::models<ttl::invocable, ThreeParamFunctor, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, ThreeParamFunctor, ParamType, ParamType>::value);
+    _Static_assert(ttl::models<ttl::invocable, ThreeParamFunctor, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, ThreeParamFunctor, NotParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, ThreeParamFunctor, ParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, ThreeParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value);
     
-    STATIC_ASSERT((!ttl::models<ttl::invocable, FourParamFunctor>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, FourParamFunctor, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, FourParamFunctor, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, FourParamFunctor, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((ttl::models<ttl::invocable, FourParamFunctor, ParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, FourParamFunctor, NotParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, FourParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert(!ttl::models<ttl::invocable, FourParamFunctor>::value);
+    _Static_assert(!ttl::models<ttl::invocable, FourParamFunctor, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, FourParamFunctor, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, FourParamFunctor, ParamType, ParamType, ParamType>::value);
+    _Static_assert(ttl::models<ttl::invocable, FourParamFunctor, ParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, FourParamFunctor, NotParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, FourParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value);
     
-    STATIC_ASSERT((!ttl::models<ttl::invocable, FiveParamFunctor>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, FiveParamFunctor, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, FiveParamFunctor, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, FiveParamFunctor, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, FiveParamFunctor, ParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((ttl::models<ttl::invocable, FiveParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, FiveParamFunctor, NotParamType, ParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert(!ttl::models<ttl::invocable, FiveParamFunctor>::value);
+    _Static_assert(!ttl::models<ttl::invocable, FiveParamFunctor, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, FiveParamFunctor, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, FiveParamFunctor, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, FiveParamFunctor, ParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(ttl::models<ttl::invocable, FiveParamFunctor, ParamType, ParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, FiveParamFunctor, NotParamType, ParamType, ParamType, ParamType, ParamType>::value);
     
-    STATIC_ASSERT((ttl::models<ttl::invocable, __decltype(ZeroParamFunction)>::value));
-    STATIC_ASSERT((ttl::models<ttl::invocable, __decltype(OneParamFunction), ParamType>::value));
-    STATIC_ASSERT((ttl::models<ttl::invocable, __decltype(TwoParamFunction), ParamType, ParamType>::value));
-    STATIC_ASSERT((ttl::models<ttl::invocable, __decltype(ThreeParamFunction), ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((ttl::models<ttl::invocable, __decltype(FourParamFunction), ParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((ttl::models<ttl::invocable, __decltype(FiveParamFunction), ParamType, ParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert(ttl::models<ttl::invocable, __decltype(ZeroParamFunction)>::value);
+    _Static_assert(ttl::models<ttl::invocable, __decltype(OneParamFunction), ParamType>::value);
+    _Static_assert(ttl::models<ttl::invocable, __decltype(TwoParamFunction), ParamType, ParamType>::value);
+    _Static_assert(ttl::models<ttl::invocable, __decltype(ThreeParamFunction), ParamType, ParamType, ParamType>::value);
+    _Static_assert(ttl::models<ttl::invocable, __decltype(FourParamFunction), ParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(ttl::models<ttl::invocable, __decltype(FiveParamFunction), ParamType, ParamType, ParamType, ParamType, ParamType>::value);
     
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(OneParamFunction)>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(TwoParamFunction)>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(ThreeParamFunction)>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(FourParamFunction)>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(FiveParamFunction)>::value));
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(OneParamFunction)>::value);
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(TwoParamFunction)>::value);
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(ThreeParamFunction)>::value);
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(FourParamFunction)>::value);
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(FiveParamFunction)>::value);
     
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(ZeroParamFunction), NotParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(OneParamFunction), NotParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(TwoParamFunction), NotParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(ThreeParamFunction), NotParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(FourParamFunction), NotParamType, ParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(FiveParamFunction), NotParamType, ParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(ZeroParamFunction), NotParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(OneParamFunction), NotParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(TwoParamFunction), NotParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(ThreeParamFunction), NotParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(FourParamFunction), NotParamType, ParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(FiveParamFunction), NotParamType, ParamType, ParamType, ParamType, ParamType>::value);
     
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(TwoParamFunction), ParamType, NotParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(ThreeParamFunction), ParamType, NotParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(FourParamFunction), ParamType, NotParamType, ParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(FiveParamFunction), ParamType, NotParamType, ParamType, ParamType, ParamType>::value));
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(TwoParamFunction), ParamType, NotParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(ThreeParamFunction), ParamType, NotParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(FourParamFunction), ParamType, NotParamType, ParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(FiveParamFunction), ParamType, NotParamType, ParamType, ParamType, ParamType>::value);
     
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(ThreeParamFunction), ParamType, ParamType, NotParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(FourParamFunction), ParamType, ParamType, NotParamType, ParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(FiveParamFunction), ParamType, ParamType, NotParamType, ParamType, ParamType>::value));
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(ThreeParamFunction), ParamType, ParamType, NotParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(FourParamFunction), ParamType, ParamType, NotParamType, ParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(FiveParamFunction), ParamType, ParamType, NotParamType, ParamType, ParamType>::value);
     
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(FourParamFunction), ParamType, ParamType, ParamType, NotParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(FiveParamFunction), ParamType, ParamType, ParamType, NotParamType, ParamType>::value));
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(FourParamFunction), ParamType, ParamType, ParamType, NotParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(FiveParamFunction), ParamType, ParamType, ParamType, NotParamType, ParamType>::value);
     
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(FiveParamFunction), ParamType, ParamType, ParamType, ParamType, NotParamType>::value));
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(FiveParamFunction), ParamType, ParamType, ParamType, ParamType, NotParamType>::value);
     
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(OneParamFunction), NotParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(TwoParamFunction), NotParamType, NotParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(ThreeParamFunction), NotParamType, NotParamType, NotParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(FourParamFunction), NotParamType, NotParamType, NotParamType, NotParamType>::value));
-    STATIC_ASSERT((!ttl::models<ttl::invocable, __decltype(FiveParamFunction), NotParamType, NotParamType, NotParamType, NotParamType, NotParamType>::value));
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(OneParamFunction), NotParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(TwoParamFunction), NotParamType, NotParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(ThreeParamFunction), NotParamType, NotParamType, NotParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(FourParamFunction), NotParamType, NotParamType, NotParamType, NotParamType>::value);
+    _Static_assert(!ttl::models<ttl::invocable, __decltype(FiveParamFunction), NotParamType, NotParamType, NotParamType, NotParamType, NotParamType>::value);
 
 }

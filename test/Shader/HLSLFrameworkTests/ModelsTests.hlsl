@@ -1,7 +1,6 @@
 
 #include "/Test/TTL/memory.hlsli"
 #include "/Test/TTL/models.hlsli"
-#include "/Test/TTL/static_assert.hlsli"
 
 namespace ModelsTests
 {
@@ -60,25 +59,25 @@ namespace ModelsTests
         ) requires();
     };
 
-    STATIC_ASSERT((ttl::models<ZeroParamConcept, ZeroParamFunc>::value));
-    STATIC_ASSERT((!ttl::models<ZeroParamConcept, OneParamFunc, ParamType1>::value));
-    STATIC_ASSERT((!ttl::models<ZeroParamConcept, TwoParamFuncSingleType, ParamType1>::value));
-    STATIC_ASSERT((!ttl::models<ZeroParamConcept, TwoParamFuncTwoTypes, ParamType1, ParamType2>::value));
+    _Static_assert(ttl::models<ZeroParamConcept, ZeroParamFunc>::value);
+    _Static_assert(!ttl::models<ZeroParamConcept, OneParamFunc, ParamType1>::value);
+    _Static_assert(!ttl::models<ZeroParamConcept, TwoParamFuncSingleType, ParamType1>::value);
+    _Static_assert(!ttl::models<ZeroParamConcept, TwoParamFuncTwoTypes, ParamType1, ParamType2>::value);
 
-    STATIC_ASSERT((!ttl::models<OneParamConcept, ZeroParamFunc>::value));
-    STATIC_ASSERT((ttl::models<OneParamConcept, OneParamFunc, ParamType1>::value));
-    STATIC_ASSERT((!ttl::models<OneParamConcept, TwoParamFuncSingleType, ParamType1>::value));
-    STATIC_ASSERT((!ttl::models<OneParamConcept, TwoParamFuncTwoTypes, ParamType1, ParamType2>::value));
+    _Static_assert(!ttl::models<OneParamConcept, ZeroParamFunc>::value);
+    _Static_assert(ttl::models<OneParamConcept, OneParamFunc, ParamType1>::value);
+    _Static_assert(!ttl::models<OneParamConcept, TwoParamFuncSingleType, ParamType1>::value);
+    _Static_assert(!ttl::models<OneParamConcept, TwoParamFuncTwoTypes, ParamType1, ParamType2>::value);
 
-    STATIC_ASSERT((!ttl::models<TwoParamSingleTypeConcept, ZeroParamFunc>::value));
-    STATIC_ASSERT((!ttl::models<TwoParamSingleTypeConcept, OneParamFunc, ParamType1>::value));
-    STATIC_ASSERT((ttl::models<TwoParamSingleTypeConcept, TwoParamFuncSingleType, ParamType1>::value));
-    STATIC_ASSERT((!ttl::models<TwoParamSingleTypeConcept, TwoParamFuncTwoTypes, ParamType1, ParamType2>::value));
+    _Static_assert(!ttl::models<TwoParamSingleTypeConcept, ZeroParamFunc>::value);
+    _Static_assert(!ttl::models<TwoParamSingleTypeConcept, OneParamFunc, ParamType1>::value);
+    _Static_assert(ttl::models<TwoParamSingleTypeConcept, TwoParamFuncSingleType, ParamType1>::value);
+    _Static_assert(!ttl::models<TwoParamSingleTypeConcept, TwoParamFuncTwoTypes, ParamType1, ParamType2>::value);
 
-    STATIC_ASSERT((!ttl::models<TwoParamTwoTypesConcept, ZeroParamFunc>::value));
-    STATIC_ASSERT((!ttl::models<TwoParamTwoTypesConcept, OneParamFunc, ParamType1>::value));
-    STATIC_ASSERT((!ttl::models<TwoParamTwoTypesConcept, TwoParamFuncSingleType, ParamType1>::value));
-    STATIC_ASSERT((ttl::models<TwoParamTwoTypesConcept, TwoParamFuncTwoTypes, ParamType1, ParamType2>::value));
+    _Static_assert(!ttl::models<TwoParamTwoTypesConcept, ZeroParamFunc>::value);
+    _Static_assert(!ttl::models<TwoParamTwoTypesConcept, OneParamFunc, ParamType1>::value);
+    _Static_assert(!ttl::models<TwoParamTwoTypesConcept, TwoParamFuncSingleType, ParamType1>::value);
+    _Static_assert(ttl::models<TwoParamTwoTypesConcept, TwoParamFuncTwoTypes, ParamType1, ParamType2>::value);
 }
 
 namespace ModelsIfTests
@@ -94,8 +93,8 @@ namespace ModelsIfTests
         ) requires();
     };
 
-    STATIC_ASSERT((ttl::models<IsTrueConcept, TrueType>::value));
-    STATIC_ASSERT((!ttl::models<IsTrueConcept, FalseType>::value));
+    _Static_assert(ttl::models<IsTrueConcept, TrueType>::value);
+    _Static_assert(!ttl::models<IsTrueConcept, FalseType>::value);
 } 
 
 namespace ModelsIfSameTests
@@ -132,17 +131,17 @@ namespace ModelsIfSameTests
         ) requires();
     };
 
-    STATIC_ASSERT((ttl::models<FuncReturnTypeConcept, FuncReturnVoid, void>::value));
-    STATIC_ASSERT((!ttl::models<FuncReturnTypeConcept, FuncReturnVoid, ReturnType1>::value));
-    STATIC_ASSERT((!ttl::models<FuncReturnTypeConcept, FuncReturnVoid, ReturnType2>::value));
+    _Static_assert(ttl::models<FuncReturnTypeConcept, FuncReturnVoid, void>::value);
+    _Static_assert(!ttl::models<FuncReturnTypeConcept, FuncReturnVoid, ReturnType1>::value);
+    _Static_assert(!ttl::models<FuncReturnTypeConcept, FuncReturnVoid, ReturnType2>::value);
 
-    STATIC_ASSERT((!ttl::models<FuncReturnTypeConcept, FuncReturnType1, void>::value));
-    STATIC_ASSERT((ttl::models<FuncReturnTypeConcept, FuncReturnType1, ReturnType1>::value));
-    STATIC_ASSERT((!ttl::models<FuncReturnTypeConcept, FuncReturnType1, ReturnType2>::value));
+    _Static_assert(!ttl::models<FuncReturnTypeConcept, FuncReturnType1, void>::value);
+    _Static_assert(ttl::models<FuncReturnTypeConcept, FuncReturnType1, ReturnType1>::value);
+    _Static_assert(!ttl::models<FuncReturnTypeConcept, FuncReturnType1, ReturnType2>::value);
 
-    STATIC_ASSERT((!ttl::models<FuncReturnTypeConcept, FuncReturnType2, void>::value));
-    STATIC_ASSERT((!ttl::models<FuncReturnTypeConcept, FuncReturnType2, ReturnType1>::value));
-    STATIC_ASSERT((ttl::models<FuncReturnTypeConcept, FuncReturnType2, ReturnType2>::value));
+    _Static_assert(!ttl::models<FuncReturnTypeConcept, FuncReturnType2, void>::value);
+    _Static_assert(!ttl::models<FuncReturnTypeConcept, FuncReturnType2, ReturnType1>::value);
+    _Static_assert(ttl::models<FuncReturnTypeConcept, FuncReturnType2, ReturnType2>::value);
 }
 
 namespace ModelsRefinesTests
@@ -190,10 +189,10 @@ namespace ModelsRefinesTests
 
     struct HasNeither{};
 
-    STATIC_ASSERT((!ttl::models<HasFooAndBarConcept, HasFoo>::value));
-    STATIC_ASSERT((!ttl::models<HasFooAndBarConcept, HasBar>::value));
-    STATIC_ASSERT((ttl::models<HasFooAndBarConcept, HasBoth>::value));
-    STATIC_ASSERT((!ttl::models<HasFooAndBarConcept, HasNeither>::value));
+    _Static_assert(!ttl::models<HasFooAndBarConcept, HasFoo>::value);
+    _Static_assert(!ttl::models<HasFooAndBarConcept, HasBar>::value);
+    _Static_assert(ttl::models<HasFooAndBarConcept, HasBoth>::value);
+    _Static_assert(!ttl::models<HasFooAndBarConcept, HasNeither>::value);
 }
 
 namespace ModelsIfPredTests
@@ -239,12 +238,12 @@ namespace ModelsIfPredTests
         float Foo();
     };
 
-    STATIC_ASSERT((!ttl::models<FooReturnsIntConcept, NoFoo>::value));
-    STATIC_ASSERT((!ttl::models<FooReturnsIntConcept, VoidFoo>::value));
-    STATIC_ASSERT((ttl::models<FooReturnsIntConcept, IntFoo>::value));
+    _Static_assert(!ttl::models<FooReturnsIntConcept, NoFoo>::value);
+    _Static_assert(!ttl::models<FooReturnsIntConcept, VoidFoo>::value);
+    _Static_assert(ttl::models<FooReturnsIntConcept, IntFoo>::value);
 
-    STATIC_ASSERT((ttl::models<FooReturnsFloatOrInt, IntFoo>::value));
-    STATIC_ASSERT((ttl::models<FooReturnsFloatOrInt, FloatFoo>::value));
-    STATIC_ASSERT((!ttl::models<FooReturnsFloatOrInt, NoFoo>::value));
-    STATIC_ASSERT((!ttl::models<FooReturnsFloatOrInt, VoidFoo>::value));
+    _Static_assert(ttl::models<FooReturnsFloatOrInt, IntFoo>::value);
+    _Static_assert(ttl::models<FooReturnsFloatOrInt, FloatFoo>::value);
+    _Static_assert(!ttl::models<FooReturnsFloatOrInt, NoFoo>::value);
+    _Static_assert(!ttl::models<FooReturnsFloatOrInt, VoidFoo>::value);
 }

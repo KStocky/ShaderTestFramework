@@ -1,4 +1,3 @@
-#include "/Test/TTL/static_assert.hlsli"
 #include "/Test/TTL/type_traits.hlsli"
 
 namespace AlignOfTests
@@ -81,9 +80,9 @@ namespace ArrayTraitsTests
         using type = int[size];
         using traits = ttl::array_traits<type>;
 
-        STATIC_ASSERT(traits::is_array);
-        STATIC_ASSERT(traits::size == size);
-        STATIC_ASSERT((ttl::is_same<traits::element_type, int>::value));
+        _Static_assert(traits::is_array);
+        _Static_assert(traits::size == size);
+        _Static_assert(ttl::is_same<traits::element_type, int>::value);
     }
 
 
@@ -92,9 +91,9 @@ namespace ArrayTraitsTests
         using type = int;
         using traits = ttl::array_traits<type>;
 
-        STATIC_ASSERT(!traits::is_array);
-        STATIC_ASSERT(traits::size == 0u);
-        STATIC_ASSERT((ttl::is_same<traits::element_type, void>::value));
+        _Static_assert(!traits::is_array);
+        _Static_assert(traits::size == 0u);
+        _Static_assert(ttl::is_same<traits::element_type, void>::value);
     }
 
 
@@ -103,9 +102,9 @@ namespace ArrayTraitsTests
         using type = int2;
         using traits = ttl::array_traits<type>;
 
-        STATIC_ASSERT(!traits::is_array);
-        STATIC_ASSERT(traits::size == 0u);
-        STATIC_ASSERT((ttl::is_same<traits::element_type, void>::value));
+        _Static_assert(!traits::is_array);
+        _Static_assert(traits::size == 0u);
+        _Static_assert(ttl::is_same<traits::element_type, void>::value);
     }
 
 
@@ -114,9 +113,9 @@ namespace ArrayTraitsTests
         using type = Buffer<int>;
         using traits = ttl::array_traits<type>;
 
-        STATIC_ASSERT(!traits::is_array);
-        STATIC_ASSERT(traits::size == 0u);
-        STATIC_ASSERT((ttl::is_same<traits::element_type, void>::value));
+        _Static_assert(!traits::is_array);
+        _Static_assert(traits::size == 0u);
+        _Static_assert(ttl::is_same<traits::element_type, void>::value);
     }
 
 
@@ -125,9 +124,9 @@ namespace ArrayTraitsTests
         using type = RWBuffer<int>;
         using traits = ttl::array_traits<type>;
 
-        STATIC_ASSERT(!traits::is_array);
-        STATIC_ASSERT(traits::size == 0u);
-        STATIC_ASSERT((ttl::is_same<traits::element_type, void>::value));
+        _Static_assert(!traits::is_array);
+        _Static_assert(traits::size == 0u);
+        _Static_assert(ttl::is_same<traits::element_type, void>::value);
     }
 
     struct MyStruct
@@ -142,9 +141,9 @@ namespace ArrayTraitsTests
         using type = StructuredBuffer<MyStruct>;
         using traits = ttl::array_traits<type>;
 
-        STATIC_ASSERT(!traits::is_array);
-        STATIC_ASSERT(traits::size == 0u);
-        STATIC_ASSERT((ttl::is_same<traits::element_type, void>::value));
+        _Static_assert(!traits::is_array);
+        _Static_assert(traits::size == 0u);
+        _Static_assert(ttl::is_same<traits::element_type, void>::value);
     }
 
 
@@ -153,9 +152,9 @@ namespace ArrayTraitsTests
         using type = RWStructuredBuffer<MyStruct>;
         using traits = ttl::array_traits<type>;
 
-        STATIC_ASSERT(!traits::is_array);
-        STATIC_ASSERT(traits::size == 0u);
-        STATIC_ASSERT((ttl::is_same<traits::element_type, void>::value));
+        _Static_assert(!traits::is_array);
+        _Static_assert(traits::size == 0u);
+        _Static_assert(ttl::is_same<traits::element_type, void>::value);
     }
 
 
@@ -164,9 +163,9 @@ namespace ArrayTraitsTests
         using type = ByteAddressBuffer;
         using traits = ttl::array_traits<type>;
 
-        STATIC_ASSERT(!traits::is_array);
-        STATIC_ASSERT(traits::size == 0u);
-        STATIC_ASSERT((ttl::is_same<traits::element_type, void>::value));
+        _Static_assert(!traits::is_array);
+        _Static_assert(traits::size == 0u);
+        _Static_assert(ttl::is_same<traits::element_type, void>::value);
     }
 
 
@@ -175,9 +174,9 @@ namespace ArrayTraitsTests
         using type = RWByteAddressBuffer;
         using traits = ttl::array_traits<type>;
 
-        STATIC_ASSERT(!traits::is_array);
-        STATIC_ASSERT(traits::size == 0u);
-        STATIC_ASSERT((ttl::is_same<traits::element_type, void>::value));
+        _Static_assert(!traits::is_array);
+        _Static_assert(traits::size == 0u);
+        _Static_assert(ttl::is_same<traits::element_type, void>::value);
     }
 }
 
@@ -214,13 +213,13 @@ namespace ContainerTraitsTests
         using type = int[6];
         using traits = ttl::container_traits<type>;
 
-        STATIC_ASSERT(traits::is_container);
-        STATIC_ASSERT(traits::is_writable);
-        STATIC_ASSERT(!traits::is_byte_address);
-        STATIC_ASSERT(!traits::is_structured);
-        STATIC_ASSERT(!traits::is_resource);
-        STATIC_ASSERT((ttl::is_same<traits::element_type, int>::value));
-        STATIC_ASSERT((ttl::is_same<traits::type, type>::value));
+        _Static_assert(traits::is_container);
+        _Static_assert(traits::is_writable);
+        _Static_assert(!traits::is_byte_address);
+        _Static_assert(!traits::is_structured);
+        _Static_assert(!traits::is_resource);
+        _Static_assert(ttl::is_same<traits::element_type, int>::value);
+        _Static_assert(ttl::is_same<traits::type, type>::value);
     }
 
     namespace GIVEN_NonArray_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
@@ -228,13 +227,13 @@ namespace ContainerTraitsTests
         using type = int;
         using traits = ttl::container_traits<type>;
 
-        STATIC_ASSERT(!traits::is_container);
-        STATIC_ASSERT(!traits::is_writable);
-        STATIC_ASSERT(!traits::is_byte_address);
-        STATIC_ASSERT(!traits::is_structured);
-        STATIC_ASSERT(!traits::is_resource);
-        STATIC_ASSERT((ttl::is_same<traits::element_type, void>::value));
-        STATIC_ASSERT((ttl::is_same<traits::type, void>::value));
+        _Static_assert(!traits::is_container);
+        _Static_assert(!traits::is_writable);
+        _Static_assert(!traits::is_byte_address);
+        _Static_assert(!traits::is_structured);
+        _Static_assert(!traits::is_resource);
+        _Static_assert(ttl::is_same<traits::element_type, void>::value);
+        _Static_assert(ttl::is_same<traits::type, void>::value);
     }
 
     namespace GIVEN_VectorType_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
@@ -242,13 +241,13 @@ namespace ContainerTraitsTests
         using type = int2;
         using traits = ttl::container_traits<type>;
 
-        STATIC_ASSERT(!traits::is_container);
-        STATIC_ASSERT(!traits::is_writable);
-        STATIC_ASSERT(!traits::is_byte_address);
-        STATIC_ASSERT(!traits::is_structured);
-        STATIC_ASSERT(!traits::is_resource);
-        STATIC_ASSERT((ttl::is_same<traits::element_type, void>::value));
-        STATIC_ASSERT((ttl::is_same<traits::type, void>::value));
+        _Static_assert(!traits::is_container);
+        _Static_assert(!traits::is_writable);
+        _Static_assert(!traits::is_byte_address);
+        _Static_assert(!traits::is_structured);
+        _Static_assert(!traits::is_resource);
+        _Static_assert(ttl::is_same<traits::element_type, void>::value);
+        _Static_assert(ttl::is_same<traits::type, void>::value);
     }
 
     namespace GIVEN_Buffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
@@ -256,26 +255,26 @@ namespace ContainerTraitsTests
         using type = Buffer<int>;
         using traits = ttl::container_traits<type>;
 
-        STATIC_ASSERT(traits::is_container);
-        STATIC_ASSERT(!traits::is_writable);
-        STATIC_ASSERT(!traits::is_byte_address);
-        STATIC_ASSERT(!traits::is_structured);
-        STATIC_ASSERT(traits::is_resource);
-        STATIC_ASSERT((ttl::is_same<traits::element_type, int>::value));
-        STATIC_ASSERT((ttl::is_same<traits::type, type>::value));
+        _Static_assert(traits::is_container);
+        _Static_assert(!traits::is_writable);
+        _Static_assert(!traits::is_byte_address);
+        _Static_assert(!traits::is_structured);
+        _Static_assert(traits::is_resource);
+        _Static_assert(ttl::is_same<traits::element_type, int>::value);
+        _Static_assert(ttl::is_same<traits::type, type>::value);
     }
 
     namespace GIVEN_RWBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
     {
         using type = RWBuffer<int>;
         using traits = ttl::container_traits<type>;
-        STATIC_ASSERT(traits::is_container);
-        STATIC_ASSERT(traits::is_writable);
-        STATIC_ASSERT(!traits::is_byte_address);
-        STATIC_ASSERT(!traits::is_structured);
-        STATIC_ASSERT(traits::is_resource);
-        STATIC_ASSERT((ttl::is_same<traits::element_type, int>::value));
-        STATIC_ASSERT((ttl::is_same<traits::type, type>::value));
+        _Static_assert(traits::is_container);
+        _Static_assert(traits::is_writable);
+        _Static_assert(!traits::is_byte_address);
+        _Static_assert(!traits::is_structured);
+        _Static_assert(traits::is_resource);
+        _Static_assert(ttl::is_same<traits::element_type, int>::value);
+        _Static_assert(ttl::is_same<traits::type, type>::value);
     }
 
     struct MyStruct
@@ -289,13 +288,13 @@ namespace ContainerTraitsTests
         using type = StructuredBuffer<MyStruct>;
         using traits = ttl::container_traits<type>;
 
-        STATIC_ASSERT(traits::is_container);
-        STATIC_ASSERT(!traits::is_writable);
-        STATIC_ASSERT(!traits::is_byte_address);
-        STATIC_ASSERT(traits::is_structured);
-        STATIC_ASSERT(traits::is_resource);
-        STATIC_ASSERT((ttl::is_same<traits::element_type, MyStruct>::value));
-        STATIC_ASSERT((ttl::is_same<traits::type, type>::value));
+        _Static_assert(traits::is_container);
+        _Static_assert(!traits::is_writable);
+        _Static_assert(!traits::is_byte_address);
+        _Static_assert(traits::is_structured);
+        _Static_assert(traits::is_resource);
+        _Static_assert(ttl::is_same<traits::element_type, MyStruct>::value);
+        _Static_assert(ttl::is_same<traits::type, type>::value);
     }
 
     namespace GIVEN_RWStructuredBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
@@ -303,13 +302,13 @@ namespace ContainerTraitsTests
         using type = RWStructuredBuffer<MyStruct>;
         using traits = ttl::container_traits<type>;
 
-        STATIC_ASSERT(traits::is_container);
-        STATIC_ASSERT(traits::is_writable);
-        STATIC_ASSERT(!traits::is_byte_address);
-        STATIC_ASSERT(traits::is_structured);
-        STATIC_ASSERT(traits::is_resource);
-        STATIC_ASSERT((ttl::is_same<traits::element_type, MyStruct>::value));
-        STATIC_ASSERT((ttl::is_same<traits::type, type>::value));
+        _Static_assert(traits::is_container);
+        _Static_assert(traits::is_writable);
+        _Static_assert(!traits::is_byte_address);
+        _Static_assert(traits::is_structured);
+        _Static_assert(traits::is_resource);
+        _Static_assert(ttl::is_same<traits::element_type, MyStruct>::value);
+        _Static_assert(ttl::is_same<traits::type, type>::value);
     }
 
     namespace GIVEN_ByteAddressBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
@@ -317,13 +316,13 @@ namespace ContainerTraitsTests
         using type = ByteAddressBuffer;
         using traits = ttl::container_traits<type>;
 
-        STATIC_ASSERT(traits::is_container);
-        STATIC_ASSERT(!traits::is_writable);
-        STATIC_ASSERT(traits::is_byte_address);
-        STATIC_ASSERT(!traits::is_structured);
-        STATIC_ASSERT(traits::is_resource);
-        STATIC_ASSERT((ttl::is_same<traits::element_type, uint>::value));
-        STATIC_ASSERT((ttl::is_same<traits::type, type>::value));
+        _Static_assert(traits::is_container);
+        _Static_assert(!traits::is_writable);
+        _Static_assert(traits::is_byte_address);
+        _Static_assert(!traits::is_structured);
+        _Static_assert(traits::is_resource);
+        _Static_assert(ttl::is_same<traits::element_type, uint>::value);
+        _Static_assert(ttl::is_same<traits::type, type>::value);
     }
 
     namespace GIVEN_RWByteAddressBuffer_WHEN_ContainerTraitsQueried_THEN_TraitsAsExpected
@@ -331,13 +330,13 @@ namespace ContainerTraitsTests
         using type = RWByteAddressBuffer;
         using traits = ttl::container_traits<type>;
 
-        STATIC_ASSERT(traits::is_container);
-        STATIC_ASSERT(traits::is_writable);
-        STATIC_ASSERT(traits::is_byte_address);
-        STATIC_ASSERT(!traits::is_structured);
-        STATIC_ASSERT(traits::is_resource);
-        STATIC_ASSERT((ttl::is_same<traits::element_type, uint>::value));
-        STATIC_ASSERT((ttl::is_same<traits::type, type>::value));
+        _Static_assert(traits::is_container);
+        _Static_assert(traits::is_writable);
+        _Static_assert(traits::is_byte_address);
+        _Static_assert(!traits::is_structured);
+        _Static_assert(traits::is_resource);
+        _Static_assert(ttl::is_same<traits::element_type, uint>::value);
+        _Static_assert(ttl::is_same<traits::type, type>::value);
     }
 }
 
@@ -351,11 +350,11 @@ namespace DeclvalTests
     {
     };
 
-    STATIC_ASSERT((ttl::is_same<A, __decltype(ttl::declval<A>())>::value));
-    STATIC_ASSERT((!ttl::is_same<B, __decltype(ttl::declval<A>())>::value));
+    _Static_assert(ttl::is_same<A, __decltype(ttl::declval<A>())>::value);
+    _Static_assert(!ttl::is_same<B, __decltype(ttl::declval<A>())>::value);
 
-    STATIC_ASSERT((!ttl::is_same<A, __decltype(ttl::declval<B>())>::value));
-    STATIC_ASSERT((ttl::is_same<B, __decltype(ttl::declval<B>())>::value));
+    _Static_assert(!ttl::is_same<A, __decltype(ttl::declval<B>())>::value);
+    _Static_assert(ttl::is_same<B, __decltype(ttl::declval<B>())>::value);
 }
 
 namespace FundamentalTypeTraitsTests
@@ -367,149 +366,149 @@ namespace FundamentalTypeTraitsTests
 
     void ScalarTests()
     {
-        STATIC_ASSERT((ttl::fundamental_type_traits<bool>::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<int16_t>::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<int32_t>::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<int64_t>::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<uint16_t>::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<uint32_t>::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<uint64_t>::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<float16_t>::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<float32_t>::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<float64_t>::is_fundamental));
-        STATIC_ASSERT((!ttl::fundamental_type_traits<MyStruct>::is_fundamental));
+        _Static_assert(ttl::fundamental_type_traits<bool>::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<int16_t>::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<int32_t>::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<int64_t>::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<uint16_t>::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<uint32_t>::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<uint64_t>::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<float16_t>::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<float32_t>::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<float64_t>::is_fundamental);
+        _Static_assert(!ttl::fundamental_type_traits<MyStruct>::is_fundamental);
 
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<bool>::dim0));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<int16_t>::dim0));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<int32_t>::dim0));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<int64_t>::dim0));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<uint16_t>::dim0));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<uint32_t>::dim0));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<uint64_t>::dim0));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<float16_t>::dim0));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<float32_t>::dim0));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<float64_t>::dim0));
-        STATIC_ASSERT((0u == ttl::fundamental_type_traits<MyStruct>::dim0));
+        _Static_assert(1u == ttl::fundamental_type_traits<bool>::dim0);
+        _Static_assert(1u == ttl::fundamental_type_traits<int16_t>::dim0);
+        _Static_assert(1u == ttl::fundamental_type_traits<int32_t>::dim0);
+        _Static_assert(1u == ttl::fundamental_type_traits<int64_t>::dim0);
+        _Static_assert(1u == ttl::fundamental_type_traits<uint16_t>::dim0);
+        _Static_assert(1u == ttl::fundamental_type_traits<uint32_t>::dim0);
+        _Static_assert(1u == ttl::fundamental_type_traits<uint64_t>::dim0);
+        _Static_assert(1u == ttl::fundamental_type_traits<float16_t>::dim0);
+        _Static_assert(1u == ttl::fundamental_type_traits<float32_t>::dim0);
+        _Static_assert(1u == ttl::fundamental_type_traits<float64_t>::dim0);
+        _Static_assert(0u == ttl::fundamental_type_traits<MyStruct>::dim0);
 
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<bool>::dim1));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<int16_t>::dim1));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<int32_t>::dim1));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<int64_t>::dim1));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<uint16_t>::dim1));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<uint32_t>::dim1));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<uint64_t>::dim1));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<float16_t>::dim1));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<float32_t>::dim1));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<float64_t>::dim1));
-        STATIC_ASSERT((0u == ttl::fundamental_type_traits<MyStruct>::dim1));
+        _Static_assert(1u == ttl::fundamental_type_traits<bool>::dim1);
+        _Static_assert(1u == ttl::fundamental_type_traits<int16_t>::dim1);
+        _Static_assert(1u == ttl::fundamental_type_traits<int32_t>::dim1);
+        _Static_assert(1u == ttl::fundamental_type_traits<int64_t>::dim1);
+        _Static_assert(1u == ttl::fundamental_type_traits<uint16_t>::dim1);
+        _Static_assert(1u == ttl::fundamental_type_traits<uint32_t>::dim1);
+        _Static_assert(1u == ttl::fundamental_type_traits<uint64_t>::dim1);
+        _Static_assert(1u == ttl::fundamental_type_traits<float16_t>::dim1);
+        _Static_assert(1u == ttl::fundamental_type_traits<float32_t>::dim1);
+        _Static_assert(1u == ttl::fundamental_type_traits<float64_t>::dim1);
+        _Static_assert(0u == ttl::fundamental_type_traits<MyStruct>::dim1);
 
-        STATIC_ASSERT((ttl::is_same<bool, ttl::fundamental_type_traits<bool>::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<int16_t, ttl::fundamental_type_traits<int16_t>::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<int32_t, ttl::fundamental_type_traits<int32_t>::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<int64_t, ttl::fundamental_type_traits<int64_t>::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<uint16_t, ttl::fundamental_type_traits<uint16_t>::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<uint32_t, ttl::fundamental_type_traits<uint32_t>::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<uint64_t, ttl::fundamental_type_traits<uint64_t>::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<float16_t, ttl::fundamental_type_traits<float16_t>::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<float32_t, ttl::fundamental_type_traits<float32_t>::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<float64_t, ttl::fundamental_type_traits<float64_t>::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<void, ttl::fundamental_type_traits<MyStruct>::base_type>::value));
+        _Static_assert(ttl::is_same<bool, ttl::fundamental_type_traits<bool>::base_type>::value);
+        _Static_assert(ttl::is_same<int16_t, ttl::fundamental_type_traits<int16_t>::base_type>::value);
+        _Static_assert(ttl::is_same<int32_t, ttl::fundamental_type_traits<int32_t>::base_type>::value);
+        _Static_assert(ttl::is_same<int64_t, ttl::fundamental_type_traits<int64_t>::base_type>::value);
+        _Static_assert(ttl::is_same<uint16_t, ttl::fundamental_type_traits<uint16_t>::base_type>::value);
+        _Static_assert(ttl::is_same<uint32_t, ttl::fundamental_type_traits<uint32_t>::base_type>::value);
+        _Static_assert(ttl::is_same<uint64_t, ttl::fundamental_type_traits<uint64_t>::base_type>::value);
+        _Static_assert(ttl::is_same<float16_t, ttl::fundamental_type_traits<float16_t>::base_type>::value);
+        _Static_assert(ttl::is_same<float32_t, ttl::fundamental_type_traits<float32_t>::base_type>::value);
+        _Static_assert(ttl::is_same<float64_t, ttl::fundamental_type_traits<float64_t>::base_type>::value);
+        _Static_assert(ttl::is_same<void, ttl::fundamental_type_traits<MyStruct>::base_type>::value);
     }
 
     template<uint InDim>
     void VectorTests()
     {
-        STATIC_ASSERT((ttl::fundamental_type_traits<vector<bool, InDim> >::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<vector<int16_t, InDim> >::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<vector<int32_t, InDim> >::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<vector<int64_t, InDim> >::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<vector<uint16_t, InDim> >::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<vector<uint32_t, InDim> >::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<vector<uint64_t, InDim> >::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<vector<float16_t, InDim> >::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<vector<float32_t, InDim> >::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<vector<float64_t, InDim> >::is_fundamental));
+        _Static_assert(ttl::fundamental_type_traits<vector<bool, InDim> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<vector<int16_t, InDim> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<vector<int32_t, InDim> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<vector<int64_t, InDim> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<vector<uint16_t, InDim> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<vector<uint32_t, InDim> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<vector<uint64_t, InDim> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<vector<float16_t, InDim> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<vector<float32_t, InDim> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<vector<float64_t, InDim> >::is_fundamental);
 
-        STATIC_ASSERT((InDim == ttl::fundamental_type_traits<vector<bool, InDim> >::dim0));
-        STATIC_ASSERT((InDim == ttl::fundamental_type_traits<vector<int16_t, InDim> >::dim0));
-        STATIC_ASSERT((InDim == ttl::fundamental_type_traits<vector<int32_t, InDim> >::dim0));
-        STATIC_ASSERT((InDim == ttl::fundamental_type_traits<vector<int64_t, InDim> >::dim0));
-        STATIC_ASSERT((InDim == ttl::fundamental_type_traits<vector<uint16_t, InDim> >::dim0));
-        STATIC_ASSERT((InDim == ttl::fundamental_type_traits<vector<uint32_t, InDim> >::dim0));
-        STATIC_ASSERT((InDim == ttl::fundamental_type_traits<vector<uint64_t, InDim> >::dim0));
-        STATIC_ASSERT((InDim == ttl::fundamental_type_traits<vector<float16_t, InDim> >::dim0));
-        STATIC_ASSERT((InDim == ttl::fundamental_type_traits<vector<float32_t, InDim> >::dim0));
-        STATIC_ASSERT((InDim == ttl::fundamental_type_traits<vector<float64_t, InDim> >::dim0));
+        _Static_assert(InDim == ttl::fundamental_type_traits<vector<bool, InDim> >::dim0);
+        _Static_assert(InDim == ttl::fundamental_type_traits<vector<int16_t, InDim> >::dim0);
+        _Static_assert(InDim == ttl::fundamental_type_traits<vector<int32_t, InDim> >::dim0);
+        _Static_assert(InDim == ttl::fundamental_type_traits<vector<int64_t, InDim> >::dim0);
+        _Static_assert(InDim == ttl::fundamental_type_traits<vector<uint16_t, InDim> >::dim0);
+        _Static_assert(InDim == ttl::fundamental_type_traits<vector<uint32_t, InDim> >::dim0);
+        _Static_assert(InDim == ttl::fundamental_type_traits<vector<uint64_t, InDim> >::dim0);
+        _Static_assert(InDim == ttl::fundamental_type_traits<vector<float16_t, InDim> >::dim0);
+        _Static_assert(InDim == ttl::fundamental_type_traits<vector<float32_t, InDim> >::dim0);
+        _Static_assert(InDim == ttl::fundamental_type_traits<vector<float64_t, InDim> >::dim0);
 
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<vector<bool, InDim> >::dim1));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<vector<int16_t, InDim> >::dim1));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<vector<int32_t, InDim> >::dim1));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<vector<int64_t, InDim> >::dim1));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<vector<uint16_t, InDim> >::dim1));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<vector<uint32_t, InDim> >::dim1));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<vector<uint64_t, InDim> >::dim1));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<vector<float16_t, InDim> >::dim1));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<vector<float32_t, InDim> >::dim1));
-        STATIC_ASSERT((1u == ttl::fundamental_type_traits<vector<float64_t, InDim> >::dim1));
+        _Static_assert(1u == ttl::fundamental_type_traits<vector<bool, InDim> >::dim1);
+        _Static_assert(1u == ttl::fundamental_type_traits<vector<int16_t, InDim> >::dim1);
+        _Static_assert(1u == ttl::fundamental_type_traits<vector<int32_t, InDim> >::dim1);
+        _Static_assert(1u == ttl::fundamental_type_traits<vector<int64_t, InDim> >::dim1);
+        _Static_assert(1u == ttl::fundamental_type_traits<vector<uint16_t, InDim> >::dim1);
+        _Static_assert(1u == ttl::fundamental_type_traits<vector<uint32_t, InDim> >::dim1);
+        _Static_assert(1u == ttl::fundamental_type_traits<vector<uint64_t, InDim> >::dim1);
+        _Static_assert(1u == ttl::fundamental_type_traits<vector<float16_t, InDim> >::dim1);
+        _Static_assert(1u == ttl::fundamental_type_traits<vector<float32_t, InDim> >::dim1);
+        _Static_assert(1u == ttl::fundamental_type_traits<vector<float64_t, InDim> >::dim1);
 
-        STATIC_ASSERT((ttl::is_same<bool, typename ttl::fundamental_type_traits<vector<bool, InDim> >::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<int16_t, typename ttl::fundamental_type_traits<vector<int16_t, InDim> >::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<int32_t, typename ttl::fundamental_type_traits<vector<int32_t, InDim> >::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<int64_t, typename ttl::fundamental_type_traits<vector<int64_t, InDim> >::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<uint16_t, typename ttl::fundamental_type_traits<vector<uint16_t, InDim> >::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<uint32_t, typename ttl::fundamental_type_traits<vector<uint32_t, InDim> >::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<uint64_t, typename ttl::fundamental_type_traits<vector<uint64_t, InDim> >::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<float16_t, typename ttl::fundamental_type_traits<vector<float16_t, InDim> >::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<float32_t, typename ttl::fundamental_type_traits<vector<float32_t, InDim> >::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<float64_t, typename ttl::fundamental_type_traits<vector<float64_t, InDim> >::base_type>::value));
+        _Static_assert(ttl::is_same<bool, typename ttl::fundamental_type_traits<vector<bool, InDim> >::base_type>::value);
+        _Static_assert(ttl::is_same<int16_t, typename ttl::fundamental_type_traits<vector<int16_t, InDim> >::base_type>::value);
+        _Static_assert(ttl::is_same<int32_t, typename ttl::fundamental_type_traits<vector<int32_t, InDim> >::base_type>::value);
+        _Static_assert(ttl::is_same<int64_t, typename ttl::fundamental_type_traits<vector<int64_t, InDim> >::base_type>::value);
+        _Static_assert(ttl::is_same<uint16_t, typename ttl::fundamental_type_traits<vector<uint16_t, InDim> >::base_type>::value);
+        _Static_assert(ttl::is_same<uint32_t, typename ttl::fundamental_type_traits<vector<uint32_t, InDim> >::base_type>::value);
+        _Static_assert(ttl::is_same<uint64_t, typename ttl::fundamental_type_traits<vector<uint64_t, InDim> >::base_type>::value);
+        _Static_assert(ttl::is_same<float16_t, typename ttl::fundamental_type_traits<vector<float16_t, InDim> >::base_type>::value);
+        _Static_assert(ttl::is_same<float32_t, typename ttl::fundamental_type_traits<vector<float32_t, InDim> >::base_type>::value);
+        _Static_assert(ttl::is_same<float64_t, typename ttl::fundamental_type_traits<vector<float64_t, InDim> >::base_type>::value);
     }
 
     template<uint InDim0, uint InDim1>
     void MatrixTests()
     {
-        STATIC_ASSERT((ttl::fundamental_type_traits<matrix<bool, InDim0, InDim1> >::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<matrix<int16_t, InDim0, InDim1> >::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<matrix<int32_t, InDim0, InDim1> >::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<matrix<int64_t, InDim0, InDim1> >::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<matrix<uint16_t, InDim0, InDim1> >::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<matrix<uint32_t, InDim0, InDim1> >::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<matrix<uint64_t, InDim0, InDim1> >::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<matrix<float16_t, InDim0, InDim1> >::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<matrix<float32_t, InDim0, InDim1> >::is_fundamental));
-        STATIC_ASSERT((ttl::fundamental_type_traits<matrix<float64_t, InDim0, InDim1> >::is_fundamental));
+        _Static_assert(ttl::fundamental_type_traits<matrix<bool, InDim0, InDim1> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<matrix<int16_t, InDim0, InDim1> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<matrix<int32_t, InDim0, InDim1> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<matrix<int64_t, InDim0, InDim1> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<matrix<uint16_t, InDim0, InDim1> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<matrix<uint32_t, InDim0, InDim1> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<matrix<uint64_t, InDim0, InDim1> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<matrix<float16_t, InDim0, InDim1> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<matrix<float32_t, InDim0, InDim1> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<matrix<float64_t, InDim0, InDim1> >::is_fundamental);
 
-        STATIC_ASSERT((InDim0 == ttl::fundamental_type_traits<matrix<bool, InDim0, InDim1> >::dim0));
-        STATIC_ASSERT((InDim0 == ttl::fundamental_type_traits<matrix<int16_t, InDim0, InDim1> >::dim0));
-        STATIC_ASSERT((InDim0 == ttl::fundamental_type_traits<matrix<int32_t, InDim0, InDim1> >::dim0));
-        STATIC_ASSERT((InDim0 == ttl::fundamental_type_traits<matrix<int64_t, InDim0, InDim1> >::dim0));
-        STATIC_ASSERT((InDim0 == ttl::fundamental_type_traits<matrix<uint16_t, InDim0, InDim1> >::dim0));
-        STATIC_ASSERT((InDim0 == ttl::fundamental_type_traits<matrix<uint32_t, InDim0, InDim1> >::dim0));
-        STATIC_ASSERT((InDim0 == ttl::fundamental_type_traits<matrix<uint64_t, InDim0, InDim1> >::dim0));
-        STATIC_ASSERT((InDim0 == ttl::fundamental_type_traits<matrix<float16_t, InDim0, InDim1> >::dim0));
-        STATIC_ASSERT((InDim0 == ttl::fundamental_type_traits<matrix<float32_t, InDim0, InDim1> >::dim0));
-        STATIC_ASSERT((InDim0 == ttl::fundamental_type_traits<matrix<float64_t, InDim0, InDim1> >::dim0));
+        _Static_assert(InDim0 == ttl::fundamental_type_traits<matrix<bool, InDim0, InDim1> >::dim0);
+        _Static_assert(InDim0 == ttl::fundamental_type_traits<matrix<int16_t, InDim0, InDim1> >::dim0);
+        _Static_assert(InDim0 == ttl::fundamental_type_traits<matrix<int32_t, InDim0, InDim1> >::dim0);
+        _Static_assert(InDim0 == ttl::fundamental_type_traits<matrix<int64_t, InDim0, InDim1> >::dim0);
+        _Static_assert(InDim0 == ttl::fundamental_type_traits<matrix<uint16_t, InDim0, InDim1> >::dim0);
+        _Static_assert(InDim0 == ttl::fundamental_type_traits<matrix<uint32_t, InDim0, InDim1> >::dim0);
+        _Static_assert(InDim0 == ttl::fundamental_type_traits<matrix<uint64_t, InDim0, InDim1> >::dim0);
+        _Static_assert(InDim0 == ttl::fundamental_type_traits<matrix<float16_t, InDim0, InDim1> >::dim0);
+        _Static_assert(InDim0 == ttl::fundamental_type_traits<matrix<float32_t, InDim0, InDim1> >::dim0);
+        _Static_assert(InDim0 == ttl::fundamental_type_traits<matrix<float64_t, InDim0, InDim1> >::dim0);
 
-        STATIC_ASSERT((InDim1 == ttl::fundamental_type_traits<matrix<bool, InDim0, InDim1> >::dim1));
-        STATIC_ASSERT((InDim1 == ttl::fundamental_type_traits<matrix<int16_t, InDim0, InDim1> >::dim1));
-        STATIC_ASSERT((InDim1 == ttl::fundamental_type_traits<matrix<int32_t, InDim0, InDim1> >::dim1));
-        STATIC_ASSERT((InDim1 == ttl::fundamental_type_traits<matrix<int64_t, InDim0, InDim1> >::dim1));
-        STATIC_ASSERT((InDim1 == ttl::fundamental_type_traits<matrix<uint16_t, InDim0, InDim1> >::dim1));
-        STATIC_ASSERT((InDim1 == ttl::fundamental_type_traits<matrix<uint32_t, InDim0, InDim1> >::dim1));
-        STATIC_ASSERT((InDim1 == ttl::fundamental_type_traits<matrix<uint64_t, InDim0, InDim1> >::dim1));
-        STATIC_ASSERT((InDim1 == ttl::fundamental_type_traits<matrix<float16_t, InDim0, InDim1> >::dim1));
-        STATIC_ASSERT((InDim1 == ttl::fundamental_type_traits<matrix<float32_t, InDim0, InDim1> >::dim1));
-        STATIC_ASSERT((InDim1 == ttl::fundamental_type_traits<matrix<float64_t, InDim0, InDim1> >::dim1));
+        _Static_assert(InDim1 == ttl::fundamental_type_traits<matrix<bool, InDim0, InDim1> >::dim1);
+        _Static_assert(InDim1 == ttl::fundamental_type_traits<matrix<int16_t, InDim0, InDim1> >::dim1);
+        _Static_assert(InDim1 == ttl::fundamental_type_traits<matrix<int32_t, InDim0, InDim1> >::dim1);
+        _Static_assert(InDim1 == ttl::fundamental_type_traits<matrix<int64_t, InDim0, InDim1> >::dim1);
+        _Static_assert(InDim1 == ttl::fundamental_type_traits<matrix<uint16_t, InDim0, InDim1> >::dim1);
+        _Static_assert(InDim1 == ttl::fundamental_type_traits<matrix<uint32_t, InDim0, InDim1> >::dim1);
+        _Static_assert(InDim1 == ttl::fundamental_type_traits<matrix<uint64_t, InDim0, InDim1> >::dim1);
+        _Static_assert(InDim1 == ttl::fundamental_type_traits<matrix<float16_t, InDim0, InDim1> >::dim1);
+        _Static_assert(InDim1 == ttl::fundamental_type_traits<matrix<float32_t, InDim0, InDim1> >::dim1);
+        _Static_assert(InDim1 == ttl::fundamental_type_traits<matrix<float64_t, InDim0, InDim1> >::dim1);
 
-        STATIC_ASSERT((ttl::is_same<bool, typename ttl::fundamental_type_traits<matrix<bool, InDim0, InDim1> >::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<int16_t, typename ttl::fundamental_type_traits<matrix<int16_t, InDim0, InDim1> >::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<int32_t, typename ttl::fundamental_type_traits<matrix<int32_t, InDim0, InDim1> >::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<int64_t, typename ttl::fundamental_type_traits<matrix<int64_t, InDim0, InDim1> >::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<uint16_t, typename ttl::fundamental_type_traits<matrix<uint16_t, InDim0, InDim1> >::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<uint32_t, typename ttl::fundamental_type_traits<matrix<uint32_t, InDim0, InDim1> >::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<uint64_t, typename ttl::fundamental_type_traits<matrix<uint64_t, InDim0, InDim1> >::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<float16_t, typename ttl::fundamental_type_traits<matrix<float16_t, InDim0, InDim1> >::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<float32_t, typename ttl::fundamental_type_traits<matrix<float32_t, InDim0, InDim1> >::base_type>::value));
-        STATIC_ASSERT((ttl::is_same<float64_t, typename ttl::fundamental_type_traits<matrix<float64_t, InDim0, InDim1> >::base_type>::value));
+        _Static_assert(ttl::is_same<bool, typename ttl::fundamental_type_traits<matrix<bool, InDim0, InDim1> >::base_type>::value);
+        _Static_assert(ttl::is_same<int16_t, typename ttl::fundamental_type_traits<matrix<int16_t, InDim0, InDim1> >::base_type>::value);
+        _Static_assert(ttl::is_same<int32_t, typename ttl::fundamental_type_traits<matrix<int32_t, InDim0, InDim1> >::base_type>::value);
+        _Static_assert(ttl::is_same<int64_t, typename ttl::fundamental_type_traits<matrix<int64_t, InDim0, InDim1> >::base_type>::value);
+        _Static_assert(ttl::is_same<uint16_t, typename ttl::fundamental_type_traits<matrix<uint16_t, InDim0, InDim1> >::base_type>::value);
+        _Static_assert(ttl::is_same<uint32_t, typename ttl::fundamental_type_traits<matrix<uint32_t, InDim0, InDim1> >::base_type>::value);
+        _Static_assert(ttl::is_same<uint64_t, typename ttl::fundamental_type_traits<matrix<uint64_t, InDim0, InDim1> >::base_type>::value);
+        _Static_assert(ttl::is_same<float16_t, typename ttl::fundamental_type_traits<matrix<float16_t, InDim0, InDim1> >::base_type>::value);
+        _Static_assert(ttl::is_same<float32_t, typename ttl::fundamental_type_traits<matrix<float32_t, InDim0, InDim1> >::base_type>::value);
+        _Static_assert(ttl::is_same<float64_t, typename ttl::fundamental_type_traits<matrix<float64_t, InDim0, InDim1> >::base_type>::value);
     }
 
     void RunScalarTests()
@@ -835,17 +834,17 @@ namespace VoidTTests
 
     };
 
-    STATIC_ASSERT((ttl::is_same<void, ttl::void_t<> >::value));
-    STATIC_ASSERT((ttl::is_same<void, ttl::void_t<A> >::value));
-    STATIC_ASSERT((ttl::is_same<void, ttl::void_t<A, A> >::value));
-    STATIC_ASSERT((ttl::is_same<void, ttl::void_t<A, A, A> >::value));
-    STATIC_ASSERT((ttl::is_same<void, ttl::void_t<A, A, A, A> >::value));
-    STATIC_ASSERT((ttl::is_same<void, ttl::void_t<A, A, A, A, A> >::value));
-    STATIC_ASSERT((ttl::is_same<void, ttl::void_t<A, A, A, A, A, A> >::value));
-    STATIC_ASSERT((ttl::is_same<void, ttl::void_t<A, A, A, A, A, A, A> >::value));
-    STATIC_ASSERT((ttl::is_same<void, ttl::void_t<A, A, A, A, A, A, A, A> >::value));
-    STATIC_ASSERT((ttl::is_same<void, ttl::void_t<A, A, A, A, A, A, A, A, A> >::value));
-    STATIC_ASSERT((ttl::is_same<void, ttl::void_t<A, A, A, A, A, A, A, A, A, A> >::value));
+    _Static_assert(ttl::is_same<void, ttl::void_t<> >::value);
+    _Static_assert(ttl::is_same<void, ttl::void_t<A> >::value);
+    _Static_assert(ttl::is_same<void, ttl::void_t<A, A> >::value);
+    _Static_assert(ttl::is_same<void, ttl::void_t<A, A, A> >::value);
+    _Static_assert(ttl::is_same<void, ttl::void_t<A, A, A, A> >::value);
+    _Static_assert(ttl::is_same<void, ttl::void_t<A, A, A, A, A> >::value);
+    _Static_assert(ttl::is_same<void, ttl::void_t<A, A, A, A, A, A> >::value);
+    _Static_assert(ttl::is_same<void, ttl::void_t<A, A, A, A, A, A, A> >::value);
+    _Static_assert(ttl::is_same<void, ttl::void_t<A, A, A, A, A, A, A, A> >::value);
+    _Static_assert(ttl::is_same<void, ttl::void_t<A, A, A, A, A, A, A, A, A> >::value);
+    _Static_assert(ttl::is_same<void, ttl::void_t<A, A, A, A, A, A, A, A, A, A> >::value);
 
     template<
         typename T0 = A, typename T1 = A , typename T2 = A, typename T3 = A, typename T4 = A,
@@ -867,18 +866,18 @@ namespace VoidTTests
         static const bool value = true;
     };
 
-    STATIC_ASSERT((VoidTDetector<A>::value));
-    STATIC_ASSERT((!VoidTDetector<B>::value));
-    STATIC_ASSERT((!VoidTDetector<A, B>::value));
-    STATIC_ASSERT((!VoidTDetector<B, A>::value));
-    STATIC_ASSERT((!VoidTDetector<A, A, B>::value));
-    STATIC_ASSERT((!VoidTDetector<A, A, A, B>::value));
-    STATIC_ASSERT((!VoidTDetector<A, A, A, A, B>::value));
-    STATIC_ASSERT((!VoidTDetector<A, A, A, A, A, B>::value));
-    STATIC_ASSERT((!VoidTDetector<A, A, A, A, A, A, B>::value));
-    STATIC_ASSERT((!VoidTDetector<A, A, A, A, A, A, A, B>::value));
-    STATIC_ASSERT((!VoidTDetector<A, A, A, A, A, A, A, A, B>::value));
-    STATIC_ASSERT((!VoidTDetector<A, A, A, A, A, A, A, A, A, B>::value));
+    _Static_assert(VoidTDetector<A>::value);
+    _Static_assert(!VoidTDetector<B>::value);
+    _Static_assert(!VoidTDetector<A, B>::value);
+    _Static_assert(!VoidTDetector<B, A>::value);
+    _Static_assert(!VoidTDetector<A, A, B>::value);
+    _Static_assert(!VoidTDetector<A, A, A, B>::value);
+    _Static_assert(!VoidTDetector<A, A, A, A, B>::value);
+    _Static_assert(!VoidTDetector<A, A, A, A, A, B>::value);
+    _Static_assert(!VoidTDetector<A, A, A, A, A, A, B>::value);
+    _Static_assert(!VoidTDetector<A, A, A, A, A, A, A, B>::value);
+    _Static_assert(!VoidTDetector<A, A, A, A, A, A, A, A, B>::value);
+    _Static_assert(!VoidTDetector<A, A, A, A, A, A, A, A, A, B>::value);
 }
 
 namespace IsArrayTraits
@@ -905,9 +904,9 @@ namespace ArrayLenTests
     template<typename T, uint ExpectedLength>
     struct Tester : ttl::integral_constant<bool, T::value == ExpectedLength>{};
 
-    STATIC_ASSERT((Tester<StringLiteralType, 6u>::value));
-    STATIC_ASSERT((Tester<Array, 42u>::value));
-    STATIC_ASSERT((Tester<NotArray, 0u>::value));
+    _Static_assert(Tester<StringLiteralType, 6u>::value);
+    _Static_assert(Tester<Array, 42u>::value);
+    _Static_assert(Tester<NotArray, 0u>::value);
 }
 
 namespace IsBaseOfTests

@@ -1,5 +1,4 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
-#include "/Test/TTL/static_assert.hlsli"
 
 template<typename T, uint N>
 uint ArrayLen(T In[N])
@@ -19,7 +18,7 @@ struct RemoveConst<const T>
     using Type = T;
 };
 
-STATIC_ASSERT((ttl::is_same<RemoveConst<const uint>::Type, uint>::value));
+_Static_assert(ttl::is_same<RemoveConst<const uint>::Type, uint>::value);
 
 template<typename T, uint N>
 struct MyString;
