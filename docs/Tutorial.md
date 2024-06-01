@@ -313,9 +313,9 @@ Shader Test Framework provides the standard assertions that one might expect fro
 
 ## Compile Time Tests
 
-With HLSL2021, we might find ourselves writing template metafunctions that we want to test. Since templates are evaluated at compile time, then it would be a waste to write run-time tests for these functions. Instead, Shader Test Framework provides a way to write Compile Time Tests. The following docs should help to better understand how to write these types of tests:
+With HLSL2021, we might find ourselves writing template metafunctions that we want to test. Since templates are evaluated at compile time, then it would be a waste to write run-time tests for these functions. Instead, we can use `_Static_assert` to write Compile Time Tests. The following docs should help to better understand how to write these types of tests:
 1. [Compile Time Tests](./STF/CompileTimeTests.md)
-2. [`STATIC_ASSERT`](./TTL/StaticAssert.md)
+2. [`_Static_assert`](./TTL/StaticAssert.md)
 
 ---
 
