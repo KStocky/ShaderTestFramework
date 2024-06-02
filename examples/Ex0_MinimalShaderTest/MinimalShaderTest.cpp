@@ -9,8 +9,6 @@ SCENARIO("MinimalShaderTestExample")
 {
     ShaderTestFixture::Desc desc{};
 
-    desc.HLSLVersion = EHLSLVersion::v2021;
-
     // The HLSL source can either be:
     // 1. a std::filesystem::path that points to the HLSL file under test
     // 2. a std::string containing the HLSL code under test.

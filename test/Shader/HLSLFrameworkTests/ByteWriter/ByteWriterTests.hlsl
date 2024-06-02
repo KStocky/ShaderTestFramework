@@ -35,7 +35,7 @@ void GIVEN_FundamentalType_WHEN_BytesRequiredQueried_THEN_ExpectedNumberReturned
     STF::AreEqual(4u, ttl::bytes_required(3.4f));
     STF::AreEqual(8u, ttl::bytes_required(float2(1.0f, 2.0f)));
     STF::AreEqual(12u, ttl::bytes_required(float3(1.0f, 2.0f, 3.0f)));
-    STF::AreEqual(16u, ttl::bytes_required(float4(1.0f, 2.0f, 3.0f, 4.0f)));
+    STF::AreEqual(16u, ttl::bytes_required(float4(1.0l, 2.0l, 3.0l, 4.0l)));
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -56,7 +56,7 @@ void GIVEN_FundamentalType_WHEN_AlignmentRequiredQueried_THEN_ExpectedNumberRetu
     STF::AreEqual(4u, ttl::alignment_required(float3(1.0f, 2.0f, 3.0f)));
     STF::AreEqual(4u, ttl::alignment_required(float4(1.0f, 2.0f, 3.0f, 4.0f)));
     STF::AreEqual(2u, ttl::alignment_required(float16_t4(1.0f, 2.0f, 3.0f, 4.0f)));
-    STF::AreEqual(8u, ttl::alignment_required(float64_t4(1.0f, 2.0f, 3.0f, 4.0f)));
+    STF::AreEqual(8u, ttl::alignment_required(float64_t4(1.0l, 2.0l, 3.0l, 4.0l)));
 }
 
 struct NoWriter

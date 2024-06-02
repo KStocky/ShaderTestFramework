@@ -1,8 +1,34 @@
 #include "D3D12/Shader/IncludeHandler.h"
-
 #include <filesystem>
 #include <fstream>
 #include <sstream>
+
+namespace fs = std::filesystem;
+
+namespace
+{
+    fs::path SanitizePath(LPCWSTR InPath)
+    {
+        if (InPath[0] == L'.')
+        {
+            InPath += 1;
+        }
+
+        if (InPath[1] == L'/')
+        {
+            InPath += 1;
+        }
+
+        std::wstring tempPath = InPath;
+
+        for (auto offset = tempPath.find_first_of(L'\\'); offset != std::wstring::npos; offset = tempPath.find_first_of(L'\\', offset + 1))
+        {
+            tempPath[offset] = L'/';
+        }
+        
+        return fs::path{ std::move(tempPath) };
+    }
+}
 
 IncludeHandler::IncludeHandler(VirtualShaderDirectoryMappingManager InManager, ComPtr<IDxcUtils> InUtils)
     : m_DirectoryMappings(std::move(InManager))
@@ -48,23 +74,15 @@ ULONG IncludeHandler::Release()
 
 HRESULT IncludeHandler::LoadSource(LPCWSTR pFilename, IDxcBlob** ppIncludeSource)
 {
-    namespace fs = std::filesystem;
-
-    if ((pFilename[0] == L'.') && (pFilename[1] == L'/'))
-    {
-        pFilename += 2;
-    }
     
-    const auto realPath = [this, pFilename]()
+    const auto realPath = [this, path = SanitizePath(pFilename)]()
     {
-        std::wstring fileName = pFilename;
-
-        if (auto result = m_DirectoryMappings.Map(std::filesystem::path{ fileName }); result.has_value())
+        if (auto result = m_DirectoryMappings.Map(path); result.has_value())
         {
             return result.value();
         }
 
-        return fs::path{ fileName };
+        return path;
     }();
 
     if (!fs::exists(realPath))

@@ -1,4 +1,4 @@
-RWBuffer<float> Buff;
+RWBuffer<float16_t> Buff;
 
 float16_t InVal;
 [numthreads(1,1,1)]

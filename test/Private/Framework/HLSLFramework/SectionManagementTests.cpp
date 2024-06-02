@@ -16,7 +16,6 @@ SCENARIO("HLSLFrameworkTests - SectionManagement")
     ShaderTestFixture::Desc desc{};
 
     desc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    desc.HLSLVersion = EHLSLVersion::v2021;
     desc.Source = fs::path("/Tests/SectionManagement.hlsl");
     desc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
     desc.TestDataLayout = STF::TestDataBufferLayout(100, 1024);

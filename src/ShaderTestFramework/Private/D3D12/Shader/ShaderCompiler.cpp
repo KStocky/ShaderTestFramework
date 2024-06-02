@@ -43,6 +43,19 @@ namespace
 
 }
 
+std::ostream& operator<<(std::ostream& InStream, const CompilationResult& InResult)
+{
+    if (InResult.has_value())
+    {
+        InStream << "Successful shader compilation";
+    }
+    else
+    {
+        InStream << InResult.error();
+    }
+    return InStream;
+}
+
 ShaderCodeSource::ShaderCodeSource(std::string InSourceCode)
 	: m_Source(std::move(InSourceCode))
 {}
@@ -127,6 +140,13 @@ CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& 
     args.push_back(L"-HV");
     args.push_back(ToWString(Enum::UnscopedName(InJob.HLSLVersion).substr(1)));
     args.push_back(L"-WX");
+
+    if (InJob.HLSLVersion >= EHLSLVersion::v202x)
+    {
+        args.push_back(L"-Wconversion");
+        args.push_back(L"-Wdouble-promotion");
+        args.push_back(L"-Whlsl-legacy-literal");
+    }
 
 	if (Enum::EnumHasMask(InJob.Flags, EShaderCompileFlags::AllResourcesBound))
 	{

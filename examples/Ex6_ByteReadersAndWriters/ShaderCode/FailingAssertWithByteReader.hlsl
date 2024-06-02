@@ -26,7 +26,7 @@ namespace STF
 void Test()
 {
     MyType test1 = (MyType)0;
-    test1.b = 2.0;
+    test1.b = 2.0l;
     MyType test2 = (MyType)0;
     test2.a = 42;
 

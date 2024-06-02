@@ -18,7 +18,6 @@ inline ShaderTestFixture::Desc CreateDescForHLSLFrameworkTest(fs::path&& InPath,
     ShaderTestFixture::Desc desc{};
 
     desc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    desc.HLSLVersion = EHLSLVersion::v2021;
     desc.Source = std::move(InPath);
     desc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
     desc.TestDataLayout = InTestDataLayout;
