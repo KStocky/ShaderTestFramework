@@ -1,13 +1,13 @@
 template<typename T, T v>
-struct integral_constant
+struct my_integral_constant
 {
     static const T value = v;
     using value_type = T;
-    using type = integral_constant;
+    using type = my_integral_constant;
 };
 
-using true_type = integral_constant<bool, true>;
-using false_type = integral_constant<bool, false>;
+using true_type = my_integral_constant<bool, true>;
+using false_type = my_integral_constant<bool, false>;
 
 template<typename T, typename U>
 struct is_same : false_type
