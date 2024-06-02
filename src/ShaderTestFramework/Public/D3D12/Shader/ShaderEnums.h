@@ -40,5 +40,6 @@ enum class EHLSLVersion : u8
     v2017,
     v2018,
     v2021,
-    Default = v2018
+    v202x,
+    Default = v202x
 };

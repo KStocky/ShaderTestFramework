@@ -215,7 +215,7 @@ namespace ttl
                 
                 for (uint numPackedSectionIds = 0; numPackedSectionIds < 4 && currentSection != -1; ++numPackedSectionIds)
                 {
-                    packedIds = packedIds | (currentSection << (numPackedSectionIds * 8));
+                    packedIds = packedIds | ((uint)currentSection << (numPackedSectionIds * 8u));
                     currentSection = In.Scratch.Sections[currentSection].ParentID;
                 }
 

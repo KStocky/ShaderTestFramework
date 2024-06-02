@@ -29,11 +29,11 @@ namespace ShaderTestPrivate
         return assertIndex;
     }
 
-    void AddAssertMetaInfo(const uint InMetaIndex, const uint InId, const uint InReaderAndTypeId, const uint2 InAddressAndSize)
+    void AddAssertMetaInfo(const uint InMetaIndex, const int InId, const uint InReaderAndTypeId, const uint2 InAddressAndSize)
     {
         RWByteAddressBuffer buffer = GetTestDataBuffer();
         const uint metaAddress = InMetaIndex * sizeof(HLSLAssertMetaData);
-        buffer.Store4(metaAddress, uint4(InId, Scratch.ThreadID.Data, (uint)Scratch.ThreadID.Type, Scratch.GetSectionID()));
+        buffer.Store4(metaAddress, uint4((uint)InId, Scratch.ThreadID.Data, (uint)Scratch.ThreadID.Type, (uint)Scratch.GetSectionID()));
         buffer.Store3(metaAddress + 16, uint3(InReaderAndTypeId, InAddressAndSize));
     }
 
@@ -179,15 +179,16 @@ namespace ShaderTestPrivate
     bool ShouldWriteGlobalData(const uint InAllocationAddress, const int InId)
     {
         uint oldIndex;
-        GetAllocationBuffer().InterlockedCompareExchange(InAllocationAddress, InId, InId + 1, oldIndex);
+        const uint id = (uint)InId;
+        GetAllocationBuffer().InterlockedCompareExchange(InAllocationAddress, id, id + 1u, oldIndex);
 
         return oldIndex == InId;
     }
 
     template<uint N>
-    void AddGlobalString(const uint InId, ttl::string<N> In)
+    void AddGlobalString(const int InId, ttl::string<N> In)
     {
-        const uint stringIndex = InId;
+        const uint stringIndex = (uint)InId;
         if (!ShouldWriteGlobalData(NumStringsIndex, InId))
         {
             return;
@@ -207,7 +208,7 @@ namespace ShaderTestPrivate
 
     void AddGlobalSection(SectionInfoMetaData InSectionInfo)
     {
-        const uint sectionIndex = InSectionInfo.SectionId;
+        const uint sectionIndex = (uint)InSectionInfo.SectionId;
         if (!ShouldWriteGlobalData(NumSectionsIndex, InSectionInfo.SectionId))
         {
             return;
@@ -331,7 +332,7 @@ STF_DECLARE_TEST_FUNC(InID)
 
 #define STF_SCENARIO_IMPL(InName, InScenarioId)                                                                                   \
 CREATE_STRING(TTL_JOIN(scenarioNameString, InScenarioId), InName);                                                         \
-static uint TTL_JOIN(scenarioNameId, InScenarioId) = ShaderTestPrivate::Scratch.NextStringID++; \
+static int TTL_JOIN(scenarioNameId, InScenarioId) = ShaderTestPrivate::Scratch.NextStringID++; \
 ShaderTestPrivate::AddGlobalString(TTL_JOIN(scenarioNameId, InScenarioId), TTL_JOIN(scenarioNameString, InScenarioId));    \
 ShaderTestPrivate::OnFirstEntryOfSectionFunctor TTL_JOIN(onFirstEntry, InScenarioId);                                                                       \
 TTL_JOIN(onFirstEntry, InScenarioId).StringId = TTL_JOIN(scenarioNameId, InScenarioId);                                                                     \
@@ -342,7 +343,7 @@ while(ShaderTestPrivate::Scratch.TryLoopScenario(TTL_JOIN(onFirstEntry, InScenar
 
 #define STF_SECTION_IMPL(InName, InID) STF_CREATE_SECTION_VAR_IMPL(InID);                                       \
 CREATE_STRING(TTL_JOIN(sectionNameString, InID), InName);                                              \
-static uint TTL_JOIN(sectionNameId, InID) = ShaderTestPrivate::Scratch.NextStringID++; \
+static int TTL_JOIN(sectionNameId, InID) = ShaderTestPrivate::Scratch.NextStringID++; \
 ShaderTestPrivate::AddGlobalString(TTL_JOIN(sectionNameId, InID), TTL_JOIN(sectionNameString, InID)); \
 ShaderTestPrivate::OnFirstEntryOfSectionFunctor TTL_JOIN(onFirstEntry, InID);                                   \
 TTL_JOIN(onFirstEntry, InID).StringId = TTL_JOIN(sectionNameId, InID);                                          \

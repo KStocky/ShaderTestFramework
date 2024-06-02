@@ -14,20 +14,21 @@ SCENARIO("ShaderHashTests")
         job.ShaderModel = shaderModel;
         job.ShaderType = EShaderType::Compute;
         job.Source = std::string{ R"(
-                        RWBuffer<int64_t> Buff;
+                        RWBuffer<uint> Buff;
 
-                        int64_t InVal;
+                        uint InVal;
                         [numthreads(1,1,1)]
                         void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
                         {
-                            Buff[DispatchThreadId.x] = (DispatchThreadId.x + 34) * InVal;
+                            Buff[DispatchThreadId.x] = (DispatchThreadId.x + 34u) * InVal;
                         }
                         )" };
         WHEN("compiled")
         {
             ShaderCompiler compiler;
             const auto result = compiler.CompileShader(job);
-
+            
+            CAPTURE(result);
             REQUIRE(result.has_value());
             
             THEN("Hash is valid")
@@ -55,13 +56,13 @@ SCENARIO("ShaderHashTests")
                 AND_WHEN("is compiled again with a slight change")
                 {
                     job.Source = std::string{ R"(
-                        RWBuffer<int64_t> Buff;
+                        RWBuffer<uint> Buff;
 
-                        int64_t InVal;
+                        uint InVal;
                         [numthreads(1,1,1)]
                         void Main(uint3 DispatchThreadId : SV_DispatchThreadID)
                         {
-                            Buff[DispatchThreadId.x] = (DispatchThreadId.x + 35) * InVal;
+                            Buff[DispatchThreadId.x] = (DispatchThreadId.x + 35u) * InVal;
                         }
                         )" };
 

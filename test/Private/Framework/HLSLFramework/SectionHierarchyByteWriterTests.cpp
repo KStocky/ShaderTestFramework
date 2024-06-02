@@ -8,7 +8,6 @@ SCENARIO("HLSLFrameworkTests - SectionHierarchy - ByteWriter")
     ShaderTestFixture::Desc desc{};
 
     desc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    desc.HLSLVersion = EHLSLVersion::v2021;
     desc.Source = std::move(fs::path("/Tests/SectionHierarchyByteWriterTests.hlsl"));
     desc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
     desc.TestDataLayout = STF::TestDataBufferLayout(100, 1024, 100, 6400, 100);

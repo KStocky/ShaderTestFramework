@@ -61,13 +61,13 @@ SCENARIO("HLSLTests")
                     std::tuple
                     {
                         "OperatorBool",
-                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; },
+                        [](const EHLSLVersion InVer) { return InVer >= EHLSLVersion::v2021; },
                         std::vector<std::wstring>{}
                     },
                     std::tuple
                     {
                         "OperatorInt",
-                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; },
+                        [](const EHLSLVersion InVer) { return InVer >= EHLSLVersion::v2021; },
                         std::vector<std::wstring>{}
                     },
                     std::tuple
@@ -97,7 +97,7 @@ SCENARIO("HLSLTests")
                     std::tuple
                     {
                         "StaticConstStructMemberInTemplatedStruct",
-                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; },
+                        [](const EHLSLVersion InVer) { return InVer >= EHLSLVersion::v2021; },
                         std::vector<std::wstring>{}
                     },
                     std::tuple
@@ -163,25 +163,25 @@ SCENARIO("HLSLTests")
                     std::tuple
                     {
                         "ArrayTemplateSpecialization",
-                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; },
+                        [](const EHLSLVersion InVer) { return InVer >= EHLSLVersion::v2021; },
                         std::vector<std::wstring>{}
                     },
                     std::tuple
                     {
                         "NestedStructTemplates",
-                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; },
+                        [](const EHLSLVersion InVer) { return InVer >= EHLSLVersion::v2021; },
                         std::vector<std::wstring>{}
                     },
                     std::tuple
                     {
                         "TernaryInTypeTrait",
-                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; },
+                        [](const EHLSLVersion InVer) { return InVer >= EHLSLVersion::v2021; },
                         std::vector<std::wstring>{}
                     },
                     std::tuple
                     {
                         "DeferSFINAE",
-                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; },
+                        [](const EHLSLVersion InVer) { return InVer >= EHLSLVersion::v2021; },
                         std::vector<std::wstring>{}
                     },
                     std::tuple
@@ -199,7 +199,7 @@ SCENARIO("HLSLTests")
                     std::tuple
                     {
                         "CallOperator",
-                        [](const EHLSLVersion InVer) { return InVer == EHLSLVersion::v2021; },
+                        [](const EHLSLVersion InVer) { return InVer >= EHLSLVersion::v2021; },
                         std::vector<std::wstring>{}
                     },
                     std::tuple
@@ -270,7 +270,8 @@ SCENARIO("HLSLTests")
         EHLSLVersion::v2016,
         EHLSLVersion::v2017,
         EHLSLVersion::v2018,
-        EHLSLVersion::v2021
+        EHLSLVersion::v2021,
+        EHLSLVersion::v202x
     );
 
     auto compiler = CreateCompiler();

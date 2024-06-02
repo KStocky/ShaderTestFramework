@@ -53,7 +53,7 @@ void GIVEN_TwoScalarFloatingPoint16bit_WHEN_Failed_THEN_OutputHasExpectedSubstri
 [numthreads(1, 1, 1)]
 void GIVEN_TwoVector3FloatingPoint64bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings()
 {
-    ASSERT(AreEqual, float64_t3(32.5, 32.5, 32.5), float64_t3(42.5, 42.5, 42.5));
+    ASSERT(AreEqual, float64_t3(32.5l, 32.5l, 32.5l), float64_t3(42.5l, 42.5l, 42.5l));
 }
 
 [RootSignature(SHADER_TEST_RS)]

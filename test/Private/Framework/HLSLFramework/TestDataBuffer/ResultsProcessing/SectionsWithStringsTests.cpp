@@ -221,7 +221,6 @@ SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - SectionsWithS
     ShaderTestFixture::Desc desc{};
 
     desc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    desc.HLSLVersion = EHLSLVersion::v2021;
     desc.Source = fs::path("/Tests/TestDataBuffer/ResultsProcessing/SectionsWithStrings.hlsl");
     desc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
     desc.TestDataLayout = STF::TestDataBufferLayout(100u, 10000u, 50u, 1000u, 50u);

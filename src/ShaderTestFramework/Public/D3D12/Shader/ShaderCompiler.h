@@ -6,6 +6,7 @@
 #include "Utility/Expected.h"
 
 #include <filesystem>
+#include <ostream>
 #include <string>
 #include <string_view>
 #include <variant>
@@ -16,6 +17,8 @@
 namespace fs = std::filesystem;
 
 using CompilationResult = Expected<CompiledShaderData, std::string>;
+
+std::ostream& operator<<(std::ostream& InStream, const CompilationResult& InResult);
 
 class ShaderCodeSource
 {
