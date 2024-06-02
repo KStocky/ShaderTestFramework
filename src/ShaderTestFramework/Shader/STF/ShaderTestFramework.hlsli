@@ -252,8 +252,8 @@ namespace STF
 
 namespace STF
 {
-    template<typename T, typename U>
-    ttl::enable_if_t<ttl::is_same_v<T, U> > AreEqual(const T InA, const U InB, int InId = -1)
+    template<typename T>
+    void AreEqual(const T InA, const T InB, int InId = -1)
     {
         if (all(InA == InB))
         {
@@ -265,8 +265,8 @@ namespace STF
         }
     }
     
-    template<typename T, typename U>
-    ttl::enable_if_t<ttl::is_same_v<T, U> > NotEqual(const T InA, const U InB, int InId = -1)
+    template<typename T>
+    void NotEqual(const T InA, const T InB, int InId = -1)
     {
         if (any(InA != InB))
         {
