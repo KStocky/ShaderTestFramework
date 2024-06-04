@@ -7,7 +7,7 @@ The HLSL and C++ sides of the framework need to be able to communicate how to in
 **Contents**
 
 1. [Byte Readers](#byte-readers)<br>
-  a. [When do I need a Byte Reader](#when-do-i-need-a-byte-read)<br>
+  a. [When do I need a Byte Reader](#when-do-i-need-a-byte-reader)<br>
   b. [The Fundamental Byte Reader](#the-fundamental-byte-reader)<br>
   c. [The Default Byte Reader](#the-default-byte-reader)<br>
   d. [Creating a Byte Reader](#creating-a-byte-reader)<br>
