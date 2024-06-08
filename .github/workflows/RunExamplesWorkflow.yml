@@ -15,7 +15,7 @@ jobs:
           with:
             github-token: ${{ secrets.DISPATCHEXAMPLEWORKFLOWPAT }}
             script: |
-                await github.rest.actions.createworkflowDispatch({
+                await github.rest.actions.createWorkflowDispatch({
                 owner: 'KStocky',
                 repo: 'ShaderTestFrameworkExamples',
                 workflow_id: 'BuildAndRunTests.yml',
