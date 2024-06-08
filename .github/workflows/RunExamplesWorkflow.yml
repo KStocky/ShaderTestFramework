@@ -5,7 +5,7 @@ run-name: "${{github.actor}}: Run Example repo tests after push to main: ${{gith
 on:
     push:
         branches:
-            - "TriggerActionInExampleRepo"
+            - "TriggerActionINExampleRepo"
         
 jobs:
     RunExampleWorkflow:
@@ -21,8 +21,8 @@ jobs:
                     workflow_id: 'BuildAndRunTests.yml',
                     ref: 'main',
                     inputs: {
-                        actor: 'a',
-                        repository: 'b',
-                        message: 'c'
+                        actor: '${{github.actor}}',
+                        repository: '${{github.event.repository.name}}',
+                        message: 'Merge pull request #91 from KStocky/TriggerActionInExampleRepo'
                     }
                 })  
