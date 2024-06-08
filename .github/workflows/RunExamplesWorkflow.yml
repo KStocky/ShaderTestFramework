@@ -16,13 +16,13 @@ jobs:
             github-token: ${{ secrets.DISPATCHEXAMPLEWORKFLOWPAT }}
             script: |
                 await github.rest.actions.createWorkflowDispatch({
-                owner: 'KStocky',
-                repo: 'ShaderTestFrameworkExamples',
-                workflow_id: 'BuildAndRunTests.yml',
-                ref: 'main',
-                inputs: {
-                    actor: ${{github.actor}},
-                    repository: ${{github.event.repository.name}},
-                    message: ${{github.event.head_commit.message}}
-                }
+                    owner: 'KStocky',
+                    repo: 'ShaderTestFrameworkExamples',
+                    workflow_id: 'BuildAndRunTests.yml',
+                    ref: 'main',
+                    inputs: {
+                        actor: ${{github.actor}},
+                        repository: ${{github.event.repository.name}},
+                        message: ${{github.event.head_commit.message}}
+                    }
                 })  
