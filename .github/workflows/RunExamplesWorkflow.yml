@@ -19,5 +19,8 @@ jobs:
                 owner: 'KStocky',
                 repo: 'ShaderTestFrameworkExamples',
                 workflow_id: 'BuildAndRunTests.yml',
-                ref: 'main'
+                ref: 'main',
+                inputs: {
+                    message: 'Commit message: ${{github.event.head_commit.message}}'
+                }
                 })  
