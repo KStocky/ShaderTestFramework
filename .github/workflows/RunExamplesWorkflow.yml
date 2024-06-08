@@ -1,13 +1,13 @@
 name: Example Repo
 
-run-name: "${{github.actor}}: Running Example repo tests after ${{github.event.head_commit.message}}"
+run-name: "${{github.actor}}: Run Example repo tests after push to main: ${{github.event.head_commit.message}}"
 
 on:
     push:
         branches:
-            - "TriggerActionInExampleRepo"
+            - "main"
 
-            
+
 jobs:
     RunExampleWorkflow:
         runs-on: ubuntu-latest
