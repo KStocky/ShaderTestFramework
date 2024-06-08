@@ -23,6 +23,6 @@ jobs:
                     inputs: {
                         actor: '${{github.actor}}',
                         repository: '${{github.event.repository.name}}',
-                        message: '${{github.event.commits.message}}'
+                        message: "${{github.event.head_commit.message}}"
                     }
                 })  
