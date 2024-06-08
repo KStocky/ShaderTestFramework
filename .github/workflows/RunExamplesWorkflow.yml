@@ -5,7 +5,7 @@ run-name: "${{github.actor}}: Run Example repo tests after push to main: ${{gith
 on:
     push:
         branches:
-            - "TestingMergingTrigger"
+            - "TriggerActionInExampleRepo"
         
 jobs:
     RunExampleWorkflow:
@@ -23,6 +23,6 @@ jobs:
                     inputs: {
                         actor: '${{github.actor}}',
                         repository: '${{github.event.repository.name}}',
-                        message: 'Hi \n asdf'
+                        message: '${{format('{0}', github.event.head_commit.message)}}'
                     }
                 })  
