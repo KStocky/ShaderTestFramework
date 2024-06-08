@@ -14,7 +14,7 @@ jobs:
         - uses: actions/github-script@v7
           with:
             github-token: ${{ secrets.DISPATCHEXAMPLEWORKFLOWPAT }}
-            script: >
+            script: >-
                 await github.rest.actions.createWorkflowDispatch({
                     owner: 'KStocky',
                     repo: 'ShaderTestFrameworkExamples',
