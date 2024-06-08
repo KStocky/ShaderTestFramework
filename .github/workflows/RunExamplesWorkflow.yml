@@ -13,6 +13,7 @@ jobs:
         steps:
         - uses: actions/github-script@v7
           with:
+            github-token: ${{ secrets.DISPATCHEXAMPLEWORKFLOWPAT }}
             script: |
                 await github.rest.actions.createworkflowDispatch({
                 owner: 'KStocky',
