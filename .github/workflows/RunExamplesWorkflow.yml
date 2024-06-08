@@ -1,12 +1,11 @@
 name: Example Repo
 
-run-name: "${{github.actor}}: Run Example repo tests for pull request: ${{github.event.pull_request.title}}"
+run-name: "${{github.actor}}: Run Example repo tests after push to main: ${{github.event.head_commit.message}}"
 
 on:
-    pull_request:
-        types: [opened, reopened, synchronize]
+    push:
         branches:
-          - "main"
+            - "main"
         
 
 
