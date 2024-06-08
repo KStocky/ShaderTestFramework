@@ -5,7 +5,7 @@ run-name: "${{github.actor}}: Run Example repo tests after push to main: ${{gith
 on:
     push:
         branches:
-            - "TestingMergingTrigger"
+            - "TriggerActionINExampleRepo"
         
 jobs:
     RunExampleWorkflow:
