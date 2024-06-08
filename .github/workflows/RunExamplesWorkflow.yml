@@ -1,7 +1,5 @@
 name: Example Repo
 
-run-name: "${{github.actor}}: Run Example repo tests after push to main: ${{github.event.head_commit.message}}"
-
 on:
     push:
         branches:
@@ -25,4 +23,13 @@ jobs:
                         repository: '${{github.event.repository.name}}',
                         message: "${{github.event.head_commit.message}}"
                     }
-                })  
+                })
+
+run-name: >-
+    await github.rest.actions.createWorkflowDispatch({
+        inputs: {
+            actor: '${{github.actor}}',
+            repository: '${{github.event.repository.name}}',
+            message: "${{github.event.head_commit.message}}"
+        }
+    })
