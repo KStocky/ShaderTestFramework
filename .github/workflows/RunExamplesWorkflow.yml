@@ -21,8 +21,8 @@ jobs:
                     workflow_id: 'BuildAndRunTests.yml',
                     ref: 'main',
                     inputs: {
-                        actor: '${{github.actor}}',
-                        repository: '${{github.event.repository.name}}',
-                        message: '${{github.event.head_commit.message}}'
+                        actor: 'a',
+                        repository: 'b',
+                        message: 'c'
                     }
                 })  
