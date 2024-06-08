@@ -6,8 +6,7 @@ on:
     push:
         branches:
             - "TriggerActionInExampleRepo"
-    workflow_dispatch:
-
+            
 jobs:
     RunExampleWorkflow:
         runs-on: ubuntu-latest
