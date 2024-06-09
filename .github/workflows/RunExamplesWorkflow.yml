@@ -11,10 +11,6 @@ jobs:
     RunExampleWorkflow:
         runs-on: ubuntu-latest
         steps:
-        - name: Logging
-          run: |
-            echo "${{github.event.head_commit.message}}"
-
         - uses: actions/github-script@v7
           with:
             github-token: ${{ secrets.DISPATCHEXAMPLEWORKFLOWPAT }}
@@ -27,6 +23,6 @@ jobs:
                     inputs: {
                         actor: '${{github.actor}}',
                         repository: '${{github.event.repository.name}}',
-                        message: 'Merging pull request'
+                        message: 'Merge pull request #105 from KStocky/TestingMergingTrigger'
                     }
                 })  
