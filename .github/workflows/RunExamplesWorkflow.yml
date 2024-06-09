@@ -7,9 +7,6 @@ on:
         branches:
             - "TriggerActionInExampleRepo"
 
-env:
-    COMMIT_MESSAGE: ${{github.event.head_commit.message}}
-        
 jobs:
     RunExampleWorkflow:
         runs-on: ubuntu-latest
@@ -17,6 +14,8 @@ jobs:
         - uses: actions/github-script@v7
           with:
             github-token: ${{ secrets.DISPATCHEXAMPLEWORKFLOWPAT }}
+            # For some reason, using the head_commit message within the call to createWorkflowDispatch
+            # breaks the script runner. So we can't give the exact pull request merge that triggered this run.
             script: >-
                 await github.rest.actions.createWorkflowDispatch({
                     owner: 'KStocky',
@@ -26,6 +25,6 @@ jobs:
                     inputs: {
                         actor: '${{github.actor}}',
                         repository: '${{github.event.repository.name}}',
-                        message: ${{env.COMMIT_MESSAGE}}
+                        message: "Merging Pull Request"
                     }
                 })  
