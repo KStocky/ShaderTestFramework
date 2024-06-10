@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Platform.h"
+#include "TypeTraits.h"
 #include <concepts>
 #include <format>
 #include <type_traits>
@@ -67,6 +68,9 @@ concept EmptyCallableType = std::is_empty_v<T> && CallableType<T, U...>;
 
 template<typename T, typename... U>
 concept ConstexprDefaultConstructableEmptyCallableType = ConstexprDefaultConstructableType<T> && EmptyCallableType<T, U...>;
+
+template<template<typename...> typename Template, typename... Ts>
+concept InstantiatableFrom = TIsInstantiationOf<Template, Template<Ts...>>::Value;
 
 template<typename T>
 concept HLSLBaseType = 

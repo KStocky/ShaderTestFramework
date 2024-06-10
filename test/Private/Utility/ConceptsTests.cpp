@@ -357,3 +357,41 @@ namespace HLSLTypeTriviallyConvertibleTypeTests
 
     static_assert(HLSLTypeTriviallyConvertibleType<Trivial4ByteAlignedFormattable>);
 }
+
+namespace InstantiatableFromTests
+{
+    struct A {};
+    struct B {};
+
+    template<typename T>
+    struct OneTypeParam {};
+
+    template<typename T, typename U>
+    struct TwoTypeParam {};
+
+    template<typename T>
+        requires (!std::same_as<T, A>)
+    struct NotA;
+
+    template<typename T>
+    struct NotB;
+
+    template<>
+    struct NotB<A> {};
+
+
+    static_assert(InstantiatableFrom<OneTypeParam, A>);
+    static_assert(InstantiatableFrom<OneTypeParam, B>);
+    static_assert(!InstantiatableFrom<OneTypeParam, A, B>);
+    static_assert(!InstantiatableFrom<OneTypeParam, A, B>);
+
+    static_assert(!InstantiatableFrom<TwoTypeParam, A>);
+    static_assert(!InstantiatableFrom<TwoTypeParam, B>);
+    static_assert(InstantiatableFrom<TwoTypeParam, A, B>);
+    static_assert(InstantiatableFrom<TwoTypeParam, A, B>);
+
+    static_assert(!InstantiatableFrom<NotA, A>);
+    static_assert(InstantiatableFrom<NotA, B>);
+
+    static_assert(InstantiatableFrom<NotB, A>);
+}
