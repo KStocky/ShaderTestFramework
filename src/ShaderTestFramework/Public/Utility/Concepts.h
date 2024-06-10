@@ -72,6 +72,13 @@ concept ConstexprDefaultConstructableEmptyCallableType = ConstexprDefaultConstru
 template<template<typename...> typename Template, typename... Ts>
 concept InstantiatableFrom = TIsInstantiationOf<Template, Template<Ts...>>::Value;
 
+template<typename T, typename... Ts>
+concept Newable = requires(void* InBuff, Ts&&... In)
+{
+    { new T(std::forward<Ts>(In)...) };
+    { new (InBuff) T(std::forward<Ts>(In)...) };
+};
+
 template<typename T>
 concept HLSLBaseType = 
     std::same_as<T, bool> ||

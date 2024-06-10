@@ -395,3 +395,16 @@ namespace InstantiatableFromTests
 
     static_assert(InstantiatableFrom<NotB, A>);
 }
+
+namespace NewableTests
+{
+    struct NewableStruct {};
+
+    struct NotNewableStruct
+    {
+        static void* operator new(std::size_t) = delete;
+    };
+
+    static_assert(Newable<NewableStruct>);
+    static_assert(!Newable<NotNewableStruct>);
+}
