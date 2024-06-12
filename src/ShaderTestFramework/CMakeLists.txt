@@ -51,6 +51,7 @@ set(SOURCES
     Public/Framework/TestDataBufferProcessor.h
     Public/Framework/TestDataBufferStructs.h
     Public/Platform.h
+    Public/Stats/ScopedObject.h
     Public/Utility/Algorithm.h
     Public/Utility/Concepts.h
     Public/Utility/EnumReflection.h
