@@ -176,6 +176,7 @@ set(SOURCES
     Private/Framework/ShaderTestFixtureTests.cpp
     Private/Framework/TestDataBufferLayoutTests.cpp
     Private/Framework/TestDataBufferProcessorTests.cpp
+    Private/Stats/ScopedObjectTests.cpp
     Private/Utility/AlignedOffsetTests.cpp
     Private/Utility/ConceptsTests.cpp
     Private/Utility/EnumReflectionTests.cpp
