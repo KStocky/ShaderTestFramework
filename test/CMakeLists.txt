@@ -177,6 +177,8 @@ set(SOURCES
     Private/Framework/TestDataBufferLayoutTests.cpp
     Private/Framework/TestDataBufferProcessorTests.cpp
     Private/Stats/ScopedObjectTests.cpp
+    Private/TestUtilities/Noisy.cpp
+    Private/TestUtilities/NoisyTests.cpp
     Private/Utility/AlignedOffsetTests.cpp
     Private/Utility/ConceptsTests.cpp
     Private/Utility/EnumReflectionTests.cpp
@@ -186,6 +188,7 @@ set(SOURCES
     Private/Utility/TypeTraitsTests.cpp
     Public/D3D12/Shader/ShaderCompilerTestsCommon.h
     Public/Framework/HLSLFramework/HLSLFrameworkTestsCommon.h
+    Public/TestUtilities/Noisy.h
 )
 
 set(SHADER_SOURCE_REL_DIR "ShaderTests")
