@@ -5,9 +5,9 @@ template<CallableType CallOnDestruction>
 class ScopedObject
 {
 public:
-    template<CallableType CallOnConstruction>
-    ScopedObject(CallOnConstruction&& OnConstruction, CallOnDestruction OnDestruction)
-        : m_OnDestruction(std::move(OnDestruction))
+    template<CallableType CallOnConstruction, CallableType OtherCallOnDestruction>
+    ScopedObject(CallOnConstruction&& OnConstruction, OtherCallOnDestruction&& OnDestruction)
+        : m_OnDestruction(std::forward<OtherCallOnDestruction>(OnDestruction))
     {
         OnConstruction();
     }
@@ -32,3 +32,6 @@ private:
 
     CallOnDestruction m_OnDestruction;
 };
+
+template<typename OnConstruct, typename OnDestruct>
+ScopedObject(OnConstruct, OnDestruct) -> ScopedObject<OnDestruct>;

@@ -54,10 +54,12 @@ public:
 
     Noisy() { LoggerType::OnConstruction(); }
     Noisy(const Noisy&) { LoggerType::OnCopyConstruction(); }
-    Noisy(Noisy&&) { LoggerType::OnMoveConstruction(); }
+    Noisy(Noisy&&) noexcept { LoggerType::OnMoveConstruction(); }
     Noisy& operator=(const Noisy&) { LoggerType::OnCopyAssignment(); return *this; }
     Noisy& operator=(Noisy&&) { LoggerType::OnMoveAssignment(); return *this; }
     ~Noisy() noexcept { LoggerType::OnDestruction(); }
 
-    void Event(const i32 InEventId) { LoggerType::OnEvent(InEventId); }
+    void Event(const i32 InEventId) const { LoggerType::OnEvent(InEventId); }
 };
+
+using DefaultNoisy = Noisy<DefaultNoisyLogger>;
