@@ -1,0 +1,8 @@
+
+class StatSystem
+{
+public:
+
+private:
+
+};
