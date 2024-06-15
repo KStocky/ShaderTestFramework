@@ -54,21 +54,122 @@ SCENARIO("ScopedObjectTests")
 
         WHEN("Scoped Object is constructed with unnamed callables")
         {
-            ScopedObject test{ NoisyCallable { onConstructionId } , NoisyCallable { onDestructionId } };
-
-            THEN("Expected calls are made")
             {
-                REQUIRE(DefaultNoisyLogger::LogData == DefaultLogData
-                    {
-                        .NumEvents =
+                ScopedObject test{ NoisyCallable { onConstructionId } , NoisyCallable { onDestructionId } };
+
+                THEN("Expected calls are made")
+                {
+                    REQUIRE(DefaultNoisyLogger::LogData == DefaultLogData
                         {
-                            {onConstructionId, 1}
-                        },
-                        .NumConstructions = 2,
-                        .NumMoveConstructions = 1,
-                        .NumDestructions = 2
-                    });
+                            .NumEvents =
+                            {
+                                {onConstructionId, 1}
+                            },
+                            .NumConstructions = 2,
+                            .NumMoveConstructions = 1,
+                            .NumDestructions = 2
+                        });
+                }
+            }
+
+            AND_WHEN("Scoped Object goes out of scope")
+            {
+                THEN("Expected calls are made")
+                {
+                    REQUIRE(DefaultNoisyLogger::LogData == DefaultLogData
+                        {
+                            .NumEvents =
+                            {
+                                {onConstructionId, 1},
+                                {onDestructionId, 1}
+                            },
+                            .NumConstructions = 2,
+                            .NumMoveConstructions = 1,
+                            .NumDestructions = 3
+                        });
+                }
             }
         }
+
+        WHEN("Scoped Object is constructed with named callables")
+        {
+            {
+                NoisyCallable construct{ onConstructionId };
+                NoisyCallable destruct{ onDestructionId };
+                ScopedObject test{ construct, destruct };
+
+                THEN("Expected calls are made")
+                {
+                    REQUIRE(DefaultNoisyLogger::LogData == DefaultLogData
+                        {
+                            .NumEvents =
+                            {
+                                {onConstructionId, 1}
+                            },
+                            .NumConstructions = 2,
+                            .NumCopyConstructions = 1,
+                        });
+                }
+            }
+
+            AND_WHEN("Scoped Object goes out of scope")
+            {
+                THEN("Expected calls are made")
+                {
+                    REQUIRE(DefaultNoisyLogger::LogData == DefaultLogData
+                        {
+                            .NumEvents =
+                            {
+                                {onConstructionId, 1},
+                                {onDestructionId, 1}
+                            },
+                            .NumConstructions = 2,
+                            .NumCopyConstructions = 1,
+                            .NumDestructions = 3
+                        });
+                }
+            }
+        }
+
+        WHEN("Scoped Object is constructed with moved named callables")
+        {
+            {
+                NoisyCallable construct{ onConstructionId };
+                NoisyCallable destruct{ onDestructionId };
+                ScopedObject test{ std::move(construct), std::move(destruct) };
+
+                THEN("Expected calls are made")
+                {
+                    REQUIRE(DefaultNoisyLogger::LogData == DefaultLogData
+                        {
+                            .NumEvents =
+                            {
+                                {onConstructionId, 1}
+                            },
+                            .NumConstructions = 2,
+                            .NumMoveConstructions = 1,
+                        });
+                }
+            }
+
+            AND_WHEN("Scoped Object goes out of scope")
+            {
+                THEN("Expected calls are made")
+                {
+                    REQUIRE(DefaultNoisyLogger::LogData == DefaultLogData
+                        {
+                            .NumEvents =
+                            {
+                                {onConstructionId, 1},
+                                {onDestructionId, 1}
+                            },
+                            .NumConstructions = 2,
+                            .NumMoveConstructions = 1,
+                            .NumDestructions = 3
+                        });
+                }
+            }
+        }
+
     }
 }
