@@ -177,6 +177,7 @@ set(SOURCES
     Private/Framework/TestDataBufferLayoutTests.cpp
     Private/Framework/TestDataBufferProcessorTests.cpp
     Private/Stats/ScopedObjectTests.cpp
+    Private/Stats/StatSystemTests.cpp
     Private/TestUtilities/Noisy.cpp
     Private/TestUtilities/NoisyTests.cpp
     Private/Utility/AlignedOffsetTests.cpp
