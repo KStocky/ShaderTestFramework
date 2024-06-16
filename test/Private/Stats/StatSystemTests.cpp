@@ -38,7 +38,7 @@ SCENARIO("StatSystemTests")
                     REQUIRE(stats[0].Stat.Count<std::chrono::microseconds>() > 0);
                 }
 
-                AND_WHEN("Stats flushed again")
+                AND_WHEN("Stats flushed again without another scoped stat")
                 {
                     auto newStats = system.FlushTimedStats();
 
@@ -47,19 +47,70 @@ SCENARIO("StatSystemTests")
                         REQUIRE(newStats.empty());
                     }
                 }
+
+                AND_WHEN("Stats flushed again with another scoped stat")
+                {
+                    const std::string expectedSecondStat = "Test2";
+                    {
+                        TestScopedStat stat(expectedSecondStat);
+                    }
+                    auto newStats = system.FlushTimedStats();
+
+                    THEN("One stat returned")
+                    {
+                        REQUIRE(newStats.size() == 1ull);
+                    }
+
+                    THEN("Flushed stat has expected info")
+                    {
+                        REQUIRE(newStats[0].Name == expectedSecondStat);
+                        REQUIRE(newStats[0].Stat.Count<std::chrono::microseconds>() > 0);
+                    }
+                }
+            }
+
+            AND_WHEN("Another stat enters and leaves scope")
+            {
+                const std::string expectedSecondStat = "Test2";
+                {
+                    TestScopedStat stat(expectedSecondStat);
+                }
+                auto newStats = system.FlushTimedStats();
+
+                THEN("Two stats returned")
+                {
+                    REQUIRE(newStats.size() == 2ull);
+                }
+
+                THEN("Flushed stats have expected info")
+                {
+                    REQUIRE(newStats[0].Name == expectedName);
+                    REQUIRE(newStats[0].Stat.Count<std::chrono::microseconds>() > 0);
+                    REQUIRE(newStats[1].Name == expectedSecondStat);
+                    REQUIRE(newStats[1].Stat.Count<std::chrono::microseconds>() > 0);
+                }
             }
         }
 
-        WHEN("Scoped stat is constructed")
+        WHEN("Stats are flushed before stats scope has ended")
         {
-            TestScopedStat stat("Uncompleted");
-
-            AND_WHEN("Stats are flushed")
             {
+                TestScopedStat stat("Uncompleted");
+
                 auto stats = system.FlushTimedStats();
 
                 THEN("There should be zero stats returned")
                 {
+                    REQUIRE(stats.empty());
+                }
+
+            }
+            
+            AND_WHEN("Stat scope ends")
+            {
+                THEN("The stat is has been ignored")
+                {
+                    auto stats = system.FlushTimedStats();
                     REQUIRE(stats.empty());
                 }
             }
