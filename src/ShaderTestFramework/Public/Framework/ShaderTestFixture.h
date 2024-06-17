@@ -7,6 +7,7 @@
 #include "Framework/HLSLTypes.h"
 #include "Framework/TestDataBufferLayout.h"
 #include "Framework/TestDataBufferProcessor.h"
+#include "Stats/StatSystem.h"
 #include <optional>
 #include <vector>
 
@@ -30,6 +31,7 @@ public:
     };
 
     ShaderTestFixture(Desc InParams);
+    ~ShaderTestFixture() noexcept;
 
     void TakeCapture();
     STF::Results RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ);
@@ -41,7 +43,14 @@ public:
 
     bool IsUsingAgilitySDK() const;
 
+    static std::vector<TimedStat> GetTestStats();
+
 private:
+
+    static StatSystem statSystem;
+    static constexpr auto StatSystemGetter = []() -> StatSystem& { return statSystem; };
+    using ScopedDuration = ScopedCPUDurationStat<StatSystemGetter>;
+    static std::vector<TimedStat> cachedStats;
 
     CompilationResult CompileShader(const std::string_view InName,  const EShaderType InType) const;
     CommandEngine CreateCommandEngine() const;

@@ -1,5 +1,6 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
 
+#include <ranges>
 #include <string>
 
 #include <catch2/catch_test_macros.hpp>
@@ -18,18 +19,65 @@ SCENARIO("BasicShaderTests")
             }
         )
     );
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/BasicShaderTests.hlsl")));
-    DYNAMIC_SECTION(testName)
+
+    GIVEN(testName)
     {
         if (shouldSucceed)
         {
-            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+            ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/BasicShaderTests.hlsl")));
+
+            THEN("There should be zero stats")
+            {
+                const auto stats = ShaderTestFixture::GetTestStats();
+
+                REQUIRE(stats.empty());
+            }
+
+            THEN("It should succeed")
+            {
+                REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+            }
         }
         else
         {
-            const auto result = fixture.RunTest(testName, 1, 1, 1);
-            REQUIRE_FALSE(result);
+            ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/BasicShaderTests.hlsl")));
+
+            THEN("There should be zero stats")
+            {
+                const auto stats = ShaderTestFixture::GetTestStats();
+
+                REQUIRE(stats.empty());
+            }
+
+            THEN("It should fail")
+            {
+                const auto result = fixture.RunTest(testName, 1, 1, 1);
+                REQUIRE_FALSE(result);
+            }
         }
-        
+
+        THEN("Stats should be generated")
+        {
+            const auto stats = ShaderTestFixture::GetTestStats();
+            REQUIRE(!stats.empty());
+
+            AND_WHEN("Any future attempts to get stats")
+            {
+                const auto otherStats = ShaderTestFixture::GetTestStats();
+
+                THEN("Has same number of stats")
+                {
+                    REQUIRE(stats.size() == otherStats.size());
+                }
+
+                THEN("Stats have the same names")
+                {
+                    for (const auto& [first, second] : std::views::zip(stats, otherStats))
+                    {
+                        REQUIRE(first.Name == second.Name);
+                    }
+                }
+            }
+        }
     }
 }
