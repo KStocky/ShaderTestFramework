@@ -81,23 +81,13 @@ private:
     u32 m_CurrentGen = 0u;
 };
 
-extern StatSystem GlobalStatSystem;
-
 template<auto Callable>
 concept StatSystemGetter = requires
 {
     { Callable() } -> std::same_as<StatSystem&>;
 };
 
-struct GlobalStatSystemGetter
-{
-    constexpr StatSystem& operator()()
-    {
-        return GlobalStatSystem;
-    }
-};
-
-template<auto Getter = GlobalStatSystemGetter{} >
+template<auto Getter >
     requires StatSystemGetter<Getter>
 class ScopedCPUDurationStat
 {

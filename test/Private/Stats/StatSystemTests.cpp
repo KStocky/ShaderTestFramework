@@ -1,6 +1,28 @@
 #include "Stats/StatSystem.h"
-
+#include "Utility/Concepts.h"
 #include <catch2/catch_test_macros.hpp>
+
+namespace ScopedCPUDurationStatCompileTests
+{
+    static StatSystem system;
+
+    constexpr auto systemGetter =
+        []() -> StatSystem&
+        {
+            return system;
+        };
+
+    using TestScopedStat = ScopedCPUDurationStat<systemGetter>;
+
+    static_assert(!DefaultConstructibleType<TestScopedStat>);
+
+    static_assert(!std::copyable<TestScopedStat>);
+    static_assert(!std::movable<TestScopedStat>);
+
+    static_assert(std::constructible_from<TestScopedStat, std::string>);
+
+    static_assert(!Newable<TestScopedStat, std::string>);
+}
 
 SCENARIO("StatSystemTests")
 {

@@ -1,8 +1,6 @@
 #include "Stats/StatSystem.h"
 #include <ranges>
 
-StatSystem GlobalStatSystem;
-
 StatSystem::Handle StatSystem::BeginStat(std::string InName)
 {
     if (m_RawTimedStats.size() > Handle::MaxIds)
