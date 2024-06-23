@@ -223,6 +223,7 @@ file(GENERATE
         COMMAND $<TARGET_FILE:ShaderTestFrameworkTests> --reporter xml --out ${CMAKE_BINARY_DIR}/build/ResultsCMake.xml --durations yes
         WORKING_DIRECTORY  $<TARGET_FILE_DIR:ShaderTestFrameworkTests>
         RESULT_VARIABLE RESULT_CODE
+        COMMAND_ECHO STDOUT
     )
     
     cmake_language(EXIT ${RESULT_CODE})
