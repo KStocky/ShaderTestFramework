@@ -213,3 +213,18 @@ target_add_asset_directory(ShaderTestFrameworkTests ${SHADER_SOURCE_DIR} "/${SHA
 copy_all_dependent_assets(ShaderTestFrameworkTests)
 
 add_catch2(ShaderTestFrameworkTests)
+
+file(GENERATE 
+    OUTPUT "${CMAKE_BINARY_DIR}/Run$<TARGET_NAME:ShaderTestFrameworkTests>$<CONFIG>.cmake"
+    CONTENT 
+    [=[ 
+    cmake_minimum_required(VERSION 3.29)
+    execute_process(
+        COMMAND $<TARGET_FILE:ShaderTestFrameworkTests> --reporter xml --out ResultsCMake.xml --durations yes
+        WORKING_DIRECTORY  $<TARGET_FILE_DIR:ShaderTestFrameworkTests>
+        RESULT_VARIABLE RESULT_CODE
+    )
+    
+    cmake_language(EXIT ${RESULT_CODE})
+    ]=]
+    )

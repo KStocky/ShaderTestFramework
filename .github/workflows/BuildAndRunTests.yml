@@ -33,12 +33,14 @@ jobs:
           - name: Checkout the repo
             uses: actions/checkout@v4
 
-          - name: Setup CMake
-            uses: threeal/cmake-action@v1.3.0
-
           - name: Build the project
             run: cmake --build build
+          
+          - name: Print CMake version
+            shell: cmake -P {0}
+            run: |
+              message(STATUS "Host CMake version: ${CMAKE_VERSION}")
 
           - name: Test
-            run: ctest --test-dir build -C Debug --output-on-failure
+            run: cmake -P build/RunShaderTestFrameworkTestsDebug.cmake
             
