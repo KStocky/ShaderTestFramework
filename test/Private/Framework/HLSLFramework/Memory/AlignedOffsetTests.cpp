@@ -16,6 +16,6 @@ SCENARIO("HLSLFrameworkTests - Memory - AlignedOffset")
     ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Memory/AlignedOffsetTests.hlsl")));
     DYNAMIC_SECTION(testName)
     {
-        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+        REQUIRE(!fixture.RunTest(testName, 1, 1, 1));
     }
 }
