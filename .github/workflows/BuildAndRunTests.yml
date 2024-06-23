@@ -33,6 +33,9 @@ jobs:
           - name: Checkout the repo
             uses: actions/checkout@v4
 
+          - name: Setup CMake
+            uses: threeal/cmake-action@v1.3.0
+
           - name: Build the project
             run: cmake --build build
           
