@@ -220,7 +220,7 @@ file(GENERATE
     [=[ 
     cmake_minimum_required(VERSION 3.29)
     execute_process(
-        COMMAND $<TARGET_FILE:ShaderTestFrameworkTests> --reporter xml --out ResultsCMake.xml --durations yes
+        COMMAND $<TARGET_FILE:ShaderTestFrameworkTests> --reporter xml --out ${CMAKE_BINARY_DIR}/build/ResultsCMake.xml --durations yes
         WORKING_DIRECTORY  $<TARGET_FILE_DIR:ShaderTestFrameworkTests>
         RESULT_VARIABLE RESULT_CODE
     )
