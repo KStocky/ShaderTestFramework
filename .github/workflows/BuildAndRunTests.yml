@@ -27,31 +27,35 @@ on:
       - '**.cmake'
       - '**BuildAndRunTests.yml'
 jobs:
-    Build-And-Test:
-        runs-on: windows-latest
-        steps:
-          - name: Checkout the repo
-            uses: actions/checkout@v4
+  Build-And-Test:
 
-          - name: Print CMake version
-            shell: cmake -P {0}
-            run: |
-              message(STATUS "Host CMake version: ${CMAKE_VERSION}")
+    permissions:
+      checks: write
+      pull-requests: write
 
-          - name: Setup CMake
-            uses: threeal/cmake-action@v1.3.0
+    runs-on: windows-latest
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
 
-          - name: Build the project
-            run: cmake --build build
+      - name: Print CMake version
+        shell: cmake -P {0}
+        run: |
+          message(STATUS "Host CMake version: ${CMAKE_VERSION}")
 
-          - name: Test
-            run: ctest --test-dir build -C Debug --output-on-failure
-          
-          - name: Publish Test Results
-            uses: EnricoMi/publish-unit-test-result-action/windows@v2
-            if: always()
-            with:
-              github_token: ${{secrets.PUBLISH_TEST_RESULTS_PAT}}
-              files: |
-                build\test\Debug\Reports\*.xml
+      - name: Setup CMake
+        uses: threeal/cmake-action@v1.3.0
+
+      - name: Build the project
+        run: cmake --build build
+
+      - name: Test
+        run: ctest --test-dir build -C Debug --output-on-failure
+      
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/windows@v2
+        if: always()
+        with:
+          files: |
+            build\test\Debug\Reports\*.xml
             
