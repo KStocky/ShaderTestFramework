@@ -20,7 +20,7 @@ function(add_catch2 IN_TARGET)
         WORKING_DIRECTORY "$<TARGET_FILE_DIR:${IN_TARGET}>"
         REPORTER junit
         OUTPUT_DIR Reports
-        OUTPUT_SUFFFIX ".xml"
+        OUTPUT_SUFFIX ".xml"
         )
     return()
 endfunction()
