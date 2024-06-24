@@ -45,11 +45,12 @@ jobs:
             run: cmake --build build
 
           - name: Test
-            run: cmake -P build/RunShaderTestFrameworkTestsDebug.cmake
-
-          - name: Upload Reports
-            uses: actions/upload-artifact@v4
+            run: ctest --test-dir build -C Debug --output-on-failure
+          
+          - name: Publish Test Results
+            uses: EnricoMi/publish-unit-test-result-action/windows@v2
+            if: always()
             with:
-              name: test-results-report
-              path: build/ResultsCMake.xml
+              files: |
+                build\test\Debug\Reports\*.xml
             
