@@ -51,6 +51,7 @@ jobs:
             uses: EnricoMi/publish-unit-test-result-action/windows@v2
             if: always()
             with:
+              github_token: ${{secrets.PUBLISH_TEST_RESULTS_PAT}}
               files: |
                 build\test\Debug\Reports\*.xml
             
