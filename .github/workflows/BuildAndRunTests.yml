@@ -58,12 +58,7 @@ jobs:
         with:
           files: |
             build\test\Debug\Reports\*.xml
-      
-      - name: Publish Test Report
-        uses: mikepenz/action-junit-report@v4.3.1
-        if: always()
-        with:
-          report_paths: build\test\Debug\Reports\*.xml
-          detailed_summary: true
-
+          ignore_runs: true
+          report_suite_logs: any
+          
             
