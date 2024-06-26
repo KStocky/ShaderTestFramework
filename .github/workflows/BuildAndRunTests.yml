@@ -58,7 +58,6 @@ jobs:
         with:
           files: |
             build\test\Debug\Reports\*.xml
-          report_suite_logs: any
       
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v4.3.1
