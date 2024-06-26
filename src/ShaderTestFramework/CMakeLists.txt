@@ -51,6 +51,8 @@ set(SOURCES
     Public/Framework/TestDataBufferProcessor.h
     Public/Framework/TestDataBufferStructs.h
     Public/Platform.h
+    Public/Stats/ScopedObject.h
+    Public/Stats/StatSystem.h
     Public/Utility/Algorithm.h
     Public/Utility/Concepts.h
     Public/Utility/EnumReflection.h
@@ -64,6 +66,7 @@ set(SOURCES
     Public/Utility/MoveOnly.h
     Public/Utility/OverloadSet.h
     Public/Utility/Pointer.h
+    Public/Utility/Time.h
     Public/Utility/Tuple.h
     Public/Utility/Type.h
     Public/Utility/TypeList.h
@@ -89,6 +92,7 @@ set(SOURCES
     Private/Framework/TestDataBufferLayout.cpp
     Private/Framework/TestDataBufferProcessor.cpp
     Private/Framework/TestDataBufferStructs.cpp
+    Private/Stats/StatSystem.cpp
 )
 
 set(SHADER_SOURCES

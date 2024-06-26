@@ -25,6 +25,9 @@ namespace
     }
 }
 
+StatSystem ShaderTestFixture::statSystem;
+std::vector<TimedStat> ShaderTestFixture::cachedStats;
+
 ShaderTestFixture::ShaderTestFixture(Desc InParams)
 	: m_Device()
 	, m_Compiler()
@@ -36,6 +39,9 @@ ShaderTestFixture::ShaderTestFixture(Desc InParams)
     , m_TestDataLayout(InParams.TestDataLayout)
 	, m_IsWarp(InParams.GPUDeviceParams.DeviceType == GPUDevice::EDeviceType::Software)
 {
+    ScopedDuration scope("Shader Test Fixture construction");
+    cachedStats.clear();
+
     fs::path shaderDir = std::filesystem::current_path();
     shaderDir += "/";
     shaderDir += SHADER_SRC;
@@ -47,6 +53,11 @@ ShaderTestFixture::ShaderTestFixture(Desc InParams)
     PopulateDefaultByteReaders();
 }
 
+ShaderTestFixture::~ShaderTestFixture() noexcept
+{
+    cachedStats = statSystem.FlushTimedStats();
+}
+
 void ShaderTestFixture::TakeCapture()
 {
     m_CaptureRequested = true;
@@ -54,6 +65,7 @@ void ShaderTestFixture::TakeCapture()
 
 STF::Results ShaderTestFixture::RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ)
 {
+    ScopedDuration fullTest(std::format("ShaderTestFixture::RunTest: {}", InName));
 	const auto compileResult = CompileShader(InName, EShaderType::Compute);
 
 	if (!compileResult.has_value())
@@ -90,6 +102,7 @@ STF::Results ShaderTestFixture::RunTest(const std::string_view InName, u32 InX, 
     const auto allocationUAV = CreateAssertBufferUAV(allocationBuffer, resourceHeap, 1);
 
     {
+        ScopedDuration testExecution("ShaderTestFixture::RunTest Test Execution");
         const auto capturer = PIXCapturer(InName, ShouldTakeCapture());
 
         engine.Execute(InName,
@@ -149,11 +162,15 @@ STF::Results ShaderTestFixture::RunTest(const std::string_view InName, u32 InX, 
         engine.Flush();
     }
 
-    return ReadbackResults(readBackAllocationBuffer, readBackBuffer, uint3(dimX, dimY, dimZ));
+    {
+        ScopedDuration readbackScope(std::format("ShaderTestFixture::ReadbackResults: {}", InName));
+        return ReadbackResults(readBackAllocationBuffer, readBackBuffer, uint3(dimX, dimY, dimZ));
+    }
 }
 
 STF::Results ShaderTestFixture::RunCompileTimeTest()
 {
+    ScopedDuration scope("ShaderTestFixture::RunCompileTimeTest");
     const auto compileResult = CompileShader("", EShaderType::Lib);
 
     if (!compileResult.has_value())
@@ -179,8 +196,14 @@ bool ShaderTestFixture::IsUsingAgilitySDK() const
 	return m_Device.GetHardwareInfo().FeatureInfo.EnhancedBarriersSupport;
 }
 
+std::vector<TimedStat> ShaderTestFixture::GetTestStats()
+{
+    return cachedStats;
+}
+
 CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName, const EShaderType InType) const
 {
+    ScopedDuration scope(std::format("ShaderTestFixture::CompileShader: {}", InName));
     ShaderCompilationJobDesc job;
     job.AdditionalFlags = m_CompilationFlags;
     job.AdditionalFlags.emplace_back(L"-enable-16bit-types");
