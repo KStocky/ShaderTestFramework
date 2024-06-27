@@ -33,7 +33,7 @@ TTL_STAMP(n, x, ...)
 | `x`       | The function-like macro to start the stamping. |
 | `...`     | The arguments to pass to `x` |
 
-## Parameters of x
+## Parameters of `x`
 
 This macro is defined by the user to kick off the stamping of another function like macro
 
