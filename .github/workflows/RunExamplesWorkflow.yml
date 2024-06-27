@@ -1,0 +1,30 @@
+name: Example Repo
+
+run-name: "${{github.actor}}: Run Example repo tests after push to main: ${{github.event.head_commit.message}}"
+
+on:
+    push:
+        branches:
+            - "main"
+
+jobs:
+    RunExampleWorkflow:
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/github-script@v7
+          with:
+            github-token: ${{ secrets.DISPATCHEXAMPLEWORKFLOWPAT }}
+            # For some reason, using the head_commit message within the call to createWorkflowDispatch
+            # breaks the script runner. So we can't give the exact pull request merge that triggered this run.
+            script: >-
+                await github.rest.actions.createWorkflowDispatch({
+                    owner: 'KStocky',
+                    repo: 'ShaderTestFrameworkExamples',
+                    workflow_id: 'BuildAndRunTests.yml',
+                    ref: 'main',
+                    inputs: {
+                        actor: '${{github.actor}}',
+                        repository: '${{github.event.repository.name}}',
+                        message: "Merging Pull Request"
+                    }
+                })  
