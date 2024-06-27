@@ -6,9 +6,8 @@ The constant boolean expression is evaluated at compile time. If it evalulates t
 Otherwise, if expression evaluates to `true`, nothing happens; no code is emitted.  This can be useful for writing tests for code that is known at compile time e.g. template meta programming.
 
 **Contents**
-1. [Header](#header)
-2. [Syntax](#syntax)
-3. [Example](#example)<br>
+1. [Syntax](#syntax)
+2. [Example](#example)<br>
 
 ## Syntax
 

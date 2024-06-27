@@ -4,8 +4,8 @@
 
 **Contents**
 1. [An Introduction](#an-introduction-to-scenarios-and-sections)
-2. [Writing Optional\<T> in HLSL](#writing-optional-in-hlsl)
-3. [Testing Optional\<T> without Scenarios And Sections](#testing-optional-without-scenarios-and-sections)
+2. [Writing Optional\<T> in HLSL](#writing-optionalt-in-hlsl)
+3. [Testing Optional\<T> without Scenarios And Sections](#testing-optionalt-without-scenarios-and-sections)
 4. [Testing Optional\<T> with Scenarios And Sections](#testing-optionalt-with-scenarios-and-sections)<br>
     a. [Following the Execution Line by Line](#following-the-execution-line-by-line)<br>
     b. [An Explanation](#an-explanation)<br>
@@ -193,7 +193,7 @@ It is this problem that Scenarios and Sections can help with.
 
 ## Testing Optional\<T> with Scenarios And Sections
 
-As we saw in [Testing Optional\<T> without Scenarios And Sections](#testing-optional-without-scenarios-and-sections) trying to write test code that does not involve repeating ourselves can lead to tests that are hard to read and scattered in terms of their placement in test files. Shader Test Framework provides Scenarios and Sections as an alternative way of structuring tests, with an aim of improving readability and reducing code repitition. Below is how we might write the tests shown in the previous section except with using scenarios and sections.
+As we saw in [Testing Optional\<T> without Scenarios And Sections](#testing-optionalt-without-scenarios-and-sections) trying to write test code that does not involve repeating ourselves can lead to tests that are hard to read and scattered in terms of their placement in test files. Shader Test Framework provides Scenarios and Sections as an alternative way of structuring tests, with an aim of improving readability and reducing code repitition. Below is how we might write the tests shown in the previous section except with using scenarios and sections.
 
 ```c++
 [RootSignature(SHADER_TEST_RS)]
