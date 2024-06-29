@@ -201,6 +201,8 @@ target_sources(ShaderTestFrameworkTests PRIVATE ${SOURCES})
 set_source_files_properties(${SHADER_SOURCES} PROPERTIES VS_SETTINGS "ExcludedFromBuild=true")
 set_target_properties(ShaderTestFrameworkTests PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:ShaderTestFrameworkTests>" )
 
+# Hide away unity files in their own filter
+source_group(UnityBuildFiles REGULAR_EXPRESSION ".+_cxx.cxx")
 source_group(TREE ${SHADER_SOURCE_DIR} PREFIX "ShaderSources" FILES ${SHADER_SOURCES})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})
 

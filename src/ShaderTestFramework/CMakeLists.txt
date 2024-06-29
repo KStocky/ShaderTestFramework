@@ -127,6 +127,8 @@ target_sources(ShaderTestFramework PRIVATE ${SHADER_SOURCES})
 
 set_source_files_properties(${SHADER_SOURCES} PROPERTIES VS_SETTINGS "ExcludedFromBuild=true")
 
+# Hide away unity files in their own filter
+source_group(UnityBuildFiles REGULAR_EXPRESSION ".+_cxx.cxx")
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source" FILES ${SOURCES})
 source_group(TREE ${AGILITY_INCLUDE} PREFIX "ThirdParty/AgilitySDK" FILES ${AGILITY_HEADERS})
 source_group(TREE ${DXC_INCLUDE} PREFIX "ThirdParty/DXC" FILES ${DXC_HEADERS})

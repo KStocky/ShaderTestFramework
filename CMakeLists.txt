@@ -20,6 +20,8 @@ if (${DEV_MODE})
     set(GLOBAL_COMPILE_FLAGS 
         $<$<CXX_COMPILER_ID:MSVC>:/W4> 
         $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic> )
+    
+    set(CMAKE_UNITY_BUILD TRUE)
 
 endif()
 
