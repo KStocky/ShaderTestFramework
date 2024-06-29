@@ -145,7 +145,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/Macros/SectionsTests.cpp
     Private/Framework/HLSLFramework/Macros/SectionVarCreationTests.cpp
     Private/Framework/HLSLFramework/Macros/StampTests.cpp
-    Private/Framework/HLSLFramework/Memory/AlignedOffsetTests.cpp
+    Private/Framework/HLSLFramework/Memory/AlignedOffset.cpp
     Private/Framework/HLSLFramework/Memory/ZeroTests.cpp
     Private/Framework/HLSLFramework/String/StringByteWriterTests.cpp
     Private/Framework/HLSLFramework/String/StringLengthTests.cpp
@@ -162,15 +162,15 @@ set(SOURCES
     Private/Framework/HLSLFramework/ByteReaderTraitsTests.cpp
     Private/Framework/HLSLFramework/ByteWriterTests.cpp
     Private/Framework/HLSLFramework/CastTests.cpp
-    Private/Framework/HLSLFramework/ConceptsTests.cpp
     Private/Framework/HLSLFramework/FlattenIndexTests.cpp
     Private/Framework/HLSLFramework/ModelsTests.cpp
     Private/Framework/HLSLFramework/SectionHierarchyByteWriterTests.cpp
     Private/Framework/HLSLFramework/ProofOfConceptTests.cpp
+    Private/Framework/HLSLFramework/PseudoConceptsTests.cpp
     Private/Framework/HLSLFramework/SectionManagementTests.cpp
     Private/Framework/HLSLFramework/ThreadDimensionsTests.cpp
     Private/Framework/HLSLFramework/ThreadIdRegistrationTests.cpp
-    Private/Framework/HLSLFramework/TypeTraitsTests.cpp
+    Private/Framework/HLSLFramework/TTLTypeTraitsTests.cpp
     Private/Framework/HLSLTypesTests.cpp
     Private/Framework/SectionsInHLSLProofOfConceptTests.cpp
     Private/Framework/ShaderTestFixtureTests.cpp
