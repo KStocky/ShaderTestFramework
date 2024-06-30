@@ -127,6 +127,8 @@ target_sources(ShaderTestFramework PRIVATE ${SHADER_SOURCES})
 
 set_source_files_properties(${SHADER_SOURCES} PROPERTIES VS_SETTINGS "ExcludedFromBuild=true")
 
+# Hide away unity files in their own filter
+source_group(UnityBuildFiles REGULAR_EXPRESSION ".+_cxx.cxx")
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Source" FILES ${SOURCES})
 source_group(TREE ${AGILITY_INCLUDE} PREFIX "ThirdParty/AgilitySDK" FILES ${AGILITY_HEADERS})
 source_group(TREE ${DXC_INCLUDE} PREFIX "ThirdParty/DXC" FILES ${DXC_HEADERS})
@@ -141,6 +143,9 @@ target_compile_definitions(ShaderTestFramework PUBLIC _SILENCE_CXX23_DENORM_DEPR
 target_compile_options(ShaderTestFramework PRIVATE ${GLOBAL_COMPILE_FLAGS})
 target_include_directories(ShaderTestFramework PUBLIC ${CMAKE_CURRENT_LIST_DIR}/Public/ ${AGILITY_INCLUDE} ${DXC_INCLUDE} ${WINPIX_INCLUDE})
 target_link_libraries(ShaderTestFramework PRIVATE d3d12.lib dxgi.lib DXC dxguid.lib WINPIX)
+if (${STF_DISABLE_UNITY_STF})
+    set_target_properties(ShaderTestFramework PROPERTIES UNITY_BUILD OFF)
+endif()
 add_tl_expected(ShaderTestFramework)
 add_tuplet(ShaderTestFramework)
 add_float16(ShaderTestFramework)

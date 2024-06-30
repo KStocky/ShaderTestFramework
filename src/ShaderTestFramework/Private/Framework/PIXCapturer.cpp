@@ -2,6 +2,7 @@
 
 #include "Utility/Exception.h"
 
+#include <d3d12.h>
 #include <filesystem>
 
 #include <WinPixEventRuntime/pix3.h>

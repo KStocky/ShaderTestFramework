@@ -1,0 +1,194 @@
+{
+    "version": 8,
+    "$schema": "https://cmake.org/cmake/help/latest/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 25,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "ConfigBase",
+            "hidden": true,
+            "binaryDir": "build",
+            "cacheVariables": {
+                "CMAKE_UNITY_BUILD": false,
+                "STF_ENABLE_TESTING": false,
+                "STF_INCLUDE_EXAMPLES": false,
+                "STF_DISABLE_UNITY_STF": false,
+                "STF_STRICT_COMPILATION": false
+            }
+        },
+        {
+            "name": "FullDev",
+            "inherits": "ConfigBase",
+            "cacheVariables": {
+                "CMAKE_UNITY_BUILD": true,
+                "STF_ENABLE_TESTING": true,
+                "STF_INCLUDE_EXAMPLES": true,
+                "STF_DISABLE_UNITY_STF": true,
+                "STF_STRICT_COMPILATION": true
+            }
+        },
+        {
+            "name": "SlimDev",
+            "inherits": "ConfigBase",
+            "cacheVariables": {
+                "CMAKE_UNITY_BUILD": true,
+                "STF_ENABLE_TESTING": true,
+                "STF_DISABLE_UNITY_STF": true,
+                "STF_STRICT_COMPILATION": true
+            }
+        },
+        {
+            "name": "FullCI",
+            "inherits": "ConfigBase",
+            "cacheVariables": {
+                "CMAKE_UNITY_BUILD": true,
+                "STF_ENABLE_TESTING": true,
+                "STF_INCLUDE_EXAMPLES": true,
+                "STF_STRICT_COMPILATION": true
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "DebugBase",
+            "hidden": true,
+            "configuration": "Debug"
+        },
+        {
+            "name": "ReleaseBase",
+            "hidden": true,
+            "configuration": "Release"
+        },
+        {
+            "name": "RebuildBase",
+            "hidden": true,
+            "cleanFirst": true
+        },
+        {
+            "name": "FullDevDebug",
+            "configurePreset": "FullDev",
+            "inherits": "DebugBase"
+
+        },
+        {
+            "name": "FullDevRelease",
+            "configurePreset": "FullDev",
+            "inherits": "ReleaseBase"
+
+        },
+        {
+            "name": "FullDevDebugRebuild",
+            "configurePreset": "FullDev",
+            "inherits": ["DebugBase", "RebuildBase"]
+
+        },
+        {
+            "name": "FullDevReleaseRebuild",
+            "configurePreset": "FullDev",
+            "inherits": ["ReleaseBase", "RebuildBase"]
+        },
+        {
+            "name": "SlimDevDebug",
+            "configurePreset": "SlimDev",
+            "inherits": "DebugBase"
+
+        },
+        {
+            "name": "SlimDevRelease",
+            "configurePreset": "SlimDev",
+            "inherits": "ReleaseBase"
+
+        },
+        {
+            "name": "SlimDevDebugRebuild",
+            "configurePreset": "SlimDev",
+            "inherits": ["DebugBase", "RebuildBase"]
+
+        },
+        {
+            "name": "SlimDevReleaseRebuild",
+            "configurePreset": "SlimDev",
+            "inherits": ["ReleaseBase", "RebuildBase"]
+
+        },
+        {
+            "name": "FullCI",
+            "configurePreset": "FullCI",
+            "inherits": "DebugBase"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "FullDev",
+            "configurePreset": "FullDev",
+            "output":
+            {
+                "outputOnFailure": true
+            }
+        },
+        {
+            "name": "SlimDev",
+            "configurePreset": "SlimDev",
+            "output":
+            {
+                "outputOnFailure": true
+            }
+        },
+        {
+            "name": "FullCI",
+            "configurePreset": "FullCI",
+            "output":
+            {
+                "outputOnFailure": true
+            }
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "FullCI",
+            "steps": [
+                {
+                    "name": "FullCI",
+                    "type": "configure"
+                },
+                {
+                    "name": "FullCI",
+                    "type": "build"
+                },
+                {
+                    "name": "FullCI",
+                    "type": "test"
+                }
+            ]
+        },
+        {
+            "name": "SlimDev",
+            "steps": [
+                {
+                    "name": "SlimDev",
+                    "type": "configure"
+                },
+                {
+                    "name": "SlimDevDebug",
+                    "type": "build"
+                }
+            ]
+        },
+        {
+            "name": "FullDev",
+            "steps": [
+                {
+                    "name": "FullDev",
+                    "type": "configure"
+                },
+                {
+                    "name": "FullDevDebug",
+                    "type": "build"
+                }
+            ]
+        }
+    ]
+}

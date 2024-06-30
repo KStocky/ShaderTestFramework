@@ -43,14 +43,8 @@ jobs:
         run: |
           message(STATUS "Host CMake version: ${CMAKE_VERSION}")
 
-      - name: Setup CMake
-        uses: threeal/cmake-action@v1.3.0
-
-      - name: Build the project
-        run: cmake --build build
-
-      - name: Test
-        run: ctest --test-dir build -C Debug --output-on-failure
+      - name: Build everything and run all Tests"
+        run: cmake --workflow --preset FullCI
       
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action/windows@v2
