@@ -46,13 +46,12 @@ install it to the default location, like so:
 ```
 $ git clone https://github.com/KStocky/ShaderTestFramework
 $ cd ShaderTestFramework
-$ mkdir build
-$ cd build
-$ cmake ..
-$ cmake --build .
+$ cmake --workflow --preset FullDev
 ```
 
-This will build everything and produce a static library called ShaderTestFramework in `ShaderTestFramework\build\src\ShaderTestFramework\Debug`. If you want a release build run `cmake --build . -C Release`
+This will build everything, including tests and examples. It will produce a static library called ShaderTestFramework in `ShaderTestFramework\build\src\ShaderTestFramework\Debug`. If you want a release build run `cmake --build --preset FullDevRelease`.
+You can also generate a project that just contains the library and tests (omitting examples) with `cmake --workflow --preset SlimDev`. More [CMake Presets](https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html) that are defined by STF can be found in [CMakePresets.json](../CMakePresets.json)
+And feel free to create your own local `CMakeUserPresets.json` to improve your workflow.
 
-From here you can link ShaderTestFramework to your project and add ShaderTestFramework\src\ShaderTestFramework\Public to your include paths.
+From here you can link ShaderTestFramework to your project and add `ShaderTestFramework\src\ShaderTestFramework\Public` to your include paths.
 
