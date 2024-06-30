@@ -200,6 +200,9 @@ target_sources(ShaderTestFrameworkTests PRIVATE ${SOURCES})
 
 set_source_files_properties(${SHADER_SOURCES} PROPERTIES VS_SETTINGS "ExcludedFromBuild=true")
 set_target_properties(ShaderTestFrameworkTests PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:ShaderTestFrameworkTests>" )
+if (${STF_DISABLE_UNITY_STF})
+    set_target_properties(ShaderTestFrameworkTests PROPERTIES UNITY_BUILD OFF)
+endif()
 
 # Hide away unity files in their own filter
 source_group(UnityBuildFiles REGULAR_EXPRESSION ".+_cxx.cxx")
