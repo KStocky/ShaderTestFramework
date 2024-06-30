@@ -174,10 +174,19 @@
                 {
                     "name": "SlimDevDebug",
                     "type": "build"
+                }
+            ]
+        },
+        {
+            "name": "FullDev",
+            "steps": [
+                {
+                    "name": "FullDev",
+                    "type": "configure"
                 },
                 {
-                    "name": "SlimDev",
-                    "type": "test"
+                    "name": "FullDevDebug",
+                    "type": "build"
                 }
             ]
         }
