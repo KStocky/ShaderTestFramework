@@ -1,10 +1,14 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.26)
 
 project(
     ShaderTestingFramework 
     VERSION 0.1.0 
     DESCRIPTION "A testing framework for shader code"
     LANGUAGES CXX )
+
+if(CMAKE_VS_VERSION_BUILD_NUMBER VERSION_LESS "17.7")
+    message(FATAL_ERROR "Shader Test Framework requires at least Visual Studio 17.7. You have ${CMAKE_VS_VERSION_BUILD_NUMBER} installed. Please update your installation of VS 2022 to latest")
+endif()
 
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
