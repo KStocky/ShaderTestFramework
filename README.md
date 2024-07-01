@@ -17,7 +17,7 @@ This should be enough to grab the repo and build everything provided you have at
 ```
 $ git clone https://github.com/KStocky/ShaderTestFramework
 $ cd ShaderTestFramework
-$ cmake --workflow --preset --FullDev
+$ cmake --workflow --preset FullDev
 ```
 
 From there you can have a play with the [examples](./examples).
