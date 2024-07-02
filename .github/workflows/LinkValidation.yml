@@ -19,5 +19,8 @@ jobs:
     LinkValidator:
         runs-on: ubuntu-latest
         steps:
-        - uses: actions/checkout@master
-        - uses: gaurav-nelson/github-action-markdown-link-check@v1
+        - uses: actions/checkout@v4
+        - name: Run linkspector
+          uses: umbrelladocs/action-linkspector@v1.1.3
+          with:
+            fail_on_error: true
