@@ -15,7 +15,6 @@ on:
         paths-ignore:
         - '**.md'
         - '**/LinkValidation.yml'
-        
 jobs:
     LinkValidator:
         runs-on: ubuntu-latest
