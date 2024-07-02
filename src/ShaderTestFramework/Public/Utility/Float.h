@@ -1,7 +1,7 @@
 #pragma once
 
 #include "float16/float16_t.hpp"
-
+#include <format>
 #include <sstream>
 
 using float16_t = numeric::float16_t;

@@ -1,4 +1,4 @@
-
+#pragma once
 #include "Platform.h"
 #include "Utility/Time.h"
 

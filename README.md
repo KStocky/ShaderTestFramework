@@ -13,14 +13,11 @@ It is a framework that is intended to be used with another testing framework suc
 
 ## Getting Started
 
-This should be enough to grab the repo and build everything provided you have a recent install of Visual Studio 2022 and CMake.
+This should be enough to grab the repo and build everything provided you have at least Visual Studio 2022 17.7 and CMake 3.26.
 ```
 $ git clone https://github.com/KStocky/ShaderTestFramework
 $ cd ShaderTestFramework
-$ mkdir build
-$ cd build
-$ cmake ..
-$ cmake --build .
+$ cmake --workflow --preset FullDev
 ```
 
 From there you can have a play with the [examples](./examples).

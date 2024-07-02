@@ -145,7 +145,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/Macros/SectionsTests.cpp
     Private/Framework/HLSLFramework/Macros/SectionVarCreationTests.cpp
     Private/Framework/HLSLFramework/Macros/StampTests.cpp
-    Private/Framework/HLSLFramework/Memory/AlignedOffsetTests.cpp
+    Private/Framework/HLSLFramework/Memory/AlignedOffset.cpp
     Private/Framework/HLSLFramework/Memory/ZeroTests.cpp
     Private/Framework/HLSLFramework/String/StringByteWriterTests.cpp
     Private/Framework/HLSLFramework/String/StringLengthTests.cpp
@@ -162,15 +162,15 @@ set(SOURCES
     Private/Framework/HLSLFramework/ByteReaderTraitsTests.cpp
     Private/Framework/HLSLFramework/ByteWriterTests.cpp
     Private/Framework/HLSLFramework/CastTests.cpp
-    Private/Framework/HLSLFramework/ConceptsTests.cpp
     Private/Framework/HLSLFramework/FlattenIndexTests.cpp
     Private/Framework/HLSLFramework/ModelsTests.cpp
     Private/Framework/HLSLFramework/SectionHierarchyByteWriterTests.cpp
     Private/Framework/HLSLFramework/ProofOfConceptTests.cpp
+    Private/Framework/HLSLFramework/PseudoConceptsTests.cpp
     Private/Framework/HLSLFramework/SectionManagementTests.cpp
     Private/Framework/HLSLFramework/ThreadDimensionsTests.cpp
     Private/Framework/HLSLFramework/ThreadIdRegistrationTests.cpp
-    Private/Framework/HLSLFramework/TypeTraitsTests.cpp
+    Private/Framework/HLSLFramework/TTLTypeTraitsTests.cpp
     Private/Framework/HLSLTypesTests.cpp
     Private/Framework/SectionsInHLSLProofOfConceptTests.cpp
     Private/Framework/ShaderTestFixtureTests.cpp
@@ -200,7 +200,12 @@ target_sources(ShaderTestFrameworkTests PRIVATE ${SOURCES})
 
 set_source_files_properties(${SHADER_SOURCES} PROPERTIES VS_SETTINGS "ExcludedFromBuild=true")
 set_target_properties(ShaderTestFrameworkTests PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:ShaderTestFrameworkTests>" )
+if (${STF_DISABLE_UNITY_STF})
+    set_target_properties(ShaderTestFrameworkTests PROPERTIES UNITY_BUILD OFF)
+endif()
 
+# Hide away unity files in their own filter
+source_group(UnityBuildFiles REGULAR_EXPRESSION ".+_cxx.cxx")
 source_group(TREE ${SHADER_SOURCE_DIR} PREFIX "ShaderSources" FILES ${SHADER_SOURCES})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})
 
