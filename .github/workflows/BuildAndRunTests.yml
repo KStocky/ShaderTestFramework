@@ -38,6 +38,9 @@ jobs:
       - name: Checkout the repo
         uses: actions/checkout@v4
 
+      - name: Install Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
       - name: Print CMake version
         shell: cmake -P {0}
         run: |
