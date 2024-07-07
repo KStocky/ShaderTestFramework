@@ -44,9 +44,6 @@ jobs:
       - name: setup devcmd
         uses: ilammy/msvc-dev-cmd@v1.13.0
 
-      - name: Add MSVC to PATH
-        uses: microsoft/setup-msbuild@v2
-
       - name: Print CMake version
         shell: cmake -P {0}
         run: |
