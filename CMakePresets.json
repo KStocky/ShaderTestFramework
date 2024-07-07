@@ -14,6 +14,7 @@
             "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_UNITY_BUILD": false,
+                "CMAKE_CXX_COMPILER":  "cl",
                 "STF_ENABLE_TESTING": false,
                 "STF_INCLUDE_EXAMPLES": false,
                 "STF_DISABLE_UNITY_STF": false,
