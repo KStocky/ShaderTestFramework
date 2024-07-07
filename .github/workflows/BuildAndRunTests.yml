@@ -41,6 +41,9 @@ jobs:
       - name: Install Ninja
         uses: seanmiddleditch/gha-setup-ninja@master
 
+      - name: setup devcmd
+        uses: ilammy/msvc-dev-cmd@v1.13.0
+
       - name: Add MSVC to PATH
         uses: microsoft/setup-msbuild@v2
 
@@ -48,7 +51,6 @@ jobs:
         shell: cmake -P {0}
         run: |
           message(STATUS "Host CMake version: ${CMAKE_VERSION}")
-          message(STATUS "Path: $ENV{PATH}")
 
       - name: Build everything and run all Tests"
         run: cmake --workflow --preset FullCI
