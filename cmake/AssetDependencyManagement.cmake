@@ -35,11 +35,11 @@ function(get_all_target_dependencies IN_TARGET IN_OUT_DEPENDENCIES)
 endfunction()
 
 function(copy_all_dependent_assets IN_TARGET)
-
+#[[
     add_custom_command(TARGET ${IN_TARGET} PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E remove_directory
         "$<TARGET_FILE_DIR:${IN_TARGET}>/")
-
+]]
     get_all_target_dependencies(${IN_TARGET} ALL_LIBS)
     list(APPEND ALL_LIBS ${IN_TARGET})
 
