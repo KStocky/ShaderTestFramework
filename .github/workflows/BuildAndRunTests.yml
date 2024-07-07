@@ -48,6 +48,7 @@ jobs:
         shell: cmake -P {0}
         run: |
           message(STATUS "Host CMake version: ${CMAKE_VERSION}")
+          message(STATUS "Path: $env{PATH}")
 
       - name: Build everything and run all Tests"
         run: cmake --workflow --preset FullCI
