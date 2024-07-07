@@ -6,7 +6,7 @@ project(
     DESCRIPTION "A testing framework for shader code"
     LANGUAGES CXX )
 
-if(CMAKE_VS_VERSION_BUILD_NUMBER VERSION_LESS "17.7")
+if(CMAKE_GENERATOR MATCHES "Visual Studio" AND CMAKE_VS_VERSION_BUILD_NUMBER VERSION_LESS "17.7")
     message(FATAL_ERROR "Shader Test Framework requires at least Visual Studio 17.7. You have ${CMAKE_VS_VERSION_BUILD_NUMBER} installed. Please update your installation of VS 2022 to latest")
 endif()
 
