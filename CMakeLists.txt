@@ -10,6 +10,14 @@ if(CMAKE_GENERATOR MATCHES "Visual Studio" AND CMAKE_VS_VERSION_BUILD_NUMBER VER
     message(FATAL_ERROR "Shader Test Framework requires at least Visual Studio 17.7. You have ${CMAKE_VS_VERSION_BUILD_NUMBER} installed. Please update your installation of VS 2022 to latest")
 endif()
 
+if(NOT MSVC)
+    message(FATAL_ERROR "Shader Test Framework requires the MSVC compiler. If you are using Ninja as the generator, set cl as the value of CMAKE_CXX_COMPILER")
+endif()
+
+if(MSVC_VERSION VERSION_LESS 1937)
+    message(FATAL_ERROR "Shader Test Framework requires at least MSVC 1937 (Visual Studio 2022 17.7 ). You have ${MSVC_VERSION} installed. Please update your installation of VS 2022 to latest or if you have a later version installed point CMake to it using the toolset configuration preset.")
+endif()
+
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
