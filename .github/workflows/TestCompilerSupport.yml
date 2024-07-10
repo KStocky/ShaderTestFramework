@@ -28,18 +28,13 @@ jobs:
       - name: Checkout the repo
         uses: actions/checkout@v4
 
-      - name: Install MSVC 14.37
-        uses: thepwrtank18/install-vs-components@v1.0.0
-        with:
-            components: Microsoft.VisualStudio.Component.VC.14.37.17.7.x86.x64
-
       - name: Install Ninja
         uses: seanmiddleditch/gha-setup-ninja@master
 
       - name: setup devcmd
         uses: ilammy/msvc-dev-cmd@v1.13.0
 
-      - name: Build with 14.37"
+      - name: Build with 14.37
         run: cmake --workflow --preset TestMinCompiler
           
             
