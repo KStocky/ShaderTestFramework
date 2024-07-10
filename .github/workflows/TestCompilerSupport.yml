@@ -7,11 +7,8 @@ on:
     paths:
       - '**.cpp'
       - '**.h'
-      - '**.hlsli'
-      - '**.hlsl'
       - '**CMakeLists.txt'
-      - '**.cmake'
-      - '**BuildAndRunTests.yml'
+      - '**TestCompilerSupport.yml'
 
   pull_request:
     types: [opened, reopened, synchronize]
@@ -21,17 +18,10 @@ on:
     paths-ignore:
       - '**.cpp'
       - '**.h'
-      - '**.hlsli'
-      - '**.hlsl'
       - '**CMakeLists.txt'
-      - '**.cmake'
-      - '**BuildAndRunTests.yml'
+      - '**TestCompilerSupport.yml'
 jobs:
   Test-Compiler-Support:
-
-    permissions:
-      checks: write
-      pull-requests: write
 
     runs-on: windows-latest
     steps:
