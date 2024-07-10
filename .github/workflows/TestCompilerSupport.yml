@@ -4,10 +4,23 @@ run-name: "${{github.actor}}: ${{github.event.head_commit.message || github.even
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '**.cpp'
+      - '**.h'
+      - '**CMakeLists.txt'
+      - '**TestCompilerSupport.yml'
+
   pull_request:
     types: [opened, reopened, synchronize]
     branches:
       - "main"
+      
+    paths-ignore:
+      - '**.cpp'
+      - '**.h'
+      - '**CMakeLists.txt'
+      - '**TestCompilerSupport.yml'
 jobs:
   Test-Compiler-Support:
 
