@@ -136,7 +136,7 @@
         },
         {
           "name": "TestMinCompiler",
-          "configurePreset": "Test14.37",
+          "configurePreset": "TestMinCompiler",
           "inherits": "DebugBase"
         }
     ],
