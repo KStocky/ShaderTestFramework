@@ -1,0 +1,55 @@
+name: Test Compiler Support
+
+run-name: "${{github.actor}}: ${{github.event.head_commit.message || github.event.pull_request.title}}"
+
+on:
+  push:
+    paths:
+      - '**.cpp'
+      - '**.h'
+      - '**.hlsli'
+      - '**.hlsl'
+      - '**CMakeLists.txt'
+      - '**.cmake'
+      - '**BuildAndRunTests.yml'
+
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches:
+      - "main"
+      
+    paths-ignore:
+      - '**.cpp'
+      - '**.h'
+      - '**.hlsli'
+      - '**.hlsl'
+      - '**CMakeLists.txt'
+      - '**.cmake'
+      - '**BuildAndRunTests.yml'
+jobs:
+  Test-Compiler-Support:
+
+    permissions:
+      checks: write
+      pull-requests: write
+
+    runs-on: windows-latest
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+
+      - name: Install MSVC 14.37
+        uses: thepwrtank18/install-vs-components@v1
+        with:
+            components: Microsoft.VisualStudio.Component.VC.14.37.17.7.x86.x64
+
+      - name: Install Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: setup devcmd
+        uses: ilammy/msvc-dev-cmd@v1.13.0
+
+      - name: Build with 14.37"
+        run: cmake --workflow --preset TestMinCompiler
+          
+            

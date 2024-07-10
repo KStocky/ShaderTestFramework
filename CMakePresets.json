@@ -51,6 +51,19 @@
         "STF_INCLUDE_EXAMPLES": true,
         "STF_STRICT_COMPILATION": true
       }
+    },
+    {
+      "name": "TestMinCompiler",
+      "inherits": "ConfigBase",
+      "toolset": {
+        "value": "host=x64,version=14.37"
+      },
+      "cacheVariables": {
+        "CMAKE_UNITY_BUILD": true,
+        "STF_ENABLE_TESTING": true,
+        "STF_INCLUDE_EXAMPLES": true,
+        "STF_STRICT_COMPILATION": true
+      }
     }
   ],
     "buildPresets": [
@@ -117,9 +130,14 @@
 
         },
         {
-            "name": "FullCI",
-            "configurePreset": "FullCI",
-            "inherits": "DebugBase"
+          "name": "FullCI",
+          "configurePreset": "FullCI",
+          "inherits": "DebugBase"
+        },
+        {
+          "name": "TestMinCompiler",
+          "configurePreset": "Test14.37",
+          "inherits": "DebugBase"
         }
     ],
     "testPresets": [
@@ -148,49 +166,62 @@
             }
         }
     ],
-    "workflowPresets": [
+  "workflowPresets": [
+    {
+      "name": "FullCI",
+      "steps": [
         {
-            "name": "FullCI",
-            "steps": [
-                {
-                    "name": "FullCI",
-                    "type": "configure"
-                },
-                {
-                    "name": "FullCI",
-                    "type": "build"
-                },
-                {
-                    "name": "FullCI",
-                    "type": "test"
-                }
-            ]
+          "name": "FullCI",
+          "type": "configure"
         },
         {
-            "name": "SlimDev",
-            "steps": [
-                {
-                    "name": "SlimDev",
-                    "type": "configure"
-                },
-                {
-                    "name": "SlimDevDebug",
-                    "type": "build"
-                }
-            ]
+          "name": "FullCI",
+          "type": "build"
         },
         {
-            "name": "FullDev",
-            "steps": [
-                {
-                    "name": "FullDev",
-                    "type": "configure"
-                },
-                {
-                    "name": "FullDevDebug",
-                    "type": "build"
-                }
-            ]
+          "name": "FullCI",
+          "type": "test"
         }
-    ]
+      ]
+    },
+    {
+      "name": "SlimDev",
+      "steps": [
+        {
+          "name": "SlimDev",
+          "type": "configure"
+        },
+        {
+          "name": "SlimDevDebug",
+          "type": "build"
+        }
+      ]
+    },
+    {
+      "name": "FullDev",
+      "steps": [
+        {
+          "name": "FullDev",
+          "type": "configure"
+        },
+        {
+          "name": "FullDevDebug",
+          "type": "build"
+        }
+      ]
+    },
+    {
+      "name": "TestMinCompiler",
+      "steps": [
+        {
+          "name": "TestMinCompiler",
+          "type": "configure"
+        },
+        {
+          "name": "TestMinCompiler",
+          "type": "build"
+        }
+      ]
+    }
+  ]
 }
