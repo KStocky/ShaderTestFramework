@@ -56,7 +56,7 @@
       "name": "TestMinCompiler",
       "inherits": "ConfigBase",
       "toolset": {
-        "value": "host=x64,version=14.37"
+        "value": "version=14.37"
       },
       "cacheVariables": {
         "CMAKE_UNITY_BUILD": true,
