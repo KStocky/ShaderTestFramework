@@ -38,8 +38,14 @@ jobs:
       - name: Install Ninja
         uses: seanmiddleditch/gha-setup-ninja@master
 
-      - name: setup devcmd
+      - name: Setup devcmd
         uses: ilammy/msvc-dev-cmd@v1.13.0
+
+      # This step is necessary due to the initial config of ninja not working when a toolset is specified
+      # Config first with a preset where no toolset is specified.
+      # Then reconfig in the --workflow to specify the compiler
+      - name: Initial Config
+        run: cmake --preset SlimDev
 
       - name: Build with 14.37
         run: cmake --workflow --preset TestMinCompiler
