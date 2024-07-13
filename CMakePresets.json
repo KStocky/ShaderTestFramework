@@ -120,11 +120,6 @@
           "name": "FullCI",
           "configurePreset": "FullCI",
           "inherits": "DebugBase"
-        },
-        {
-          "name": "TestMinCompiler",
-          "configurePreset": "TestMinCompiler",
-          "inherits": "DebugBase"
         }
     ],
     "testPresets": [
