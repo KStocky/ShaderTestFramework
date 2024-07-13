@@ -29,6 +29,12 @@ jobs:
       - name: Checkout the repo
         uses: actions/checkout@v4
 
+
+      - name: Install MSVC 14.37
+        uses: thepwrtank18/install-vs-components@v1.0.0
+        with:
+            components: Microsoft.VisualStudio.Component.VC.14.37.17.7.x86.x64
+
       - name: Install Ninja
         uses: seanmiddleditch/gha-setup-ninja@master
 
