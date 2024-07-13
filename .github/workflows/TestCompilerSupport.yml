@@ -38,10 +38,10 @@ jobs:
         uses: seanmiddleditch/gha-setup-ninja@master
 
       - name: Setup Environment to use MSVC 14.37
-        uses: seanmiddleditch/gha-setup-vsdevenv@master
+        uses: ilammy/msvc-dev-cmd@v1.13.0
         with:
             arch: x64
-            toolset_version: 14.37
+            toolset: "14.37"
 
       - name: Build with 14.37
         run: cmake --workflow --preset BuildCI
