@@ -43,7 +43,6 @@ jobs:
         with:
             arch: x64
             toolset_version: 14.37
-            components: Microsoft.VisualStudio.Component.VC.14.37.17.7.x86.x64
 
       - name: Build with 14.37
         run: cmake --workflow --preset BuildCI
