@@ -6,66 +6,53 @@
         "minor": 25,
         "patch": 0
     },
-  "configurePresets": [
-    {
-      "name": "ConfigBase",
-      "hidden": true,
-      "binaryDir": "build",
-      "generator": "Ninja Multi-Config",
-      "cacheVariables": {
-        "CMAKE_UNITY_BUILD": false,
-        "CMAKE_CXX_COMPILER": "cl",
-        "STF_ENABLE_TESTING": false,
-        "STF_INCLUDE_EXAMPLES": false,
-        "STF_DISABLE_UNITY_STF": false,
-        "STF_STRICT_COMPILATION": false
-      }
-    },
-    {
-      "name": "FullDev",
-      "inherits": "ConfigBase",
-      "cacheVariables": {
-        "CMAKE_UNITY_BUILD": true,
-        "STF_ENABLE_TESTING": true,
-        "STF_INCLUDE_EXAMPLES": true,
-        "STF_DISABLE_UNITY_STF": true,
-        "STF_STRICT_COMPILATION": true
-      }
-    },
-    {
-      "name": "SlimDev",
-      "inherits": "ConfigBase",
-      "cacheVariables": {
-        "CMAKE_UNITY_BUILD": true,
-        "STF_ENABLE_TESTING": true,
-        "STF_DISABLE_UNITY_STF": true,
-        "STF_STRICT_COMPILATION": true
-      }
-    },
-    {
-      "name": "FullCI",
-      "inherits": "ConfigBase",
-      "cacheVariables": {
-        "CMAKE_UNITY_BUILD": true,
-        "STF_ENABLE_TESTING": true,
-        "STF_INCLUDE_EXAMPLES": true,
-        "STF_STRICT_COMPILATION": true
-      }
-    },
-    {
-      "name": "TestMinCompiler",
-      "inherits": "ConfigBase",
-      "toolset": {
-        "value": "version=14.37"
+    "configurePresets": [
+      {
+        "name": "ConfigBase",
+        "hidden": true,
+        "binaryDir": "build",
+        "generator": "Ninja Multi-Config",
+        "cacheVariables": {
+          "CMAKE_UNITY_BUILD": false,
+          "CMAKE_CXX_COMPILER": "cl",
+          "STF_ENABLE_TESTING": false,
+          "STF_INCLUDE_EXAMPLES": false,
+          "STF_DISABLE_UNITY_STF": false,
+          "STF_STRICT_COMPILATION": false
+        }
       },
-      "cacheVariables": {
-        "CMAKE_UNITY_BUILD": true,
-        "STF_ENABLE_TESTING": true,
-        "STF_INCLUDE_EXAMPLES": true,
-        "STF_STRICT_COMPILATION": true
+      {
+        "name": "FullDev",
+        "inherits": "ConfigBase",
+        "cacheVariables": {
+          "CMAKE_UNITY_BUILD": true,
+          "STF_ENABLE_TESTING": true,
+          "STF_INCLUDE_EXAMPLES": true,
+          "STF_DISABLE_UNITY_STF": true,
+          "STF_STRICT_COMPILATION": true
+        }
+      },
+      {
+        "name": "SlimDev",
+        "inherits": "ConfigBase",
+        "cacheVariables": {
+          "CMAKE_UNITY_BUILD": true,
+          "STF_ENABLE_TESTING": true,
+          "STF_DISABLE_UNITY_STF": true,
+          "STF_STRICT_COMPILATION": true
+        }
+      },
+      {
+        "name": "FullCI",
+        "inherits": "ConfigBase",
+        "cacheVariables": {
+          "CMAKE_UNITY_BUILD": true,
+          "STF_ENABLE_TESTING": true,
+          "STF_INCLUDE_EXAMPLES": true,
+          "STF_STRICT_COMPILATION": true
+        }
       }
-    }
-  ],
+    ],
     "buildPresets": [
         {
             "name": "DebugBase",
@@ -185,6 +172,19 @@
       ]
     },
     {
+      "name": "BuildCI",
+      "steps": [
+        {
+          "name": "FullCI",
+          "type": "configure"
+        },
+        {
+          "name": "FullCI",
+          "type": "build"
+        }
+      ]
+    },
+    {
       "name": "SlimDev",
       "steps": [
         {
@@ -206,19 +206,6 @@
         },
         {
           "name": "FullDevDebug",
-          "type": "build"
-        }
-      ]
-    },
-    {
-      "name": "TestMinCompiler",
-      "steps": [
-        {
-          "name": "TestMinCompiler",
-          "type": "configure"
-        },
-        {
-          "name": "TestMinCompiler",
           "type": "build"
         }
       ]
