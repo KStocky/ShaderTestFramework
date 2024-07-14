@@ -29,8 +29,8 @@ jobs:
     runs-on: windows-latest
 
     env:
-        MSVC_VERSION: "14.37"
-        VS_VERSION: "17.7"
+        MSVC_VERSION: 14.37
+        VS_VERSION: 17.7
 
     steps:
       - name: Checkout the repo
@@ -39,18 +39,18 @@ jobs:
       - name: Install MSVC ${{env.MSVC_VERSION}}
         uses: thepwrtank18/install-vs-components@v1.0.0
         with:
-            components: Microsoft.VisualStudio.Component.VC.$MSVC_VERSION.$VS_VERSION.x86.x64
+            components: Microsoft.VisualStudio.Component.VC.${{env.MSVC_VERSION}}.${{env.VS_VERSION}}.x86.x64
 
       - name: Install Ninja
         uses: seanmiddleditch/gha-setup-ninja@master
 
-      - name: Setup Environment to use MSVC $MSVC_VERSION
+      - name: Setup Environment to use MSVC ${{env.MSVC_VERSION}}
         uses: TheMrMilchmann/setup-msvc-dev@v3.0.1
         with:
             arch: amd64
-            toolset: "$MSVC_VERSION"
+            toolset: "${{env.MSVC_VERSION}}"
 
-      - name: Build with $MSVC_VERSION
+      - name: Build with ${{env.MSVC_VERSION}}
         run: cmake --workflow --preset BuildCI
           
             
