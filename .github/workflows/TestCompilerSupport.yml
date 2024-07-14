@@ -48,8 +48,9 @@ jobs:
         run: dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
 
       - name: Install MSVC 14.37
-        shell: cmd
-        run: call "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise" --quiet --norestart --nocache --add Microsoft.VisualStudio.Component.VC.14.37.17.7.x86.x64
+        #shell: cmd
+        #run: call "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise" --quiet --norestart --nocache --add Microsoft.VisualStudio.Component.VC.14.37.17.7.x86.x64
+        run: choco upgrade visualstudio2022enterprise --add Microsoft.VisualStudio.Component.VC.14.37.17.7.x86.x64
       
       - name: List MSVC versions after
         shell: cmd
