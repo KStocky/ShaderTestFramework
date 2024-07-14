@@ -39,7 +39,7 @@ jobs:
       - name: List MSVC versions before
         shell: cmd
         run: |
-            cd "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC" && dir
+            cd /d "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC" && dir
 
       #- name: Install MSVC 14.37
       #  uses: thepwrtank18/install-vs-components@v1.0.0
