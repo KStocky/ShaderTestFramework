@@ -48,7 +48,7 @@ jobs:
         uses: TheMrMilchmann/setup-msvc-dev@v3.0.1
         with:
             arch: amd64
-            toolset: "${{env.MSVC_VERSION}}"
+            toolset: ${{env.MSVC_VERSION}}
 
       - name: Build with ${{env.MSVC_VERSION}}
         run: cmake --workflow --preset BuildCI
