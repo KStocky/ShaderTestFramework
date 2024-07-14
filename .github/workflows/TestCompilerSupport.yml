@@ -1,0 +1,94 @@
+name: Test Compiler Support
+
+run-name: "${{github.actor}}: ${{github.event.head_commit.message || github.event.pull_request.title}}"
+
+on:
+  workflow_dispatch:
+
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches:
+      - "main"
+
+env:
+    MSVC_VERSION: 14.37
+    VS_VERSION: 17.7
+
+jobs:
+  Test-Compiler-Support:
+  
+    runs-on: windows-latest
+  
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+  
+      - name: Install Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+  
+      - name: List VS 2022 installations
+        shell: cmd
+        run: dir "C:\Program Files\Microsoft Visual Studio\2022"
+  
+      - name: List MSVC versions before
+        shell: cmd
+        run: dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
+  
+      - name: Install MSVC ${{env.MSVC_VERSION}}
+        shell: powershell
+        run: |
+                Set-Location "C:\Program Files (x86)\Microsoft Visual Studio\Installer\"
+                $InstallPath = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
+                $componentsToAdd= @(
+                  "Microsoft.VisualStudio.Component.VC.${{env.MSVC_VERSION}}.${{env.VS_VERSION}}.x86.x64"
+                )
+                [string]$workloadArgs = $componentsToAdd | ForEach-Object {" --add " +  $_}
+                $Arguments = ('/c', "vs_installer.exe", 'modify', '--installPath', "`"$InstallPath`"",$workloadArgs, '--quiet', '--norestart', '--nocache')
+                # should be run twice... for reasons... https://github.com/actions/runner-images/issues/9701
+                $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
+                $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
+  
+      - name: List MSVC versions after
+        shell: cmd
+        run: dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
+      
+      - name: Setup Environment to use MSVC ${{env.MSVC_VERSION}}
+        uses: TheMrMilchmann/setup-msvc-dev@v3.0.1
+        with:
+            arch: amd64
+            toolset: ${{env.MSVC_VERSION}}
+      
+      - name: Build with ${{env.MSVC_VERSION}}
+        run: cmake --workflow --preset BuildCI
+
+  Generate-Badges:
+
+    permissions:
+      contents: write
+      
+    runs-on: ubuntu-latest
+    needs: Test-Compiler-Support
+    steps:
+      - name: Min VS Badge
+        uses: RubbaBoy/BYOB@v1.3.0
+        with:
+          name: MinMSVCVersion
+          label: 'Minimum MSVC/Visual Studio version'
+          icon: "visualstudio"
+          status: "${{env.MSVC_VERSION}}/${{env.VS_VERSION}}"
+          color: green
+          github_token: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Min CMake badge
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+            auth: ${{ secrets.DYNAMIC_BADGE_GIST_PAT }}
+            gistID: fc80ff760df6627ccc295d486a54824c
+            filename: MinCMakeVersion.json
+            label: Minimum CMake version
+            message: 3.26
+            color: green
+            namedLogo: cmake
+
+          
+            

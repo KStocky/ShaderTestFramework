@@ -2,6 +2,8 @@
 
 ![Tests](https://github.com/KStocky/ShaderTestFramework/actions/workflows/BuildAndRunTests.yml/badge.svg)
 ![Link Validation](https://github.com/KStocky/ShaderTestFramework/actions/workflows/LinkValidation.yml/badge.svg)
+![Minimum MSVC Version](https://byob.yarr.is/KStocky/ShaderTestFramework/MinMSVCVersion)
+![Minimum CMake Version](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/KStocky/fc80ff760df6627ccc295d486a54824c/raw/MinCMakeVersion.json)
 
 **Shader code is code. We should test it**
 
@@ -13,16 +15,19 @@ It is a framework that is intended to be used with another testing framework suc
 
 ## Getting Started
 
-This should be enough to grab the repo and build everything provided you have at least Visual Studio 2022 17.7 and CMake 3.26.
+This should be enough to grab the repo and build everything provided you have at the minimum Visual Studio and CMake versions specified by the badges above.
 ```
 $ git clone https://github.com/KStocky/ShaderTestFramework
 $ cd ShaderTestFramework
-$ cmake --workflow --preset FullDev
+$ cmake --workflow --preset FullDevVS
 ```
 
 From there you can have a play with the [examples](./examples).
 
 There is also a much more in depth [tutorial](docs/Tutorial.md). This describes the requirements in detail, then takes you through how to include the framework in your project, and then how to write tests for your shader code.
+
+Shader Test Framework also provides [Ninja Build](https://ninja-build.org/) presets which can be used if you open the root folder in Visual Studio to make use of Visual Studio's CMake integration.
+This is the recommended way to use Shader Test Framework as Ninja is MUCH faster than MSBuild.
 
 ## Example Shader Unit Test
 
