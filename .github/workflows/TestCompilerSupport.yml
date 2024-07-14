@@ -92,14 +92,22 @@ jobs:
           github_token: ${{secrets.GITHUB_TOKEN}}
 
       - name: Min CMake badge
-        uses: RubbaBoy/BYOB@v1.3.0
+        uses: peterrhodesdev/build-a-badge@v1.3.0
         with:
-          name: MinCMakeVersion
-          label: 'Minimum CMake version'
-          icon: "visualstudio"
-          status: "3.26"
-          color: green
-          github_token: ${{secrets.GITHUB_TOKEN}}
+            token: ${{ secrets.GITHUB_TOKEN }}
+            filename: MinCMakeVersion
+            label: Minimum CMake version
+            message: "3.26"
+            color: green
+            namedLogo: CMake
+        #uses: RubbaBoy/BYOB@v1.3.0
+        #    with:
+        #      name: MinCMakeVersion
+        #      label: 'Minimum CMake version'
+        #      icon: "visualstudio"
+        #      status: "3.26"
+        #      color: green
+        #      github_token: ${{secrets.GITHUB_TOKEN}}
 
           
             
