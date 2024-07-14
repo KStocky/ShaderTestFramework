@@ -39,7 +39,7 @@ jobs:
       - name: List MSVC versions before
         shell: cmd
         run: |
-            cd /d "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC" && dir
+            dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
 
       - name: Install MSVC 14.37
         uses: thepwrtank18/install-vs-components@v1.0.0
@@ -49,18 +49,18 @@ jobs:
       - name: List MSVC versions after
         shell: cmd
         run: |
-            cd /d "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC" && dir
+            dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
       
-      #- name: Install Ninja
-      #  uses: seanmiddleditch/gha-setup-ninja@master
-      #
-      #- name: Setup Environment to use MSVC 14.37
-      #  uses: TheMrMilchmann/setup-msvc-dev@v3.0.1
-      #  with:
-      #      arch: amd64
-      #      toolset: "14.37"
-      #
-      #- name: Build with 14.37
-      #  run: cmake --workflow --preset BuildCI
+      - name: Install Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+      
+      - name: Setup Environment to use MSVC 14.37
+        uses: TheMrMilchmann/setup-msvc-dev@v3.0.1
+        with:
+            arch: amd64
+            toolset: 14.37
+      
+      - name: Build with 14.37
+        run: cmake --workflow --preset BuildCI
           
             
