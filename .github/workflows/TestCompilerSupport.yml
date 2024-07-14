@@ -39,6 +39,14 @@ jobs:
       - name: Install Ninja
         uses: seanmiddleditch/gha-setup-ninja@master
 
+      - name: List VS installations
+        shell: cmd
+        run: dir "C:\Program Files\Microsoft Visual Studio"
+
+      - name: List VS 2022 installations
+        shell: cmd
+        run: dir "C:\Program Files\Microsoft Visual Studio\2022"
+
       - name: List MSVC versions before
         shell: cmd
         run: dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
