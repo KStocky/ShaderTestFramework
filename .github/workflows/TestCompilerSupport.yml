@@ -21,29 +21,36 @@ on:
       - '**.h'
       - '**CMakeLists.txt'
       - '**TestCompilerSupport.yml'
+
+
 jobs:
   Test-Compiler-Support:
 
     runs-on: windows-latest
+
+    env:
+        MSVC_VERSION: 14.37
+        VS_VERSION: 17.7
+
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v4
 
-      - name: Install MSVC 14.37
+      - name: Install MSVC $MSVC_VERSION
         uses: thepwrtank18/install-vs-components@v1.0.0
         with:
-            components: Microsoft.VisualStudio.Component.VC.14.37.17.7.x86.x64
+            components: Microsoft.VisualStudio.Component.VC.$MSVC_VERSION.$VS_VERSION.x86.x64
 
       - name: Install Ninja
         uses: seanmiddleditch/gha-setup-ninja@master
 
-      - name: Setup Environment to use MSVC 14.37
+      - name: Setup Environment to use MSVC $MSVC_VERSION
         uses: TheMrMilchmann/setup-msvc-dev@v3.0.1
         with:
             arch: amd64
-            toolset: "14.37"
+            toolset: "$MSVC_VERSION"
 
-      - name: Build with 14.37
+      - name: Build with $MSVC_VERSION
         run: cmake --workflow --preset BuildCI
           
             
