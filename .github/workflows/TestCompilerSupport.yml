@@ -99,7 +99,6 @@ jobs:
             filename: MinCMakeVersion.json
             label: Minimum CMake version
             message: 3.26
-            labelColor: grey
             color: green
             namedLogo: cmake
         #uses: RubbaBoy/BYOB@v1.3.0
