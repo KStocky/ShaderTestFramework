@@ -28,6 +28,10 @@ jobs:
 
     runs-on: windows-latest
 
+    env:
+        MSVC_VERSION: 14.37
+        VS_VERSION: 17.7
+
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v4
@@ -47,23 +51,23 @@ jobs:
         shell: cmd
         run: dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
 
-      - name: Install MSVC 14.37
+      - name: Install MSVC ${{env.MSVC_VERSION}}
         shell: cmd
         run: |
-            call "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise" --quiet --norestart --nocache --add Microsoft.VisualStudio.Component.VC.14.37.17.7.x86.x64
-            call "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise" --quiet --norestart --nocache --add Microsoft.VisualStudio.Component.VC.14.37.17.7.x86.x64
+            call "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise" --quiet --norestart --nocache --add Microsoft.VisualStudio.Component.VC.${{env.MSVC_VERSION}}.${{env.VS_VERSION}}.x86.x64
+            call "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise" --quiet --norestart --nocache --add Microsoft.VisualStudio.Component.VC.${{env.MSVC_VERSION}}.${{env.VS_VERSION}}.x86.x64
       
       - name: List MSVC versions after
         shell: cmd
         run: dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
       
-      #- name: Setup Environment to use MSVC 14.37
-      #  uses: TheMrMilchmann/setup-msvc-dev@v3.0.1
-      #  with:
-      #      arch: amd64
-      #      toolset: 14.37
-      #
-      #- name: Build with 14.37
-      #  run: cmake --workflow --preset BuildCI
+      - name: Setup Environment to use MSVC ${{env.MSVC_VERSION}}
+        uses: TheMrMilchmann/setup-msvc-dev@v3.0.1
+        with:
+            arch: amd64
+            toolset: ${{env.MSVC_VERSION}}
+      
+      - name: Build with ${{env.MSVC_VERSION}}
+        run: cmake --workflow --preset BuildCI
           
             
