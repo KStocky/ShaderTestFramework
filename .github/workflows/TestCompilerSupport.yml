@@ -92,14 +92,24 @@ jobs:
           github_token: ${{secrets.GITHUB_TOKEN}}
 
       - name: Min CMake badge
-        uses: RubbaBoy/BYOB@v1.3.0
+        uses: schneegans/dynamic-badges-action@v1.7.0
         with:
-            name: MinCMakeVersion
-            label: 'Minimum CMake version'
-            icon: "cmake"
-            status: "3.26"
+            auth: ${{ secrets.DYNAMIC_BADGE_GIST_PAT }}
+            gistID: fc80ff760df6627ccc295d486a54824c
+            filename: MinCMakeVersion.json
+            label: Minimum CMake version
+            message: 3.26
+            labelColor: grey
             color: green
-            github_token: ${{secrets.GITHUB_TOKEN}}
+            namedLogo: cmake
+        #uses: RubbaBoy/BYOB@v1.3.0
+        #with:
+        #    name: MinCMakeVersion
+        #    label: 'Minimum CMake version'
+        #    icon: "cmake"
+        #    status: "3.26"
+        #    color: green
+        #    github_token: ${{secrets.GITHUB_TOKEN}}
 
           
             
