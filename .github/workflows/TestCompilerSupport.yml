@@ -76,7 +76,6 @@ jobs:
   Generate-Badge:
 
     permissions:
-      actions: write
       contents: write
       
     runs-on: ubuntu-latest
