@@ -36,21 +36,21 @@ jobs:
       - name: Checkout the repo
         uses: actions/checkout@v4
 
-      - name: Install MSVC ${{env.MSVC_VERSION}}
+      - name: Install MSVC 14.37
         uses: thepwrtank18/install-vs-components@v1.0.0
         with:
-            components: Microsoft.VisualStudio.Component.VC.${{env.MSVC_VERSION}}.${{env.VS_VERSION}}.x86.x64
+            components: Microsoft.VisualStudio.Component.VC.14.37.17.7.x86.x64
 
       - name: Install Ninja
         uses: seanmiddleditch/gha-setup-ninja@master
 
-      - name: Setup Environment to use MSVC ${{env.MSVC_VERSION}}
+      - name: Setup Environment to use MSVC 14.37
         uses: TheMrMilchmann/setup-msvc-dev@v3.0.1
         with:
             arch: amd64
-            toolset: ${{env.MSVC_VERSION}}
+            toolset: "14.37"
 
-      - name: Build with ${{env.MSVC_VERSION}}
+      - name: Build with 14.37
         run: cmake --workflow --preset BuildCI
           
             
