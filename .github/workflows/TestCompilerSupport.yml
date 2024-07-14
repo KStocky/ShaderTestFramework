@@ -36,7 +36,7 @@ jobs:
       - name: Checkout the repo
         uses: actions/checkout@v4
 
-      - name: Install MSVC $MSVC_VERSION
+      - name: Install MSVC ${{env.MSVC_VERSION}}
         uses: thepwrtank18/install-vs-components@v1.0.0
         with:
             components: Microsoft.VisualStudio.Component.VC.$MSVC_VERSION.$VS_VERSION.x86.x64
