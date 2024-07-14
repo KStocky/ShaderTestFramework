@@ -73,5 +73,14 @@ jobs:
       
       - name: Build with ${{env.MSVC_VERSION}}
         run: cmake --workflow --preset BuildCI
+
+      - name: Generate Badge
+        uses: RubbaBoy/BYOB@v1.3.0
+        with:
+            NAME: MinMSVCVersion
+            LABEL: 'Min MSVC/VS version'
+            STATUS: "${{env.MSVC_VERSION}}/${{env.VS_VERSION}}"
+            COLOR: green
+
           
             
