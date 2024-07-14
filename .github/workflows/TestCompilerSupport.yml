@@ -52,10 +52,22 @@ jobs:
         run: dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
 
       - name: Install MSVC ${{env.MSVC_VERSION}}
-        shell: cmd
+        shell: powershell
         run: |
-            call "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise" --quiet --norestart --nocache --add Microsoft.VisualStudio.Component.VC.${{env.MSVC_VERSION}}.${{env.VS_VERSION}}.x86.x64
-            call "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise" --quiet --norestart --nocache --add Microsoft.VisualStudio.Component.VC.${{env.MSVC_VERSION}}.${{env.VS_VERSION}}.x86.x64
+                Set-Location "C:\Program Files (x86)\Microsoft Visual Studio\Installer\"
+                $InstallPath = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
+                $componentsToAdd= @(
+                  "Microsoft.VisualStudio.Component.VC.${{env.MSVC_VERSION}}.${{env.VS_VERSION}}.x86.x64"
+                )
+                [string]$workloadArgs = $componentsToAdd | ForEach-Object {" --add " +  $_}
+                $Arguments = ('/c', "vs_installer.exe", 'modify', '--installPath', "`"$InstallPath`"",$workloadArgs, '--quiet', '--norestart', '--nocache')
+                # should be run twice
+                $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
+                $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
+      #  shell: cmd
+      #  run: |
+      #      call "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise" --quiet --norestart --nocache --add Microsoft.VisualStudio.Component.VC.${{env.MSVC_VERSION}}.${{env.VS_VERSION}}.x86.x64
+      #      call "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise" --quiet --norestart --nocache --add Microsoft.VisualStudio.Component.VC.${{env.MSVC_VERSION}}.${{env.VS_VERSION}}.x86.x64
       
       - name: List MSVC versions after
         shell: cmd
