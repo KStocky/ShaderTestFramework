@@ -79,7 +79,7 @@ jobs:
       actions: write
       
     runs-on: ubuntu-latest
-    needs: Test-Compiler-Support
+    #needs: Test-Compiler-Support
     steps:
       - name: Generate Badge
         uses: RubbaBoy/BYOB@v1.3.0
