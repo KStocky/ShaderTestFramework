@@ -22,15 +22,14 @@ on:
       - '**CMakeLists.txt'
       - '**TestCompilerSupport.yml'
 
+env:
+    MSVC_VERSION: 14.37
+    VS_VERSION: 17.7
 
 jobs:
   Test-Compiler-Support:
 
     runs-on: windows-latest
-
-    env:
-        MSVC_VERSION: 14.37
-        VS_VERSION: 17.7
 
     steps:
       - name: Checkout the repo
