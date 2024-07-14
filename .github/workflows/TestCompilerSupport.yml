@@ -82,8 +82,10 @@ jobs:
         with:
             NAME: MinMSVCVersion
             LABEL: 'Min MSVC/VS version'
+            ICON: "visualstudio"
             STATUS: "${{env.MSVC_VERSION}}/${{env.VS_VERSION}}"
             COLOR: green
+            GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
           
             
