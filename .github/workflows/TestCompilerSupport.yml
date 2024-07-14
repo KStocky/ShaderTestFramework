@@ -101,14 +101,6 @@ jobs:
             message: 3.26
             color: green
             namedLogo: cmake
-        #uses: RubbaBoy/BYOB@v1.3.0
-        #with:
-        #    name: MinCMakeVersion
-        #    label: 'Minimum CMake version'
-        #    icon: "cmake"
-        #    status: "3.26"
-        #    color: green
-        #    github_token: ${{secrets.GITHUB_TOKEN}}
 
           
             

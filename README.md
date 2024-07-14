@@ -3,7 +3,7 @@
 ![Tests](https://github.com/KStocky/ShaderTestFramework/actions/workflows/BuildAndRunTests.yml/badge.svg)
 ![Link Validation](https://github.com/KStocky/ShaderTestFramework/actions/workflows/LinkValidation.yml/badge.svg)
 ![Minimum MSVC Version](https://byob.yarr.is/KStocky/ShaderTestFramework/MinMSVCVersion)
-![Minimum CMake Version](https://byob.yarr.is/KStocky/ShaderTestFramework/MinCMakeVersion)
+![Minimum CMake Version](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/KStocky/fc80ff760df6627ccc295d486a54824c/raw/MinCMakeVersion.json)
 
 **Shader code is code. We should test it**
 
