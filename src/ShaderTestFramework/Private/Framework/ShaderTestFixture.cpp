@@ -14,17 +14,6 @@
 #include <ranges>
 #include <utility>
 
-#include <WinPixEventRuntime/pix3.h>
-
-namespace
-{
-    bool LoadPix()
-    {
-        static bool isAvailable = PIXLoadLatestWinPixGpuCapturerLibrary() != nullptr;
-        return isAvailable;
-    }
-}
-
 StatSystem ShaderTestFixture::statSystem;
 std::vector<TimedStat> ShaderTestFixture::cachedStats;
 
@@ -47,7 +36,6 @@ ShaderTestFixture::ShaderTestFixture(Desc InParams)
     shaderDir += SHADER_SRC;
     InParams.Mappings.push_back({ "/Test", std::move(shaderDir) });
     m_Compiler.emplace(std::move(InParams.Mappings));
-    m_PIXAvailable = LoadPix();
     m_Device = GPUDevice{ InParams.GPUDeviceParams };
 
     PopulateDefaultByteReaders();
@@ -528,6 +516,6 @@ void ShaderTestFixture::PopulateDefaultByteReaders()
 
 bool ShaderTestFixture::ShouldTakeCapture() const
 {
-    return m_PIXAvailable && m_CaptureRequested;
+    return m_Device.IsGPUCaptureEnabled() && m_CaptureRequested;
 }
 

@@ -18,9 +18,11 @@ public:
     struct Desc
     {
         std::vector<VirtualShaderDirectoryMapping> Mappings;
-        GPUDevice::CreationParams GPUDeviceParams = {
+        GPUDevice::CreationParams GPUDeviceParams
+        {
             .DebugLevel = GPUDevice::EDebugLevel::DebugLayerWithValidation,
-            .DeviceType = GPUDevice::EDeviceType::Software
+            .DeviceType = GPUDevice::EDeviceType::Software,
+            .EnableGPUCapture = true
         };
         ShaderCodeSource Source;
         std::vector<std::wstring> CompilationFlags;
