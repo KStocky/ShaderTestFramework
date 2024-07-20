@@ -22,7 +22,7 @@ public:
         {
             .DebugLevel = GPUDevice::EDebugLevel::DebugLayerWithValidation,
             .DeviceType = GPUDevice::EDeviceType::Software,
-            .EnableGPUCapture = true
+            .EnableGPUCapture = false
         };
         ShaderCodeSource Source;
         std::vector<std::wstring> CompilationFlags;
