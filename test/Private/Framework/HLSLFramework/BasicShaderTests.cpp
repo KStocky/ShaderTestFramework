@@ -1,4 +1,6 @@
+
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
+#include <Framework/ShaderTestFixture.h>
 
 #include <ranges>
 #include <string>
@@ -22,9 +24,14 @@ SCENARIO("BasicShaderTests")
 
     GIVEN(testName)
     {
-        if (shouldSucceed)
+
         {
-            ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/BasicShaderTests.hlsl")));
+            ShaderTestFixture fixture(
+                ShaderTestFixture::FixtureDesc
+                {
+                    .Mappings{ GetTestVirtualDirectoryMapping() }
+                }
+            );
 
             THEN("There should be zero stats")
             {
@@ -33,26 +40,31 @@ SCENARIO("BasicShaderTests")
                 REQUIRE(stats.empty());
             }
 
-            THEN("It should succeed")
+            const auto result = fixture.RunTest(
+                ShaderTestFixture::RuntimeTestDesc
+                {
+                    .CompilationEnv
+                    {
+                        .Source = fs::path("/Tests/BasicShaderTests.hlsl")
+                    },
+                    .TestName = testName,
+                    .ThreadGroupCount{1, 1, 1}
+                });
+
+            if (shouldSucceed)
             {
-                REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+                THEN("It should succeed")
+                {
+                    REQUIRE(result);
+                }
             }
-        }
-        else
-        {
-            ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/BasicShaderTests.hlsl")));
-
-            THEN("There should be zero stats")
+            else
             {
-                const auto stats = ShaderTestFixture::GetTestStats();
+                THEN("It should fail")
+                {
 
-                REQUIRE(stats.empty());
-            }
-
-            THEN("It should fail")
-            {
-                const auto result = fixture.RunTest(testName, 1, 1, 1);
-                REQUIRE_FALSE(result);
+                    REQUIRE_FALSE(result);
+                }
             }
         }
 

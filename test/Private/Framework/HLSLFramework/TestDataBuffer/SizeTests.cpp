@@ -1,5 +1,5 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
-
+#include <Framework/ShaderTestFixture.h>
 #include <string>
 
 #include <catch2/catch_test_macros.hpp>
@@ -20,9 +20,30 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - SizeTests")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/TestDataBuffer/SizeTests.hlsl"), {numRecordedFailedAsserts, numBytesAssertData}));
+    ShaderTestFixture fixture(
+        ShaderTestFixture::FixtureDesc
+        {
+            .Mappings{ GetTestVirtualDirectoryMapping() }
+        }
+    );
+
     DYNAMIC_SECTION(testName)
     {
-        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+        REQUIRE(fixture.RunTest(
+            ShaderTestFixture::RuntimeTestDesc
+            {
+                .CompilationEnv
+                {
+                    .Source = fs::path("/Tests/TestDataBuffer/SizeTests.hlsl")
+                },
+                .TestName = testName,
+                .ThreadGroupCount{1, 1, 1},
+                .TestDataLayout
+                {
+                    .NumFailedAsserts = numRecordedFailedAsserts,
+                    .NumBytesAssertData = numBytesAssertData
+                }
+            }
+        ));
     }
 }

@@ -1,4 +1,5 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
+#include <Framework/ShaderTestFixture.h>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
@@ -13,16 +14,30 @@ SCENARIO("HLSLFrameworkTests - SectionManagement")
         "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_RanUsingWhile_THEN_SectionsEntered5Times"
     );
 
-    ShaderTestFixture::Desc desc{};
+    ShaderTestFixture fixture(
+        ShaderTestFixture::FixtureDesc
+        {
+            .Mappings{GetTestVirtualDirectoryMapping()}
+        }
+    );
 
-    desc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    desc.Source = fs::path("/Tests/SectionManagement.hlsl");
-    desc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
-    desc.TestDataLayout = STF::TestDataBufferLayout(100, 1024);
-
-    ShaderTestFixture fixture(std::move(desc));
     DYNAMIC_SECTION(testName)
     {
-        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+        REQUIRE(fixture.RunTest(
+            ShaderTestFixture::RuntimeTestDesc
+            {
+                .CompilationEnv
+                {
+                    .Source = fs::path("/Tests/SectionManagement.hlsl")
+                },
+                .TestName = testName,
+                .ThreadGroupCount{1, 1, 1},
+                .TestDataLayout
+                {
+                    .NumFailedAsserts = 100,
+                    .NumBytesAssertData = 1024
+                }
+            })
+        );
     }
 }

@@ -1,4 +1,5 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
+#include <Framework/ShaderTestFixture.h>
 #include <Utility/Math.h>
 #include <Utility/OverloadSet.h>
 #include <Utility/Tuple.h>
@@ -267,12 +268,33 @@ SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - AssertInfoWit
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/TestDataBuffer/ResultsProcessing/AssertInfoWithData.hlsl"), { numRecordedAsserts, numBytesData }));
+    ShaderTestFixture fixture(
+        ShaderTestFixture::FixtureDesc
+        {
+            .Mappings{ GetTestVirtualDirectoryMapping() }
+        }
+    );
+
     fixture.RegisterByteReader("TEST_TYPE_WITH_WRITER", [](const u16, const std::span<const std::byte>) { return ""; });
 
     DYNAMIC_SECTION(testName)
     {
-        const auto results = fixture.RunTest(testName, 1, 1, 1);
+        const auto results = fixture.RunTest(
+            ShaderTestFixture::RuntimeTestDesc
+            {
+                .CompilationEnv
+                {
+                    .Source = fs::path("/Tests/TestDataBuffer/ResultsProcessing/AssertInfoWithData.hlsl")
+                },
+                .TestName = testName,
+                .ThreadGroupCount{1, 1, 1},
+                .TestDataLayout
+                {
+                    .NumFailedAsserts = numRecordedAsserts,
+                    .NumBytesAssertData = numBytesData
+                }
+            }
+        );
         CAPTURE(results);
         const auto actual = results.GetTestResults();
         REQUIRE(actual);

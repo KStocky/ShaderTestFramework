@@ -114,7 +114,7 @@ namespace STF
     TestRunResults ProcessTestDataBuffer(
         const AllocationBufferData InAllocationBufferData,
         const uint3 InDispatchDimensions,
-        TestDataBufferLayout InLayout,
+        const TestDataBufferLayout& InLayout,
         std::span<const std::byte> InTestData,
         const MultiTypeByteReaderMap& InByteReaderMap);
 

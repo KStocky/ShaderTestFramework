@@ -66,7 +66,7 @@ SCENARIO("ShaderTestFixtureTests - Run Compile Time Tests")
     {
         if (shouldSucceed)
         {
-            ShaderTestFixture fixture(ShaderTestFixture::Desc{ .Source = std::move(source) });
+            ShaderTestFixture fixture{ ShaderTestFixture::FixtureDesc{} };
 
             THEN("There should be zero stats")
             {
@@ -75,7 +75,18 @@ SCENARIO("ShaderTestFixtureTests - Run Compile Time Tests")
                 REQUIRE(stats.empty());
             }
 
-            const auto result = fixture.RunCompileTimeTest();
+            const auto result = fixture.RunCompileTimeTest
+            (
+                ShaderTestFixture::CompileTestDesc
+                {
+                    .CompilationEnv
+                    {
+                        .Source = std::move(source)
+                    },
+                    .TestName = std::move(testName)
+                }
+            );
+
             THEN("It should succeed")
             {
                 REQUIRE(result);
@@ -83,7 +94,7 @@ SCENARIO("ShaderTestFixtureTests - Run Compile Time Tests")
         }
         else
         {
-            ShaderTestFixture fixture(ShaderTestFixture::Desc{ .Source = std::move(source) });
+            ShaderTestFixture fixture{ ShaderTestFixture::FixtureDesc{} };
 
             THEN("There should be zero stats")
             {
@@ -92,7 +103,18 @@ SCENARIO("ShaderTestFixtureTests - Run Compile Time Tests")
                 REQUIRE(stats.empty());
             }
 
-            const auto result = fixture.RunCompileTimeTest();
+            const auto result = fixture.RunCompileTimeTest
+            (
+                ShaderTestFixture::CompileTestDesc
+                {
+                    .CompilationEnv
+                    {
+                        .Source = std::move(source)
+                    },
+                    .TestName = std::move(testName)
+                }
+            );
+
             THEN("It should fail")
             {
                 REQUIRE_FALSE(result);

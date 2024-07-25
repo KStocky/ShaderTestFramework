@@ -1,5 +1,5 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
-
+#include <Framework/ShaderTestFixture.h>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
@@ -24,16 +24,37 @@ SCENARIO("HLSLFrameworkTests - Container_wrapper")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/Container/ArrayTests/{}.hlsl", testName))));
+    ShaderTestFixture fixture(
+        ShaderTestFixture::FixtureDesc
+        {
+            .Mappings{ GetTestVirtualDirectoryMapping() }
+        }
+    );
+
+    const auto getDesc =
+        [&testName]()
+        {
+            return
+                ShaderTestFixture::RuntimeTestDesc
+            {
+                .CompilationEnv
+                {
+                    .Source = fs::path(std::format("/Tests/Container/ArrayTests/{}.hlsl", testName))
+                },
+                .TestName = testName,
+                .ThreadGroupCount{1, 1, 1}
+            };
+        };
+
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
         {
-            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+            REQUIRE(fixture.RunTest(getDesc()));
         }
         else
         {
-            const auto result = fixture.RunTest(testName, 1, 1, 1);
+            const auto result = fixture.RunTest(getDesc());
             REQUIRE_FALSE(result);
         }
     }

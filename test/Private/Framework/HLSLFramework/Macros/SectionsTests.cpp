@@ -15,9 +15,25 @@ SCENARIO("HLSLFrameworkTests - Macros - SECTIONS")
         "GIVEN_ThreeLevelsDeepSections_WHEN_RanUsingSingle_THEN_ExpectedSubsectionEntryOccurs"
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Macros/Sections.hlsl")));
+    ShaderTestFixture fixture(
+        ShaderTestFixture::FixtureDesc
+        {
+            .Mappings{ GetTestVirtualDirectoryMapping() }
+        }
+    );
+
     DYNAMIC_SECTION(testName)
     {
-        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+        REQUIRE(fixture.RunTest(
+            ShaderTestFixture::RuntimeTestDesc
+            {
+                .CompilationEnv
+                {
+                    .Source = fs::path("/Tests/Macros/Sections.hlsl")
+                },
+                .TestName = testName,
+                .ThreadGroupCount{1, 1, 1}
+            }
+        ));
     }
 }

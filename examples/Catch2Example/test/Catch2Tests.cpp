@@ -6,16 +6,6 @@ static VirtualShaderDirectoryMapping GetTestVirtualDirectoryMapping()
     return VirtualShaderDirectoryMapping{ "/MyTests", fs::current_path() / "shader" };
 }
 
-static ShaderTestFixture::Desc CreateDescForHLSLFrameworkTest(fs::path&& InPath)
-{
-    ShaderTestFixture::Desc desc{};
-
-    desc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    desc.Source = std::move(InPath);
-    desc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
-    return desc;
-}
-
 #include <string>
 
 #include <catch2/catch_test_macros.hpp>
@@ -34,18 +24,39 @@ SCENARIO("Catch2ShaderTests")
             }
         )
     );
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/MyTests/ShaderTest.hlsl")));
+
+    ShaderTestFixture fixture(
+        ShaderTestFixture::FixtureDesc
+        {
+            .Mappings{ GetTestVirtualDirectoryMapping() }
+        }
+    );
+
+    auto testDesc =
+        [&testName]()
+        {
+            return
+                ShaderTestFixture::RuntimeTestDesc
+            {
+                .CompilationEnv
+                {
+                    .Source = fs::path("/MyTests/ShaderTest.hlsl")
+                },
+                .TestName = testName,
+                .ThreadGroupCount{ 1, 1, 1 }
+            };
+        };
+
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
         {
-            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+            REQUIRE(fixture.RunTest(testDesc()));
         }
         else
         {
-            const auto result = fixture.RunTest(testName, 1, 1, 1);
+            const auto result = fixture.RunTest(testDesc());
             REQUIRE_FALSE(result);
         }
-        
     }
 }

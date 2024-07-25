@@ -7,27 +7,36 @@
 
 SCENARIO("MinimalShaderTestExample")
 {
-    ShaderTestFixture::Desc desc{};
+    ShaderTestFixture fixture(ShaderTestFixture::FixtureDesc{});
 
-    // The HLSL source can either be:
-    // 1. a std::filesystem::path that points to the HLSL file under test
-    // 2. a std::string containing the HLSL code under test.
-    desc.Source = std::string{
-        R"(
-            // Include the test framework
-            #include "/Test/STF/ShaderTestFramework.hlsli"
-
-            [RootSignature(SHADER_TEST_RS)]
-            [numthreads(1, 1, 1)]
-            void MinimalTestEntryFunction()
+    // RunTest takes a desc that describes the test setup
+    // In this case we give the HLSL source code, entry function name and thread group count.
+    REQUIRE(fixture.RunTest
+    (
+        ShaderTestFixture::RuntimeTestDesc
+        {
+            .CompilationEnv
             {
-                STF::AreEqual(42, 42);
-            }
-        )"
-    };
-    ShaderTestFixture fixture(std::move(desc));
+                // The HLSL source can either be:
+                // 1. a std::filesystem::path that points to the HLSL file under test
+                // 2. a std::string containing the HLSL code under test.
+                .Source = std::string{
+                    R"(
+                        // Include the test framework
+                        #include "/Test/STF/ShaderTestFramework.hlsli"
 
-    // RunTest takes the entry function of the shader to run and also the dispatch config.
-    // In this case we are launching a single threadgroup
-    REQUIRE(fixture.RunTest("MinimalTestEntryFunction", 1, 1, 1));
+                        [RootSignature(SHADER_TEST_RS)]
+                        [numthreads(1, 1, 1)]
+                        void MinimalTestEntryFunction()
+                        {
+                            STF::AreEqual(42, 42);
+                        }
+                    )"
+                }
+            },
+            .TestName = "MinimalTestEntryFunction",
+            .ThreadGroupCount{ 1, 1, 1}
+        }
+    )
+    );
 }

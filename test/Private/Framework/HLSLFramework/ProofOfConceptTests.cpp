@@ -17,9 +17,25 @@ SCENARIO("HLSLFrameworkTests - ProofOfConcept")
         "VariadicMacroOverloading"
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/ProofOfConcept/{}.hlsl", testName))));
+    ShaderTestFixture fixture(
+        ShaderTestFixture::FixtureDesc
+        {
+            .Mappings{ GetTestVirtualDirectoryMapping() }
+        }
+    );
+
     DYNAMIC_SECTION(testName)
     {
-        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+        REQUIRE(fixture.RunTest(
+            ShaderTestFixture::RuntimeTestDesc
+            {
+                .CompilationEnv
+                {
+                    .Source = fs::path(std::format("/Tests/ProofOfConcept/{}.hlsl", testName))
+                },
+                .TestName = testName,
+                .ThreadGroupCount{1, 1, 1}
+            })
+        );
     }
 }

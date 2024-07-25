@@ -1,5 +1,5 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
-
+#include <Framework/ShaderTestFixture.h>
 #include <string>
 
 #include <catch2/catch_test_macros.hpp>
@@ -20,11 +20,27 @@ SCENARIO("HLSLFrameworkTests - String - StrLen")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/String/StringLengthTests/{}.hlsl", testName))));
+    ShaderTestFixture fixture(
+        ShaderTestFixture::FixtureDesc
+        {
+            .Mappings{ GetTestVirtualDirectoryMapping() }
+        }
+    );
+
     DYNAMIC_SECTION(testName)
     {
 
-        const auto results = fixture.RunTest("Main", 1, 1, 1);
+        const auto results = fixture.RunTest(
+            ShaderTestFixture::RuntimeTestDesc
+            {
+                .CompilationEnv
+                {
+                    .Source = fs::path(std::format("/Tests/String/StringLengthTests/{}.hlsl", testName))
+                },
+                .TestName = "Main",
+                .ThreadGroupCount{1, 1, 1}
+            }
+        );
         CAPTURE(results);
         const auto actual = results.GetFailedCompilationResult();
         REQUIRE(actual);

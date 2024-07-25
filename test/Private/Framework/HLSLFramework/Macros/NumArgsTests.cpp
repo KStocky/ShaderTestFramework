@@ -1,11 +1,25 @@
 
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
-
+#include <Framework/ShaderTestFixture.h>
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/generators/catch_generators.hpp>
 
 SCENARIO("HLSLFrameworkTests - Macros - NumArgs")
 {
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Macros/NumArgs.hlsl")));
-    REQUIRE(fixture.RunCompileTimeTest());
+    ShaderTestFixture fixture(
+        ShaderTestFixture::FixtureDesc
+        {
+            .Mappings{ GetTestVirtualDirectoryMapping() }
+        }
+    );
+
+    REQUIRE(fixture.RunCompileTimeTest(
+        ShaderTestFixture::CompileTestDesc
+        {
+            .CompilationEnv
+            {
+                .Source = fs::path("/Tests/Macros/NumArgs.hlsl")
+            },
+            .TestName = "Macros - NumArgs tests"
+        }
+    ));
 }

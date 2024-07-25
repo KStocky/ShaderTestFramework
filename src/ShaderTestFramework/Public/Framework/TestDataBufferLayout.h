@@ -66,9 +66,19 @@ namespace STF
         u32 m_SizeSection = 0;
     };
 
+    struct TestDataBufferLayoutDesc
+    {
+        u32 NumFailedAsserts = 0;
+        u32 NumBytesAssertData = 0;
+        u32 NumStrings = 0;
+        u32 NumBytesStringData = 0;
+        u32 NumSections = 0;
+    };
+
     class TestDataBufferLayout
     {
     public:
+        TestDataBufferLayout(TestDataBufferLayoutDesc InDesc);
         TestDataBufferLayout(u32 InNumFailedAsserts = 0, u32 InBytesAssertData = 0, u32 InNumStrings = 0, u32 InBytesStringData = 0, u32 InNumSections = 0);
 
         TestDataSection<HLSLAssertMetaData> GetAssertSection() const;
