@@ -33,7 +33,7 @@ if (${STF_STRICT_COMPILATION})
     set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
 
     set(GLOBAL_COMPILE_FLAGS 
-        $<$<CXX_COMPILER_ID:MSVC>:/W4> 
+        $<$<CXX_COMPILER_ID:MSVC>:/W4 /MP> 
         $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic> )
 
 endif()
