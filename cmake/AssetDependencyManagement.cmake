@@ -1,5 +1,27 @@
 include_guard(GLOBAL)
 
+function(asset_dependency_clean_target IN_TARGET)
+    set(TARGET_CLEAN_DIR ${CMAKE_BINARY_DIR}/TargetsToClean)
+    if (EXISTS ${TARGET_CLEAN_DIR})
+
+        file(GLOB TARGET_TO_CLEAN_FILES RELATIVE ${TARGET_CLEAN_DIR} "${TARGET_CLEAN_DIR}/*")
+        foreach(TARGET_TO_CLEAN_FILE IN ITEMS ${TARGET_TO_CLEAN_FILES})
+            file(READ ${TARGET_CLEAN_DIR}/${TARGET_TO_CLEAN_FILE} DIR_TO_DELETE)
+            file(REMOVE_RECURSE ${DIR_TO_DELETE})
+        endforeach()
+
+        file(REMOVE_RECURSE ${TARGET_CLEAN_DIR})
+
+    endif()
+    
+    if (NOT EXISTS ${TARGET_CLEAN_DIR})
+        file(MAKE_DIRECTORY ${TARGET_CLEAN_DIR})
+    endif()
+    
+
+    file(GENERATE OUTPUT ${TARGET_CLEAN_DIR}/$<TARGET_NAME:${IN_TARGET}>$<CONFIG> CONTENT "$<TARGET_FILE_DIR:${IN_TARGET}>")
+endfunction()
+
 function(asset_dependency_init IN_TARGET)
     get_cmake_property(CACHE_VARS CACHE_VARIABLES)
     set(CACHE_VARS_TO_DELETE "TARGET_DIRECTORY_SRC_${IN_TARGET};TARGET_DIRECTORY_DST_${IN_TARGET}")
@@ -7,6 +29,8 @@ function(asset_dependency_init IN_TARGET)
     foreach(CACHE_VAR IN LISTS CACHE_VARS_TO_DELETE)
         unset(${CACHE_VAR} CACHE)
     endforeach()
+
+    asset_dependency_clean_target(${IN_TARGET})
 endfunction()
 
 function(target_add_asset_directory IN_TARGET IN_ABSOLUTE_SRC IN_RELATIVE_DEST)
@@ -35,22 +59,6 @@ function(get_all_target_dependencies IN_TARGET IN_OUT_DEPENDENCIES)
 endfunction()
 
 function(copy_all_dependent_assets IN_TARGET)
-
-    # If we have a multi config generator e.g VS or Ninja Multi-Config
-    # We can ensure there are no stale files between builds by just deleting the target directory
-    # We can't do that with a single config generator because by default the target is built in place in the
-    # target directory
-    get_property(IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-    if (IS_MULTI_CONFIG)
-        set(CLEAN_TARGET "Clean_${IN_TARGET}_Directory")
-        add_custom_target(
-            ${CLEAN_TARGET}
-            ${CMAKE_COMMAND} -E rm -f -r
-                "$<TARGET_FILE_DIR:${IN_TARGET}>/"
-        )
-
-        add_dependencies(${IN_TARGET} ${CLEAN_TARGET})
-    endif()
 
     get_all_target_dependencies(${IN_TARGET} ALL_LIBS)
     list(APPEND ALL_LIBS ${IN_TARGET})
