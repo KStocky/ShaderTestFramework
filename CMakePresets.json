@@ -170,6 +170,7 @@
         {
             "name": "FullDev",
             "configurePreset": "FullDev",
+            "configuration": "Debug",
             "output":
             {
                 "outputOnFailure": true
@@ -177,7 +178,8 @@
         },
         {
             "name": "SlimDev",
-            "configurePreset": "SlimDev",
+          "configurePreset": "SlimDev",
+            "configuration": "Debug",
             "output":
             {
                 "outputOnFailure": true
@@ -186,6 +188,7 @@
         {
             "name": "FullCI",
             "configurePreset": "FullCI",
+            "configuration": "Debug",
             "output":
             {
                 "outputOnFailure": true

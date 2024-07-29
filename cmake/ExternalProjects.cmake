@@ -21,6 +21,7 @@ function(add_catch2 IN_TARGET)
         REPORTER junit
         OUTPUT_DIR Reports
         OUTPUT_SUFFIX ".xml"
+        DISCOVERY_MODE PRE_TEST
         )
     return()
 endfunction()
