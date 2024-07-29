@@ -4,8 +4,8 @@ include(FetchContent)
 function(add_catch2 IN_TARGET)
     FetchContent_Declare(
         catch2
-        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-        GIT_TAG v3.6.0
+        GIT_REPOSITORY https://github.com/KStocky/Catch2.git
+        GIT_TAG 0e77ecbae7a42d2e0ba9452681f08e8032a7df3e
     )
 
     FetchContent_MakeAvailable(Catch2)
