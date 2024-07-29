@@ -4,7 +4,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - Macros - SCENARIO")
+TEST_CASE_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - Macros - SCENARIO")
 {
     auto testName = GENERATE
     (
@@ -16,13 +16,6 @@ SCENARIO("HLSLFrameworkTests - Macros - SCENARIO")
         "GIVEN_ScenarioWithoutId_WHEN_Ran_THEN_IdIsNone",
         "GIVEN_ScenarioWithDispatchThreadId_WHEN_Ran_THEN_IdIsInt3",
         "GIVEN_ScenarioWithIntId_WHEN_Ran_THEN_IdIsInt"
-    );
-
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
-        {
-            .Mappings{ GetTestVirtualDirectoryMapping() }
-        }
     );
 
     DYNAMIC_SECTION(testName)

@@ -3,7 +3,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - ThreadIdRegistrationTests")
+TEST_CASE_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - ThreadIdRegistrationTests")
 {
     auto [testName, dimX, dimY, dimZ] = GENERATE
     (
@@ -18,13 +18,6 @@ SCENARIO("HLSLFrameworkTests - ThreadIdRegistrationTests")
                 std::tuple{"GIVEN_ThreadIdNotRegistered_WHEN_ThreadIDQueried_THEN_RegisteredThreadIdIsCorrect", 1, 1, 1}
             }
         )
-    );
-
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
-        {
-            .Mappings{GetTestVirtualDirectoryMapping()}
-        }
     );
 
     DYNAMIC_SECTION(testName)

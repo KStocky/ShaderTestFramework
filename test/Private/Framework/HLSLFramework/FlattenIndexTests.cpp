@@ -3,7 +3,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - FlattenIndex")
+TEST_CASE_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - FlattenIndex")
 {
     auto testName = GENERATE
     (
@@ -13,13 +13,6 @@ SCENARIO("HLSLFrameworkTests - FlattenIndex")
         "GIVEN_CubeSide10AndIndicesDifferentByOneInY_WHEN_BothFlattened_THEN_DifferenceIsTen",
         "GIVEN_CubeSide10AndIndicesDifferentByOneInZ_WHEN_BothFlattened_THEN_DifferenceIs100",
         "GIVEN_CubeSide3_WHEN_IndicesIncrementedInXThenYThenZ_AND_WHEN_Flattened_THEN_DifferenceIs1"
-    );
-
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
-        {
-            .Mappings{ GetTestVirtualDirectoryMapping() }
-        }
     );
 
     DYNAMIC_SECTION(testName)

@@ -5,7 +5,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - AssertBuffer - SizeTests")
+TEST_CASE_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - AssertBuffer - SizeTests")
 {
     auto [testName, numRecordedFailedAsserts, numBytesAssertData] = GENERATE
     (
@@ -18,13 +18,6 @@ SCENARIO("HLSLFrameworkTests - AssertBuffer - SizeTests")
                 std::tuple{"GIVEN_FiveAssertsRecordedAndNonMultipleOf8BytesOfData_WHEN_Ran_THEN_AssertBufferInfoAsExpected", 5, 97}
             }
         )
-    );
-
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
-        {
-            .Mappings{ GetTestVirtualDirectoryMapping() }
-        }
     );
 
     DYNAMIC_SECTION(testName)

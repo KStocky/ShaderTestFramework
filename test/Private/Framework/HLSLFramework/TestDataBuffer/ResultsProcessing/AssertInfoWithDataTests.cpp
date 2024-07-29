@@ -8,7 +8,17 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - AssertInfoWithData")
+class AssertInfoWithDataTestsFixture : public ShaderTestFixtureBaseFixture
+{
+public:
+    AssertInfoWithDataTestsFixture()
+        : ShaderTestFixtureBaseFixture()
+    {
+        fixture.RegisterByteReader("TEST_TYPE_WITH_WRITER", [](const u16, const std::span<const std::byte>) { return ""; });
+    }
+};
+
+TEST_CASE_FIXTURE(AssertInfoWithDataTestsFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - AssertInfoWithData")
 {
 
     auto serializeImpl = OverloadSet{ 
@@ -267,15 +277,6 @@ SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - AssertInfoWit
             }
         )
     );
-
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
-        {
-            .Mappings{ GetTestVirtualDirectoryMapping() }
-        }
-    );
-
-    fixture.RegisterByteReader("TEST_TYPE_WITH_WRITER", [](const u16, const std::span<const std::byte>) { return ""; });
 
     DYNAMIC_SECTION(testName)
     {

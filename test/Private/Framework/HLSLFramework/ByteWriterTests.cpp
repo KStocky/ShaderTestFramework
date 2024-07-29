@@ -4,7 +4,8 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - ByteWriter")
+
+TEST_CASE_FIXTURE( ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - ByteWriter")
 {
     auto testName = GENERATE
     (
@@ -18,13 +19,6 @@ SCENARIO("HLSLFrameworkTests - ByteWriter")
         "GIVEN_TypeWithWriter_WHEN_BytesRequiredQueried_THEN_ExpectedNumberReturned",
         "GIVEN_TypeWithWriter_WHEN_AlignmentRequiredQueried_THEN_ExpectedNumberReturned",
         "GIVEN_UIntBufferAndTypeWithWriter_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten"
-    );
-
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
-        {
-            .Mappings{ GetTestVirtualDirectoryMapping() }
-        }
     );
 
     DYNAMIC_SECTION(testName)

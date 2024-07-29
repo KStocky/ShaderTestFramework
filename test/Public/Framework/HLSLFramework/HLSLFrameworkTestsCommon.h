@@ -1,6 +1,6 @@
 #pragma once
-
 #include <D3D12/Shader/VirtualShaderDirectoryMapping.h>
+#include <Framework/ShaderTestFixture.h>
 #include <filesystem>
 
 inline VirtualShaderDirectoryMapping GetTestVirtualDirectoryMapping()
@@ -13,3 +13,24 @@ inline VirtualShaderDirectoryMapping GetTestVirtualDirectoryMapping()
 
     return VirtualShaderDirectoryMapping{ "/Tests", std::move(shaderDir) };
 }
+
+class ShaderTestFixtureBaseFixture
+{
+public:
+
+    ShaderTestFixtureBaseFixture()
+        : ShaderTestFixtureBaseFixture(
+            ShaderTestFixture::FixtureDesc
+            {
+                .Mappings{ GetTestVirtualDirectoryMapping() }
+            }
+        )
+    {}
+
+    ShaderTestFixtureBaseFixture(ShaderTestFixture::FixtureDesc InDesc)
+        : fixture(std::move(InDesc))
+    {}
+
+protected:
+    ShaderTestFixture fixture;
+};

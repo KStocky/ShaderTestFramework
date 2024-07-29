@@ -3,7 +3,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - Container_wrapper")
+TEST_CASE_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - Container_wrapper")
 {
     auto [testName, shouldSucceed] = GENERATE
     (
@@ -22,13 +22,6 @@ SCENARIO("HLSLFrameworkTests - Container_wrapper")
                 std::tuple{"GIVEN_IntArray_WHEN_Store4CalledWithDifferentType_THEN_Fails", false }
             }
         )
-    );
-
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
-        {
-            .Mappings{ GetTestVirtualDirectoryMapping() }
-        }
     );
 
     const auto getDesc =

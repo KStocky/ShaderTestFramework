@@ -4,7 +4,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - SectionsWithStrings")
+TEST_CASE_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - SectionsWithStrings")
 {
     auto [testName, expectedStrings, expectedSections, expectedFailingSectionIds] = GENERATE
     (
@@ -217,13 +217,6 @@ SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - SectionsWithS
                 }
             }
         )
-    );
-
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
-        {
-            .Mappings{ GetTestVirtualDirectoryMapping() }
-        }
     );
 
     DYNAMIC_SECTION(testName)

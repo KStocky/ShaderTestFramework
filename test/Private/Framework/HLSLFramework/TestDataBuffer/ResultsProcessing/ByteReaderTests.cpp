@@ -5,7 +5,30 @@
 #include <catch2/generators/catch_generators.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
-SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - ByteReader")
+class ByteReaderTestsFixture : public ShaderTestFixtureBaseFixture
+{
+public:
+    ByteReaderTestsFixture()
+        : ShaderTestFixtureBaseFixture()
+    {
+        fixture.RegisterByteReader("TEST_READER_1",
+            [](const u16, const std::span<const std::byte> InBytes)
+            {
+                u32 value;
+                std::memcpy(&value, InBytes.data(), sizeof(u32));
+                return std::format("Reader 1: {}", value);
+            });
+        fixture.RegisterByteReader("TEST_READER_2",
+            [](const u16, const std::span<const std::byte> InBytes)
+            {
+                u32 value;
+                std::memcpy(&value, InBytes.data(), sizeof(u32));
+                return std::format("Reader 2: {}", value);
+            });
+    }
+};
+
+TEST_CASE_FIXTURE(ByteReaderTestsFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - ByteReader")
 {
     using Catch::Matchers::ContainsSubstring;
 
@@ -42,28 +65,6 @@ SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - ByteReader")
             }
         )
     );
-
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
-        {
-            .Mappings{ GetTestVirtualDirectoryMapping() }
-        }
-    );
-
-    fixture.RegisterByteReader("TEST_READER_1",
-        [](const u16, const std::span<const std::byte> InBytes)
-        {
-            u32 value;
-            std::memcpy(&value, InBytes.data(), sizeof(u32));
-            return std::format("Reader 1: {}", value);
-        });
-    fixture.RegisterByteReader("TEST_READER_2",
-        [](const u16, const std::span<const std::byte> InBytes)
-        {
-            u32 value;
-            std::memcpy(&value, InBytes.data(), sizeof(u32));
-            return std::format("Reader 2: {}", value);
-        });
 
     DYNAMIC_SECTION(testName)
     {

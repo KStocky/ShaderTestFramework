@@ -3,7 +3,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - String - StringByteWriter")
+TEST_CASE_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - String - StringByteWriter")
 {
     auto testName = GENERATE
     (
@@ -14,13 +14,6 @@ SCENARIO("HLSLFrameworkTests - String - StringByteWriter")
         "GIVEN_EmptyString_WHEN_WriteCalled_THEN_NothingWritten",
         "GIVEN_StringWith4Characters_WHEN_WriteCalled_THEN_4CharactersWritten",
         "GIVEN_StringWith5Characters_WHEN_WriteCalled_THEN_5CharactersWritten"
-    );
-
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
-        {
-            .Mappings{ GetTestVirtualDirectoryMapping() }
-        }
     );
 
     DYNAMIC_SECTION(testName)

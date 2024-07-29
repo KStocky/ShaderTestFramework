@@ -3,7 +3,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - ThreadDimensionTests")
+TEST_CASE_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - ThreadDimensionTests")
 {
     auto [testName, dimX, dimY, dimZ] = GENERATE
     (
@@ -16,13 +16,6 @@ SCENARIO("HLSLFrameworkTests - ThreadDimensionTests")
                 std::tuple{"GIVEN_GroupWithSide2WithGroupSizeOfSide2_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected", 2, 2, 2}
             }
         )
-    );
-
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
-        {
-            .Mappings{GetTestVirtualDirectoryMapping()}
-        }
     );
 
     DYNAMIC_SECTION(testName)

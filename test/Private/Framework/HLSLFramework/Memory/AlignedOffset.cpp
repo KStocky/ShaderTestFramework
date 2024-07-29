@@ -4,7 +4,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - Memory - AlignedOffset")
+TEST_CASE_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - Memory - AlignedOffset")
 {
     auto testName = GENERATE
     (
@@ -12,13 +12,6 @@ SCENARIO("HLSLFrameworkTests - Memory - AlignedOffset")
         "GIVEN_IndexIsZero_WHEN_Aligned_THEN_ReturnsZero",
         "GIVEN_IndexIsOneMinusAlignment_WHEN_Aligned_THEN_Alignment",
         "GIVEN_IndexIsNotAligned_WHEN_Aligned_THEN_ReturnsNextMultipleOfAlignment"
-    );
-
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
-        {
-            .Mappings{ GetTestVirtualDirectoryMapping() }
-        }
     );
 
     DYNAMIC_SECTION(testName)

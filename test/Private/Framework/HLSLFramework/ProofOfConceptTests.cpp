@@ -3,7 +3,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - ProofOfConcept")
+TEST_CASE_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - ProofOfConcept")
 {
     auto testName = GENERATE
     (
@@ -15,13 +15,6 @@ SCENARIO("HLSLFrameworkTests - ProofOfConcept")
         "StringsAndTemplates",
         "MatesPrinter",
         "VariadicMacroOverloading"
-    );
-
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
-        {
-            .Mappings{ GetTestVirtualDirectoryMapping() }
-        }
     );
 
     DYNAMIC_SECTION(testName)

@@ -3,7 +3,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - Asserts - Fail")
+TEST_CASE_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - Asserts - Fail")
 {
     auto [testName, shouldSucceed] = GENERATE
     (
@@ -14,13 +14,6 @@ SCENARIO("HLSLFrameworkTests - Asserts - Fail")
                 std::tuple{"GIVEN_Empty_WHEN_Ran_THEN_Succeeds", true}
             }
         )
-    );
-
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
-        {
-            .Mappings{ GetTestVirtualDirectoryMapping() }
-        }
     );
 
     const auto getDesc =

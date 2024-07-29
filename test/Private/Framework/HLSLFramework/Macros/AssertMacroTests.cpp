@@ -3,7 +3,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - Macros - AssertMacro")
+TEST_CASE_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - Macros - AssertMacro")
 {
     auto [testName, shouldSucceed] = GENERATE
     (
@@ -21,13 +21,6 @@ SCENARIO("HLSLFrameworkTests - Macros - AssertMacro")
                 std::tuple{"GIVEN_TestWithFailAssert_WHEN_Ran_THEN_Fails", false}
             }
         )
-    );
-
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
-        {
-            .Mappings{ GetTestVirtualDirectoryMapping() }
-        }
     );
 
     const auto getDesc =
