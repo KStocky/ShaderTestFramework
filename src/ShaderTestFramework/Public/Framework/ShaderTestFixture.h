@@ -22,6 +22,20 @@ public:
         On
     };
 
+    enum class EStringMode : u8
+    {
+        Off,
+        OnFailure,
+        On
+    };
+
+    enum class EStringMaxLength
+    {
+        s16 = 16,
+        s64 = 64,
+        s256 = 256
+    };
+
     struct FixtureDesc
     {
         std::vector<VirtualShaderDirectoryMapping> Mappings;
@@ -55,6 +69,8 @@ public:
             .NumBytesStringData = 800u, 
             .NumSections = 100u 
         };
+        EStringMaxLength StringMaxLength = EStringMaxLength::s64;
+        EStringMode StringMode = EStringMode::OnFailure;
         EGPUCaptureMode GPUCaptureMode = EGPUCaptureMode::Off;
     };
 
@@ -85,6 +101,8 @@ private:
     using ScopedDuration = ScopedCPUDurationStat<StatSystemGetter>;
     static std::vector<TimedStat> cachedStats;
 
+    STF::Results RunTestImpl(RuntimeTestDesc InTestDesc, const bool InIsFailureRetry);
+
     CompilationResult CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const;
     CommandEngine CreateCommandEngine() const;
     DescriptorHeap CreateDescriptorHeap() const;
@@ -96,7 +114,7 @@ private:
     STF::Results ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer, const uint3 InDispatchDimensions, const STF::TestDataBufferLayout& InTestDataLayout) const;
     void PopulateDefaultByteReaders();
 
-    bool ShouldTakeCapture(const EGPUCaptureMode InCaptureMode) const;
+    bool ShouldTakeCapture(const EGPUCaptureMode InCaptureMode, const bool InIsFailureRetry) const;
 
     GPUDevice m_Device;
     ShaderCompiler m_Compiler;

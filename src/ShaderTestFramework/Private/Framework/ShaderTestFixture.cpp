@@ -48,20 +48,95 @@ ShaderTestFixture::~ShaderTestFixture() noexcept
 STF::Results ShaderTestFixture::RunTest(RuntimeTestDesc InTestDesc)
 {
     ScopedDuration fullTest(std::format("ShaderTestFixture::RunTest: {}", InTestDesc.TestName));
-    const bool takeCapture = ShouldTakeCapture(InTestDesc.GPUCaptureMode);
-	const auto compileResult = CompileShader(InTestDesc.TestName, EShaderType::Compute, std::move(InTestDesc.CompilationEnv), takeCapture);
 
-	if (!compileResult.has_value())
+    InTestDesc.CompilationEnv.Defines.push_back(
+        ShaderMacro
+        {
+            .Name = "TTL_STRING_MAX_LENGTH",
+            .Definition = std::to_string(static_cast<i32>(InTestDesc.StringMaxLength))
+        });
+
+    const bool requestedRetryOnFail =
+        InTestDesc.GPUCaptureMode == EGPUCaptureMode::CaptureOnFailure ||
+        InTestDesc.StringMode == EStringMode::OnFailure;
+
+    if (!requestedRetryOnFail)
+    {
+        return RunTestImpl(std::move(InTestDesc), false);
+    }
+
+    const auto firstResult = RunTestImpl(InTestDesc, false);
+    const bool compilationFailed = firstResult.GetFailedCompilationResult();
+    const bool succeeded = firstResult;
+
+    if (succeeded || compilationFailed || !requestedRetryOnFail)
+    {
+        return firstResult;
+    }
+    
+    return RunTestImpl(std::move(InTestDesc), true);
+}
+
+STF::Results ShaderTestFixture::RunCompileTimeTest(CompileTestDesc InTestDesc)
+{
+    ScopedDuration scope(std::format("ShaderTestFixture::RunCompileTimeTest: {}", InTestDesc.TestName));
+    const auto compileResult = CompileShader("", EShaderType::Lib, std::move(InTestDesc.CompilationEnv), false);
+
+    if (!compileResult.has_value())
+    {
+        return STF::Results{ {compileResult.error()} };
+    }
+
+    return STF::Results{ STF::TestRunResults{} };
+}
+
+bool ShaderTestFixture::IsValid() const
+{
+    return m_Device.IsValid();
+}
+
+bool ShaderTestFixture::IsUsingAgilitySDK() const
+{
+	if (!IsValid())
 	{
-		return STF::Results{ {compileResult.error()} };
+		return false;
 	}
+
+	return m_Device.GetHardwareInfo().FeatureInfo.EnhancedBarriersSupport;
+}
+
+std::vector<TimedStat> ShaderTestFixture::GetTestStats()
+{
+    return cachedStats;
+}
+
+STF::Results ShaderTestFixture::RunTestImpl(RuntimeTestDesc InTestDesc, const bool InIsFailureRetry)
+{
+    const bool takeCapture = ShouldTakeCapture(InTestDesc.GPUCaptureMode, InIsFailureRetry);
+    const bool enableStrings = InTestDesc.StringMode == EStringMode::On || (InIsFailureRetry && InTestDesc.StringMode == EStringMode::OnFailure);
+    InTestDesc.CompilationEnv.Defines.push_back(
+        ShaderMacro
+        {
+            .Name = "TTL_ENABLE_STRINGS",
+            .Definition = enableStrings ? "1" : "0"
+        }
+    );
+    const auto compileResult = CompileShader(InTestDesc.TestName, EShaderType::Compute, std::move(InTestDesc.CompilationEnv), takeCapture);
+
+    if (!compileResult.has_value())
+    {
+        return STF::Results
+        {
+            STF::FailedShaderCompilationResult{compileResult.error()}
+        };
+    }
 
     auto engine = CreateCommandEngine();
     auto resourceHeap = CreateDescriptorHeap();
-	auto rootSignature = CreateRootSignature(compileResult.value());
+    auto rootSignature = CreateRootSignature(compileResult.value());
     auto pipelineState = CreatePipelineState(rootSignature, compileResult->GetCompiledShader());
 
-    const auto [dimX, dimY, dimZ] = 
+    const auto [dimX, dimY, dimZ] =
         [&compileResult, threadGroupCount = InTestDesc.ThreadGroupCount]()
         {
             u32 threadX = 0;
@@ -77,7 +152,7 @@ STF::Results ShaderTestFixture::RunTest(RuntimeTestDesc InTestDesc)
         }();
 
     const STF::TestDataBufferLayout testDataLayout{ InTestDesc.TestDataLayout };
-    
+
     const u64 bufferSizeInBytes = std::max(testDataLayout.GetSizeOfTestData(), 4u);
     auto assertBuffer = CreateAssertBuffer(bufferSizeInBytes);
     auto allocationBuffer = CreateAssertBuffer(28ull);
@@ -106,7 +181,7 @@ STF::Results ShaderTestFixture::RunTest(RuntimeTestDesc InTestDesc)
             (ScopedCommandContext& InContext)
             {
                 InContext.Section("Test Setup",
-                [&](ScopedCommandContext& InContext)
+                    [&](ScopedCommandContext& InContext)
                     {
                         InContext->SetPipelineState(pipelineState);
                         InContext->SetDescriptorHeaps(resourceHeap);
@@ -155,39 +230,6 @@ STF::Results ShaderTestFixture::RunTest(RuntimeTestDesc InTestDesc)
     }
 }
 
-STF::Results ShaderTestFixture::RunCompileTimeTest(CompileTestDesc InTestDesc)
-{
-    ScopedDuration scope(std::format("ShaderTestFixture::RunCompileTimeTest: {}", InTestDesc.TestName));
-    const auto compileResult = CompileShader("", EShaderType::Lib, std::move(InTestDesc.CompilationEnv), false);
-
-    if (!compileResult.has_value())
-    {
-        return STF::Results{ {compileResult.error()} };
-    }
-
-    return STF::Results{ STF::TestRunResults{} };
-}
-
-bool ShaderTestFixture::IsValid() const
-{
-    return m_Device.IsValid();
-}
-
-bool ShaderTestFixture::IsUsingAgilitySDK() const
-{
-	if (!IsValid())
-	{
-		return false;
-	}
-
-	return m_Device.GetHardwareInfo().FeatureInfo.EnhancedBarriersSupport;
-}
-
-std::vector<TimedStat> ShaderTestFixture::GetTestStats()
-{
-    return cachedStats;
-}
-
 CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const
 {
     ScopedDuration scope(std::format("ShaderTestFixture::CompileShader: {}", InName));
@@ -202,6 +244,7 @@ CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName
     job.Source = std::move(InCompileDesc.Source);
     job.HLSLVersion = InCompileDesc.HLSLVersion;
     job.Defines = m_Defines;
+    job.Defines.append_range(InCompileDesc.Defines);
 
     if (InTakingCapture)
     {
@@ -512,8 +555,9 @@ void ShaderTestFixture::PopulateDefaultByteReaders()
         });
 }
 
-bool ShaderTestFixture::ShouldTakeCapture(const EGPUCaptureMode InCaptureMode) const
+bool ShaderTestFixture::ShouldTakeCapture(const EGPUCaptureMode InCaptureMode, const bool InIsFailureRetry) const
 {
-    return m_Device.IsGPUCaptureEnabled() && (InCaptureMode != EGPUCaptureMode::Off);
+    const bool takeCaptureIfAble = InCaptureMode == EGPUCaptureMode::On || (InIsFailureRetry && InCaptureMode == EGPUCaptureMode::CaptureOnFailure);
+    return m_Device.IsGPUCaptureEnabled() && takeCaptureIfAble;
 }
 

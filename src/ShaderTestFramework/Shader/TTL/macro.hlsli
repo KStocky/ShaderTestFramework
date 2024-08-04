@@ -3,6 +3,9 @@
 
 #define TTL_JOIN(a, b) a##b
 
+#define TTL_STRINGIFY_IMPL(str) #str
+#define TTL_STRINGIFY(str) TTL_STRINGIFY_IMPL(str)
+
 #define TTL_NUM_ARGS_N( \
           _1,  _2,  _3,  _4,  _5,  _6,  _7,  _8,  _9, _10, \
          _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, \
@@ -48,6 +51,6 @@
     TTL_STAMP64(n + 128, x, ##__VA_ARGS__); \
     TTL_STAMP64(n + 192, x, ##__VA_ARGS__)
 
-#define TTL_STAMP(n, x, ...) x(TTL_STAMP##n, n, ##__VA_ARGS__)
+#define TTL_STAMP(n, x, ...) x(TTL_JOIN(TTL_STAMP, n), n, ##__VA_ARGS__)
 
 #endif
