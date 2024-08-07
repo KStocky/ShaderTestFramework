@@ -10,7 +10,7 @@
 
 using Catch::Matchers::ContainsSubstring;
 
-TEST_CASE_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - String - Defines")
+TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - String - Defines")
 {
     const auto stringMode = GENERATE
     (

@@ -28,7 +28,7 @@ public:
     }
 };
 
-TEST_CASE_FIXTURE(ByteReaderTestsFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - ByteReader")
+TEST_CASE_PERSISTENT_FIXTURE(ByteReaderTestsFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - ByteReader")
 {
     using Catch::Matchers::ContainsSubstring;
 

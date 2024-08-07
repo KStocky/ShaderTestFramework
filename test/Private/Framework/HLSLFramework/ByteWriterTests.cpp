@@ -5,7 +5,7 @@
 #include <catch2/generators/catch_generators.hpp>
 
 
-TEST_CASE_FIXTURE( ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - ByteWriter")
+TEST_CASE_PERSISTENT_FIXTURE( ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - ByteWriter")
 {
     auto testName = GENERATE
     (

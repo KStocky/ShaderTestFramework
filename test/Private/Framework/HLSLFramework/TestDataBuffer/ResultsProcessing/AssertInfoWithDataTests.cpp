@@ -18,7 +18,7 @@ public:
     }
 };
 
-TEST_CASE_FIXTURE(AssertInfoWithDataTestsFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - AssertInfoWithData")
+TEST_CASE_PERSISTENT_FIXTURE(AssertInfoWithDataTestsFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - AssertInfoWithData")
 {
 
     auto serializeImpl = OverloadSet{ 

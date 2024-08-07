@@ -32,5 +32,5 @@ public:
     {}
 
 protected:
-    ShaderTestFixture fixture;
+    mutable ShaderTestFixture fixture;
 };
