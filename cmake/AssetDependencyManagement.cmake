@@ -63,14 +63,24 @@ function(copy_all_dependent_assets IN_TARGET)
     get_all_target_dependencies(${IN_TARGET} ALL_LIBS)
     list(APPEND ALL_LIBS ${IN_TARGET})
 
+    set(TARGET_NUM 0)
+
     foreach(TARGET IN LISTS ALL_LIBS)
         if (DEFINED CACHE{TARGET_DIRECTORY_SRC_${TARGET}})
             foreach(ASSET_DIR IN ZIP_LISTS TARGET_DIRECTORY_SRC_${TARGET} TARGET_DIRECTORY_DST_${TARGET})
+
+                set(TARGET_COPY "${IN_TARGET}Copy${TARGET_NUM}")
+
+                add_custom_target(${TARGET_COPY}
+	                COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+                        ${ASSET_DIR_0}
+                        "$<TARGET_FILE_DIR:${IN_TARGET}>${ASSET_DIR_1}"
+                )
                 
-            add_custom_command(TARGET ${IN_TARGET} POST_BUILD
-                    COMMAND ${CMAKE_COMMAND} -E copy_directory
-                    ${ASSET_DIR_0}
-                    "$<TARGET_FILE_DIR:${IN_TARGET}>${ASSET_DIR_1}")
+                set_target_properties(${TARGET_COPY} PROPERTIES FOLDER "CopyAssets")
+                add_dependencies(${IN_TARGET} ${TARGET_COPY})
+                math(EXPR TARGET_NUM "${TARGET_NUM} + 1")
+
             endforeach()
         endif()
     endforeach()

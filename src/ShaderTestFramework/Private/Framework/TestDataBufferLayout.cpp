@@ -2,6 +2,10 @@
 
 namespace STF
 {
+    TestDataBufferLayout::TestDataBufferLayout(TestDataBufferLayoutDesc InDesc)
+        : TestDataBufferLayout(InDesc.NumFailedAsserts, InDesc.NumBytesAssertData, InDesc.NumStrings, InDesc.NumBytesStringData, InDesc.NumSections)
+    {}
+
     TestDataBufferLayout::TestDataBufferLayout(u32 InNumFailedAsserts, u32 InBytesAssertData, u32 InNumStrings, u32 InBytesStringData, u32 InNumSections)
         : m_Asserts(0, InNumFailedAsserts, InBytesAssertData)
         , m_Strings(m_Asserts.EndSection(), InNumStrings, InBytesStringData)

@@ -99,8 +99,8 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/ProofOfConcept/SectionTest.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/StringsAndTemplates.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/VariadicMacroOverloading.hlsl
-    Shader/HLSLFrameworkTests/String/StringLengthTests/GIVEN_StringCreatorWithOver64Characters_THEN_FailsCompilation.hlsl
     Shader/HLSLFrameworkTests/String/StringByteWriterTests.hlsl
+    Shader/HLSLFrameworkTests/String/StringDefineTests.hlsl
     Shader/HLSLFrameworkTests/String/StringTests.hlsl
     Shader/HLSLFrameworkTests/TestDataBuffer/ResultsProcessing/AssertInfoWithData.hlsl
     Shader/HLSLFrameworkTests/TestDataBuffer/ResultsProcessing/AssertInfoWithNoData.hlsl
@@ -148,7 +148,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/Memory/AlignedOffset.cpp
     Private/Framework/HLSLFramework/Memory/ZeroTests.cpp
     Private/Framework/HLSLFramework/String/StringByteWriterTests.cpp
-    Private/Framework/HLSLFramework/String/StringLengthTests.cpp
+    Private/Framework/HLSLFramework/String/StringDefineTests.cpp
     Private/Framework/HLSLFramework/String/StringTests.cpp
     Private/Framework/HLSLFramework/TestDataBuffer/ResultsProcessing/AssertInfoWithDataTests.cpp
     Private/Framework/HLSLFramework/TestDataBuffer/ResultsProcessing/AssertInfoWithNoDataTests.cpp

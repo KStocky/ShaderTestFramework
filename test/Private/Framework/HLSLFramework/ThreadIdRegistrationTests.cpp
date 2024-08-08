@@ -1,9 +1,9 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
-
+#include <Framework/ShaderTestFixture.h>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - ThreadIdRegistrationTests")
+TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - ThreadIdRegistrationTests")
 {
     auto [testName, dimX, dimY, dimZ] = GENERATE
     (
@@ -20,9 +20,18 @@ SCENARIO("HLSLFrameworkTests - ThreadIdRegistrationTests")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/ThreadIdRegistrationTests.hlsl")));
     DYNAMIC_SECTION(testName)
     {
-        REQUIRE(fixture.RunTest(testName, dimX, dimY, dimZ));
+        REQUIRE(fixture.RunTest(
+            ShaderTestFixture::RuntimeTestDesc
+            {
+                .CompilationEnv
+                {
+                    .Source = fs::path("/Tests/ThreadIdRegistrationTests.hlsl")
+                },
+                .TestName = testName,
+                .ThreadGroupCount{dimX, dimY, dimZ}
+            })
+        );
     }
 }

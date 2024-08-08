@@ -310,7 +310,7 @@ namespace STF
         return ret;
     }
 
-    TestRunResults ProcessTestDataBuffer(const AllocationBufferData InAllocationBufferData, const uint3 InDispatchDimensions, const TestDataBufferLayout InLayout, std::span<const std::byte> InTestData, const MultiTypeByteReaderMap& InByteReaderMap)
+    TestRunResults ProcessTestDataBuffer(const AllocationBufferData InAllocationBufferData, const uint3 InDispatchDimensions, const TestDataBufferLayout& InLayout, std::span<const std::byte> InTestData, const MultiTypeByteReaderMap& InByteReaderMap)
     {
         TestRunResults ret{};
         ret.NumSucceeded = InAllocationBufferData.NumPassedAsserts;

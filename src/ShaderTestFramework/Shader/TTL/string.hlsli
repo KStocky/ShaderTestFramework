@@ -168,16 +168,33 @@ namespace ttl_detail
     #undef CHAR_CHECK
 }
 
-#define CHAR_STAMP(i, InLength, InStr, OutStr) if (i >= InLength) break; OutStr.append(ttl_detail::char_to_uint(InStr[i]));
-#define STAMPER(InStamper, InN, InLength, InStr, OutStr) InStamper(0, CHAR_STAMP, InLength, InStr, OutStr)
+#define TTL_CHAR_STAMP(i, InLength, InStr, OutStr) if (i >= InLength) break; OutStr.append(ttl_detail::char_to_uint(InStr[i]));
+#define TTL_CHAR_STAMPER(InStamper, InN, InLength, InStr, OutStr) InStamper(0, TTL_CHAR_STAMP, InLength, InStr, OutStr)
 
+#ifndef TTL_STRING_MAX_LENGTH
+#define TTL_STRING_MAX_LENGTH 64
+#endif
+
+#ifndef TTL_ENABLE_STRINGS
+#define TTL_ENABLE_STRINGS 0
+#endif
+
+#if TTL_ENABLE_STRINGS
 #define CREATE_STRING(OutStr, InStrLiteral)                                                                                          \
-_Static_assert((__decltype(ttl::array_len(InStrLiteral))::value <= 256), "Strings with greater than 256 characters are not supported"); \
+_Static_assert((__decltype(ttl::array_len(InStrLiteral))::value <= TTL_STRING_MAX_LENGTH), "Strings with greater than " TTL_STRINGIFY(TTL_STRING_MAX_LENGTH) " characters are not supported"); \
 ttl::string<__decltype(ttl::array_len(InStrLiteral))::value> OutStr;                                                                 \
 ttl::zero(OutStr);                                                                                                                   \
 do {                                                                                                                                 \
     using LengthType = __decltype(ttl::array_len(InStrLiteral));                                                                     \
-    TTL_STAMP(256, STAMPER, LengthType::value, InStrLiteral, OutStr)                                                                 \
-} while(false)   
+    TTL_STAMP(TTL_STRING_MAX_LENGTH, TTL_CHAR_STAMPER, LengthType::value, InStrLiteral, OutStr)                                      \
+} while(false)
+
+#else
+
+#define CREATE_STRING(OutStr, InStrLiteral)                                                                                          \
+ttl::string<__decltype(ttl::array_len(InStrLiteral))::value> OutStr;                                                                 \
+ttl::zero(OutStr);                                                                                                                   
+
+#endif
 
 #endif

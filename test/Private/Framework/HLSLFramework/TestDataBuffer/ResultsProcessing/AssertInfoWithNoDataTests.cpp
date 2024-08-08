@@ -1,9 +1,9 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
-
+#include <Framework/ShaderTestFixture.h>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - AssertInfoWithNoData")
+TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - AssertInfoWithNoData")
 {
     auto [testName, numRecordedAsserts, failedAsserts, numSucceeded, numFailed, dims] = GENERATE
     (
@@ -41,11 +41,24 @@ SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - AssertInfoWit
         .DispatchDimensions = dims
     };
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/TestDataBuffer/ResultsProcessing/AssertInfoWithNoData.hlsl"), { numRecordedAsserts, 0 }));
-
     DYNAMIC_SECTION(testName)
     {
-        const auto results = fixture.RunTest(testName, 1, 1, 1);
+        const auto results = fixture.RunTest(
+            ShaderTestFixture::RuntimeTestDesc
+            {
+                .CompilationEnv
+                {
+                    .Source = fs::path("/Tests/TestDataBuffer/ResultsProcessing/AssertInfoWithNoData.hlsl")
+                },
+                .TestName = testName,
+                .ThreadGroupCount{1, 1, 1},
+                .TestDataLayout
+                {
+                    .NumFailedAsserts = numRecordedAsserts,
+                    .NumBytesAssertData = 0
+                }
+            }
+        );
         CAPTURE(results);
         const auto actual = results.GetTestResults();
         REQUIRE(actual);

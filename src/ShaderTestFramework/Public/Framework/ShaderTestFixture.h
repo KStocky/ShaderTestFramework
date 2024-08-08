@@ -15,27 +15,76 @@ class ShaderTestFixture
 {
 public:
 
-    struct Desc
+    enum class EGPUCaptureMode : u8
     {
-        std::vector<VirtualShaderDirectoryMapping> Mappings;
-        GPUDevice::CreationParams GPUDeviceParams = {
-            .DebugLevel = GPUDevice::EDebugLevel::DebugLayerWithValidation,
-            .DeviceType = GPUDevice::EDeviceType::Software
-        };
-        ShaderCodeSource Source;
-        std::vector<std::wstring> CompilationFlags;
-        D3D_SHADER_MODEL ShaderModel = D3D_SHADER_MODEL_6_6;
-        EHLSLVersion HLSLVersion = EHLSLVersion::v202x;
-        STF::TestDataBufferLayout TestDataLayout{100u, 10000u, 100u, 800u, 100u};
-        std::vector<ShaderMacro> Defines;
+        Off,
+        CaptureOnFailure,
+        On
     };
 
-    ShaderTestFixture(Desc InParams);
+    enum class EStringMode : u8
+    {
+        Off,
+        OnFailure,
+        On
+    };
+
+    enum class EStringMaxLength
+    {
+        s16 = 16,
+        s64 = 64,
+        s256 = 256
+    };
+
+    struct FixtureDesc
+    {
+        std::vector<VirtualShaderDirectoryMapping> Mappings;
+        GPUDevice::CreationParams GPUDeviceParams
+        {
+            .DebugLevel = GPUDevice::EDebugLevel::DebugLayerWithValidation,
+            .DeviceType = GPUDevice::EDeviceType::Software,
+            .EnableGPUCapture = false
+        };
+    };
+
+    struct CompilationEnvDesc
+    {
+        ShaderCodeSource Source;
+        std::vector<std::wstring> CompilationFlags;
+        std::vector<ShaderMacro> Defines;
+        D3D_SHADER_MODEL ShaderModel = D3D_SHADER_MODEL_6_6;
+        EHLSLVersion HLSLVersion = EHLSLVersion::v202x;
+    };
+
+    struct RuntimeTestDesc
+    {
+        CompilationEnvDesc CompilationEnv;
+        std::string_view TestName;
+        uint3 ThreadGroupCount{};
+        STF::TestDataBufferLayoutDesc TestDataLayout
+        { 
+            .NumFailedAsserts = 100u, 
+            .NumBytesAssertData = 10000u, 
+            .NumStrings = 100u, 
+            .NumBytesStringData = 800u, 
+            .NumSections = 100u 
+        };
+        EStringMaxLength StringMaxLength = EStringMaxLength::s64;
+        EStringMode StringMode = EStringMode::OnFailure;
+        EGPUCaptureMode GPUCaptureMode = EGPUCaptureMode::Off;
+    };
+
+    struct CompileTestDesc
+    {
+        CompilationEnvDesc CompilationEnv;
+        std::string_view TestName;
+    };
+
+    ShaderTestFixture(FixtureDesc InParams);
     ~ShaderTestFixture() noexcept;
 
-    void TakeCapture();
-    STF::Results RunTest(const std::string_view InName, u32 InX, u32 InY, u32 InZ);
-    STF::Results RunCompileTimeTest();
+    STF::Results RunTest(RuntimeTestDesc InTestDesc);
+    STF::Results RunCompileTimeTest(CompileTestDesc InTestDesc);
     void RegisterByteReader(std::string InTypeIDName, STF::MultiTypeByteReader InByteReader);
     void RegisterByteReader(std::string InTypeIDName, STF::SingleTypeByteReader InByteReader);
 
@@ -52,7 +101,9 @@ private:
     using ScopedDuration = ScopedCPUDurationStat<StatSystemGetter>;
     static std::vector<TimedStat> cachedStats;
 
-    CompilationResult CompileShader(const std::string_view InName,  const EShaderType InType) const;
+    STF::Results RunTestImpl(RuntimeTestDesc InTestDesc, const bool InIsFailureRetry);
+
+    CompilationResult CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const;
     CommandEngine CreateCommandEngine() const;
     DescriptorHeap CreateDescriptorHeap() const;
     PipelineState CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const;
@@ -60,23 +111,13 @@ private:
     GPUResource CreateAssertBuffer(const u64 InSizeInBytes) const;
     GPUResource CreateReadbackBuffer(const u64 InSizeInBytes) const;
     DescriptorHandle CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap, const u32 InIndex) const;
-    STF::Results ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer, const uint3 InDispatchDimensions) const;
+    STF::Results ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer, const uint3 InDispatchDimensions, const STF::TestDataBufferLayout& InTestDataLayout) const;
     void PopulateDefaultByteReaders();
 
-    bool ShouldTakeCapture() const;
+    bool ShouldTakeCapture(const EGPUCaptureMode InCaptureMode, const bool InIsFailureRetry) const;
 
     GPUDevice m_Device;
-    std::optional<ShaderCompiler> m_Compiler;
-    ShaderCodeSource m_Source;
+    ShaderCompiler m_Compiler;
     STF::MultiTypeByteReaderMap m_ByteReaderMap;
-    std::vector<std::wstring> m_CompilationFlags;
     std::vector<ShaderMacro> m_Defines;
-    D3D_SHADER_MODEL m_ShaderModel;
-    EHLSLVersion m_HLSLVersion;
-    STF::TestDataBufferLayout m_TestDataLayout;
-    
-    u32 m_NextTypeID = 0u;
-    bool m_IsWarp = false;
-    bool m_CaptureRequested = false;
-    bool m_PIXAvailable = false;
 };

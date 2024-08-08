@@ -1,9 +1,9 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
-
+#include <Framework/ShaderTestFixture.h>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - Asserts - Fail")
+TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - Asserts - Fail")
 {
     auto [testName, shouldSucceed] = GENERATE
     (
@@ -16,16 +16,30 @@ SCENARIO("HLSLFrameworkTests - Asserts - Fail")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Asserts/Fail.hlsl")));
+    const auto getDesc =
+        [&testName]()
+        {
+            return
+                ShaderTestFixture::RuntimeTestDesc
+                {
+                    .CompilationEnv
+                    {
+                        .Source = fs::path("/Tests/Asserts/Fail.hlsl")
+                    },
+                    .TestName = testName,
+                    .ThreadGroupCount{1, 1, 1}
+                };
+        };
+
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
         {
-            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+            REQUIRE(fixture.RunTest(getDesc()));
         }
         else
         {
-            const auto result = fixture.RunTest(testName, 1, 1, 1);
+            const auto result = fixture.RunTest(getDesc());
             REQUIRE_FALSE(result);
         }
     }

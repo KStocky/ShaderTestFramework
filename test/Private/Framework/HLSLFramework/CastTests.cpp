@@ -1,9 +1,10 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
+#include <Framework/ShaderTestFixture.h>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - Cast")
+TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - Cast")
 {
     auto [testName, shouldSucceed] = GENERATE
     (
@@ -17,16 +18,35 @@ SCENARIO("HLSLFrameworkTests - Cast")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/Cast/{}.hlsl", testName))));
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
         {
-            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+            REQUIRE(fixture.RunTest(
+                ShaderTestFixture::RuntimeTestDesc
+                {
+                    .CompilationEnv
+                    {
+                        .Source = fs::path(std::format("/Tests/Cast/{}.hlsl", testName))
+                    },
+                    .TestName = testName,
+                    .ThreadGroupCount{1, 1, 1}
+                })
+            );
         }
         else
         {
-            const auto result = fixture.RunTest(testName, 1, 1, 1);
+            const auto result = fixture.RunTest(
+                ShaderTestFixture::RuntimeTestDesc
+                {
+                    .CompilationEnv
+                    {
+                        .Source = fs::path(std::format("/Tests/Cast/{}.hlsl", testName))
+                    },
+                    .TestName = testName,
+                    .ThreadGroupCount{1, 1, 1}
+                }
+            );
             REQUIRE_FALSE(result);
         }
     }

@@ -123,13 +123,19 @@ public:
 	{
 		EDebugLevel DebugLevel = EDebugLevel::Off;
 		EDeviceType DeviceType = EDeviceType::Software;
+        bool EnableGPUCapture = false;
 	};
 
 	GPUDevice() = default;
 	GPUDevice(const CreationParams InDesc);
+    GPUDevice(const GPUDevice&) = default;
+    GPUDevice(GPUDevice&&) = default;
+    GPUDevice& operator=(const GPUDevice&) = default;
+    GPUDevice& operator=(GPUDevice&&) = default;
 	~GPUDevice();
 
 	bool IsValid() const;
+    bool IsGPUCaptureEnabled() const;
 
 	CommandAllocator CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandAllocator") const;
 	CommandList CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandList") const;
@@ -168,25 +174,20 @@ public:
 	void CreateShaderResourceView(const GPUResource& InResource, const DescriptorHandle InHandle) const;
 	void CreateUnorderedAccessView(const GPUResource& InResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc, const DescriptorHandle InHandle) const;
 
-	ExpectedHRes<void> SetDedicatedVideoMemoryReservation(const u64 InNewReservationBytes);
-	ExpectedHRes<void> SetSystemVideoMemoryReservation(const u64 InNewReservationBytes);
-
 	const GPUHardwareInfo& GetHardwareInfo() const;
 
 private:
 
 	ExpectedHRes<void> SetupDebugLayer(const EDebugLevel InDebugLevel);
-	ExpectedHRes<void> CacheHardwareInfo(ID3D12Device12* InDevice);
+    void SetupDebugInfoQueue();
+	void CacheHardwareInfo(ID3D12Device12* InDevice, IDXGIAdapter4* InAdapter);
 	u32 GetDescriptorSize(const D3D12_DESCRIPTOR_HEAP_TYPE InType) const;
 
-	ComPtr<ID3D12Device12> m_Device = nullptr;
-	ComPtr<ID3D12Debug6> m_Debug = nullptr;
-	ComPtr<ID3D12DebugDevice2> m_DebugDevice = nullptr;
-    ComPtr<ID3D12InfoQueue> m_InfoQueue = nullptr;
-	ComPtr<IDXGIFactory7> m_Factory = nullptr;
-	ComPtr<IDXGIAdapter4> m_Adapter = nullptr;
+    ComPtr<ID3D12Device12> m_Device = nullptr;
 
 	SharedPtr<GPUHardwareInfo> m_Info = nullptr;
+
+    HMODULE m_PixHandle = nullptr;
 
 	u32 m_CBVDescriptorSize = 0;
 	u32 m_RTVDescriptorSize = 0;

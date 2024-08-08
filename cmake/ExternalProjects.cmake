@@ -5,7 +5,7 @@ function(add_catch2 IN_TARGET)
     FetchContent_Declare(
         catch2
         GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-        GIT_TAG v3.6.0
+        GIT_TAG f7cd0ba0511b61592e70f07533d7ea30a8a5395d
     )
 
     FetchContent_MakeAvailable(Catch2)
@@ -21,6 +21,7 @@ function(add_catch2 IN_TARGET)
         REPORTER junit
         OUTPUT_DIR Reports
         OUTPUT_SUFFIX ".xml"
+        DISCOVERY_MODE PRE_TEST
         )
     return()
 endfunction()

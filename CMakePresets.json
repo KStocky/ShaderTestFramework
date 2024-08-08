@@ -22,6 +22,20 @@
       }
     },
     {
+      "name": "ConfigBaseNinja",
+      "hidden": true,
+      "binaryDir": "build",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_UNITY_BUILD": false,
+        "CMAKE_CXX_COMPILER": "cl",
+        "STF_ENABLE_TESTING": false,
+        "STF_INCLUDE_EXAMPLES": false,
+        "STF_DISABLE_UNITY_STF": false,
+        "STF_STRICT_COMPILATION": false
+      }
+    },
+    {
       "name": "ConfigBaseVS",
       "hidden": true,
       "binaryDir": "build",
@@ -156,6 +170,7 @@
         {
             "name": "FullDev",
             "configurePreset": "FullDev",
+            "configuration": "Debug",
             "output":
             {
                 "outputOnFailure": true
@@ -163,7 +178,8 @@
         },
         {
             "name": "SlimDev",
-            "configurePreset": "SlimDev",
+          "configurePreset": "SlimDev",
+            "configuration": "Debug",
             "output":
             {
                 "outputOnFailure": true
@@ -172,6 +188,7 @@
         {
             "name": "FullCI",
             "configurePreset": "FullCI",
+            "configuration": "Debug",
             "output":
             {
                 "outputOnFailure": true

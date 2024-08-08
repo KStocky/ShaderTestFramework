@@ -1,9 +1,10 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
+#include <Framework/ShaderTestFixture.h>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - SectionsWithStrings")
+TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - SectionsWithStrings")
 {
     auto [testName, expectedStrings, expectedSections, expectedFailingSectionIds] = GENERATE
     (
@@ -218,17 +219,27 @@ SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - SectionsWithS
         )
     );
 
-    ShaderTestFixture::Desc desc{};
-
-    desc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    desc.Source = fs::path("/Tests/TestDataBuffer/ResultsProcessing/SectionsWithStrings.hlsl");
-    desc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
-    desc.TestDataLayout = STF::TestDataBufferLayout(100u, 10000u, 50u, 1000u, 50u);
-
-    ShaderTestFixture fixture{std::move(desc)};
     DYNAMIC_SECTION(testName)
     {
-        const auto results = fixture.RunTest(testName, 1, 1, 1);
+        const auto results = fixture.RunTest(
+            ShaderTestFixture::RuntimeTestDesc
+            {
+                .CompilationEnv
+                {
+                    .Source = fs::path("/Tests/TestDataBuffer/ResultsProcessing/SectionsWithStrings.hlsl")
+                },
+                .TestName = testName,
+                .ThreadGroupCount{1, 1, 1},
+                .TestDataLayout
+                {
+                    .NumFailedAsserts = 100,
+                    .NumBytesAssertData = 10000,
+                    .NumStrings = 50,
+                    .NumBytesStringData = 1000,
+                    .NumSections = 50
+                }
+            }
+        );
         CAPTURE(results);
         const auto actual = results.GetTestResults();
         REQUIRE(actual);

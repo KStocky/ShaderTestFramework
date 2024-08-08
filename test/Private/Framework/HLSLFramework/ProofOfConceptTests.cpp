@@ -3,7 +3,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - ProofOfConcept")
+TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - ProofOfConcept")
 {
     auto testName = GENERATE
     (
@@ -17,9 +17,18 @@ SCENARIO("HLSLFrameworkTests - ProofOfConcept")
         "VariadicMacroOverloading"
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path(std::format("/Tests/ProofOfConcept/{}.hlsl", testName))));
     DYNAMIC_SECTION(testName)
     {
-        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+        REQUIRE(fixture.RunTest(
+            ShaderTestFixture::RuntimeTestDesc
+            {
+                .CompilationEnv
+                {
+                    .Source = fs::path(std::format("/Tests/ProofOfConcept/{}.hlsl", testName))
+                },
+                .TestName = testName,
+                .ThreadGroupCount{1, 1, 1}
+            })
+        );
     }
 }

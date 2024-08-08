@@ -3,7 +3,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - Macros - AssertMacro")
+TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - Macros - AssertMacro")
 {
     auto [testName, shouldSucceed] = GENERATE
     (
@@ -23,16 +23,30 @@ SCENARIO("HLSLFrameworkTests - Macros - AssertMacro")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Macros/AssertMacro.hlsl")));
+    const auto getDesc =
+        [&testName]()
+        {
+            return
+                ShaderTestFixture::RuntimeTestDesc
+            {
+                .CompilationEnv
+                {
+                    .Source = fs::path("/Tests/Macros/AssertMacro.hlsl")
+                },
+                .TestName = testName,
+                .ThreadGroupCount{1, 1, 1}
+            };
+        };
+
     DYNAMIC_SECTION(testName)
     {
         if (shouldSucceed)
         {
-            REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+            REQUIRE(fixture.RunTest(getDesc()));
         }
         else
         {
-            const auto result = fixture.RunTest(testName, 1, 1, 1);
+            const auto result = fixture.RunTest(getDesc());
             REQUIRE_FALSE(result);
         }
     }

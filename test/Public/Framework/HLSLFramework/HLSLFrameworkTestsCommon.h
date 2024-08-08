@@ -1,10 +1,11 @@
 #pragma once
-
-#include "Framework/ShaderTestFixture.h"
-#include "D3D12/Shader/ShaderEnums.h"
+#include <D3D12/Shader/VirtualShaderDirectoryMapping.h>
+#include <Framework/ShaderTestFixture.h>
+#include <filesystem>
 
 inline VirtualShaderDirectoryMapping GetTestVirtualDirectoryMapping()
 {
+    namespace fs = std::filesystem;
     fs::path shaderDir = fs::current_path();
     shaderDir += "/";
     shaderDir += SHADER_SRC;
@@ -13,13 +14,23 @@ inline VirtualShaderDirectoryMapping GetTestVirtualDirectoryMapping()
     return VirtualShaderDirectoryMapping{ "/Tests", std::move(shaderDir) };
 }
 
-inline ShaderTestFixture::Desc CreateDescForHLSLFrameworkTest(fs::path&& InPath, STF::TestDataBufferLayout InTestDataLayout = {10, 1024})
+class ShaderTestFixtureBaseFixture
 {
-    ShaderTestFixture::Desc desc{};
+public:
 
-    desc.Mappings.emplace_back(GetTestVirtualDirectoryMapping());
-    desc.Source = std::move(InPath);
-    desc.GPUDeviceParams.DeviceType = GPUDevice::EDeviceType::Software;
-    desc.TestDataLayout = InTestDataLayout;
-    return desc;
-}
+    ShaderTestFixtureBaseFixture()
+        : ShaderTestFixtureBaseFixture(
+            ShaderTestFixture::FixtureDesc
+            {
+                .Mappings{ GetTestVirtualDirectoryMapping() }
+            }
+        )
+    {}
+
+    ShaderTestFixtureBaseFixture(ShaderTestFixture::FixtureDesc InDesc)
+        : fixture(std::move(InDesc))
+    {}
+
+protected:
+    mutable ShaderTestFixture fixture;
+};

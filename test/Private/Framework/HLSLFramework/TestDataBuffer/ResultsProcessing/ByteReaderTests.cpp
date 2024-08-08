@@ -1,10 +1,34 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
+#include <Framework/ShaderTestFixture.h>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
-SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - ByteReader")
+class ByteReaderTestsFixture : public ShaderTestFixtureBaseFixture
+{
+public:
+    ByteReaderTestsFixture()
+        : ShaderTestFixtureBaseFixture()
+    {
+        fixture.RegisterByteReader("TEST_READER_1",
+            [](const u16, const std::span<const std::byte> InBytes)
+            {
+                u32 value;
+                std::memcpy(&value, InBytes.data(), sizeof(u32));
+                return std::format("Reader 1: {}", value);
+            });
+        fixture.RegisterByteReader("TEST_READER_2",
+            [](const u16, const std::span<const std::byte> InBytes)
+            {
+                u32 value;
+                std::memcpy(&value, InBytes.data(), sizeof(u32));
+                return std::format("Reader 2: {}", value);
+            });
+    }
+};
+
+TEST_CASE_PERSISTENT_FIXTURE(ByteReaderTestsFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - ByteReader")
 {
     using Catch::Matchers::ContainsSubstring;
 
@@ -42,25 +66,24 @@ SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - ByteReader")
         )
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/TestDataBuffer/ResultsProcessing/ByteReader.hlsl"), { 10, 400 }));
-    fixture.RegisterByteReader("TEST_READER_1",
-        [](const u16, const std::span<const std::byte> InBytes)
-        {
-            u32 value;
-            std::memcpy(&value, InBytes.data(), sizeof(u32));
-            return std::format("Reader 1: {}", value);
-        });
-    fixture.RegisterByteReader("TEST_READER_2",
-        [](const u16, const std::span<const std::byte> InBytes)
-        {
-            u32 value;
-            std::memcpy(&value, InBytes.data(), sizeof(u32));
-            return std::format("Reader 2: {}", value);
-        });
-
     DYNAMIC_SECTION(testName)
     {
-        const auto results = fixture.RunTest(testName, 1, 1, 1);
+        const auto results = fixture.RunTest(
+            ShaderTestFixture::RuntimeTestDesc
+            {
+                .CompilationEnv
+                {
+                    .Source = fs::path("/Tests/TestDataBuffer/ResultsProcessing/ByteReader.hlsl")
+                },
+                .TestName = testName,
+                .ThreadGroupCount{1, 1, 1},
+                .TestDataLayout
+                {
+                    .NumFailedAsserts = 10,
+                    .NumBytesAssertData = 400
+                }
+            }
+        );
         CAPTURE(results);
         const auto actual = results.GetTestResults();
         REQUIRE(actual);

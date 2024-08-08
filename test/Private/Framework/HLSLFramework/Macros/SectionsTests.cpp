@@ -3,7 +3,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("HLSLFrameworkTests - Macros - SECTIONS")
+TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - Macros - SECTIONS")
 {
     auto testName = GENERATE
     (
@@ -15,9 +15,18 @@ SCENARIO("HLSLFrameworkTests - Macros - SECTIONS")
         "GIVEN_ThreeLevelsDeepSections_WHEN_RanUsingSingle_THEN_ExpectedSubsectionEntryOccurs"
     );
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/Macros/Sections.hlsl")));
     DYNAMIC_SECTION(testName)
     {
-        REQUIRE(fixture.RunTest(testName, 1, 1, 1));
+        REQUIRE(fixture.RunTest(
+            ShaderTestFixture::RuntimeTestDesc
+            {
+                .CompilationEnv
+                {
+                    .Source = fs::path("/Tests/Macros/Sections.hlsl")
+                },
+                .TestName = testName,
+                .ThreadGroupCount{1, 1, 1}
+            }
+        ));
     }
 }

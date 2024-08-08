@@ -1,10 +1,11 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
+#include <Framework/ShaderTestFixture.h>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 #include <catch2/matchers/catch_matchers_predicate.hpp>
 
-SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - FundamentalByteReader")
+TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - FundamentalByteReader")
 {
     using Catch::Matchers::Predicate;
 
@@ -122,11 +123,24 @@ SCENARIO("HLSLFrameworkTests - TestDataBuffer - ResultProcessing - FundamentalBy
             return true;
         };
 
-    ShaderTestFixture fixture(CreateDescForHLSLFrameworkTest(fs::path("/Tests/TestDataBuffer/ResultsProcessing/FundamentalByteReader.hlsl"), { 10, 400 }));
-
     DYNAMIC_SECTION(testName)
     {
-        const auto results = fixture.RunTest(testName, 1, 1, 1);
+        const auto results = fixture.RunTest(
+            ShaderTestFixture::RuntimeTestDesc
+            {
+                .CompilationEnv
+                {
+                    .Source = fs::path("/Tests/TestDataBuffer/ResultsProcessing/FundamentalByteReader.hlsl")
+                },
+                .TestName = testName,
+                .ThreadGroupCount{1, 1, 1},
+                .TestDataLayout
+                {
+                    .NumFailedAsserts = 10,
+                    .NumBytesAssertData = 400
+                }
+            }
+        );
         CAPTURE(results);
         const auto actual = results.GetTestResults();
         REQUIRE(actual);
