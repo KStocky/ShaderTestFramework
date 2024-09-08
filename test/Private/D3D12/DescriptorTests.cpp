@@ -9,6 +9,7 @@
 
 SCENARIO("DescriptorRangeTests")
 {
+    using namespace stf;
 	SECTION("Invalid Range Tests")
 	{
 		const auto ErrorOr =

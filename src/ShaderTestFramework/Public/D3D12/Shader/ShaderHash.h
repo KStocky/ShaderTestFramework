@@ -7,32 +7,35 @@
 #include <unknwn.h>
 #include <dxcapi.h>
 
-class ShaderHash
+namespace stf
 {
-public:
+    class ShaderHash
+    {
+    public:
 
-	ShaderHash() = default;
-	ShaderHash(const DxcShaderHash& In) noexcept
-		: m_Hash(In)
-	{}
+        ShaderHash() = default;
+        ShaderHash(const DxcShaderHash& In) noexcept
+            : m_Hash(In)
+        {}
 
-	std::span<const u8> GetHash() const
-	{
-		return m_Hash.HashDigest;
-	}
+        std::span<const u8> GetHash() const
+        {
+            return m_Hash.HashDigest;
+        }
 
-	friend bool operator==(const ShaderHash& InA, const ShaderHash& InB)
-	{
-		return std::memcmp(&InA.m_Hash, &InB.m_Hash, sizeof(InA.m_Hash)) == 0;
-	}
+        friend bool operator==(const ShaderHash& InA, const ShaderHash& InB)
+        {
+            return std::memcmp(&InA.m_Hash, &InB.m_Hash, sizeof(InA.m_Hash)) == 0;
+        }
 
-	friend bool operator!=(const ShaderHash& InA, const ShaderHash& InB)
-	{
-		return !(InA == InB);
-	}
+        friend bool operator!=(const ShaderHash& InA, const ShaderHash& InB)
+        {
+            return !(InA == InB);
+        }
 
-private:
+    private:
 
-	DxcShaderHash m_Hash;
-};
+        DxcShaderHash m_Hash;
+    };
+}
 

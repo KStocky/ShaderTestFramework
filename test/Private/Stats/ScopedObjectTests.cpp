@@ -7,6 +7,7 @@
 
 namespace ScopedObjectCompileTests
 {
+    using namespace stf;
     using CallableType = decltype([]() {});
     
     struct NonCallableType {};
@@ -28,6 +29,7 @@ namespace ScopedObjectCompileTests
 
 SCENARIO("ScopedObjectTests")
 {
+    using namespace stf;
     GIVEN("Noisy Callables")
     {
         class NoisyCallable

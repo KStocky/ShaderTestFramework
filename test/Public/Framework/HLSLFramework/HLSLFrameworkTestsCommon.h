@@ -3,7 +3,7 @@
 #include <Framework/ShaderTestFixture.h>
 #include <filesystem>
 
-inline VirtualShaderDirectoryMapping GetTestVirtualDirectoryMapping()
+inline stf::VirtualShaderDirectoryMapping GetTestVirtualDirectoryMapping()
 {
     namespace fs = std::filesystem;
     fs::path shaderDir = fs::current_path();
@@ -11,7 +11,7 @@ inline VirtualShaderDirectoryMapping GetTestVirtualDirectoryMapping()
     shaderDir += SHADER_SRC;
     shaderDir += "/HLSLFrameworkTests/";
 
-    return VirtualShaderDirectoryMapping{ "/Tests", std::move(shaderDir) };
+    return stf::VirtualShaderDirectoryMapping{ "/Tests", std::move(shaderDir) };
 }
 
 class ShaderTestFixtureBaseFixture
@@ -20,17 +20,17 @@ public:
 
     ShaderTestFixtureBaseFixture()
         : ShaderTestFixtureBaseFixture(
-            ShaderTestFixture::FixtureDesc
+            stf::ShaderTestFixture::FixtureDesc
             {
                 .Mappings{ GetTestVirtualDirectoryMapping() }
             }
         )
     {}
 
-    ShaderTestFixtureBaseFixture(ShaderTestFixture::FixtureDesc InDesc)
+    ShaderTestFixtureBaseFixture(stf::ShaderTestFixture::FixtureDesc InDesc)
         : fixture(std::move(InDesc))
     {}
 
 protected:
-    mutable ShaderTestFixture fixture;
+    mutable stf::ShaderTestFixture fixture;
 };

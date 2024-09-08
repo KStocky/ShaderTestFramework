@@ -3,6 +3,7 @@
 
 namespace CommandEngineFuncTypeTests
 {
+    using namespace stf;
     template<typename... T>
     struct CallableType
     {
@@ -50,6 +51,7 @@ namespace CommandEngineFuncTypeTests
 
 namespace ExecuteLambdaTypeTests
 {
+    using namespace stf;
     template<typename... T>
     struct CallableType
     {

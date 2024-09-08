@@ -4,7 +4,7 @@
 
 #include <ostream>
 
-namespace STF
+namespace stf
 {
     struct DynamicSectionDataInfo
     {

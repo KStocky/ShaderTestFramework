@@ -1,6 +1,6 @@
 #include "Framework/TestDataBufferLayout.h"
 
-namespace STF
+namespace stf
 {
     TestDataBufferLayout::TestDataBufferLayout(TestDataBufferLayoutDesc InDesc)
         : TestDataBufferLayout(InDesc.NumFailedAsserts, InDesc.NumBytesAssertData, InDesc.NumStrings, InDesc.NumBytesStringData, InDesc.NumSections)

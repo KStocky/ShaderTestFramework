@@ -5,30 +5,33 @@
 
 #include "Utility/Expected.h"
 
-class DescriptorFreeListAllocator
+namespace stf
 {
-public:
+    class DescriptorFreeListAllocator
+    {
+    public:
 
-	enum class EErrorType
-	{
-		EmptyError,
-		InvalidDescriptor
-	};
+        enum class EErrorType
+        {
+            EmptyError,
+            InvalidDescriptor
+        };
 
-	template<typename T>
-	using Expected = Expected<T, EErrorType>;
+        template<typename T>
+        using Expected = Expected<T, EErrorType>;
 
-	DescriptorFreeListAllocator() = default;
-	DescriptorFreeListAllocator(const DescriptorRange& InRange);
-	[[nodiscard]] Expected<DescriptorHandle> Allocate();
-	Expected<void> Release(const DescriptorHandle& InDescriptor);
+        DescriptorFreeListAllocator() = default;
+        DescriptorFreeListAllocator(const DescriptorRange& InRange);
+        [[nodiscard]] Expected<DescriptorHandle> Allocate();
+        Expected<void> Release(const DescriptorHandle& InDescriptor);
 
-	u32 GetSize() const;
-	u32 GetCapacity() const;
+        u32 GetSize() const;
+        u32 GetCapacity() const;
 
-private:
+    private:
 
-	DescriptorRange m_Range;
-	RingBuffer<u32> m_FreeList;
-	std::vector<u8> m_FreeSet;
-};
+        DescriptorRange m_Range;
+        RingBuffer<u32> m_FreeList;
+        std::vector<u8> m_FreeSet;
+    };
+}

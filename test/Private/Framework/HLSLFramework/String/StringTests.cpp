@@ -5,6 +5,7 @@
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - String - String")
 {
+    using namespace stf;
     const auto testName = GENERATE
     (
         "GIVEN_EmptyString_WHEN_CharacterAppended_THEN_DataIsAsExpected",

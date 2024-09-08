@@ -6,40 +6,43 @@
 
 #include <d3d12.h>
 
-class CommandList;
-
-class CommandQueue : MoveOnly
+namespace stf
 {
-public:
+    class CommandList;
 
-	struct CreationParams
-	{
-		ComPtr<ID3D12CommandQueue> Queue;
-		Fence Fence{};
-	};
+    class CommandQueue : MoveOnly
+    {
+    public:
 
-	CommandQueue() = default;
-	CommandQueue(CreationParams InParams);
-	CommandQueue(CommandQueue&& In) noexcept;
-	CommandQueue& operator=(CommandQueue&& In) noexcept;
-	~CommandQueue();
+        struct CreationParams
+        {
+            ComPtr<ID3D12CommandQueue> Queue;
+            Fence Fence{};
+        };
 
-	bool HasFencePointBeenReached(const Fence::FencePoint& InFencePoint) const;
-	Fence::FencePoint Signal();
-	void WaitOnFence(const Fence::FencePoint& InFencePoint);
-	void SyncWithQueue(CommandQueue& InQueue);
-	void FlushQueue();
+        CommandQueue() = default;
+        CommandQueue(CreationParams InParams);
+        CommandQueue(CommandQueue&& In) noexcept;
+        CommandQueue& operator=(CommandQueue&& In) noexcept;
+        ~CommandQueue();
 
-	void ExecuteCommandList(CommandList& InList);
+        bool HasFencePointBeenReached(const Fence::FencePoint& InFencePoint) const;
+        Fence::FencePoint Signal();
+        void WaitOnFence(const Fence::FencePoint& InFencePoint);
+        void SyncWithQueue(CommandQueue& InQueue);
+        void FlushQueue();
 
-	ID3D12CommandQueue* GetRaw() const;
-	operator ID3D12CommandQueue* () const;
-	const Fence& GetFence() const;
+        void ExecuteCommandList(CommandList& InList);
 
-	D3D12_COMMAND_LIST_TYPE GetType() const;
+        ID3D12CommandQueue* GetRaw() const;
+        operator ID3D12CommandQueue* () const;
+        const Fence& GetFence() const;
 
-private:
+        D3D12_COMMAND_LIST_TYPE GetType() const;
 
-	ComPtr<ID3D12CommandQueue> m_Queue = nullptr;
-	Fence m_Fence;
-};
+    private:
+
+        ComPtr<ID3D12CommandQueue> m_Queue = nullptr;
+        Fence m_Fence;
+    };
+}

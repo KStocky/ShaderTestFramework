@@ -8,7 +8,7 @@
 #include <unordered_map>
 
 template<typename T>
-concept NoisyLoggable = requires(i32 EventId)
+concept NoisyLoggable = requires(stf::i32 EventId)
 {
     { T::OnConstruction() };
     { T::OnCopyConstruction() };
@@ -21,13 +21,13 @@ concept NoisyLoggable = requires(i32 EventId)
 
 struct DefaultLogData
 {
-    std::unordered_map<i32, u64> NumEvents;
-    u64 NumConstructions = 0;
-    u64 NumCopyConstructions = 0;
-    u64 NumCopyAssignments = 0;
-    u64 NumMoveConstructions = 0;
-    u64 NumMoveAssignments = 0;
-    u64 NumDestructions = 0;
+    std::unordered_map<stf::i32, stf::u64> NumEvents;
+    stf::u64 NumConstructions = 0;
+    stf::u64 NumCopyConstructions = 0;
+    stf::u64 NumCopyAssignments = 0;
+    stf::u64 NumMoveConstructions = 0;
+    stf::u64 NumMoveAssignments = 0;
+    stf::u64 NumDestructions = 0;
 
     friend auto operator<=>(const DefaultLogData&, const DefaultLogData&) = default;
 };
@@ -44,7 +44,7 @@ struct DefaultNoisyLogger
     static void OnMoveConstruction() { ++LogData.NumMoveConstructions; }
     static void OnMoveAssignment() { ++LogData.NumMoveAssignments; }
     static void OnDestruction() { ++LogData.NumDestructions; }
-    static void OnEvent(const i32 InEventId) { ++LogData.NumEvents[InEventId]; }
+    static void OnEvent(const stf::i32 InEventId) { ++LogData.NumEvents[InEventId]; }
 };
 
 template<NoisyLoggable LoggerType = DefaultNoisyLogger>
@@ -59,7 +59,7 @@ public:
     Noisy& operator=(Noisy&&) { LoggerType::OnMoveAssignment(); return *this; }
     ~Noisy() noexcept { LoggerType::OnDestruction(); }
 
-    void Event(const i32 InEventId) const { LoggerType::OnEvent(InEventId); }
+    void Event(const stf::i32 InEventId) const { LoggerType::OnEvent(InEventId); }
 };
 
 using DefaultNoisy = Noisy<DefaultNoisyLogger>;

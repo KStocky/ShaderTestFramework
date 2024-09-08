@@ -4,6 +4,7 @@
 
 SCENARIO("HLSLFrameworkTests - SectionHierarchy - ByteWriter")
 {
+    using namespace stf;
     ShaderTestFixture fixture(
         ShaderTestFixture::FixtureDesc
         {

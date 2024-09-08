@@ -6,6 +6,7 @@
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - Macros - SCENARIO")
 {
+    using namespace stf;
     auto testName = GENERATE
     (
         "GIVEN_EmptyScenario_WHEN_Ran_THEN_NoAssertMade",

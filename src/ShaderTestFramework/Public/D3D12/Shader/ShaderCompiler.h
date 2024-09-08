@@ -14,59 +14,62 @@
 
 #include <d3d12.h>
 
-namespace fs = std::filesystem;
-
-using CompilationResult = Expected<CompiledShaderData, std::string>;
-
-std::ostream& operator<<(std::ostream& InStream, const CompilationResult& InResult);
-
-class ShaderCodeSource
+namespace stf
 {
-public:
+    namespace fs = std::filesystem;
 
-    ShaderCodeSource() = default;
-    ShaderCodeSource(std::string InSourceCode);
-    ShaderCodeSource(fs::path InSourcePath);
+    using CompilationResult = Expected<CompiledShaderData, std::string>;
 
-    std::string ToString(const VirtualShaderDirectoryMappingManager& InManager) const;
+    std::ostream& operator<<(std::ostream& InStream, const CompilationResult& InResult);
 
-private:
-    std::variant<std::monostate, std::string, fs::path> m_Source;
-};
+    class ShaderCodeSource
+    {
+    public:
 
-struct ShaderMacro
-{
-    std::string Name;
-    std::string Definition;
-};
+        ShaderCodeSource() = default;
+        ShaderCodeSource(std::string InSourceCode);
+        ShaderCodeSource(fs::path InSourcePath);
 
-struct ShaderCompilationJobDesc
-{
-    ShaderCodeSource Source;
-    std::string_view Name;
-    std::vector<ShaderMacro> Defines;
-    std::vector<std::wstring> AdditionalFlags;
-    std::string EntryPoint;
-    D3D_SHADER_MODEL ShaderModel = D3D_SHADER_MODEL_6_0;
-    EShaderType ShaderType = EShaderType::None;
-    EHLSLVersion HLSLVersion = EHLSLVersion::Default;
-    EShaderCompileFlags Flags = EShaderCompileFlags::None;
-};
+        std::string ToString(const VirtualShaderDirectoryMappingManager& InManager) const;
 
-class ShaderCompiler
-{
-public:
+    private:
+        std::variant<std::monostate, std::string, fs::path> m_Source;
+    };
 
-    ShaderCompiler();
-    ShaderCompiler(std::vector<VirtualShaderDirectoryMapping> InMappings);
-    CompilationResult CompileShader(const ShaderCompilationJobDesc& InJob) const;
+    struct ShaderMacro
+    {
+        std::string Name;
+        std::string Definition;
+    };
 
-private:
+    struct ShaderCompilationJobDesc
+    {
+        ShaderCodeSource Source;
+        std::string_view Name;
+        std::vector<ShaderMacro> Defines;
+        std::vector<std::wstring> AdditionalFlags;
+        std::string EntryPoint;
+        D3D_SHADER_MODEL ShaderModel = D3D_SHADER_MODEL_6_0;
+        EShaderType ShaderType = EShaderType::None;
+        EHLSLVersion HLSLVersion = EHLSLVersion::Default;
+        EShaderCompileFlags Flags = EShaderCompileFlags::None;
+    };
 
-    void Init();
+    class ShaderCompiler
+    {
+    public:
 
-    VirtualShaderDirectoryMappingManager m_DirectoryManager;
-    ComPtr<IDxcUtils> m_Utils = nullptr;
-    ComPtr<IDxcCompiler3> m_Compiler = nullptr;
-    ComPtr<IDxcIncludeHandler> m_IncludeHandler = nullptr;
-};
+        ShaderCompiler();
+        ShaderCompiler(std::vector<VirtualShaderDirectoryMapping> InMappings);
+        CompilationResult CompileShader(const ShaderCompilationJobDesc& InJob) const;
+
+    private:
+
+        void Init();
+
+        VirtualShaderDirectoryMappingManager m_DirectoryManager;
+        ComPtr<IDxcUtils> m_Utils = nullptr;
+        ComPtr<IDxcCompiler3> m_Compiler = nullptr;
+        ComPtr<IDxcIncludeHandler> m_IncludeHandler = nullptr;
+    };
+}

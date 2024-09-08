@@ -8,46 +8,49 @@
 #include <d3d12shader.h>
 #include <dxcapi.h>
 
-class ShaderCompilerToken
+namespace stf
 {
-	friend class ShaderCompiler;
-	ShaderCompilerToken() = default;
-};
+    class ShaderCompilerToken
+    {
+        friend class ShaderCompiler;
+        ShaderCompilerToken() = default;
+    };
 
-class CompiledShaderData
-{
-public:
-	struct CreationParams
-	{
-		ComPtr<IDxcBlob> CompiledShader = nullptr;
-		ComPtr<ID3D12ShaderReflection> Reflection = nullptr;
-		std::optional<ShaderHash> Hash = {};
-	};
+    class CompiledShaderData
+    {
+    public:
+        struct CreationParams
+        {
+            ComPtr<IDxcBlob> CompiledShader = nullptr;
+            ComPtr<ID3D12ShaderReflection> Reflection = nullptr;
+            std::optional<ShaderHash> Hash = {};
+        };
 
-	CompiledShaderData() = default;
-	CompiledShaderData(ShaderCompilerToken, CreationParams InParams);
+        CompiledShaderData() = default;
+        CompiledShaderData(ShaderCompilerToken, CreationParams InParams);
 
-	template<typename ThisType>
-	decltype(auto) GetCompiledShader(this ThisType&& InThis)
-	{
-		return std::forward<ThisType>(InThis).m_CompiledShader.Get();
-	}
+        template<typename ThisType>
+        decltype(auto) GetCompiledShader(this ThisType&& InThis)
+        {
+            return std::forward<ThisType>(InThis).m_CompiledShader.Get();
+        }
 
-	template<typename ThisType>
-	decltype(auto) GetShaderHash(this ThisType&& InThis)
-	{
-		return std::forward<ThisType>(InThis).m_Hash;
-	}
+        template<typename ThisType>
+        decltype(auto) GetShaderHash(this ThisType&& InThis)
+        {
+            return std::forward<ThisType>(InThis).m_Hash;
+        }
 
-	template<typename ThisType>
-	decltype(auto) GetReflection(this ThisType&& InThis)
-	{
-		return std::forward<ThisType>(InThis).m_Reflection;
-	}
+        template<typename ThisType>
+        decltype(auto) GetReflection(this ThisType&& InThis)
+        {
+            return std::forward<ThisType>(InThis).m_Reflection;
+        }
 
-private:
+    private:
 
-	ComPtr<IDxcBlob> m_CompiledShader = nullptr;
-	ComPtr<ID3D12ShaderReflection> m_Reflection = nullptr;
-	std::optional<ShaderHash> m_Hash;
-};
+        ComPtr<IDxcBlob> m_CompiledShader = nullptr;
+        ComPtr<ID3D12ShaderReflection> m_Reflection = nullptr;
+        std::optional<ShaderHash> m_Hash;
+    };
+}

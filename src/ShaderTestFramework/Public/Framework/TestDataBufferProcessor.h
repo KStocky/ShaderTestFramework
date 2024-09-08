@@ -15,7 +15,7 @@
 #include <variant>
 #include <vector>
 
-namespace STF
+namespace stf
 {
     enum class EThreadIdType : u8
     {

@@ -4,6 +4,7 @@
 
 SCENARIO("ShaderHashTests")
 {
+    using namespace stf;
     GIVEN("a valid shader")
     {
         const auto shaderModel = D3D_SHADER_MODEL_6_0;

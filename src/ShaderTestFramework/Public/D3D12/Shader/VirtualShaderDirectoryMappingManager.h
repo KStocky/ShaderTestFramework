@@ -3,30 +3,33 @@
 #include "D3D12/Shader/VirtualShaderDirectoryMapping.h"
 #include "Utility/Expected.h"
 
-class VirtualShaderDirectoryMappingManager
+namespace stf
 {
-public:
+    class VirtualShaderDirectoryMappingManager
+    {
+    public:
 
-	enum class EErrorType
-	{
-		Success,
-		NoMappingFound,
-		RealPathMustBeAbsolute,
-		VirtualPathAlreadyExists,
-		VirtualPathEmpty,
-		VirtualPathShouldStartWithASlash
-	};
+        enum class EErrorType
+        {
+            Success,
+            NoMappingFound,
+            RealPathMustBeAbsolute,
+            VirtualPathAlreadyExists,
+            VirtualPathEmpty,
+            VirtualPathShouldStartWithASlash
+        };
 
-	template<typename T>
-	using Expected = Expected<T, EErrorType>;
+        template<typename T>
+        using Expected = Expected<T, EErrorType>;
 
-	VirtualShaderDirectoryMappingManager() = default;
+        VirtualShaderDirectoryMappingManager() = default;
 
-	EErrorType AddMapping(VirtualShaderDirectoryMapping InMapping);
-	Expected<std::filesystem::path> Map(const std::filesystem::path& InVirtualPath) const;
+        EErrorType AddMapping(VirtualShaderDirectoryMapping InMapping);
+        Expected<std::filesystem::path> Map(const std::filesystem::path& InVirtualPath) const;
 
 
-private:
+    private:
 
-	std::vector<VirtualShaderDirectoryMapping> m_Mappings;
-};
+        std::vector<VirtualShaderDirectoryMapping> m_Mappings;
+    };
+}

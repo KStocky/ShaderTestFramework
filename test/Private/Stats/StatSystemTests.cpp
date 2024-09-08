@@ -4,6 +4,7 @@
 
 namespace ScopedCPUDurationStatCompileTests
 {
+    using namespace stf;
     static StatSystem system;
 
     constexpr auto systemGetter =
@@ -26,6 +27,7 @@ namespace ScopedCPUDurationStatCompileTests
 
 SCENARIO("StatSystemTests")
 {
+    using namespace stf;
     GIVEN("A global stat system")
     {
         static StatSystem system;

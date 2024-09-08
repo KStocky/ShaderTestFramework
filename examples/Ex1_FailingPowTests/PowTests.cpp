@@ -7,11 +7,10 @@
 
 SCENARIO("PowTests")
 {
-
     // We need to enable GPU capturing to allow us to take a GPU capture during a test
     // This is done in the FixtureDesc.
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
+    stf::ShaderTestFixture fixture(
+        stf::ShaderTestFixture::FixtureDesc
         {
             .GPUDeviceParams
             {
@@ -24,7 +23,7 @@ SCENARIO("PowTests")
     // In this case we give the HLSL source code, entry function name and thread group count.
     // We also enable a gpu capture
     REQUIRE(fixture.RunTest(
-        ShaderTestFixture::RuntimeTestDesc
+        stf::ShaderTestFixture::RuntimeTestDesc
         {
             .CompilationEnv
             {
@@ -61,7 +60,7 @@ SCENARIO("PowTests")
             },
             .TestName = "RunPowTests",
             .ThreadGroupCount{1, 1, 1},
-            .GPUCaptureMode = ShaderTestFixture::EGPUCaptureMode::On
+            .GPUCaptureMode = stf::ShaderTestFixture::EGPUCaptureMode::On
         })
     );
 }

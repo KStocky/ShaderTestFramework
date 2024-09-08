@@ -10,7 +10,7 @@ using namespace ShaderCompilerTestsCommon;
 
 SCENARIO("ShaderReflectionTests - Resource binding")
 {
-
+    using namespace stf;
     auto [name, expectedNumBufferInResources] =
         GENERATE
         (

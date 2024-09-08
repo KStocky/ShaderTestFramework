@@ -1,6 +1,6 @@
 #include "Framework/TestDataBufferStructs.h"
 
-namespace STF
+namespace stf
 {
     std::ostream& operator<<(std::ostream& InOs, const SectionInfoMetaData& In)
     {

@@ -6,23 +6,24 @@
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - SectionsWithStrings")
 {
+    using namespace stf;
     auto [testName, expectedStrings, expectedSections, expectedFailingSectionIds] = GENERATE
     (
-        table<std::string, std::vector<std::string>, std::vector<STF::SectionInfoMetaData>, std::vector<i32>>
+        table<std::string, std::vector<std::string>, std::vector<SectionInfoMetaData>, std::vector<i32>>
         (
             {
                 std::tuple
                 { 
                     "GIVEN_ZeroSectionsWithStrings_WHEN_ZeroAssertsFailed_THEN_HasExpectedResults",
                     std::vector<std::string>{},
-                    std::vector<STF::SectionInfoMetaData>{},
+                    std::vector<SectionInfoMetaData>{},
                     std::vector<i32>{}
                 },
                 std::tuple
                 { 
                     "GIVEN_ZeroSectionsWithStrings_WHEN_AssertsFailed_THEN_HasExpectedResults",
                     std::vector<std::string>{},
-                    std::vector<STF::SectionInfoMetaData>{},
+                    std::vector<SectionInfoMetaData>{},
                     std::vector<i32>{-1}
                 
                 },
@@ -32,7 +33,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                     std::vector<std::string>{"TestScenario"},
                     std::vector
                     {
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 0,
                             .StringId = 0,
@@ -47,13 +48,13 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                     std::vector<std::string>{"TestScenario", "TestSection"},
                     std::vector
                     {
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 0,
                             .StringId = 0,
                             .ParentId = -1
                         },
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 1,
                             .StringId = 1,
@@ -68,13 +69,13 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                     std::vector<std::string>{"TestScenario", "TestSection"},
                     std::vector
                     {
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 0,
                             .StringId = 0,
                             .ParentId = -1
                         },
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 1,
                             .StringId = 1,
@@ -89,19 +90,19 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                     std::vector<std::string>{"TestScenario", "TestSection1", "TestSection2"},
                     std::vector
                     {
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 0,
                             .StringId = 0,
                             .ParentId = -1
                         },
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 1,
                             .StringId = 1,
                             .ParentId = 0
                         },
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 2,
                             .StringId = 2,
@@ -116,19 +117,19 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                     std::vector<std::string>{"TestScenario", "TestSection1", "TestSection2"},
                     std::vector
                     {
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 0,
                             .StringId = 0,
                             .ParentId = -1
                         },
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 1,
                             .StringId = 1,
                             .ParentId = 0
                         },
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 2,
                             .StringId = 2,
@@ -143,31 +144,31 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                     std::vector<std::string>{"TestScenario", "TestSection1", "TestSection2", "TestSection3", "TestSection4"},
                     std::vector
                     {
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 0,
                             .StringId = 0,
                             .ParentId = -1
                         },
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 1,
                             .StringId = 1,
                             .ParentId = 0
                         },
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 2,
                             .StringId = 2,
                             .ParentId = 1
                         },
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 3,
                             .StringId = 3,
                             .ParentId = 1
                         },
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 4,
                             .StringId = 4,
@@ -182,31 +183,31 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                     std::vector<std::string>{"TestScenario", "TestSection1", "TestSection2", "TestSection3", "TestSection4"},
                     std::vector
                     {
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 0,
                             .StringId = 0,
                             .ParentId = -1
                         },
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 1,
                             .StringId = 1,
                             .ParentId = 0
                         },
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 2,
                             .StringId = 2,
                             .ParentId = 1
                         },
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 3,
                             .StringId = 3,
                             .ParentId = 1
                         },
-                        STF::SectionInfoMetaData
+                        SectionInfoMetaData
                         {
                             .SectionId = 4,
                             .StringId = 4,

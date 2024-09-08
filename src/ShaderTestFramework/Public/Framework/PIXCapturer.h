@@ -2,18 +2,21 @@
 
 #include <string_view>
 
-class PIXCapturer
+namespace stf
 {
-public:
+    class PIXCapturer
+    {
+    public:
 
-    explicit PIXCapturer(const std::string_view InName, const bool InTakeCapture);
-    PIXCapturer(const PIXCapturer&) = delete;
-    PIXCapturer(PIXCapturer&&) = delete;
-    PIXCapturer& operator=(const PIXCapturer&) = delete;
-    PIXCapturer& operator=(PIXCapturer&&) = delete;
-    ~PIXCapturer() noexcept;
+        explicit PIXCapturer(const std::string_view InName, const bool InTakeCapture);
+        PIXCapturer(const PIXCapturer&) = delete;
+        PIXCapturer(PIXCapturer&&) = delete;
+        PIXCapturer& operator=(const PIXCapturer&) = delete;
+        PIXCapturer& operator=(PIXCapturer&&) = delete;
+        ~PIXCapturer() noexcept;
 
-private:
+    private:
 
-    bool m_IsCapturing = false;
-};
+        bool m_IsCapturing = false;
+    };
+}

@@ -3,19 +3,19 @@
 
 namespace ShaderCompilerTestsCommon
 {
-    inline ShaderCompiler CreateCompiler()
+    inline stf::ShaderCompiler CreateCompiler()
     {
-        fs::path shaderDir = fs::current_path();
+        stf::fs::path shaderDir = stf::fs::current_path();
         shaderDir += "/";
         shaderDir += SHADER_SRC;
         shaderDir += "/D3D12/Shader/ShaderCompilerTests";
 
-        return ShaderCompiler{ std::vector{ VirtualShaderDirectoryMapping{ "/Tests", std::move(shaderDir) } } };
+        return stf::ShaderCompiler{ std::vector{ stf::VirtualShaderDirectoryMapping{ "/Tests", std::move(shaderDir) } } };
     }
 
-    inline ShaderCompilationJobDesc CreateCompilationJob(const EShaderType InType, const D3D_SHADER_MODEL InModel, const EHLSLVersion InVersion, std::vector<std::wstring>&& InFlags, fs::path&& InPath)
+    inline stf::ShaderCompilationJobDesc CreateCompilationJob(const stf::EShaderType InType, const D3D_SHADER_MODEL InModel, const stf::EHLSLVersion InVersion, std::vector<std::wstring>&& InFlags, stf::fs::path&& InPath)
     {
-        ShaderCompilationJobDesc job;
+        stf::ShaderCompilationJobDesc job;
         job.Name = "Test";
         job.EntryPoint = "Main";
         job.ShaderModel = InModel;

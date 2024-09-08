@@ -4,7 +4,7 @@
 #include "Framework/TestDataBufferStructs.h"
 #include "Utility/Math.h"
 
-namespace STF
+namespace stf
 {
     template<typename MetaDataType>
     class TestDataSection

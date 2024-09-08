@@ -1,9 +1,9 @@
 #include <D3D12/Shader/ShaderEnums.h>
 #include <Framework/ShaderTestFixture.h>
 
-static VirtualShaderDirectoryMapping GetTestVirtualDirectoryMapping()
+static stf::VirtualShaderDirectoryMapping GetTestVirtualDirectoryMapping()
 {
-    return VirtualShaderDirectoryMapping{ "/MyTests", fs::current_path() / "shader" };
+    return stf::VirtualShaderDirectoryMapping{ "/MyTests", stf::fs::current_path() / "shader" };
 }
 
 #include <string>
@@ -25,8 +25,8 @@ SCENARIO("Catch2ShaderTests")
         )
     );
 
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
+    stf::ShaderTestFixture fixture(
+        stf::ShaderTestFixture::FixtureDesc
         {
             .Mappings{ GetTestVirtualDirectoryMapping() }
         }
@@ -36,11 +36,11 @@ SCENARIO("Catch2ShaderTests")
         [&testName]()
         {
             return
-                ShaderTestFixture::RuntimeTestDesc
+                stf::ShaderTestFixture::RuntimeTestDesc
             {
                 .CompilationEnv
                 {
-                    .Source = fs::path("/MyTests/ShaderTest.hlsl")
+                    .Source = std::filesystem::path("/MyTests/ShaderTest.hlsl")
                 },
                 .TestName = testName,
                 .ThreadGroupCount{ 1, 1, 1 }

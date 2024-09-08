@@ -8,48 +8,51 @@
 
 #include <d3d12.h>
 
-class DescriptorHeap : MoveOnly
+namespace stf
 {
-public:
+    class DescriptorHeap : MoveOnly
+    {
+    public:
 
-	struct Desc
-	{
-		ComPtr<ID3D12DescriptorHeap> Heap;
-		u32 DescriptorSize = 0;
-	};
+        struct Desc
+        {
+            ComPtr<ID3D12DescriptorHeap> Heap;
+            u32 DescriptorSize = 0;
+        };
 
-	enum class EErrorType : u8
-	{
-		AllocationError
-	};
+        enum class EErrorType : u8
+        {
+            AllocationError
+        };
 
-	template<typename T>
-	using Expected = Expected<T, EErrorType>;
+        template<typename T>
+        using Expected = Expected<T, EErrorType>;
 
-	DescriptorHeap() = default;
-	DescriptorHeap(Desc InParams) noexcept;
+        DescriptorHeap() = default;
+        DescriptorHeap(Desc InParams) noexcept;
 
-	Expected<DescriptorRange> CreateDescriptorRange(const u32 InBeginIndex, const u32 InNum) const;
-	Expected<DescriptorHandle> CreateDescriptorHandle(const u32 InIndex) const;
+        Expected<DescriptorRange> CreateDescriptorRange(const u32 InBeginIndex, const u32 InNum) const;
+        Expected<DescriptorHandle> CreateDescriptorHandle(const u32 InIndex) const;
 
-	u32 GetNumDescriptors() const noexcept;
-	D3D12_DESCRIPTOR_HEAP_TYPE GetType() const noexcept;
-	D3D12_DESCRIPTOR_HEAP_FLAGS GetAccess() const;
+        u32 GetNumDescriptors() const noexcept;
+        D3D12_DESCRIPTOR_HEAP_TYPE GetType() const noexcept;
+        D3D12_DESCRIPTOR_HEAP_FLAGS GetAccess() const;
 
-	template<typename ThisType>
-	ID3D12DescriptorHeap* GetRaw(this ThisType&& InThis)
-	{
-		return std::forward<ThisType>(InThis).m_Heap.Get();
-	}
+        template<typename ThisType>
+        ID3D12DescriptorHeap* GetRaw(this ThisType&& InThis)
+        {
+            return std::forward<ThisType>(InThis).m_Heap.Get();
+        }
 
-	template<typename ThisType>
-	operator ID3D12DescriptorHeap*(this ThisType&& InThis)
-	{
-		return std::forward<ThisType>(InThis).GetRaw();
-	}
+        template<typename ThisType>
+        operator ID3D12DescriptorHeap* (this ThisType&& InThis)
+        {
+            return std::forward<ThisType>(InThis).GetRaw();
+        }
 
-private:
+    private:
 
-	ComPtr<ID3D12DescriptorHeap> m_Heap = nullptr;
-	u32 m_DescriptorSize = 0;
-};
+        ComPtr<ID3D12DescriptorHeap> m_Heap = nullptr;
+        u32 m_DescriptorSize = 0;
+    };
+}

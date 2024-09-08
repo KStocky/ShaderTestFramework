@@ -7,114 +7,116 @@
 #include <string>
 #include <vector>
 
-
-template<typename T>
-struct NamedStat
+namespace stf
 {
-    std::string Name;
-    T Stat;
-};
+    template<typename T>
+    struct NamedStat
+    {
+        std::string Name;
+        T Stat;
+    };
 
-using TimedStat = NamedStat<Duration>;
+    using TimedStat = NamedStat<Duration>;
 
-class StatSystem
-{
-public:
-
-    class Handle
+    class StatSystem
     {
     public:
 
-        static constexpr u32 NumBitsId = 28;
-        static constexpr u32 NumBitsGen = 3;
-        static constexpr u32 ValidBits = 1;
-
-        static constexpr u32 MaxIds = 1 << NumBitsId;
-        static constexpr u32 MaxGens = 1 << NumBitsGen;
-
-        Handle() = default;
-        Handle(const u32 InId, const u32 InGeneration, const bool InIsValid)
-            : m_Id(InId)
-            , m_Gen(InGeneration)
-            , m_IsValid(InIsValid)
-        {}
-
-        u32 GetId() const
+        class Handle
         {
-            return m_Id;
-        }
+        public:
 
-        u32 GetGeneration() const
-        {
-            return m_Gen;
-        }
+            static constexpr u32 NumBitsId = 28;
+            static constexpr u32 NumBitsGen = 3;
+            static constexpr u32 ValidBits = 1;
 
-        template<typename ThisType>
-        operator bool(this ThisType&& InThis)
-        {
-            return InThis.m_IsValid != 0;
-        }
+            static constexpr u32 MaxIds = 1 << NumBitsId;
+            static constexpr u32 MaxGens = 1 << NumBitsGen;
 
-        friend auto operator<=>(Handle, Handle) = default;
+            Handle() = default;
+            Handle(const u32 InId, const u32 InGeneration, const bool InIsValid)
+                : m_Id(InId)
+                , m_Gen(InGeneration)
+                , m_IsValid(InIsValid)
+            {}
+
+            u32 GetId() const
+            {
+                return m_Id;
+            }
+
+            u32 GetGeneration() const
+            {
+                return m_Gen;
+            }
+
+            template<typename ThisType>
+            operator bool(this ThisType&& InThis)
+            {
+                return InThis.m_IsValid != 0;
+            }
+
+            friend auto operator<=>(Handle, Handle) = default;
+
+        private:
+            u32 m_Id : NumBitsId = 0;
+            u32 m_Gen : NumBitsGen = 0;
+            u32 m_IsValid : ValidBits = 0;
+        };
+
+        Handle BeginStat(std::string InName);
+        void EndStat(const Handle InHandle);
+
+        [[nodiscard]] std::vector<TimedStat> FlushTimedStats();
 
     private:
-        u32 m_Id : NumBitsId = 0;
-        u32 m_Gen : NumBitsGen = 0;
-        u32 m_IsValid : ValidBits = 0;
+
+        struct RawTimedStat
+        {
+            std::string Name;
+            TimePoint StartTime = {};
+            TimePoint EndTime = {};
+        };
+
+        std::vector<RawTimedStat> m_RawTimedStats;
+        u32 m_CurrentGen = 0u;
     };
 
-    Handle BeginStat(std::string InName);
-    void EndStat(const Handle InHandle);
-
-    [[nodiscard]] std::vector<TimedStat> FlushTimedStats();
-
-private:
-
-    struct RawTimedStat
+    template<auto Callable>
+    concept StatSystemGetter = requires
     {
-        std::string Name;
-        TimePoint StartTime = {};
-        TimePoint EndTime = {};
+        { Callable() } -> std::same_as<StatSystem&>;
     };
 
-    std::vector<RawTimedStat> m_RawTimedStats;
-    u32 m_CurrentGen = 0u;
-};
-
-template<auto Callable>
-concept StatSystemGetter = requires
-{
-    { Callable() } -> std::same_as<StatSystem&>;
-};
-
-template<auto Getter >
-    requires StatSystemGetter<Getter>
-class ScopedCPUDurationStat
-{
-public:
-
-    ScopedCPUDurationStat(std::string InName)
+    template<auto Getter >
+        requires StatSystemGetter<Getter>
+    class ScopedCPUDurationStat
     {
-        m_Handle = Getter().BeginStat(std::move(InName));
-    }
+    public:
 
-    ~ScopedCPUDurationStat()
-    {
-        Getter().EndStat(m_Handle);
-    }
+        ScopedCPUDurationStat(std::string InName)
+        {
+            m_Handle = Getter().BeginStat(std::move(InName));
+        }
 
-    ScopedCPUDurationStat(const ScopedCPUDurationStat&) = delete;
-    ScopedCPUDurationStat(ScopedCPUDurationStat&&) = delete;
-    ScopedCPUDurationStat& operator=(const ScopedCPUDurationStat&) = delete;
-    ScopedCPUDurationStat& operator=(ScopedCPUDurationStat&&) = delete;
+        ~ScopedCPUDurationStat()
+        {
+            Getter().EndStat(m_Handle);
+        }
 
-    template<typename... Ts>
-    static void* operator new(std::size_t, Ts&&...) = delete;
+        ScopedCPUDurationStat(const ScopedCPUDurationStat&) = delete;
+        ScopedCPUDurationStat(ScopedCPUDurationStat&&) = delete;
+        ScopedCPUDurationStat& operator=(const ScopedCPUDurationStat&) = delete;
+        ScopedCPUDurationStat& operator=(ScopedCPUDurationStat&&) = delete;
 
-    template<typename... Ts>
-    static void* operator new[](std::size_t, Ts&&...) = delete;
+        template<typename... Ts>
+        static void* operator new(std::size_t, Ts&&...) = delete;
 
-private:
+        template<typename... Ts>
+        static void* operator new[](std::size_t, Ts&&...) = delete;
 
-    StatSystem::Handle m_Handle{};
-};
+    private:
+
+        StatSystem::Handle m_Handle{};
+    };
+}

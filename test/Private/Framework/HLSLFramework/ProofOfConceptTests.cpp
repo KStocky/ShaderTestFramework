@@ -5,6 +5,7 @@
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - ProofOfConcept")
 {
+    using namespace stf;
     auto testName = GENERATE
     (
         "GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent",

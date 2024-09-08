@@ -10,75 +10,78 @@
 
 #include <d3d12.h>
 
-class CommandAllocator;
-class DescriptorHeap;
-class GPUResource;
-class PipelineState;
-class RootSignature;
-
-template<typename T>
-concept RootSigConstantType = std::is_trivial_v<T> && sizeof(T) == 4;
-
-class CommandList : MoveOnly
+namespace stf
 {
-public:
+    class CommandAllocator;
+    class DescriptorHeap;
+    class GPUResource;
+    class PipelineState;
+    class RootSignature;
 
-	struct CreationParams
-	{
-		ComPtr<ID3D12GraphicsCommandList9> List = nullptr;
-	};
+    template<typename T>
+    concept RootSigConstantType = std::is_trivial_v<T> && sizeof(T) == 4;
 
-	CommandList() = default;
-	CommandList(CreationParams InParams);
+    class CommandList : MoveOnly
+    {
+    public:
 
-	void CopyBufferResource(GPUResource& InDest, GPUResource& InSource);
+        struct CreationParams
+        {
+            ComPtr<ID3D12GraphicsCommandList9> List = nullptr;
+        };
 
-	void Dispatch(const u32 InX, const u32 InY, const u32 InZ);
+        CommandList() = default;
+        CommandList(CreationParams InParams);
 
-	template<RootSigConstantType T>
-	void SetComputeRoot32BitConstants(const u32 InRootParamIndex, const T InVal, const u32 InOffset)
-	{
-		const auto val = std::bit_cast<u32>(InVal);
-		m_List->SetComputeRoot32BitConstant(InRootParamIndex, val, InOffset);
-	}
+        void CopyBufferResource(GPUResource& InDest, GPUResource& InSource);
 
-	template<RootSigConstantType T, u64 InSpanSize>
-	void SetComputeRoot32BitConstants(const u32 InRootParamIndex, const std::span<T, InSpanSize> InVals, const u32 InOffset)
-	{
-		m_List->SetComputeRoot32BitConstants(InRootParamIndex, static_cast<u32>(InVals.size()), InVals.data(), InOffset);
-	}
+        void Dispatch(const u32 InX, const u32 InY, const u32 InZ);
 
-	void SetComputeRootSignature(const RootSignature& InRootSig);
+        template<RootSigConstantType T>
+        void SetComputeRoot32BitConstants(const u32 InRootParamIndex, const T InVal, const u32 InOffset)
+        {
+            const auto val = std::bit_cast<u32>(InVal);
+            m_List->SetComputeRoot32BitConstant(InRootParamIndex, val, InOffset);
+        }
 
-	void SetDescriptorHeaps(const DescriptorHeap& InHeap);
+        template<RootSigConstantType T, u64 InSpanSize>
+        void SetComputeRoot32BitConstants(const u32 InRootParamIndex, const std::span<T, InSpanSize> InVals, const u32 InOffset)
+        {
+            m_List->SetComputeRoot32BitConstants(InRootParamIndex, static_cast<u32>(InVals.size()), InVals.data(), InOffset);
+        }
 
-	template<RootSigConstantType T>
-	void SetGraphicsRoot32BitConstants(const u32 InRootParamIndex, const T InVal, const u32 InOffset)
-	{
-		const auto val = std::bit_cast<u32>(InVal);
-		m_List->SetGraphicsRoot32BitConstant(InRootParamIndex, val, InOffset);
-	}
+        void SetComputeRootSignature(const RootSignature& InRootSig);
 
-	template<RootSigConstantType T, u64 InSpanSize>
-	void SetGraphicsRoot32BitConstants(const u32 InRootParamIndex, const std::span<T, InSpanSize> InVals, const u32 InOffset)
-	{
-		m_List->SetGraphicsRoot32BitConstants(InRootParamIndex, static_cast<u32>(InVals.size()), InVals.data(), InOffset);
-	}
+        void SetDescriptorHeaps(const DescriptorHeap& InHeap);
 
-	void SetGraphicsRootSignature(const RootSignature& InRootSig);
-	void SetPipelineState(const PipelineState& InState);
+        template<RootSigConstantType T>
+        void SetGraphicsRoot32BitConstants(const u32 InRootParamIndex, const T InVal, const u32 InOffset)
+        {
+            const auto val = std::bit_cast<u32>(InVal);
+            m_List->SetGraphicsRoot32BitConstant(InRootParamIndex, val, InOffset);
+        }
 
-	void SetBufferUAV(GPUResource& InResource);
+        template<RootSigConstantType T, u64 InSpanSize>
+        void SetGraphicsRoot32BitConstants(const u32 InRootParamIndex, const std::span<T, InSpanSize> InVals, const u32 InOffset)
+        {
+            m_List->SetGraphicsRoot32BitConstants(InRootParamIndex, static_cast<u32>(InVals.size()), InVals.data(), InOffset);
+        }
 
-	void Close();
-	void Reset(CommandAllocator& InAllocator);
+        void SetGraphicsRootSignature(const RootSignature& InRootSig);
+        void SetPipelineState(const PipelineState& InState);
 
-	D3D12_COMMAND_LIST_TYPE GetType() const;
+        void SetBufferUAV(GPUResource& InResource);
 
-    ID3D12GraphicsCommandList* GetRaw() const;
-	operator ID3D12GraphicsCommandList* () const;
+        void Close();
+        void Reset(CommandAllocator& InAllocator);
 
-private:
+        D3D12_COMMAND_LIST_TYPE GetType() const;
 
-	ComPtr<ID3D12GraphicsCommandList9> m_List = nullptr;
-};
+        ID3D12GraphicsCommandList* GetRaw() const;
+        operator ID3D12GraphicsCommandList* () const;
+
+    private:
+
+        ComPtr<ID3D12GraphicsCommandList9> m_List = nullptr;
+    };
+}

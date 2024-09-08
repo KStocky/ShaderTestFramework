@@ -10,6 +10,7 @@ using namespace ShaderCompilerTestsCommon;
 
 SCENARIO("ShaderIncludeHandlerTests")
 {
+    using namespace stf;
     GIVEN("Shader that includes test framework")
     {
         WHEN("compiled")

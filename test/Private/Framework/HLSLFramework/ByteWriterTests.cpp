@@ -7,6 +7,7 @@
 
 TEST_CASE_PERSISTENT_FIXTURE( ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - ByteWriter")
 {
+    using namespace stf;
     auto testName = GENERATE
     (
         "GIVEN_FundamentalType_WHEN_HasWriterQueried_THEN_False",

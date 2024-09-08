@@ -6,6 +6,7 @@
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - NoAssertBuffer")
 {
+    using namespace stf;
     auto [testName, numSucceeded, numFailed] = GENERATE
     (
         table<std::string, u32, u32>
@@ -19,7 +20,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
         )
     );
 
-    const STF::TestRunResults expected
+    const TestRunResults expected
     {
         .FailedAsserts = {},
         .NumSucceeded = numSucceeded,

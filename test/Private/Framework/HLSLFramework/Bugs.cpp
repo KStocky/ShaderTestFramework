@@ -6,6 +6,7 @@
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - Bugs")
 {
+    using namespace stf;
     auto [testName, testFile, shouldSucceed] = GENERATE
     (
         table<std::string, std::string, bool>

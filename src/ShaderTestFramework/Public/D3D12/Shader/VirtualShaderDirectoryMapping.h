@@ -2,8 +2,11 @@
 
 #include <filesystem>
 
-struct VirtualShaderDirectoryMapping
+namespace stf
 {
-	std::filesystem::path VirtualPath;
-	std::filesystem::path RealPath;
-};
+    struct VirtualShaderDirectoryMapping
+    {
+        std::filesystem::path VirtualPath;
+        std::filesystem::path RealPath;
+    };
+}

@@ -5,6 +5,7 @@
 
 SCENARIO("VirtualShaderDirectoryMappingManagerTests")
 {
+    using namespace stf;
 	VirtualShaderDirectoryMappingManager manager;
 
 	GIVEN("Manager does not have requested mapping")

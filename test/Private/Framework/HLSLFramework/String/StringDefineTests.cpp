@@ -12,6 +12,7 @@ using Catch::Matchers::ContainsSubstring;
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - String - Defines")
 {
+    using namespace stf;
     const auto stringMode = GENERATE
     (
         ShaderTestFixture::EStringMode::Off,

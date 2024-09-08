@@ -7,13 +7,13 @@
 
 SCENARIO("MinimalShaderTestExample")
 {
-    ShaderTestFixture fixture(ShaderTestFixture::FixtureDesc{});
+    stf::ShaderTestFixture fixture(stf::ShaderTestFixture::FixtureDesc{});
 
     // RunTest takes a desc that describes the test setup
     // In this case we give the HLSL source code, entry function name and thread group count.
     REQUIRE(fixture.RunTest
     (
-        ShaderTestFixture::RuntimeTestDesc
+        stf::ShaderTestFixture::RuntimeTestDesc
         {
             .CompilationEnv
             {

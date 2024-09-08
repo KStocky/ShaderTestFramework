@@ -9,139 +9,142 @@
 
 #include <d3dx12/d3dx12.h>
 
-CommandList::CommandList(CreationParams InParams)
-	: m_List(std::move(InParams.List))
+namespace stf
 {
-}
-
-void CommandList::CopyBufferResource(GPUResource& InDest, GPUResource& InSource)
-{
-    const auto prevSourceBarrier = InSource.GetBarrier();
-    const auto prevDestBarrier = InSource.GetBarrier();
-
-    GPUEnhancedBarrier newSourceBarrier
+    CommandList::CommandList(CreationParams InParams)
+        : m_List(std::move(InParams.List))
     {
-        .Sync = D3D12_BARRIER_SYNC_COPY,
-        .Access = D3D12_BARRIER_ACCESS_COPY_SOURCE,
-        .Layout = D3D12_BARRIER_LAYOUT_DIRECT_QUEUE_COPY_SOURCE
-    };
+    }
 
-    GPUEnhancedBarrier newDestBarrier
+    void CommandList::CopyBufferResource(GPUResource& InDest, GPUResource& InSource)
     {
-        .Sync = D3D12_BARRIER_SYNC_COPY,
-        .Access = D3D12_BARRIER_ACCESS_COPY_DEST,
-        .Layout = D3D12_BARRIER_LAYOUT_DIRECT_QUEUE_COPY_DEST
-    };
+        const auto prevSourceBarrier = InSource.GetBarrier();
+        const auto prevDestBarrier = InSource.GetBarrier();
 
-    InSource.SetBarrier(newSourceBarrier);
-    InSource.SetBarrier(newDestBarrier);
+        GPUEnhancedBarrier newSourceBarrier
+        {
+            .Sync = D3D12_BARRIER_SYNC_COPY,
+            .Access = D3D12_BARRIER_ACCESS_COPY_SOURCE,
+            .Layout = D3D12_BARRIER_LAYOUT_DIRECT_QUEUE_COPY_SOURCE
+        };
 
-    D3D12_BUFFER_BARRIER bufferBarriers[] =
+        GPUEnhancedBarrier newDestBarrier
+        {
+            .Sync = D3D12_BARRIER_SYNC_COPY,
+            .Access = D3D12_BARRIER_ACCESS_COPY_DEST,
+            .Layout = D3D12_BARRIER_LAYOUT_DIRECT_QUEUE_COPY_DEST
+        };
+
+        InSource.SetBarrier(newSourceBarrier);
+        InSource.SetBarrier(newDestBarrier);
+
+        D3D12_BUFFER_BARRIER bufferBarriers[] =
+        {
+            CD3DX12_BUFFER_BARRIER(
+                prevSourceBarrier.Sync,
+                newSourceBarrier.Sync,
+                prevSourceBarrier.Access,
+                newSourceBarrier.Access,
+                InSource
+            ),
+            CD3DX12_BUFFER_BARRIER(
+                prevDestBarrier.Sync,
+                newDestBarrier.Sync,
+                prevDestBarrier.Access,
+                newDestBarrier.Access,
+                InSource
+            )
+        };
+
+        D3D12_BARRIER_GROUP BufBarrierGroups[] =
+        {
+            CD3DX12_BARRIER_GROUP(2, bufferBarriers)
+        };
+
+        m_List->Barrier(1, BufBarrierGroups);
+        m_List->CopyResource(InDest, InSource);
+    }
+
+    void CommandList::Dispatch(const u32 InX, const u32 InY, const u32 InZ)
     {
-        CD3DX12_BUFFER_BARRIER(
-            prevSourceBarrier.Sync,
-            newSourceBarrier.Sync,
-            prevSourceBarrier.Access,
-            newSourceBarrier.Access,
-            InSource
-        ),
-        CD3DX12_BUFFER_BARRIER(
-            prevDestBarrier.Sync,
-            newDestBarrier.Sync,
-            prevDestBarrier.Access,
-            newDestBarrier.Access,
-            InSource
-        )
-    };
+        m_List->Dispatch(InX, InY, InZ);
+    }
 
-    D3D12_BARRIER_GROUP BufBarrierGroups[] =
+    void CommandList::SetComputeRootSignature(const RootSignature& InRootSig)
     {
-        CD3DX12_BARRIER_GROUP(2, bufferBarriers)
-    };
+        m_List->SetComputeRootSignature(InRootSig);
+    }
 
-    m_List->Barrier(1, BufBarrierGroups);
-    m_List->CopyResource(InDest, InSource);
-}
-
-void CommandList::Dispatch(const u32 InX, const u32 InY, const u32 InZ)
-{
-	m_List->Dispatch(InX, InY, InZ);
-}
-
-void CommandList::SetComputeRootSignature(const RootSignature& InRootSig)
-{
-    m_List->SetComputeRootSignature(InRootSig);
-}
-
-void CommandList::SetDescriptorHeaps(const DescriptorHeap& InHeap)
-{
-	const auto rawHeap = InHeap.GetRaw();
-	m_List->SetDescriptorHeaps(1, &rawHeap);
-}
-
-void CommandList::SetGraphicsRootSignature(const RootSignature& InRootSig)
-{
-	m_List->SetGraphicsRootSignature(InRootSig);
-}
-
-void CommandList::SetPipelineState(const PipelineState& InState)
-{
-	m_List->SetPipelineState(InState);
-}
-
-void CommandList::SetBufferUAV(GPUResource& InResource)
-{
-    const auto prevBarrier = InResource.GetBarrier();
-    GPUEnhancedBarrier newBarrier
+    void CommandList::SetDescriptorHeaps(const DescriptorHeap& InHeap)
     {
-        .Sync = D3D12_BARRIER_SYNC_COMPUTE_SHADING,
-        .Access = D3D12_BARRIER_ACCESS_UNORDERED_ACCESS,
-        .Layout = D3D12_BARRIER_LAYOUT_DIRECT_QUEUE_UNORDERED_ACCESS
-    };
+        const auto rawHeap = InHeap.GetRaw();
+        m_List->SetDescriptorHeaps(1, &rawHeap);
+    }
 
-    InResource.SetBarrier(newBarrier);
-    D3D12_BUFFER_BARRIER bufferBarriers[] =
+    void CommandList::SetGraphicsRootSignature(const RootSignature& InRootSig)
     {
-        CD3DX12_BUFFER_BARRIER(
-            prevBarrier.Sync, 
-            newBarrier.Sync,
-            prevBarrier.Access,
-            newBarrier.Access,
-            InResource
-        )
-    };
+        m_List->SetGraphicsRootSignature(InRootSig);
+    }
 
-    D3D12_BARRIER_GROUP BufBarrierGroups[] =
+    void CommandList::SetPipelineState(const PipelineState& InState)
     {
-        CD3DX12_BARRIER_GROUP(1, bufferBarriers)
-    };
+        m_List->SetPipelineState(InState);
+    }
 
-    m_List->Barrier(1, BufBarrierGroups);
-}
+    void CommandList::SetBufferUAV(GPUResource& InResource)
+    {
+        const auto prevBarrier = InResource.GetBarrier();
+        GPUEnhancedBarrier newBarrier
+        {
+            .Sync = D3D12_BARRIER_SYNC_COMPUTE_SHADING,
+            .Access = D3D12_BARRIER_ACCESS_UNORDERED_ACCESS,
+            .Layout = D3D12_BARRIER_LAYOUT_DIRECT_QUEUE_UNORDERED_ACCESS
+        };
 
-void CommandList::Close()
-{
-	ThrowIfFailed(m_List->Close());
-}
+        InResource.SetBarrier(newBarrier);
+        D3D12_BUFFER_BARRIER bufferBarriers[] =
+        {
+            CD3DX12_BUFFER_BARRIER(
+                prevBarrier.Sync,
+                newBarrier.Sync,
+                prevBarrier.Access,
+                newBarrier.Access,
+                InResource
+            )
+        };
 
-void CommandList::Reset(CommandAllocator& InAllocator)
-{
-	ThrowIfUnexpected(InAllocator.Reset());
-	ThrowIfFailed(m_List->Reset(InAllocator, nullptr));
-}
+        D3D12_BARRIER_GROUP BufBarrierGroups[] =
+        {
+            CD3DX12_BARRIER_GROUP(1, bufferBarriers)
+        };
 
-D3D12_COMMAND_LIST_TYPE CommandList::GetType() const
-{
-	return m_List->GetType();
-}
+        m_List->Barrier(1, BufBarrierGroups);
+    }
 
-ID3D12GraphicsCommandList* CommandList::GetRaw() const
-{
-	return m_List.Get();
-}
+    void CommandList::Close()
+    {
+        ThrowIfFailed(m_List->Close());
+    }
 
-CommandList::operator ID3D12GraphicsCommandList* () const
-{
-	return GetRaw();
+    void CommandList::Reset(CommandAllocator& InAllocator)
+    {
+        ThrowIfUnexpected(InAllocator.Reset());
+        ThrowIfFailed(m_List->Reset(InAllocator, nullptr));
+    }
+
+    D3D12_COMMAND_LIST_TYPE CommandList::GetType() const
+    {
+        return m_List->GetType();
+    }
+
+    ID3D12GraphicsCommandList* CommandList::GetRaw() const
+    {
+        return m_List.Get();
+    }
+
+    CommandList::operator ID3D12GraphicsCommandList* () const
+    {
+        return GetRaw();
+    }
 }
 

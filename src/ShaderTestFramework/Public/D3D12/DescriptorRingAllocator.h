@@ -5,36 +5,39 @@
 #include "Platform.h"
 #include <utility>
 
-class DescriptorRingAllocator
+namespace stf
 {
-public:
+    class DescriptorRingAllocator
+    {
+    public:
 
-	enum class EErrorType : u8
-	{
-		Success,
-		AllocationError,
-		ReleaseError
-	};
+        enum class EErrorType : u8
+        {
+            Success,
+            AllocationError,
+            ReleaseError
+        };
 
-	template<typename T>
-	using Expected = Expected<T, EErrorType>;
+        template<typename T>
+        using Expected = Expected<T, EErrorType>;
 
-	DescriptorRingAllocator() = default;
-	DescriptorRingAllocator(const DescriptorRange& InRange);
-	[[nodiscard]] Expected<DescriptorRange> Allocate(const u32 InNum);
-	Expected<void> Release(const u32 InNum);
+        DescriptorRingAllocator() = default;
+        DescriptorRingAllocator(const DescriptorRange& InRange);
+        [[nodiscard]] Expected<DescriptorRange> Allocate(const u32 InNum);
+        Expected<void> Release(const u32 InNum);
 
-	u32 GetSize() const;
-	u32 GetCapacity() const;
+        u32 GetSize() const;
+        u32 GetCapacity() const;
 
-	bool CanAllocate(const u32 InNum) const;
+        bool CanAllocate(const u32 InNum) const;
 
-private:
-	bool CanAllocateInternal(const u32 InActualNum) const;
-	std::pair<u32, u32> CalculateAllocationIndexAndSize(const u32 InRequestedNum) const;
+    private:
+        bool CanAllocateInternal(const u32 InActualNum) const;
+        std::pair<u32, u32> CalculateAllocationIndexAndSize(const u32 InRequestedNum) const;
 
-	DescriptorRange m_Range;
-	u32 m_Size = 0;
-	u32 m_AllocateIndex = 0;
-	u32 m_ReleaseIndex = 0;
-};
+        DescriptorRange m_Range;
+        u32 m_Size = 0;
+        u32 m_AllocateIndex = 0;
+        u32 m_ReleaseIndex = 0;
+    };
+}

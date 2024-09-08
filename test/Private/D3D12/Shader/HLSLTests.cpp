@@ -10,6 +10,7 @@ using namespace ShaderCompilerTestsCommon;
 
 SCENARIO("HLSLTests")
 {
+    using namespace stf;
     auto [name, successCondition, flags] =
         GENERATE
         (

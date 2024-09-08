@@ -5,6 +5,7 @@
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - ThreadDimensionTests")
 {
+    using namespace stf;
     auto [testName, dimX, dimY, dimZ] = GENERATE
     (
         table<std::string, u32, u32, u32>

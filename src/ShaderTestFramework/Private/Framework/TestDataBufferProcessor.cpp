@@ -7,7 +7,7 @@
 #include <ranges>
 #include <sstream>
 
-namespace STF
+namespace stf
 {
     static_assert(sizeof(HLSLAssertMetaData) == 32,
         "The size of this struct must be the same size as ShaderTestPrivate::HLSLAssertMetaData");
@@ -20,21 +20,21 @@ namespace STF
         return uint3{ xy % InDims.x, xy / InDims.x, z };
     }
 
-    static std::string ThreadInfoToString(const STF::EThreadIdType InType, const u32 InId, const uint3 InDispatchDimensions)
+    static std::string ThreadInfoToString(const EThreadIdType InType, const u32 InId, const uint3 InDispatchDimensions)
     {
         switch (InType)
         {
-            case STF::EThreadIdType::None:
+            case EThreadIdType::None:
             {
                 return "Thread Id not initialized for test";
             }
 
-            case STF::EThreadIdType::Int:
+            case EThreadIdType::Int:
             {
                 return std::format("ThreadId: {}", InId);
             }
 
-            case STF::EThreadIdType::Int3:
+            case EThreadIdType::Int3:
             {
                 return std::format("ThreadId: {}", Unflatten(InId, InDispatchDimensions));
             }
@@ -112,7 +112,7 @@ namespace STF
         for (const auto& [index, error] : std::views::enumerate(In.FailedAsserts))
         {
             const std::string lineInfo = error.Info.LineNumber == u32(-1) ? std::string{ "" } : std::format("Line: {}", error.Info.LineNumber);
-            const std::string threadInfo = error.Info.ThreadIdType == 0 ? std::string{ "" } : STF::ThreadInfoToString(static_cast<STF::EThreadIdType>(error.Info.ThreadIdType), error.Info.ThreadId, In.DispatchDimensions);
+            const std::string threadInfo = error.Info.ThreadIdType == 0 ? std::string{ "" } : ThreadInfoToString(static_cast<EThreadIdType>(error.Info.ThreadIdType), error.Info.ThreadId, In.DispatchDimensions);
 
             InOs << std::format("Assert {}: {} {}\n", index, lineInfo, threadInfo);
             u32 indentLevel = 0;

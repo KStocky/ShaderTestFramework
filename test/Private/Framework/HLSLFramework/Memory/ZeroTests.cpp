@@ -5,6 +5,7 @@
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - Memory - Zero")
 {
+    using namespace stf;
     auto testName = GENERATE
     (
         "GIVEN_ObjectIsInitialized_WHEN_Zeroed_THEN_AllMembersAreZeroed",

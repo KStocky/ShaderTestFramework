@@ -5,6 +5,7 @@
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - Macros - SECTIONS")
 {
+    using namespace stf;
     auto testName = GENERATE
     (
         "GIVEN_EmptySection_WHEN_RanUsingSingle_THEN_NoAssertMade",
