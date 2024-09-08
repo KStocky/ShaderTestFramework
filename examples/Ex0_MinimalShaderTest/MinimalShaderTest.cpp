@@ -29,7 +29,7 @@ SCENARIO("MinimalShaderTestExample")
                         [numthreads(1, 1, 1)]
                         void MinimalTestEntryFunction()
                         {
-                            STF::AreEqual(42, 42);
+                            ASSERT(AreEqual, 42, 42);
                         }
                     )"
                 }

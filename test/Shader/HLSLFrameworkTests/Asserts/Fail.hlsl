@@ -4,7 +4,7 @@
 [numthreads(1,1,1)]
 void GIVEN_TestWithFailAssert_WHEN_Ran_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    STF::Fail();
+    stf::Fail();
 }
 
 [RootSignature(SHADER_TEST_RS)]

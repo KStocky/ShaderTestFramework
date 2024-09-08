@@ -25,7 +25,7 @@ void GIVEN_SingleSection_WHEN_RanUsingSingle_THEN_SectionsEnteredOnce(uint3 Disp
         }
     }
     
-    STF::AreEqual(1, num);
+    ASSERT(AreEqual, 1, num);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -47,8 +47,8 @@ void GIVEN_TwoSections_WHEN_RanUsingSingle_THEN_EachSectionIsEnteredOnce(uint3 D
         }
     }
     
-    STF::AreEqual(1, num1);
-    STF::AreEqual(1, num2);
+    ASSERT(AreEqual, 1, num1);
+    ASSERT(AreEqual, 1, num2);
     
 }
 
@@ -77,9 +77,9 @@ void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_RanUsingSingle_THEN_EachSe
         }
     }
     
-    STF::AreEqual(1, num1);
-    STF::AreEqual(1, num2);
-    STF::AreEqual(1, num3);
+    ASSERT(AreEqual, 1, num1);
+    ASSERT(AreEqual, 1, num2);
+    ASSERT(AreEqual, 1, num3);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -114,10 +114,10 @@ void GIVEN_TwoSubSectionsWithTwoNestedSubsections_WHEN_RanUsingSingle_THEN_Expec
         }
     }
     
-    STF::AreEqual(1, num1);
-    STF::AreEqual(2, num2);
-    STF::AreEqual(1, num3);
-    STF::AreEqual(1, num4);
+    ASSERT(AreEqual, 1, num1);
+    ASSERT(AreEqual, 2, num2);
+    ASSERT(AreEqual, 1, num3);
+    ASSERT(AreEqual, 1, num4);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -176,12 +176,12 @@ void GIVEN_ThreeLevelsDeepSections_WHEN_RanUsingSingle_THEN_ExpectedSubsectionEn
         }
     }
     
-    STF::AreEqual(3, num1);
-    STF::AreEqual(2, num2);
-    STF::AreEqual(1, num3);
-    STF::AreEqual(1, num4);
-    STF::AreEqual(2, num5);
-    STF::AreEqual(1, num6);
-    STF::AreEqual(1, num7);
-    STF::AreEqual(1, num8);
+    ASSERT(AreEqual, 3, num1);
+    ASSERT(AreEqual, 2, num2);
+    ASSERT(AreEqual, 1, num3);
+    ASSERT(AreEqual, 1, num4);
+    ASSERT(AreEqual, 2, num5);
+    ASSERT(AreEqual, 1, num6);
+    ASSERT(AreEqual, 1, num7);
+    ASSERT(AreEqual, 1, num8);
 }

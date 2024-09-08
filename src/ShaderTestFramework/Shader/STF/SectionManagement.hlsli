@@ -7,171 +7,174 @@
 #include "/Test/TTL/memory.hlsli"
 #include "/Test/TTL/type_traits.hlsli"
 
-namespace ShaderTestPrivate
+namespace stf
 {
-    static const int NumSections = 32;
-
-    enum class ESectionRunState
+    namespace detail
     {
-        NeverEntered,
-        NeedsRun,
-        Running,
-        RunningEnteredSubsection,
-        RunningNeedsRerun,
-        Completed
-    };
+        static const int NumSections = 32;
 
-    struct ScenarioSectionInfo
-    {
-        int ParentID;
-        ESectionRunState RunState; 
-    };
+        enum class ESectionRunState
+        {
+            NeverEntered,
+            NeedsRun,
+            Running,
+            RunningEnteredSubsection,
+            RunningNeedsRerun,
+            Completed
+        };
 
-    enum class EThreadIDType
-    {
-        None,
-        Int,
-        Int3
-    };
+        struct ScenarioSectionInfo
+        {
+            int ParentID;
+            ESectionRunState RunState; 
+        };
 
-    struct ThreadIDInfo
-    {
-        uint Data;
-        EThreadIDType Type;
-    };
+        enum class EThreadIDType
+        {
+            None,
+            Int,
+            Int3
+        };
+
+        struct ThreadIDInfo
+        {
+            uint Data;
+            EThreadIDType Type;
+        };
     
-    struct PerThreadScratchData
-    {
-        int CurrentSectionID;
-        int NextSectionID;
-        int NextStringID;
-        ThreadIDInfo ThreadID;
-        ScenarioSectionInfo Sections[NumSections];
-
-        int GetSectionID()
+        struct PerThreadScratchData
         {
-            return Sections[0].ParentID == -1 ? CurrentSectionID : -1;
-        }
+            int CurrentSectionID;
+            int NextSectionID;
+            int NextStringID;
+            ThreadIDInfo ThreadID;
+            ScenarioSectionInfo Sections[NumSections];
 
-        void Init()
-        {
-            NextSectionID = 1;
-            Sections[0].ParentID = -1;
-        }
-
-        void OnLeave(int InID)
-        {
-            const bool hasUnenteredSubsections = Sections[InID].RunState == ESectionRunState::RunningNeedsRerun;
-            Sections[InID].RunState = hasUnenteredSubsections ? ESectionRunState::NeedsRun : ESectionRunState::Completed;
-            CurrentSectionID = Sections[InID].ParentID;
-            Sections[CurrentSectionID].RunState = hasUnenteredSubsections ?
-                ESectionRunState::RunningNeedsRerun :
-                Sections[CurrentSectionID].RunState;
-        
-        }
-
-        void OnLeave()
-        {
-            OnLeave(CurrentSectionID);
-        }
-
-        bool ShouldEnter(int InID)
-        {   
-            const ESectionRunState state = Sections[InID].RunState;
-            switch (state)
+            int GetSectionID()
             {
-                case ESectionRunState::NeverEntered:
-                case ESectionRunState::NeedsRun:
+                return Sections[0].ParentID == -1 ? CurrentSectionID : -1;
+            }
+
+            void Init()
+            {
+                NextSectionID = 1;
+                Sections[0].ParentID = -1;
+            }
+
+            void OnLeave(int InID)
+            {
+                const bool hasUnenteredSubsections = Sections[InID].RunState == ESectionRunState::RunningNeedsRerun;
+                Sections[InID].RunState = hasUnenteredSubsections ? ESectionRunState::NeedsRun : ESectionRunState::Completed;
+                CurrentSectionID = Sections[InID].ParentID;
+                Sections[CurrentSectionID].RunState = hasUnenteredSubsections ?
+                    ESectionRunState::RunningNeedsRerun :
+                    Sections[CurrentSectionID].RunState;
+        
+            }
+
+            void OnLeave()
+            {
+                OnLeave(CurrentSectionID);
+            }
+
+            bool ShouldEnter(int InID)
+            {   
+                const ESectionRunState state = Sections[InID].RunState;
+                switch (state)
                 {
+                    case ESectionRunState::NeverEntered:
+                    case ESectionRunState::NeedsRun:
+                    {
+                        return true;
+                    }
+                    case ESectionRunState::RunningNeedsRerun:
+                    case ESectionRunState::RunningEnteredSubsection:
+                    case ESectionRunState::Running:
+                    {
+                        OnLeave(InID);
+                        return false;
+                    }
+                    case ESectionRunState::Completed:
+                    {
+                        return false;
+                    }
+                }
+
+                return false;
+            }
+
+            template<typename T>
+            bool TryLoopScenario(const T InOnFirstEnter)
+            {
+                if (Sections[0].RunState == ESectionRunState::NeverEntered)
+                {
+                    InOnFirstEnter(0, -1);
+                }
+                const bool shouldEnter =
+                    Sections[0].RunState == ESectionRunState::NeverEntered ||
+                    Sections[0].RunState == ESectionRunState::NeedsRun || 
+                    Sections[0].RunState == ESectionRunState::RunningNeedsRerun;
+
+                if (shouldEnter)
+                {
+                    CurrentSectionID = 0;
+                    Sections[0].RunState = ESectionRunState::Running;
+                    
                     return true;
                 }
-                case ESectionRunState::RunningNeedsRerun:
-                case ESectionRunState::RunningEnteredSubsection:
-                case ESectionRunState::Running:
-                {
-                    OnLeave(InID);
-                    return false;
-                }
-                case ESectionRunState::Completed:
-                {
-                    return false;
-                }
-            }
-
-            return false;
-        }
-
-        template<typename T>
-        bool TryLoopScenario(const T InOnFirstEnter)
-        {
-            if (Sections[0].RunState == ESectionRunState::NeverEntered)
-            {
-                InOnFirstEnter(0, -1);
-            }
-            const bool shouldEnter =
-                Sections[0].RunState == ESectionRunState::NeverEntered ||
-                Sections[0].RunState == ESectionRunState::NeedsRun || 
-                Sections[0].RunState == ESectionRunState::RunningNeedsRerun;
-
-            if (shouldEnter)
-            {
-                CurrentSectionID = 0;
-                Sections[0].RunState = ESectionRunState::Running;
-                    
-                return true;
-            }
             
-            return false;
-        }
-
-        template<typename T>
-        bool TryEnterSection(const T InOnFirstEnter, int InID)
-        {
-            if (Sections[InID].RunState == ESectionRunState::NeverEntered)
-            {
-                Sections[InID].ParentID = CurrentSectionID;
-                InOnFirstEnter(InID, CurrentSectionID);
-                Sections[InID].RunState = ESectionRunState::NeedsRun;
-            }
-
-            if (!ShouldEnter(InID))
-            {
                 return false;
             }
 
-            const bool ourTurn = Sections[CurrentSectionID].RunState == ESectionRunState::Running;
-            if (ourTurn)
+            template<typename T>
+            bool TryEnterSection(const T InOnFirstEnter, int InID)
             {
-                Sections[CurrentSectionID].RunState = ESectionRunState::RunningEnteredSubsection;
-                Sections[InID].RunState = ESectionRunState::Running;
-                CurrentSectionID = InID;
-                return true;
+                if (Sections[InID].RunState == ESectionRunState::NeverEntered)
+                {
+                    Sections[InID].ParentID = CurrentSectionID;
+                    InOnFirstEnter(InID, CurrentSectionID);
+                    Sections[InID].RunState = ESectionRunState::NeedsRun;
+                }
+
+                if (!ShouldEnter(InID))
+                {
+                    return false;
+                }
+
+                const bool ourTurn = Sections[CurrentSectionID].RunState == ESectionRunState::Running;
+                if (ourTurn)
+                {
+                    Sections[CurrentSectionID].RunState = ESectionRunState::RunningEnteredSubsection;
+                    Sections[InID].RunState = ESectionRunState::Running;
+                    CurrentSectionID = InID;
+                    return true;
+                }
+                else
+                {   
+                    Sections[CurrentSectionID].RunState = ESectionRunState::RunningNeedsRerun;  
+                    return false;
+                }
             }
-            else
-            {   
-                Sections[CurrentSectionID].RunState = ESectionRunState::RunningNeedsRerun;  
-                return false;
-            }
-        }
-    };
+        };
     
-    struct SectionHierarchy
-    {
-        PerThreadScratchData Scratch;
-    };
+        struct SectionHierarchy
+        {
+            PerThreadScratchData Scratch;
+        };
 
-    static PerThreadScratchData Scratch;
+        static PerThreadScratchData Scratch;
 
-    uint FlattenIndex(const uint3 InIndex, const uint3 InDimensions)
-    {
-        return (InIndex.z * InDimensions.x * InDimensions.y) + (InIndex.y * InDimensions.x) + InIndex.x;
+        uint FlattenIndex(const uint3 InIndex, const uint3 InDimensions)
+        {
+            return (InIndex.z * InDimensions.x * InDimensions.y) + (InIndex.y * InDimensions.x) + InIndex.x;
+        }
     }
 }
 
 namespace ttl
 {
-    using ShaderTestPrivate::PerThreadScratchData;
-    using ShaderTestPrivate::SectionHierarchy;
+    using stf::detail::PerThreadScratchData;
+    using stf::detail::SectionHierarchy;
 
     template<>
     struct byte_writer<SectionHierarchy>
@@ -225,10 +228,10 @@ namespace ttl
     };
 }
 
-namespace STF
+namespace stf
 {
     template<>
-    struct ByteReaderTraits<ShaderTestPrivate::PerThreadScratchData> : ByteReaderTraitsBase<READER_ID_PER_THREAD_SCRATCH>
+    struct ByteReaderTraits<detail::PerThreadScratchData> : ByteReaderTraitsBase<READER_ID_PER_THREAD_SCRATCH>
     {
     };
 }
@@ -236,9 +239,9 @@ namespace STF
 namespace ttl
 {
     template<>
-    struct caster<bool, ShaderTestPrivate::PerThreadScratchData>
+    struct caster<bool, stf::detail::PerThreadScratchData>
     {
-        static bool cast(ShaderTestPrivate::PerThreadScratchData In)
+        static bool cast(stf::detail::PerThreadScratchData In)
         {
             return false;
         }

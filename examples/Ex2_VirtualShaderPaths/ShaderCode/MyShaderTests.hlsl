@@ -10,5 +10,5 @@
 [numthreads(1, 1, 1)]
 void Example2Test()
 {
-    STF::AreEqual(ReturnTheBestNumber(), 42);
+    ASSERT(AreEqual, ReturnTheBestNumber(), 42);
 }

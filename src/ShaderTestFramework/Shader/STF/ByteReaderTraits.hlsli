@@ -3,34 +3,35 @@
 
 #include "/Test/TTL/type_traits.hlsli"
 
-namespace STFPrivate
+namespace stf
 {
-    template<typename U>
-    struct TypeToVal;
+    namespace detail
+    {
+        template<typename U>
+        struct TypeToVal;
 
-    template<> struct TypeToVal<bool> : ttl::integral_constant<uint, 0>{};
-    template<> struct TypeToVal<int16_t> : ttl::integral_constant<uint, 1>{};
-    template<> struct TypeToVal<int32_t> : ttl::integral_constant<uint, 1>{};
-    template<> struct TypeToVal<int64_t> : ttl::integral_constant<uint, 1>{};
+        template<> struct TypeToVal<bool> : ttl::integral_constant<uint, 0>{};
+        template<> struct TypeToVal<int16_t> : ttl::integral_constant<uint, 1>{};
+        template<> struct TypeToVal<int32_t> : ttl::integral_constant<uint, 1>{};
+        template<> struct TypeToVal<int64_t> : ttl::integral_constant<uint, 1>{};
 
-    template<> struct TypeToVal<uint16_t> : ttl::integral_constant<uint, 2>{};
-    template<> struct TypeToVal<uint32_t> : ttl::integral_constant<uint, 2>{};
-    template<> struct TypeToVal<uint64_t> : ttl::integral_constant<uint, 2>{};
+        template<> struct TypeToVal<uint16_t> : ttl::integral_constant<uint, 2>{};
+        template<> struct TypeToVal<uint32_t> : ttl::integral_constant<uint, 2>{};
+        template<> struct TypeToVal<uint64_t> : ttl::integral_constant<uint, 2>{};
 
-    template<> struct TypeToVal<float16_t> : ttl::integral_constant<uint, 3>{};
-    template<> struct TypeToVal<float32_t> : ttl::integral_constant<uint, 3>{};
-    template<> struct TypeToVal<float64_t> : ttl::integral_constant<uint, 3>{};
+        template<> struct TypeToVal<float16_t> : ttl::integral_constant<uint, 3>{};
+        template<> struct TypeToVal<float32_t> : ttl::integral_constant<uint, 3>{};
+        template<> struct TypeToVal<float64_t> : ttl::integral_constant<uint, 3>{};
 
-    template<uint U>
-    struct NumBitsToValBase;
+        template<uint U>
+        struct NumBitsToValBase;
 
-    template<> struct NumBitsToValBase<2> : ttl::integral_constant<uint, 0>{};
-    template<> struct NumBitsToValBase<4> : ttl::integral_constant<uint, 1>{};
-    template<> struct NumBitsToValBase<8> : ttl::integral_constant<uint, 2>{};
-}
+        template<> struct NumBitsToValBase<2> : ttl::integral_constant<uint, 0>{};
+        template<> struct NumBitsToValBase<4> : ttl::integral_constant<uint, 1>{};
+        template<> struct NumBitsToValBase<8> : ttl::integral_constant<uint, 2>{};
+    }
 
-namespace STF
-{
+
     template<uint16_t InReaderId, uint16_t InTypeId = 0>
     struct ByteReaderTraitsBase
     {
@@ -52,9 +53,9 @@ namespace STF
         using Traits = ttl::fundamental_type_traits<T>;
 
         template<typename U>
-        struct NumBitsToVal : STFPrivate::NumBitsToValBase<ttl::size_of_v<U> >{};
+        struct NumBitsToVal : detail::NumBitsToValBase<ttl::size_of_v<U> >{};
         
-        static const uint16_t TypeVal = STFPrivate::TypeToVal<typename Traits::base_type>::value & 3;
+        static const uint16_t TypeVal = detail::TypeToVal<typename Traits::base_type>::value & 3;
         static const uint16_t NumBitsVal = NumBitsToVal<typename Traits::base_type>::value & 3;
         static const uint16_t NumColumns = (Traits::dim0 - 1) & 3;
         static const uint16_t NumRows = (Traits::dim1 - 1) & 3;
@@ -64,10 +65,8 @@ namespace STF
         static const uint16_t PackedNumColumns = NumColumns << 4;
         static const uint16_t PackedNumRows = NumRows << 6;
     };
-}
 
-namespace STF
-{
+
     template<typename T>
     struct ByteReaderTraits<T, ttl::enable_if_t<ttl::fundamental_type_traits<T>::is_fundamental> >
     {

@@ -11,6 +11,6 @@ void GIVEN_StructDoesNotHaveOverloadOfCast_WHEN_CastCalled_THEN_Fails(uint3 Disp
 {
     TestStruct test;
     test.Value = 42;
-    int result = STF::Cast<int>(test);
-    STF::AreEqual(result, 42);
+    int result = ttl::cast<int>(test);
+    ASSER(AreEqual, result, 42);
 }

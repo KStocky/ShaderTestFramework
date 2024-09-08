@@ -47,36 +47,36 @@
 [numthreads(1,1,1)]
 void VariadicMacroOverloading(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-	STF::AreEqual(0, COUNT_ARG_TEST());
-    STF::AreEqual(1, COUNT_ARG_TEST(Hello World));
-    STF::AreEqual(3, COUNT_ARG_TEST(Shader, Test, Framework));
+	ASSERT(AreEqual, 0, COUNT_ARG_TEST());
+    ASSERT(AreEqual, 1, COUNT_ARG_TEST(Hello World));
+    ASSERT(AreEqual, 3, COUNT_ARG_TEST(Shader, Test, Framework));
     
     {
         int Test = -1;
         
         VARIADIC_OVERLOAD();
-        STF::AreEqual(0, Test);
+        ASSERT(AreEqual, 0, Test);
 
         VARIADIC_OVERLOAD(Hello);
-        STF::AreEqual(1, Test);
+        ASSERT(AreEqual, 1, Test);
 
         VARIADIC_OVERLOAD(Hello, World);
-        STF::AreEqual(2, Test);
+        ASSERT(AreEqual, 2, Test);
     }
 
     {
         int Test[2] = {0, 0};
         
         VARIADIC_OVERLOAD_PARAMS();
-        STF::AreEqual(0, Test[0]);
-        STF::AreEqual(0, Test[1]);
+        ASSERT(AreEqual, 0, Test[0]);
+        ASSERT(AreEqual, 0, Test[1]);
 
         VARIADIC_OVERLOAD_PARAMS(42);
-        STF::AreEqual(42, Test[0]);
-        STF::AreEqual(0, Test[1]);
+        ASSERT(AreEqual, 42, Test[0]);
+        ASSERT(AreEqual, 0, Test[1]);
 
         VARIADIC_OVERLOAD_PARAMS(42, 23);
-        STF::AreEqual(42, Test[0]);
-        STF::AreEqual(23, Test[1]);
+        ASSERT(AreEqual, 42, Test[0]);
+        ASSERT(AreEqual, 23, Test[1]);
     }
 }

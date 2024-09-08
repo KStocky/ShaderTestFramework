@@ -14,7 +14,7 @@ void GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed(uint3 DispatchThreadI
 {
 	for (int i = 0; i < 100; ++i)
 	{
-		STF::AreEqual(globalArray[i].Val, 0);
-		STF::IsFalse(globalArray[i].Other);
+		ASSERT(AreEqual, globalArray[i].Val, 0);
+		ASSERT(IsFalse, globalArray[i].Other);
 	}
 }

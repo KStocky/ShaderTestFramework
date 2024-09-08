@@ -8,10 +8,10 @@ void GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent(uint3 DispatchThrea
 	int b = __COUNTER__;
 	if (a == (b - 1))
 	{
-		ShaderTestPrivate::Success();
+		stf::detail::Success();
 	}
 	else
 	{
-		STF::Fail();
-	}
+        ASSERT(Fail);
+    }
 }

@@ -24,7 +24,7 @@ void GIVEN_ScenarioWithNoSections_WHEN_Ran_THEN_FunctionOnlyEnteredOnce(uint3 Di
     {
         static int counter = 0;
         const int num = counter++;
-        STF::AreEqual(num, 0);
+        ASSERT(AreEqual, num, 0);
     }
 }
 
@@ -40,14 +40,14 @@ void GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce(uint3 DispatchThreadI
         static int num = 0;
 
         static const int Section_1Num = 1;
-        if (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_1Num))
+        if (stf::detail::Scratch.TryEnterSection(nullCallable, Section_1Num))
         {
             ++num;
-            ShaderTestPrivate::Scratch.OnLeave();
+            stf::detail::Scratch.OnLeave();
         }
 
-        STF::AreEqual(1, num);
-        STF::AreEqual(1, numEntered);
+        ASSERT(AreEqual, 1, num);
+        ASSERT(AreEqual, 1, numEntered);
     }
 }
 
@@ -63,32 +63,32 @@ void GIVEN_TwoSections_WHEN_Ran_THEN_EachSectionIsEnteredOnce(uint3 DispatchThre
         static int num1 = 0;
         static int num2 = 0;
         static const int Section_1Num = 1;
-        if (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_1Num))
+        if (stf::detail::Scratch.TryEnterSection(nullCallable, Section_1Num))
         {
             ++num1;
-            ShaderTestPrivate::Scratch.OnLeave();
+            stf::detail::Scratch.OnLeave();
         }
         
         static const int Section_2Num = 2;
-        if (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_2Num))
+        if (stf::detail::Scratch.TryEnterSection(nullCallable, Section_2Num))
         {
             ++num2;
-            ShaderTestPrivate::Scratch.OnLeave();
+            stf::detail::Scratch.OnLeave();
         }
 
         if (numEntered == 1)
         {
-            STF::AreEqual(1, num1);
-            STF::AreEqual(0, num2);
+            ASSERT(AreEqual, 1, num1);
+            ASSERT(AreEqual, 0, num2);
         }
         else if (numEntered == 2)
         {
-            STF::AreEqual(1, num1);
-            STF::AreEqual(1, num2);
+            ASSERT(AreEqual, 1, num1);
+            ASSERT(AreEqual, 1, num2);
         }
         else
         {
-            STF::Fail();
+            ASSERT(Fail);
         }
     }
 }
@@ -107,41 +107,41 @@ void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnte
         static int num3 = 0;
 
         static const int Section_1Num = 1;
-        if (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_1Num))
+        if (stf::detail::Scratch.TryEnterSection(nullCallable, Section_1Num))
         {
             ++num1;
-            ShaderTestPrivate::Scratch.OnLeave();
+            stf::detail::Scratch.OnLeave();
         }
 
         static const int Section_2Num = 2;
-        if (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_2Num))
+        if (stf::detail::Scratch.TryEnterSection(nullCallable, Section_2Num))
         {
             ++num2;
 
             static const int Section_3Num = 3;
-            if (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_3Num))
+            if (stf::detail::Scratch.TryEnterSection(nullCallable, Section_3Num))
             {
                 ++num3;
-                ShaderTestPrivate::Scratch.OnLeave();
+                stf::detail::Scratch.OnLeave();
             }
-            ShaderTestPrivate::Scratch.OnLeave();
+            stf::detail::Scratch.OnLeave();
         }
     
         if (numEntered == 1)
         {
-            STF::AreEqual(1, num1);
-            STF::AreEqual(0, num2);
-            STF::AreEqual(0, num3);
+            ASSERT(AreEqual, 1, num1);
+            ASSERT(AreEqual, 0, num2);
+            ASSERT(AreEqual, 0, num3);
         }
         else if (numEntered == 2)
         {
-            STF::AreEqual(1, num1);
-            STF::AreEqual(1, num2);
-            STF::AreEqual(1, num3);
+            ASSERT(AreEqual, 1, num1);
+            ASSERT(AreEqual, 1, num2);
+            ASSERT(AreEqual, 1, num3);
         }
         else
         {
-            STF::Fail();
+            ASSERT(Fail);
         }
     }
 }
@@ -153,30 +153,30 @@ void GIVEN_ScenarioWithoutId_WHEN_Ran_THEN_IdIsNone(uint3 DispatchThreadId : SV_
     SCENARIO("")
     {
     }
-    STF::AreEqual(0u, ShaderTestPrivate::Scratch.ThreadID.Data);
-    STF::AreEqual(ShaderTestPrivate::EThreadIDType::None, ShaderTestPrivate::Scratch.ThreadID.Type);
+    ASSERT(AreEqual, 0u, stf::detail::Scratch.ThreadID.Data);
+    ASSERT(AreEqual, stf::detail::EThreadIDType::None, stf::detail::Scratch.ThreadID.Type);
 }
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(42,1,1)]
 void GIVEN_ScenarioWithDispatchThreadId_WHEN_Ran_THEN_IdIsInt3(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    STF::RegisterThreadID(DispatchThreadId);
+    stf::RegisterThreadID(DispatchThreadId);
     SCENARIO("")
     {
     }
-    STF::AreEqual(ShaderTestPrivate::FlattenIndex(DispatchThreadId, ShaderTestPrivate::DispatchDimensions), ShaderTestPrivate::Scratch.ThreadID.Data);
-    STF::AreEqual(ShaderTestPrivate::EThreadIDType::Int3, ShaderTestPrivate::Scratch.ThreadID.Type);
+    ASSERT(AreEqual, stf::detail::FlattenIndex(DispatchThreadId, stf::detail::DispatchDimensions), stf::detail::Scratch.ThreadID.Data);
+    ASSERT(AreEqual, stf::detail::EThreadIDType::Int3, stf::detail::Scratch.ThreadID.Type);
 }
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(42,1,1)]
 void GIVEN_ScenarioWithIntId_WHEN_Ran_THEN_IdIsInt()
 {
-    STF::RegisterThreadID(42);
+    stf::RegisterThreadID(42);
     SCENARIO("")
     {
     }
-    STF::AreEqual(42u, ShaderTestPrivate::Scratch.ThreadID.Data);
-    STF::AreEqual(ShaderTestPrivate::EThreadIDType::Int, ShaderTestPrivate::Scratch.ThreadID.Type);
+    ASSERT(AreEqual, 42u, stf::detail::Scratch.ThreadID.Data);
+    ASSERT(AreEqual, stf::detail::EThreadIDType::Int, stf::detail::Scratch.ThreadID.Type);
 }

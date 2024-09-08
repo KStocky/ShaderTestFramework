@@ -1,21 +1,21 @@
 // "/Test" is the virtual shader directory for the framework
 // This is defined by the framework itself.
-#include "/Test/STF/ShaderTestFramework.hlsli"
+#include "/Test/stf/ShaderTestFramework.hlsli"
 
 void PassingStandardAsserts()
 {
-    STF::IsTrue(true);
-    STF::IsFalse(false);
-    STF::AreEqual(42, 42);
-    STF::NotEqual(24, 42);
+    stf::IsTrue(true);
+    stf::IsFalse(false);
+    stf::AreEqual(42, 42);
+    stf::NotEqual(24, 42);
 }
 
 void FailingStandardAsserts()
 {
-    STF::IsTrue(false);
-    STF::IsFalse(true);
-    STF::AreEqual(42, 24);
-    STF::NotEqual(42, 42);
+    stf::IsTrue(false);
+    stf::IsFalse(true);
+    stf::AreEqual(42, 24);
+    stf::NotEqual(42, 42);
 }
 
 void PassingAssertsWithMacro()

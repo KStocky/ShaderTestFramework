@@ -14,7 +14,7 @@ struct MyType
     }
 };
 
-namespace STF
+namespace stf
 {
     // Using ByteReaderTraitsBase to fill out the members for us.
     template<>

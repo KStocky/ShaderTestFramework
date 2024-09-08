@@ -12,14 +12,14 @@ struct EmptyCallable
 void GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
     EmptyCallable nullCallable;
-    ShaderTestPrivate::Scratch.Init();
+    stf::detail::Scratch.Init();
     int num = 0;
-    while (ShaderTestPrivate::Scratch.TryLoopScenario(nullCallable))
+    while (stf::detail::Scratch.TryLoopScenario(nullCallable))
     {
         ++num;
     }  
     
-    STF::AreEqual(1, num);
+    ASSERT(AreEqual, 1, num);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -27,19 +27,19 @@ void GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce(uint3 DispatchThreadI
 void GIVEN_SingleSubsection_WHEN_RanUsingWhile_THEN_SectionsEntered2Times(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
     EmptyCallable nullCallable;
-    ShaderTestPrivate::Scratch.Init();
+    stf::detail::Scratch.Init();
     int num = 0;
-    while (ShaderTestPrivate::Scratch.TryLoopScenario(nullCallable))
+    while (stf::detail::Scratch.TryLoopScenario(nullCallable))
     {
         ++num;
         static const int Section_1Num = 1;
-        while (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_1Num))
+        while (stf::detail::Scratch.TryEnterSection(nullCallable, Section_1Num))
         {
             ++num;
         }
     }  
     
-    STF::AreEqual(2, num);
+    ASSERT(AreEqual, 2, num);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -47,24 +47,24 @@ void GIVEN_SingleSubsection_WHEN_RanUsingWhile_THEN_SectionsEntered2Times(uint3 
 void GIVEN_TwoSubsections_WHEN_RanUsingWhile_THEN_SectionsEntered4Times(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
     EmptyCallable nullCallable;
-    ShaderTestPrivate::Scratch.Init();
+    stf::detail::Scratch.Init();
     int num = 0;
-    while (ShaderTestPrivate::Scratch.TryLoopScenario(nullCallable))
+    while (stf::detail::Scratch.TryLoopScenario(nullCallable))
     {
         ++num;
-        static const int Section_1Num = ShaderTestPrivate::Scratch.NextSectionID++;
-        while (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_1Num))
+        static const int Section_1Num = stf::detail::Scratch.NextSectionID++;
+        while (stf::detail::Scratch.TryEnterSection(nullCallable, Section_1Num))
         {
             ++num;
         }
-        static const int Section_2Num = ShaderTestPrivate::Scratch.NextSectionID++;
-        while (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_2Num))
+        static const int Section_2Num = stf::detail::Scratch.NextSectionID++;
+        while (stf::detail::Scratch.TryEnterSection(nullCallable, Section_2Num))
         {
             ++num;
         }
     }  
     
-    STF::AreEqual(4, num);
+    ASSERT(AreEqual, 4, num);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -72,30 +72,30 @@ void GIVEN_TwoSubsections_WHEN_RanUsingWhile_THEN_SectionsEntered4Times(uint3 Di
 void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_RanUsingWhile_THEN_SectionsEntered5Times(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
     EmptyCallable nullCallable;
-    ShaderTestPrivate::Scratch.Init();
+    stf::detail::Scratch.Init();
     int num = 0;
-    while (ShaderTestPrivate::Scratch.TryLoopScenario(nullCallable))
+    while (stf::detail::Scratch.TryLoopScenario(nullCallable))
     {
         ++num;
 
-        static const int Section_1Num = ShaderTestPrivate::Scratch.NextSectionID++;
-        while (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_1Num))
+        static const int Section_1Num = stf::detail::Scratch.NextSectionID++;
+        while (stf::detail::Scratch.TryEnterSection(nullCallable, Section_1Num))
         {
             ++num;
         }
 
-        static const int Section_2Num = ShaderTestPrivate::Scratch.NextSectionID++;
-        while (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_2Num))
+        static const int Section_2Num = stf::detail::Scratch.NextSectionID++;
+        while (stf::detail::Scratch.TryEnterSection(nullCallable, Section_2Num))
         {
             ++num;
 
-            static const int Section_3Num = ShaderTestPrivate::Scratch.NextSectionID++;
-            while (ShaderTestPrivate::Scratch.TryEnterSection(nullCallable, Section_3Num))
+            static const int Section_3Num = stf::detail::Scratch.NextSectionID++;
+            while (stf::detail::Scratch.TryEnterSection(nullCallable, Section_3Num))
             {
                 ++num;
             }
         }
     }  
     
-    STF::AreEqual(5, num);
+    ASSERT(AreEqual, 5, num);
 }
