@@ -3,8 +3,10 @@
 # Installation Guide
 
 **Contents**<br>
-[CMake Installation](#cmake-installation)<br>
-[Installing from git repository](#installing-shader-test-framework-from-git-repository)<br>
+1. [CMake Installation](#cmake-installation)<br>
+2. [Installing from git repository](#installing-shader-test-framework-from-git-repository)<br>
+3. [Building with Ninja](#building-with-ninja)<br>
+a. [Building with Ninja from the Command Line](#building-with-ninja-from-the-command-line)<br>
 
 Because we use CMake to build Shader Test Framework, we also provide a couple of
 integration points for our users.
@@ -39,19 +41,31 @@ asset_dependency_init(MyTestTarget)
 add_stf_with_catch2(MyTestTarget)
 ```
 
+[ShaderTestFrameworkExamples](https://github.com/KStocky/ShaderTestFrameworkExamples) is a repository that demonstrates how to set up a cmake project that makes use of `ShaderTestFramework`. It also has a github workflow to demonstrate how to run your tests on github actions.
+
 ## Installing Shader Test Framework from git repository
 
-Assuming you have enough rights, you can just
-install it to the default location, like so:
+Assuming you have enough permissions, you can download and build it like so:
 ```
 $ git clone https://github.com/KStocky/ShaderTestFramework
 $ cd ShaderTestFramework
-$ cmake --workflow --preset FullDev
+$ cmake --workflow --preset VS2022Build
 ```
 
-This will build everything, including tests and examples. It will produce a static library called ShaderTestFramework in `ShaderTestFramework\build\src\ShaderTestFramework\Debug`. If you want a release build run `cmake --build --preset FullDevRelease`.
-You can also generate a project that just contains the library and tests (omitting examples) with `cmake --workflow --preset SlimDev`. More [CMake Presets](https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html) that are defined by STF can be found in [CMakePresets.json](../CMakePresets.json)
+This will create a Visual Studio 2022 solution, and then build everything, including tests and examples. It will produce a static library called ShaderTestFramework in `ShaderTestFramework\build\src\ShaderTestFramework\Debug`. If you want a release build you could create a new build preset for a release build. STF's [CMake Presets](https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html) can be found in [CMakePresets.json](../CMakePresets.json)
 And feel free to create your own local `CMakeUserPresets.json` to improve your workflow.
 
 From here you can link ShaderTestFramework to your project and add `ShaderTestFramework\src\ShaderTestFramework\Public` to your include paths.
+
+## Building with Ninja
+
+In the previous section we mentioned that you can use `$ cmake --workflow --preset VS2022Build` to create a Visual Studion 2022 solution to build the project. However, STF can also be built using Ninja. The main benefit to using Ninja as opposed to Visual Studio 2022 to bulid is speed. Full project compilations are 10x faster with Ninja in comparison to VS2022. There are two ways to build with Ninja rather than with a VS sln.
+
+1. You can make use of Visual Studio's CMake integration by simply opening the root folder in Visual Studio 2022. [CMake Projects in Visual Studio](https://learn.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio?view=msvc-170)
+
+2. Run CMake commands from an x64 Native Tools command line. This might be preferred if you would rather not have to use Visual Studio.
+
+### Building with Ninja from the Command Line
+
+It is not enough to just run `cmake --workflow --preset NinjaBuild` from the command line unfortunately. Prior to running this command, you must set up the developer environment in your command prompt. To do this open the `x64 Native Tools Command Prompt for VS 2022`. A simple search in the windows search bar should find it. Then navigate `cd` to the project root. At this point running `cmake --workflow --preset NinjaBuild` will create a Ninja project and build.
 
