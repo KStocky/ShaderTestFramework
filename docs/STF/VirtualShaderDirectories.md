@@ -13,7 +13,7 @@
 
 ## An Introduction to Virtual Shader Directories
 
-It can be useful to have virtual mappings to directories for asset like files. This decouples the actual location of the asset files themselves on disk, from the directory structure of the assets. A good example of the use of Virtual Paths is [Unreal Engine](https://dev.epicgames.com/documentation/en-us/unreal-engine/overview-of-shaders-in-plugins-unreal-engine). In Unreal Engine, a game's Content folder will be mapped to the virtual path, "/Game". Similarly, plugins can provide their own virtual path mappings for shaders of that plugin.
+It can be useful to have virtual mappings to directories for asset like files. This decouples the actual location of the asset files themselves on disk, from the directory structure of the assets. A good example of the use of Virtual Paths is [Unreal Engine](https://dev.epicgames.com/documentation/en-us/unreal-engine/overview-of-shaders-in-plugins-unreal-engine#unrealshaderfiles). In Unreal Engine, a game's Content folder will be mapped to the virtual path, "/Game". Similarly, plugins can provide their own virtual path mappings for shaders of that plugin.
 
 Shader Test Framework provides a very similar system for handling a test suite's shader files. An example project of this has been provided with ([Ex2_VirtualShaderDirectories](../../examples/Ex2_VirtualShaderPaths))
 
