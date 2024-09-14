@@ -11,8 +11,7 @@ SCENARIO("MinimalShaderTestExample")
 
     // RunTest takes a desc that describes the test setup
     // In this case we give the HLSL source code, entry function name and thread group count.
-    REQUIRE(fixture.RunTest
-    (
+    REQUIRE(fixture.RunTest(
         stf::ShaderTestFixture::RuntimeTestDesc
         {
             .CompilationEnv
@@ -35,8 +34,7 @@ SCENARIO("MinimalShaderTestExample")
                 }
             },
             .TestName = "MinimalTestEntryFunction",
-            .ThreadGroupCount{ 1, 1, 1}
-        }
-    )
+            .ThreadGroupCount{ 1, 1, 1 }
+        })
     );
 }
