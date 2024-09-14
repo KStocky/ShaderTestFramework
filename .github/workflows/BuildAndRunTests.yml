@@ -50,7 +50,7 @@ jobs:
           message(STATUS "Host CMake version: ${CMAKE_VERSION}")
 
       - name: Build everything and run all Tests"
-        run: cmake --workflow --preset FullCI
+        run: cmake --workflow --preset NinjaBuildAndTest
       
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action/windows@v2
