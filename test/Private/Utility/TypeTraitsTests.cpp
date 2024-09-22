@@ -2,6 +2,7 @@
 
 namespace TUnqualifiedTests
 {
+    using namespace stf;
 	static constexpr bool Identity = std::is_same_v<int, TUnqualified<int>>;
 	static constexpr bool Pointer = std::is_same_v<int, TUnqualified<int*>>;
 	static constexpr bool Const = std::is_same_v<int, TUnqualified<const int>>;
@@ -25,6 +26,7 @@ namespace TUnqualifiedTests
 
 namespace TIsInstantiationOfTests
 {
+    using namespace stf;
 	template<typename T, typename U>
 	struct TestTemplate
 	{};

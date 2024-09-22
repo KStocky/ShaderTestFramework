@@ -4,15 +4,15 @@
 
 SCENARIO("Example5Tests")
 {
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
+    stf::ShaderTestFixture fixture(
+        stf::ShaderTestFixture::FixtureDesc
         {
             // We can add virtual shader directory mappings to our shader test environment
             // Here we are saying that if a file path begins with "/Shader" then it is a virtual file directory
             // and should be replaced with the path that evaluates from current_path()/SHADER_SRC
             // std::filesystem::current_path() returns the current working directory
             // We set both the current working directory and the SHADER_SRC macro in our cmake script.
-            .Mappings{ VirtualShaderDirectoryMapping{"/Shader", std::filesystem::current_path() / SHADER_SRC} }
+            .Mappings{ stf::VirtualShaderDirectoryMapping{"/Shader", std::filesystem::current_path() / SHADER_SRC} }
         });
 
     // RunCompileTimeTest takes a desc which is the compilation environment and the test name.
@@ -20,7 +20,7 @@ SCENARIO("Example5Tests")
     // If the shader compiles, the test passes, if it doesn't compile, the shader fails
     // Unlike RunTest, it will not attempt to actually dispatch the shader.
     REQUIRE(fixture.RunCompileTimeTest(
-        ShaderTestFixture::CompileTestDesc
+        stf::ShaderTestFixture::CompileTestDesc
         {
             .CompilationEnv
             {

@@ -71,7 +71,7 @@ void GIVEN_InvalidOptional_WHEN_ValidityQueried_THEN_NotValid()
     Optional<int> opt;
     opt.Reset();
 
-    STF::IsFalse(opt.IsValid);
+    ASSERT(IsFalse, opt.IsValid);
 }
 ```
 
@@ -87,7 +87,7 @@ void GIVEN_InvalidOptional_WHEN_GetOrDefaultCalled_THEN_DefaultReturned()
 
     const int expectedValue = 42;
 
-    STF::AreEqual(expectedValue, opt.GetOrDefault(expectedValue));
+    Assert(AreEqual, expectedValue, opt.GetOrDefault(expectedValue));
 }
 ```
 
@@ -104,7 +104,7 @@ void GIVEN_InvalidOptional_WHEN_ValidityQueried_THEN_NotValid()
     Optional<int> opt;
     opt.Reset();
 
-    STF::IsFalse(opt.IsValid);
+    ASSERT(IsFalse, opt.IsValid);
 }
 
 void GIVEN_InvalidOptional_WHEN_GetOrDefaultCalled_THEN_DefaultReturned()
@@ -114,7 +114,7 @@ void GIVEN_InvalidOptional_WHEN_GetOrDefaultCalled_THEN_DefaultReturned()
 
     const int expectedValue = 42;
 
-    STF::AreEqual(expectedValue, opt.GetOrDefault(expectedValue));
+    ASSERT(AreEqual, expectedValue, opt.GetOrDefault(expectedValue));
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -131,14 +131,14 @@ This then leads to a method of removing the first annoyance, which is the duplic
 ```c++
 void GIVEN_InvalidOptional_WHEN_ValidityQueried_THEN_NotValid(const Optional<int> InOpt)
 {
-    STF::IsFalse(InOpt.IsValid);
+    ASSERT(IsFalse, InOpt.IsValid);
 }
 
 void GIVEN_InvalidOptional_WHEN_GetOrDefaultCalled_THEN_DefaultReturned(const Optional<int> InOpt)
 {
     const int expectedValue = 42;
 
-    STF::AreEqual(expectedValue, InOpt.GetOrDefault(expectedValue));
+    ASSERT(AreEqual, expectedValue, InOpt.GetOrDefault(expectedValue));
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -161,7 +161,7 @@ void GIVEN_InvalidOptional_WHEN_ValueSet_THEN_IsValid(Optional<int> InOpt)
     const int expectedValue = 42;
 
     InOpt.Set(expectedValue);
-    STF::IsTrue(InOpt.IsValid);
+    ASSERT(IsTrue, InOpt.IsValid);
 }
 
 void GIVEN_InvalidOptional_WHEN_ValueSet_THEN_GetReturnsValue(Optional<int> InOpt)
@@ -170,7 +170,7 @@ void GIVEN_InvalidOptional_WHEN_ValueSet_THEN_GetReturnsValue(Optional<int> InOp
     const int defaultValue = 24;
 
     InOpt.Set(expectedValue);
-    STF::AreEqual( expectedValue, InOpt.GetOrDefault(defaultValue));
+    ASSERT( AreEqual, expectedValue, InOpt.GetOrDefault(defaultValue));
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -207,13 +207,13 @@ void OptionalTestsWithScenariosAndSections()
 
         SECTION("THEN IsValid returns false")
         {
-            STF::IsFalse(opt.IsValid);
+            ASSERT(IsFalse, opt.IsValid);
         }
 
         SECTION("THEN GetOrDefault returns default value")
         {
             const int expectedValue = 42;
-            STF::AreEqual(expectedValue, opt.GetOrDefault(expectedValue));
+            ASSERT(AreEqual, expectedValue, opt.GetOrDefault(expectedValue));
         }
 
         SECTION("WHEN value is set")
@@ -223,13 +223,13 @@ void OptionalTestsWithScenariosAndSections()
 
             SECTION("THEN IsValid returns true")
             {
-                STF::IsTrue(opt.IsValid);
+                ASSERT(IsTrue, opt.IsValid);
             }
 
             SECTION("THEN GetOrDefault returns set value")
             {
                 const int defaultValue = 24;
-                STF::AreEqual( expectedValue, opt.GetOrDefault(defaultValue));
+                ASSERT(AreEqual, expectedValue, opt.GetOrDefault(defaultValue));
             }
         }
     }
@@ -273,7 +273,7 @@ As noted in [Following the Execution Line by Line](#following-the-execution-line
 
 1. Strings are not actually supported by HLSL. They only work due to exploiting DXC. You can read more about how this works in [Shader Printf in HLSL and DX12](https://therealmjp.github.io/posts/hlsl-printf/) by MJP. The implementation used in STF is based on this article. And it is a fantastic article on the topic. Definitely worth a read.
 
-2. Unlike MJPs implementation there is no hard limit of 64 characters, and there is no requirement to run without debug optimizations. Turns out that the issue with the validator during compilation only occurs when processing strings in a dynamic loop. TTL, instead uses macros to produce an unrolled loop. Currently TTL supports up to 256 characters but this can easily be increased by increasing the size of the unrolled loop in [ttl::string](../../src/ShaderTestFramework/Shader/TTL/string.hlsli). [Link](https://discord.com/channels/590611987420020747/1209044520285507634) to a discord thread talking about the issues that MJPs implementation leads to.
+2. Unlike MJPs implementation there is no hard limit of 64 characters, and there is no requirement to run without debug optimizations. Turns out that the issue with the validator during compilation only occurs when processing strings in a dynamic loop. TTL, instead uses macros to produce an unrolled loop. Currently TTL supports up to 256 characters but this can easily be increased by increasing the size of the unrolled loop in [ttl::string](../../src/Shader/TTL/string.hlsli). [Link](https://discord.com/channels/590611987420020747/1209044520285507634) to a discord thread talking about the issues that MJPs implementation leads to.
 
 ## Tracking down failures on a Particular Thread
 
@@ -293,18 +293,18 @@ void OptionalTestsWithScenariosAndSectionsAndThreadIds(uint3 DTid : SV_DispatchT
         {
             if (DTid.x == 16)
             {
-                STF::IsTrue(opt.IsValid);
+                ASSERT(IsTrue, opt.IsValid);
             }
             else
             {
-                STF::IsFalse(opt.IsValid);
+                ASSERT(IsFalse, opt.IsValid);
             }
         }
 
         SECTION("THEN GetOrDefault returns default value")
         {
             const int expectedValue = 42;
-            STF::AreEqual(expectedValue, opt.GetOrDefault(expectedValue));
+            ASSERT(AreEqual, expectedValue, opt.GetOrDefault(expectedValue));
         }
 
         SECTION("WHEN value is set")
@@ -314,13 +314,13 @@ void OptionalTestsWithScenariosAndSectionsAndThreadIds(uint3 DTid : SV_DispatchT
 
             SECTION("THEN IsValid returns true")
             {
-                STF::IsTrue(opt.IsValid);
+                ASSERT(IsTrue, opt.IsValid);
             }
 
             SECTION("THEN GetOrDefault returns set value")
             {
                 const int defaultValue = 24;
-                STF::AreEqual( expectedValue, opt.GetOrDefault(defaultValue));
+                ASSERT(AreEqual, expectedValue, opt.GetOrDefault(defaultValue));
             }
         }
     }
@@ -344,14 +344,14 @@ test cases: 3 | 2 passed | 1 failed
 assertions: 3 | 2 passed | 1 failed
 ```
 
-This error states that there were 127 successful asserts and 1 failed one. Trying to track down this in a real test could be a nightmare. Obviously in this case it is very easy to see which thread produced the assert. It is very clearly the thread with threadid (16,0,0). But let's assume that we don't know that for the sake of this example. Shader Test Framework makes tracking down issues like this where an assert only fails on one thread out of many quite easy. STF provides a function that can be called at the start of a test called `STF::RegisterThreadID`. Passing the thread id to this function will provide the framework with ability to tag each failed assert with its associated thread id. So we can change the start of our test to the following:
+This error states that there were 127 successful asserts and 1 failed one. Trying to track down this in a real test could be a nightmare. Obviously in this case it is very easy to see which thread produced the assert. It is very clearly the thread with threadid (16,0,0). But let's assume that we don't know that for the sake of this example. Shader Test Framework makes tracking down issues like this where an assert only fails on one thread out of many quite easy. STF provides a function that can be called at the start of a test called `stf::RegisterThreadID`. Passing the thread id to this function will provide the framework with ability to tag each failed assert with its associated thread id. So we can change the start of our test to the following:
 
 ```c++
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(32, 1, 1)]
 void OptionalTestsWithScenariosAndSectionsAndThreadIds(uint3 DTid : SV_DispatchThreadID)
 {
-    STF::RegisterThreadID(DTid);
+    stf::RegisterThreadID(DTid);
     SCENARIO("GIVEN An Optional that is reset")
     {
         // Everything else is the same

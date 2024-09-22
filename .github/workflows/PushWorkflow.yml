@@ -1,0 +1,59 @@
+name: Push Workflow Checks
+
+run-name: "${{github.actor}}: ${{ github.event.head_commit.message }}"
+
+on:
+  push:
+
+jobs:
+
+  Determine-Jobs-To-Run:
+    name: Determine Jobs to Run
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+      docs: ${{ steps.filter.outputs.docs }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate Filters
+        uses: dorny/paths-filter@v3.0.2
+        id: filter
+        with:
+          base: ${{ github.ref }}
+          filters: |
+            code:
+              - '**.cpp'
+              - '**.h'
+              - '**.hlsli'
+              - '**.hlsl'
+              - '**/CMakeLists.txt'
+              - '**.cmake'
+              - '**/RWBuildAndRunTests.yml'
+            docs:
+              - '**.md'
+              - '**/RWLinkValidation.yml'
+
+  If-Code-Changes:
+    
+    needs: Determine-Jobs-To-Run
+    if: ${{ needs.Determine-Jobs-To-Run.outputs.code == 'true' }}
+
+    name: Code Change Checks
+    permissions:
+        checks: write
+        pull-requests: write
+
+    uses: ./.github/workflows/RWBuildAndRunTests.yml
+
+  If-Docs-Change:
+
+    needs: Determine-Jobs-To-Run
+    if: ${{ needs.Determine-Jobs-To-Run.outputs.docs == 'true' }}
+
+    name: Docs Change Checks
+    uses: ./.github/workflows/RWLinkValidation.yml
+          
+            

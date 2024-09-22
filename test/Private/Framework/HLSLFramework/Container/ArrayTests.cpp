@@ -5,6 +5,7 @@
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - Container_wrapper")
 {
+    using namespace stf;
     auto [testName, shouldSucceed] = GENERATE
     (
         table<std::string, bool>

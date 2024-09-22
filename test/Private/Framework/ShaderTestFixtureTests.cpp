@@ -9,6 +9,7 @@
 
 SCENARIO("ShaderTestFixtureTests")
 {
+    using namespace stf;
     GIVEN("Default Constructed Fixture")
     {
         ShaderTestFixture test{ {} };
@@ -32,6 +33,7 @@ SCENARIO("ShaderTestFixtureTests")
 
 SCENARIO("ShaderTestFixtureTests - Run Compile Time Tests")
 {
+    using namespace stf;
     auto [testName, source, shouldSucceed] = GENERATE
     (
         table<std::string, std::string, bool>

@@ -42,22 +42,33 @@ Let's start with a really simple example ([code](../examples/Ex0_MinimalShaderTe
 ```c++
 SCENARIO("MinimalShaderTestExample")
 {
-    ShaderTestFixture::Desc desc{};
-    desc.Source = std::string{
-        R"(
-            // Include the test framework
-            #include "/Test/STF/ShaderTestFramework.hlsli"
-
-            [RootSignature(SHADER_TEST_RS)]
-            [numthreads(1, 1, 1)]
-            void MinimalTestEntryFunction()
+    stf::ShaderTestFixture fixture(stf::ShaderTestFixture::FixtureDesc{});
+    REQUIRE(fixture.RunTest
+        (
+            stf::ShaderTestFixture::RuntimeTestDesc
             {
-                STF::AreEqual(42, 42);
+                .CompilationEnv
+                {
+                    .Source = std::string
+                    {
+                        R"(
+                            // Include the test framework
+                            #include "/Test/STF/ShaderTestFramework.hlsli"
+
+                            [RootSignature(SHADER_TEST_RS)]
+                            [numthreads(1, 1, 1)]
+                            void MinimalTestEntryFunction()
+                            {
+                                ASSERT(AreEqual, 42, 42);
+                            }
+                        )"
+                    }
+                },
+                .TestName = "MinimalTestEntryFunction",
+                .ThreadGroupCount{ 1, 1, 1}
             }
-        )"
-    };
-    ShaderTestFixture fixture(std::move(desc));
-    REQUIRE(fixture.RunTest("MinimalTestEntryFunction", 1, 1, 1));
+        )
+    );
 }
 ```
 And you will get an output like
@@ -66,9 +77,15 @@ And you will get an output like
 All tests passed (1 assertion in 1 test case)
 ```
 
-This demonstrates how we can run a shader test from C++ by creating a `ShaderTestFixture` and then calling `ShaderTestFixture::RunTest`. The HLSL code under test can be provided as a `std::string` or, it can be provided by providing a `std::filesystem::path`. `ShaderTestFixture::RunTest` takes the name of the entry function to run and the dispatch configuration. So, this test will dispatch a single thread group.
+This demonstrates how we can run a shader test from C++ by creating an `stf::ShaderTestFixture` and then calling `ShaderTestFixture::RunTest`. `ShaderTestFixture::RunTest` takes an `stf::ShaderTestFixture::RuntimeTestDesc` which describes the parameters of the test. The parameters that we need to specify in the minimal test case are:
 
-If we change the assert to be `STF::NotEqual` then our test will fail and will have an output like the following:
+1. `Source` - Can be either a `std::string` which contains the HLSL source code OR a `std::filesystem::path` which points to a file which contains the HLSL code that we want to compile.
+2. `TestName` - This is the name of the entry function of the test shader.
+3. `ThreadGroupCount` - The thread group dispatch configuration.
+
+In this example we are providing our HLSL code as a `std::string` and the entry function of the test is `MinimalTestEntryFunction`, and we are only dispatching a single thread group to run the test.
+
+If we change the assert to be `stf::NotEqual` then our test will fail and will have an output like the following:
 ```
 MinimalShaderTest.cpp(34): FAILED:
   REQUIRE( fixture.RunTest("MinimalTestEntryFunction", 1, 1, 1) )
@@ -92,7 +109,7 @@ ShaderTestFramework provides assert failure formatting for all native types prov
 [numthreads(1, 1, 1)]
 void MinimalTestEntryFunction()
 {
-    STF::AreEqual(float2(42.0, 2.0), float2(0.0, 3.2));
+    ASSERT(AreEqual, float2(42.0, 2.0), float2(0.0, 3.2));
 }
 ```
 we will get a similar assert failure report:
@@ -118,35 +135,44 @@ Let's have a look at ([code](../examples/Ex1_FailingPowTests/PowTests.cpp)) and 
 ```c++
 SCENARIO("PowTests")
 {
-    ShaderTestFixture::Desc desc{};
-    desc.Source = std::string{
-        R"(
-            #include "/Test/STF/ShaderTestFramework.hlsli"
-
-            int MyPow(int num, int power)
+    stf::ShaderTestFixture fixture(stf::ShaderTestFixture::FixtureDesc{});
+    REQUIRE(fixture.RunTest(
+        stf::ShaderTestFixture::RuntimeTestDesc
+        {
+            .CompilationEnv
             {
-                int ret = num;
-                for (int i = 1; i < power; ++i)
-                {
-                    ret *= num;
+                .Source = std::string{
+                    R"(
+                        // Include the test framework
+                        #include "/Test/STF/ShaderTestFramework.hlsli"
+
+                        int MyPow(int num, int power)
+                        {
+                            int ret = num;
+                            for (int i = 1; i < power; ++i)
+                            {
+                                ret *= num;
+                            }
+                            return ret;
+                        }
+
+                        [RootSignature(SHADER_TEST_RS)]
+                        [numthreads(1, 1, 1)]
+                        void RunPowTests()
+                        {
+                            ASSERT(AreEqual, 1, MyPow(3, 0));
+                            ASSERT(AreEqual, 3, MyPow(3, 1));
+                            ASSERT(AreEqual, 9, MyPow(3, 2));
+                            ASSERT(AreEqual, 27, MyPow(3, 3));
+                            ASSERT(AreEqual, 81, MyPow(3, 4));
+                        }
+                    )"
                 }
-                return ret;
-            }
-
-            [RootSignature(SHADER_TEST_RS)]
-            [numthreads(1, 1, 1)]
-            void RunPowTests()
-            {
-                STF::AreEqual(1, MyPow(3, 0));
-                STF::AreEqual(3, MyPow(3, 1));
-                STF::AreEqual(9, MyPow(3, 2));
-                STF::AreEqual(27, MyPow(3, 3));
-                STF::AreEqual(81, MyPow(3, 4));
-            }
-        )"
-    };
-    ShaderTestFixture fixture(std::move(desc));
-    REQUIRE(fixture.RunTest("RunPowTests", 1, 1, 1));
+            },
+            .TestName = "RunPowTests",
+            .ThreadGroupCount{1, 1, 1},
+        })
+    );
 }
 ```
 
@@ -166,44 +192,72 @@ assertions: 1 | 1 failed
 ```
 
 We have 5 asserts. 4 of which passed. 1 failed. And the one that failed was the one that had 1 as the left argument and 3 as the right argument. This is the first assertion. The fix for this is fairly trivial however, let's pretend it is not. We can debug this with [PIX on Windows](https://devblogs.microsoft.com/pix/download/).
+
 To take a capture of a test that is run we can call `ShaderTestFixture::TakeCapture` before running a test. So, we can amend the example to look like this
+
+To take a capture of a test we have to do two things:
+1. Enable GPU capturing capabilities when constructing the `stf::ShaderTestFixture`
+2. Set the `GPUCaptureMode` in the `stf::ShaderTestFixture::RuntimeTestDesc` when calling `ShaderTestFixture::RunTest`
+
+Making these two changes our example now looks like this:
 
 ```c++
 SCENARIO("PowTests")
 {
-    ShaderTestFixture::Desc desc{};
-    desc.Source = std::string{
-        R"(
-            #include "/Test/STF/ShaderTestFramework.hlsli"
-
-            int MyPow(int num, int power)
+    stf::ShaderTestFixture fixture(
+        stf::ShaderTestFixture::FixtureDesc
+        {
+            .GPUDeviceParams
             {
-                int ret = num;
-                for (int i = 1; i < power; ++i)
-                {
-                    ret *= num;
+                .EnableGPUCapture = true
+            }
+        }
+    );
+
+    REQUIRE(fixture.RunTest(
+        stf::ShaderTestFixture::RuntimeTestDesc
+        {
+            .CompilationEnv
+            {
+                .Source = std::string{
+                    R"(
+                        // Include the test framework
+                        #include "/Test/STF/ShaderTestFramework.hlsli"
+
+                        int MyPow(int num, int power)
+                        {
+                            int ret = num;
+                            for (int i = 1; i < power; ++i)
+                            {
+                                ret *= num;
+                            }
+                            return ret;
+                        }
+
+                        [RootSignature(SHADER_TEST_RS)]
+                        [numthreads(1, 1, 1)]
+                        void RunPowTests()
+                        {
+                            //ASSERT(AreEqual, 1, MyPow(3, 0));
+                            ASSERT(AreEqual, 3, MyPow(3, 1));
+                            ASSERT(AreEqual, 9, MyPow(3, 2));
+                            ASSERT(AreEqual, 27, MyPow(3, 3));
+                            ASSERT(AreEqual, 81, MyPow(3, 4));
+                        }
+                    )"
                 }
-                return ret;
-            }
-
-            [RootSignature(SHADER_TEST_RS)]
-            [numthreads(1, 1, 1)]
-            void RunPowTests()
-            {
-                STF::AreEqual(1, MyPow(3, 0));
-                STF::AreEqual(3, MyPow(3, 1));
-                STF::AreEqual(9, MyPow(3, 2));
-                STF::AreEqual(27, MyPow(3, 3));
-                STF::AreEqual(81, MyPow(3, 4));
-            }
-        )"
-    };
-    ShaderTestFixture fixture(std::move(desc));
-    fixture.TakeCapture();
-    REQUIRE(fixture.RunTest("RunPowTests", 1, 1, 1));
+            },
+            .TestName = "RunPowTests",
+            .ThreadGroupCount{1, 1, 1},
+            .GPUCaptureMode = stf::ShaderTestFixture::EGPUCaptureMode::On
+        })
+    );
+}
 ```
 
-And then run it. There will now be a `Captures` directory in the same directory that your executable lives. Inside it, there will be a `.wpix` file that we can open with PIX. From here we can click "Analyze" at the top and we will have a view like this 
+NOTE: you can also set the `GPUCaptureMode` to be `stf::ShaderTestFixture::EGPUCaptureMode::CaptureOnFailure`. This will run your test without capturing it. If the test passes, no GPU capture is created. If the test fails, the fixture will run the test again while capturing it.
+
+Now we run this example again. There will now be a `Captures` directory in the same directory that your executable lives. Inside it, there will be a `.wpix` file that we can open with PIX. From here we can click "Analyze" at the top and we will have a view like this 
 
 ![PIX analysis](images/PowTestPIXStart.png)
 
@@ -269,20 +323,20 @@ Shader Test Framework provides a mechanism to help test writers, write tests tha
 [numthreads(1, 1, 1)]
 void OptionalTestsWithScenariosAndSections()
 {
-    SCENARIO("GIVEN An Optional that is reset")
+        SCENARIO("GIVEN An Optional that is reset")
     {
         Optional<int> opt;
         opt.Reset();
 
         SECTION("THEN IsValid returns false")
         {
-            STF::IsFalse(opt.IsValid);
+            ASSERT(IsFalse, opt.IsValid);
         }
 
         SECTION("THEN GetOrDefault returns default value")
         {
             const int expectedValue = 42;
-            STF::AreEqual(expectedValue, opt.GetOrDefault(expectedValue));
+            ASSERT(AreEqual, expectedValue, opt.GetOrDefault(expectedValue));
         }
 
         SECTION("WHEN value is set")
@@ -292,13 +346,13 @@ void OptionalTestsWithScenariosAndSections()
 
             SECTION("THEN IsValid returns true")
             {
-                STF::IsTrue(opt.IsValid);
+                ASSERT(IsTrue, opt.IsValid);
             }
 
             SECTION("THEN GetOrDefault returns set value")
             {
                 const int defaultValue = 24;
-                STF::AreEqual( expectedValue, opt.GetOrDefault(defaultValue));
+                ASSERT(AreEqual,  expectedValue, opt.GetOrDefault(defaultValue));
             }
         }
     }
@@ -309,7 +363,7 @@ Please refer to [Scenarios and Sections](./STF/ScenariosAndSections.md) for more
 
 ## Assertions
 
-Shader Test Framework provides the standard assertions that one might expect from a testing framework, `STF::IsTrue`, `STF::IsFalse`, `STF::AreEqual`, and `STF::NotEqual`. To read more about the other assertion features that Shader Test Framework provides, the [Asserts](./STF/Asserts.md) documentation is the place to go.
+To read more about the other assertion features that Shader Test Framework provides, the [Asserts](./STF/Asserts.md) documentation is the place to go.
 
 ## Compile Time Tests
 

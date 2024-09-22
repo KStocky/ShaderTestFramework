@@ -5,6 +5,7 @@
 
 SCENARIO("HLSLFrameworkTests - TypeTraits")
 {
+    using namespace stf;
     ShaderTestFixture fixture(
         ShaderTestFixture::FixtureDesc
         {

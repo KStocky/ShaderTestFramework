@@ -6,6 +6,7 @@
 
 namespace RootSigConstantTypeTests
 {
+    using namespace stf;
 	template<u32 Size>
 	struct TrivialType
 	{

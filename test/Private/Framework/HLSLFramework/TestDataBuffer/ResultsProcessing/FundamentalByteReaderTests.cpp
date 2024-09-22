@@ -7,6 +7,7 @@
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - FundamentalByteReader")
 {
+    using namespace stf;
     using Catch::Matchers::Predicate;
 
     auto [testName, expectedSubstrings, unexpectedSubstrings] = GENERATE

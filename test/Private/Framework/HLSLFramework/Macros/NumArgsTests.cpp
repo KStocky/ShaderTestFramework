@@ -5,6 +5,7 @@
 
 SCENARIO("HLSLFrameworkTests - Macros - NumArgs")
 {
+    using namespace stf;
     ShaderTestFixture fixture(
         ShaderTestFixture::FixtureDesc
         {

@@ -20,6 +20,6 @@ void GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeRep
 {
 	const uint expectedA = 4;
 	const uint expectedB = 8;
-	STF::AreEqual(expectedA, (uint)sizeof(SizeOfTests::A));
-	STF::AreEqual(expectedB, (uint)sizeof(SizeOfTests::B));
+	ASSERT(AreEqual, expectedA, (uint)sizeof(SizeOfTests::A));
+	ASSERT(AreEqual, expectedB, (uint)sizeof(SizeOfTests::B));
 }

@@ -6,6 +6,7 @@
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - SectionManagement")
 {
+    using namespace stf;
     auto testName = GENERATE
     (
         "GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce",

@@ -13,7 +13,7 @@ struct MyType
     }
 };
 
-namespace STF
+namespace stf
 {
     
     // Since MyType has a non-type template parameter we partially specialize

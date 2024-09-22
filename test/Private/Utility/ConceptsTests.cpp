@@ -5,6 +5,7 @@
 
 namespace CallableTypeTests
 {
+    using namespace stf;
 	static auto LambdaFunc = [](float) {return 42; };
 
 	static auto LambdaFuncWithCapture = [ret = 42](float) {return ret; };
@@ -73,6 +74,7 @@ namespace CallableTypeTests
 
 namespace TemplatedCallableTypeTests
 {
+    using namespace stf;
 	static auto LambdaFunc = [](float) {return 42; };
 
 	static auto LambdaFuncWithCapture = [ret = 42](float) {return ret; };
@@ -141,6 +143,7 @@ namespace TemplatedCallableTypeTests
 
 namespace NonTemplatedCallableTypeTests
 {
+    using namespace stf;
 	static auto LambdaFunc = [](float) {return 42; };
 
 	static auto LambdaFuncWithCapture = [ret = 42](float) {return ret; };
@@ -209,6 +212,7 @@ namespace NonTemplatedCallableTypeTests
 
 namespace PureFunctionTests
 {
+    using namespace stf;
 	static auto LambdaFunc = [](float) {return 42; };
 
 	static auto LambdaFuncWithCapture = [ret = 42](float) {return ret; };
@@ -242,6 +246,7 @@ namespace PureFunctionTests
 
 namespace CapturelessLambdaTests
 {
+    using namespace stf;
 	static auto LambdaFunc = [](float) {return 42; };
 
 	static auto LambdaFuncWithCapture = [ret = 42](float) {return ret; };
@@ -275,6 +280,7 @@ namespace CapturelessLambdaTests
 
 namespace ConstexprDefaultConstructableTypeTests
 {
+    using namespace stf;
 	struct ConstexprDefaultConstructable
 	{
 		constexpr ConstexprDefaultConstructable() {}
@@ -298,6 +304,7 @@ namespace ConstexprDefaultConstructableTypeTests
 
 namespace HLSLTypeTriviallyConvertibleTypeTests
 {
+    using namespace stf;
     template<std::size_t InAlignment>
     struct Trivial
     {
@@ -343,6 +350,7 @@ struct std::formatter<HLSLTypeTriviallyConvertibleTypeTests::Formattable<T, InAl
 
 namespace HLSLTypeTriviallyConvertibleTypeTests
 {
+    using namespace stf;
     static_assert(!std::is_trivially_copyable_v<NotTrivial<4>>);
     static_assert(std::is_trivially_copyable_v<Trivial<4>>);
 
@@ -360,6 +368,7 @@ namespace HLSLTypeTriviallyConvertibleTypeTests
 
 namespace InstantiatableFromTests
 {
+    using namespace stf;
     struct A {};
     struct B {};
 
@@ -398,6 +407,7 @@ namespace InstantiatableFromTests
 
 namespace NewableTests
 {
+    using namespace stf;
     struct NewableStruct {};
 
     struct NotNewableStruct

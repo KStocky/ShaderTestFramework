@@ -2,7 +2,7 @@
 
 # Type Traits
 
-The TTL (Test Template Library) provides a number of type traits in the [`type_traits.hlsli`](../../../src/ShaderTestFramework/Shader/TTL/type_traits.hlsli) header. These operate in the same way as [C++ type traits](https://en.cppreference.com/w/cpp/header/type_traits).
+The TTL (Test Template Library) provides a number of type traits in the [`type_traits.hlsli`](../../../src/Shader/TTL/type_traits.hlsli) header. These operate in the same way as [C++ type traits](https://en.cppreference.com/w/cpp/header/type_traits).
 
 ## Structs
 

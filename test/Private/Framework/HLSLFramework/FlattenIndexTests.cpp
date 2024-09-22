@@ -5,6 +5,7 @@
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - FlattenIndex")
 {
+    using namespace stf;
     auto testName = GENERATE
     (
         "GIVEN_UnitCubeAndZeroIndex_WHEN_Flattened_THEN_ReturnsZero",

@@ -5,6 +5,7 @@
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - Asserts - AreEqual")
 {
+    using namespace stf;
     auto [testName, shouldSucceed] = GENERATE
     (
         table<std::string, bool>

@@ -59,7 +59,7 @@ jobs:
             toolset: ${{env.MSVC_VERSION}}
       
       - name: Build with ${{env.MSVC_VERSION}}
-        run: cmake --workflow --preset BuildCI
+        run: cmake --workflow --preset NinjaBuild
 
   Generate-Badges:
 

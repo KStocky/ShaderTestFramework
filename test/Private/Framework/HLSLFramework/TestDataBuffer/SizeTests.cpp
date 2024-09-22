@@ -7,6 +7,7 @@
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - AssertBuffer - SizeTests")
 {
+    using namespace stf;
     auto [testName, numRecordedFailedAsserts, numBytesAssertData] = GENERATE
     (
         table<std::string, u32, u32>

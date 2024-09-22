@@ -2,6 +2,7 @@
 
 namespace FuncTraitsTests
 {
+    using namespace stf;
 	struct SingleZeroParamCallOperator
 	{
 		int operator()()

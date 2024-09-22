@@ -4,18 +4,18 @@
 
 // "/Test" is the virtual shader directory for the framework
 // This is defined by the framework itself.
-#include "/Test/STF/ShaderTestFramework.hlsli"
+#include "/Test/stf/ShaderTestFramework.hlsli"
 
 void GIVEN_InvalidOptional_WHEN_ValidityQueried_THEN_NotValid(const Optional<int> InOpt)
 {
-    STF::IsFalse(InOpt.IsValid);
+    ASSERT(IsFalse, InOpt.IsValid);
 }
 
 void GIVEN_InvalidOptional_WHEN_GetOrDefaultCalled_THEN_DefaultReturned(const Optional<int> InOpt)
 {
     const int expectedValue = 42;
 
-    STF::AreEqual(expectedValue, InOpt.GetOrDefault(expectedValue));
+    ASSERT(AreEqual, expectedValue, InOpt.GetOrDefault(expectedValue));
 }
 
 void GIVEN_InvalidOptional_WHEN_ValueSet_THEN_IsValid(Optional<int> InOpt)
@@ -23,7 +23,7 @@ void GIVEN_InvalidOptional_WHEN_ValueSet_THEN_IsValid(Optional<int> InOpt)
     const int expectedValue = 42;
 
     InOpt.Set(expectedValue);
-    STF::IsTrue(InOpt.IsValid);
+    ASSERT(IsTrue, InOpt.IsValid);
 }
 
 void GIVEN_InvalidOptional_WHEN_ValueSet_THEN_GetReturnsValue(Optional<int> InOpt)
@@ -32,7 +32,7 @@ void GIVEN_InvalidOptional_WHEN_ValueSet_THEN_GetReturnsValue(Optional<int> InOp
     const int defaultValue = 24;
 
     InOpt.Set(expectedValue);
-    STF::AreEqual( expectedValue, InOpt.GetOrDefault(defaultValue));
+    ASSERT(AreEqual,  expectedValue, InOpt.GetOrDefault(defaultValue));
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -59,13 +59,13 @@ void OptionalTestsWithScenariosAndSections()
 
         SECTION("THEN IsValid returns false")
         {
-            STF::IsFalse(opt.IsValid);
+            ASSERT(IsFalse, opt.IsValid);
         }
 
         SECTION("THEN GetOrDefault returns default value")
         {
             const int expectedValue = 42;
-            STF::AreEqual(expectedValue, opt.GetOrDefault(expectedValue));
+            ASSERT(AreEqual, expectedValue, opt.GetOrDefault(expectedValue));
         }
 
         SECTION("WHEN value is set")
@@ -75,13 +75,13 @@ void OptionalTestsWithScenariosAndSections()
 
             SECTION("THEN IsValid returns true")
             {
-                STF::IsTrue(opt.IsValid);
+                ASSERT(IsTrue, opt.IsValid);
             }
 
             SECTION("THEN GetOrDefault returns set value")
             {
                 const int defaultValue = 24;
-                STF::AreEqual( expectedValue, opt.GetOrDefault(defaultValue));
+                ASSERT(AreEqual,  expectedValue, opt.GetOrDefault(defaultValue));
             }
         }
     }
@@ -91,7 +91,7 @@ void OptionalTestsWithScenariosAndSections()
 [numthreads(32, 1, 1)]
 void OptionalTestsWithScenariosAndSectionsAndThreadIds(uint3 DTid : SV_DispatchThreadID)
 {
-    STF::RegisterThreadID(DTid);
+    stf::RegisterThreadID(DTid);
     SCENARIO("GIVEN An Optional that is reset")
     {
         Optional<int> opt;
@@ -101,18 +101,18 @@ void OptionalTestsWithScenariosAndSectionsAndThreadIds(uint3 DTid : SV_DispatchT
         {
             //if (DTid.x == 16)
             //{
-            //    STF::IsTrue(opt.IsValid);
+            //    ASSERT(IsTrue, opt.IsValid);
             //}
             //else
             {
-                STF::IsFalse(opt.IsValid);
+                ASSERT(IsFalse, opt.IsValid);
             }
         }
 
         SECTION("THEN GetOrDefault returns default value")
         {
             const int expectedValue = 42;
-            STF::AreEqual(expectedValue, opt.GetOrDefault(expectedValue));
+            ASSERT(AreEqual, expectedValue, opt.GetOrDefault(expectedValue));
         }
 
         SECTION("WHEN value is set")
@@ -122,13 +122,13 @@ void OptionalTestsWithScenariosAndSectionsAndThreadIds(uint3 DTid : SV_DispatchT
 
             SECTION("THEN IsValid returns true")
             {
-                STF::IsTrue(opt.IsValid);
+                ASSERT(IsTrue, opt.IsValid);
             }
 
             SECTION("THEN GetOrDefault returns set value")
             {
                 const int defaultValue = 24;
-                STF::AreEqual( expectedValue, opt.GetOrDefault(defaultValue));
+                ASSERT(AreEqual,  expectedValue, opt.GetOrDefault(defaultValue));
             }
         }
     }

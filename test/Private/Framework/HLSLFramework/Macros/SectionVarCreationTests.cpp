@@ -5,6 +5,7 @@
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - Macros - SectionVarCreation")
 {
+    using namespace stf;
     auto testName = GENERATE
     (
         "GIVEN_SingleSectionVarCreated_WHEN_Queried_THEN_ValueIsZero",

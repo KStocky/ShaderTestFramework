@@ -7,6 +7,7 @@
 
 SCENARIO("RingBufferTests")
 {
+    using namespace stf;
 	enum class EState
 	{
 		Constructed,

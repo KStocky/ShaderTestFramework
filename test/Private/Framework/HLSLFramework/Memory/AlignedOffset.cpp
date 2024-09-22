@@ -6,6 +6,7 @@
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - Memory - AlignedOffset")
 {
+    using namespace stf;
     auto testName = GENERATE
     (
         "GIVEN_IndexIsAlreadyAligned_WHEN_Aligned_THEN_ReturnsSameIndex",

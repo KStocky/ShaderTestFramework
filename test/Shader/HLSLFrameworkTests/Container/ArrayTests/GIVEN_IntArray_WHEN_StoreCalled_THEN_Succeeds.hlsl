@@ -7,5 +7,5 @@ void GIVEN_IntArray_WHEN_StoreCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_D
     ttl::container_wrapper<int[2]> span;
     span.store(0, 42);
 
-    STF::AreEqual(42, span.Data[0]);
+    ASSERT(AreEqual, 42, span.Data[0]);
 }

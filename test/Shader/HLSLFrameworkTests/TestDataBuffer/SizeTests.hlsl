@@ -1,7 +1,7 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
 
 _Static_assert(
-    ttl::size_of<ShaderTestPrivate::HLSLAssertMetaData>::value == 32u, 
+    ttl::size_of<stf::detail::HLSLAssertMetaData>::value == 32u, 
     "The size of this struct must match the size of HLSLAssertMetaData in TestDataBufferProcessor.h");
 
 [RootSignature(SHADER_TEST_RS)]
@@ -10,12 +10,12 @@ void GIVEN_ZeroAssertsRecorded_WHEN_Ran_THEN_AssertBufferInfoAsExpected()
 {
     const uint bufferSize = 4u;
 
-    ASSERT(AreEqual, 0u, ShaderTestPrivate::Asserts.SizeInBytesOfSection());
-    ASSERT(AreEqual, 0u, ShaderTestPrivate::Asserts.SizeInBytesOfData());
-    ASSERT(AreEqual, 0u, ShaderTestPrivate::Asserts.Num());
+    ASSERT(AreEqual, 0u, stf::detail::Asserts.SizeInBytesOfSection());
+    ASSERT(AreEqual, 0u, stf::detail::Asserts.SizeInBytesOfData());
+    ASSERT(AreEqual, 0u, stf::detail::Asserts.Num());
 
     uint resourceSize = 0;
-    ShaderTestPrivate::GetTestDataBuffer().GetDimensions(resourceSize);
+    stf::detail::GetTestDataBuffer().GetDimensions(resourceSize);
     ASSERT(AreEqual, bufferSize, resourceSize);
 }
 
@@ -23,14 +23,14 @@ void GIVEN_ZeroAssertsRecorded_WHEN_Ran_THEN_AssertBufferInfoAsExpected()
 [numthreads(1,1,1)]
 void GIVEN_FiveAssertsRecordedAndNoData_WHEN_Ran_THEN_AssertBufferInfoAsExpected()
 {
-    const uint bufferSize = 5 * sizeof(ShaderTestPrivate::HLSLAssertMetaData);
+    const uint bufferSize = 5 * sizeof(stf::detail::HLSLAssertMetaData);
 
-    ASSERT(AreEqual, bufferSize, ShaderTestPrivate::Asserts.SizeInBytesOfSection());
-    ASSERT(AreEqual, 0u, ShaderTestPrivate::Asserts.SizeInBytesOfData());
-    ASSERT(AreEqual, 5u, ShaderTestPrivate::Asserts.Num());
+    ASSERT(AreEqual, bufferSize, stf::detail::Asserts.SizeInBytesOfSection());
+    ASSERT(AreEqual, 0u, stf::detail::Asserts.SizeInBytesOfData());
+    ASSERT(AreEqual, 5u, stf::detail::Asserts.Num());
 
     uint resourceSize = 0;
-    ShaderTestPrivate::GetTestDataBuffer().GetDimensions(resourceSize);
+    stf::detail::GetTestDataBuffer().GetDimensions(resourceSize);
     ASSERT(AreEqual, bufferSize, resourceSize);
 }
 
@@ -39,14 +39,14 @@ void GIVEN_FiveAssertsRecordedAndNoData_WHEN_Ran_THEN_AssertBufferInfoAsExpected
 void GIVEN_FiveAssertsRecordedAnd200BytesOfData_WHEN_Ran_THEN_AssertBufferInfoAsExpected()
 {
 
-    const uint bufferSize = 5 * sizeof(ShaderTestPrivate::HLSLAssertMetaData) + 200;
+    const uint bufferSize = 5 * sizeof(stf::detail::HLSLAssertMetaData) + 200;
 
-    ASSERT(AreEqual, bufferSize, ShaderTestPrivate::Asserts.SizeInBytesOfSection());
-    ASSERT(AreEqual, 200u, ShaderTestPrivate::Asserts.SizeInBytesOfData());
-    ASSERT(AreEqual, 5u, ShaderTestPrivate::Asserts.Num());
+    ASSERT(AreEqual, bufferSize, stf::detail::Asserts.SizeInBytesOfSection());
+    ASSERT(AreEqual, 200u, stf::detail::Asserts.SizeInBytesOfData());
+    ASSERT(AreEqual, 5u, stf::detail::Asserts.Num());
 
     uint resourceSize = 0;
-    ShaderTestPrivate::GetTestDataBuffer().GetDimensions(resourceSize);
+    stf::detail::GetTestDataBuffer().GetDimensions(resourceSize);
     ASSERT(AreEqual, bufferSize, resourceSize);
 }
 
@@ -56,13 +56,13 @@ void GIVEN_FiveAssertsRecordedAndNonMultipleOf8BytesOfData_WHEN_Ran_THEN_AssertB
 {
     const uint requestedByteSize = 97;
     const uint expectedByteSize = 104;
-    const uint bufferSize = 5 * sizeof(ShaderTestPrivate::HLSLAssertMetaData) + expectedByteSize;
+    const uint bufferSize = 5 * sizeof(stf::detail::HLSLAssertMetaData) + expectedByteSize;
 
-    ASSERT(AreEqual, bufferSize, ShaderTestPrivate::Asserts.SizeInBytesOfSection());
-    ASSERT(AreEqual, expectedByteSize, ShaderTestPrivate::Asserts.SizeInBytesOfData());
-    ASSERT(AreEqual, 5u, ShaderTestPrivate::Asserts.Num());
+    ASSERT(AreEqual, bufferSize, stf::detail::Asserts.SizeInBytesOfSection());
+    ASSERT(AreEqual, expectedByteSize, stf::detail::Asserts.SizeInBytesOfData());
+    ASSERT(AreEqual, 5u, stf::detail::Asserts.Num());
 
     uint resourceSize = 0;
-    ShaderTestPrivate::GetTestDataBuffer().GetDimensions(resourceSize);
+    stf::detail::GetTestDataBuffer().GetDimensions(resourceSize);
     ASSERT(AreEqual, bufferSize, resourceSize);
 }

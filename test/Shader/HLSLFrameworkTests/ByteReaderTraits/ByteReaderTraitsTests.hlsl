@@ -1,4 +1,4 @@
-#include "/Test/STF/ByteReaderTraits.hlsli"
+#include "/Test/stf/ByteReaderTraits.hlsli"
 
 namespace CustomByteReaderTraitsTests
 {
@@ -18,7 +18,7 @@ namespace CustomByteReaderTraitsTests
     }; 
 }
 
-namespace STF
+namespace stf
 {
     template<> struct ByteReaderTraits<CustomByteReaderTraitsTests::TypeWithReaderTraitsNoTypeId> 
         : ByteReaderTraitsBase<CustomByteReaderTraitsTests::TypeWithReaderTraitsNoTypeId::ReaderId>{};
@@ -29,14 +29,14 @@ namespace STF
 
 namespace CustomByteReaderTraitsTests
 {
-    _Static_assert(STF::ByteReaderTraits<TypeWithoutReaderTraits>::ReaderId == 0);
-    _Static_assert(STF::ByteReaderTraits<TypeWithoutReaderTraits>::TypeId == 0);
+    _Static_assert(stf::ByteReaderTraits<TypeWithoutReaderTraits>::ReaderId == 0);
+    _Static_assert(stf::ByteReaderTraits<TypeWithoutReaderTraits>::TypeId == 0);
 
-    _Static_assert(STF::ByteReaderTraits<TypeWithReaderTraitsNoTypeId>::ReaderId == TypeWithReaderTraitsNoTypeId::ReaderId);
-    _Static_assert(STF::ByteReaderTraits<TypeWithReaderTraitsNoTypeId>::TypeId == 0);
+    _Static_assert(stf::ByteReaderTraits<TypeWithReaderTraitsNoTypeId>::ReaderId == TypeWithReaderTraitsNoTypeId::ReaderId);
+    _Static_assert(stf::ByteReaderTraits<TypeWithReaderTraitsNoTypeId>::TypeId == 0);
 
-    _Static_assert(STF::ByteReaderTraits<TypeWithReaderTraitsAndTypeId>::ReaderId == TypeWithReaderTraitsAndTypeId::ReaderId);
-    _Static_assert(STF::ByteReaderTraits<TypeWithReaderTraitsAndTypeId>::TypeId == TypeWithReaderTraitsAndTypeId::TypeId);
+    _Static_assert(stf::ByteReaderTraits<TypeWithReaderTraitsAndTypeId>::ReaderId == TypeWithReaderTraitsAndTypeId::ReaderId);
+    _Static_assert(stf::ByteReaderTraits<TypeWithReaderTraitsAndTypeId>::TypeId == TypeWithReaderTraitsAndTypeId::TypeId);
 }
 
 namespace PackedFundamentalTypeInfoTests
@@ -44,17 +44,17 @@ namespace PackedFundamentalTypeInfoTests
     template<typename T, uint ExpectedTypeVal, uint ExpectedNumBits, uint ExpectedNumColumns, uint ExpectedNumRows>
     void Test()
     {
-        _Static_assert(STF::PackedFundamentalTypeInfo<T>::TypeVal == ExpectedTypeVal);
-        _Static_assert(STF::PackedFundamentalTypeInfo<T>::PackedTypeVal == ExpectedTypeVal);
+        _Static_assert(stf::PackedFundamentalTypeInfo<T>::TypeVal == ExpectedTypeVal);
+        _Static_assert(stf::PackedFundamentalTypeInfo<T>::PackedTypeVal == ExpectedTypeVal);
 
-        _Static_assert(STF::PackedFundamentalTypeInfo<T>::NumBitsVal == ExpectedNumBits);
-        _Static_assert((STF::PackedFundamentalTypeInfo<T>::PackedNumBitsVal >> 2) == ExpectedNumBits);
+        _Static_assert(stf::PackedFundamentalTypeInfo<T>::NumBitsVal == ExpectedNumBits);
+        _Static_assert((stf::PackedFundamentalTypeInfo<T>::PackedNumBitsVal >> 2) == ExpectedNumBits);
 
-        _Static_assert(STF::PackedFundamentalTypeInfo<T>::NumColumns == ExpectedNumColumns);
-        _Static_assert((STF::PackedFundamentalTypeInfo<T>::PackedNumColumns >> 4) == ExpectedNumColumns);
+        _Static_assert(stf::PackedFundamentalTypeInfo<T>::NumColumns == ExpectedNumColumns);
+        _Static_assert((stf::PackedFundamentalTypeInfo<T>::PackedNumColumns >> 4) == ExpectedNumColumns);
 
-        _Static_assert(STF::PackedFundamentalTypeInfo<T>::NumRows == ExpectedNumRows);
-        _Static_assert((STF::PackedFundamentalTypeInfo<T>::PackedNumRows >> 6) == ExpectedNumRows);
+        _Static_assert(stf::PackedFundamentalTypeInfo<T>::NumRows == ExpectedNumRows);
+        _Static_assert((stf::PackedFundamentalTypeInfo<T>::PackedNumRows >> 6) == ExpectedNumRows);
     }
 
     void ScalarTests()
@@ -142,8 +142,8 @@ namespace FundamentalByteReaderTraitsTests
     template<typename Type>
     void Test()
     {
-        static const uint16_t ActualTypeId = STF::ByteReaderTraits<Type>::TypeId;
-        using ExpectedInfo = STF::PackedFundamentalTypeInfo<Type>;
+        static const uint16_t ActualTypeId = stf::ByteReaderTraits<Type>::TypeId;
+        using ExpectedInfo = stf::PackedFundamentalTypeInfo<Type>;
 
         _Static_assert((ActualTypeId & 3) == ExpectedInfo::TypeVal);
         _Static_assert(((ActualTypeId >> 2) & 3) == ExpectedInfo::NumBitsVal);

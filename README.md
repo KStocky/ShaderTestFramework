@@ -19,15 +19,14 @@ This should be enough to grab the repo and build everything provided you have at
 ```
 $ git clone https://github.com/KStocky/ShaderTestFramework
 $ cd ShaderTestFramework
-$ cmake --workflow --preset FullDevVS
+$ cmake --workflow --preset VS2022Build
 ```
 
 From there you can have a play with the [examples](./examples).
 
 There is also a much more in depth [tutorial](docs/Tutorial.md). This describes the requirements in detail, then takes you through how to include the framework in your project, and then how to write tests for your shader code.
 
-Shader Test Framework also provides [Ninja Build](https://ninja-build.org/) presets which can be used if you open the root folder in Visual Studio to make use of Visual Studio's CMake integration.
-This is the recommended way to use Shader Test Framework as Ninja is MUCH faster than MSBuild.
+Shader Test Framework also provides [Ninja Build](https://ninja-build.org/) presets for greater compilation speed. Docs on how to use Ninja with STF can be found in the [Installation Guide](./docs/InstallationGuide.md)
 
 ## Example Shader Unit Test
 
@@ -77,3 +76,8 @@ void OptionalTests()
 - [Tutorial](./docs/Tutorial.md)
 - [Reference](./docs/ShaderTestFramework.md)
 - [Example Repository](https://github.com/KStocky/ShaderTestFrameworkExamples)
+
+## Libraries Used
+
+Shader Test Framework makes use of lots of third party libraries. Users should not have to worry about these dependencies as the CMake build scripts should handle all of that for you. But I think it is important to give credit where credit is due.
+You can find a full list of all the libraries used [here](./docs/ThirdPartyLibraries.md)

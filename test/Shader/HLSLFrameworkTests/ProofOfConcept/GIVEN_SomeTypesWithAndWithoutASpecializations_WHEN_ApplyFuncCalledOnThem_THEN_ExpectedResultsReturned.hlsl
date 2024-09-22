@@ -45,7 +45,7 @@ namespace SFINAETemplateSpecialization
 [numthreads(1,1,1)]
 void GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-	STF::AreEqual(0u, SFINAETemplateSpecialization::Apply<bool>());
-	STF::AreEqual(1u, SFINAETemplateSpecialization::Apply<int>());
-	STF::AreEqual(2u, SFINAETemplateSpecialization::Apply<float>());
+	ASSERT(AreEqual, 0u, SFINAETemplateSpecialization::Apply<bool>());
+	ASSERT(AreEqual, 1u, SFINAETemplateSpecialization::Apply<int>());
+	ASSERT(AreEqual, 2u, SFINAETemplateSpecialization::Apply<float>());
 }

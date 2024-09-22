@@ -21,7 +21,7 @@ namespace ttl
 [numthreads(1,1,1)]
 void GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    STF::IsFalse(true);
+    ASSERT(IsFalse, true);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -29,21 +29,21 @@ void GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails(uint3 DispatchThreadId : SV
 void GIVEN_TrueNonLiteral_WHEN_IsFalseCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
     const bool value = true;
-    STF::IsFalse(value);
+    ASSERT(IsFalse, value);
 }
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_TrueExpression_WHEN_IsFalseCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    STF::IsFalse(2 == 2);
+    ASSERT(IsFalse, 2 == 2);
 }
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_FalseLiteral_WHEN_IsFalseCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    STF::IsFalse(false);
+    ASSERT(IsFalse, false);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -51,14 +51,14 @@ void GIVEN_FalseLiteral_WHEN_IsFalseCalled_THEN_Succeeds(uint3 DispatchThreadId 
 void GIVEN_FalseNonLiteral_WHEN_IsFalseCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
     const bool value = false;
-    STF::IsFalse(value);
+    ASSERT(IsFalse, value);
 }
 
 [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_FalseExpression_WHEN_IsFalseCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    STF::IsFalse(2 == 3);
+    ASSERT(IsFalse, 2 == 3);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -67,7 +67,7 @@ void GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsTrue_THEN_Fails(uint3 DispatchThread
 {
     TestStruct test;
     test.Value = 0;
-    STF::IsFalse(test);
+    ASSERT(IsFalse, test);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -76,5 +76,5 @@ void GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsFalse_THEN_Succeeds(uint3 DispatchTh
 {
     TestStruct test;
     test.Value = 1;
-    STF::IsFalse(test);
+    ASSERT(IsFalse, test);
 }

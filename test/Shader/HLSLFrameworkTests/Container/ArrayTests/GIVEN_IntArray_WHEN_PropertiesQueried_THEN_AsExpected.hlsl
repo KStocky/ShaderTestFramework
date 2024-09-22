@@ -12,11 +12,11 @@ void GIVEN_IntArray_WHEN_PropertiesQueried_THEN_AsExpected(uint3 DispatchThreadI
     using spanType = ttl::container_wrapper<expectedType>;
     spanType span;
 
-    STF::AreEqual(expectedSize, span.size());
-    STF::AreEqual(expectedSizeInBytes, span.size_in_bytes());
+    ASSERT(AreEqual, expectedSize, span.size());
+    ASSERT(AreEqual, expectedSizeInBytes, span.size_in_bytes());
 
-    STF::IsTrue(ttl::is_same<expectedType, spanType::underlying_type>::value);
-    STF::IsTrue(ttl::is_same<expectedElementType, spanType::element_type>::value);
-    STF::IsTrue(spanType::writable);
+    ASSERT(IsTrue, ttl::is_same<expectedType, spanType::underlying_type>::value);
+    ASSERT(IsTrue, ttl::is_same<expectedElementType, spanType::element_type>::value);
+    ASSERT(IsTrue, spanType::writable);
 }
 

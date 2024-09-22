@@ -24,5 +24,5 @@ void GIVEN_StructDoesHasDifferentOverloadOfCast_WHEN_CastCalled_THEN_Fails(uint3
     TestStruct test;
     test.Value = 42;
     int result = ttl::cast<int>(test);
-    STF::AreEqual(result, 42);
+    ASSERT(AreEqual, result, 42);
 }

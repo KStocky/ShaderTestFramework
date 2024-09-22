@@ -2,6 +2,7 @@
 
 namespace LambdaTypeTests
 {
+    using namespace stf;
 	void SizeTests()
 	{
 		Lambda CapturelessLambda([]() {});

@@ -105,10 +105,10 @@ void SectionTest(uint3 DispatchThreadId : SV_DispatchThreadID)
 
 	if (num == 5)
 	{
-		ShaderTestPrivate::Success();
+		stf::detail::Success();
 	}
 	else
 	{
-		STF::Fail();
-	}
+        ASSERT(Fail);
+    }
 }

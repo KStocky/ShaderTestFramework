@@ -132,9 +132,9 @@ fixture.RegisterByteReader("MY_TYPE_READER_ID",
     {
         struct MyType
         {
-            u32 a;
-            f64 b;
-            u32 c;
+            stf::u32 a;
+            stf::f64 b;
+            stf::u32 c;
         };
 
         MyType val;
@@ -149,25 +149,25 @@ fixture.RegisterByteReader("MY_TYPE_READER_ID",
 1. Name - This is the name of the Byte Reader. We will use this to make the HLSL tests aware of this byte reader in the next step. The framework passes this name to the HLSL test using a define. This is why the name given here is in the style of a C++ macro.
 2. A lambda - This lambda takes a `const std::span<const std::byte>` and returns a `std::string`. The input parameter contains all of the bytes written as part of the failed assertion in HLSL. The output string is the string representation of the bytes that will be formatted into the failed assertion output.
 
-In this example we simply create a struct that mimics the struct used in the HLSL tests. This makes it easy to just `memcpy` the bytes into an object of this type. You will notice that we are using a `u32` in place of a `bool` here. That is because in HLSL, `bool`s are 32 bit, whereas in C++ they are 8 bit. So we just use a 32 bit integer here and then interpret it while formatting the string.
+In this example we simply create a struct that mimics the struct used in the HLSL tests. This makes it easy to just `memcpy` the bytes into an object of this type. You will notice that we are using a `stf::u32` in place of a `bool` here. That is because in HLSL, `bool`s are 32 bit, whereas in C++ they are 8 bit. So we just use a 32 bit integer here and then interpret it while formatting the string.
 
 #### Step 2: Making the HLSL test aware of the Byte Reader
 
-Test writers need to be able to tell the framework what HLSL types use what Byte Reader on the C++ side. They do this by specializing `STF::ByteReaderTraits` in their HLSL tests. A specialization MUST provide the following member:
+Test writers need to be able to tell the framework what HLSL types use what Byte Reader on the C++ side. They do this by specializing `stf::ByteReaderTraits` in their HLSL tests. A specialization MUST provide the following member:
 
 `static const uint16_t ReaderId`
 
 The value of this should be set to the value of the name of the reader that was used when calling `RegisterByteReader`. The shader test framework provides a convenience base struct to make this easier. You can see this in [FailingAssertWithByteReader.hlsl](../../examples/Ex6_ByteReadersAndWriters/ShaderCode/FailingAssertWithByteReader.hlsl).
 
 ```c++
-namespace STF
+namespace stf
 {
     template<>
     struct ByteReaderTraits<MyType> : ByteReaderTraitsBase<MY_TYPE_READER_ID>{};
 }
 ```
 
-Here we are providing the specialization of `STF::ByteReaderTraits` for `MyType` and we are using `STF::ByteReaderTraitsBase` for convenience.
+Here we are providing the specialization of `stf::ByteReaderTraits` for `MyType` and we are using `stf::ByteReaderTraitsBase` for convenience.
 
 And that is all that is required to register and use a byte reader.
 
@@ -191,14 +191,14 @@ There were 0 successful asserts and 1 failed assertions
 
 #### Multi Type Byte Readers in HLSL
 
-If we are wanting to make use of a Multi Type Byte Reader in HLSL then there is a slight difference in how we specialize the `STF::ByteReaderTraits` template. Below is the specialization from the example:
+If we are wanting to make use of a Multi Type Byte Reader in HLSL then there is a slight difference in how we specialize the `stf::ByteReaderTraits` template. Below is the specialization from the example:
 
 ```c++
 template<uint InNum>
 struct ByteReaderTraits<MyType<InNum> > : ByteReaderTraitsBase<MY_TYPE_READER_ID, InNum>{};
 ```
 
-The difference here is that we are passing two values to the `STF::ByteReaderTraitsBase` template. We are passing the ReaderId like before. But we are also passing in the value `InNum` which in this example represents the number of elements in the array. This is because for Multi Type Byte Readers `STF::ByteReaderTraits` must have two members:
+The difference here is that we are passing two values to the `stf::ByteReaderTraitsBase` template. We are passing the ReaderId like before. But we are also passing in the value `InNum` which in this example represents the number of elements in the array. This is because for Multi Type Byte Readers `stf::ByteReaderTraits` must have two members:
 
 1. `static const uint16_t ReaderId` - Like with the single type byte reader, this is the id of the reader which is the value of the name of the reader that you use to register the byte reader with `RegisterByteReader`
 2. `static const uint16_t TypeId` - This is an additional 16 bit integer that will be passed to the byte reader in C++. The value of this is test writer defined. It can be anything. In this case we are using the TypeId to pass through the size of the array. But it could be a value that represents a particular type. Or anything else.
@@ -209,9 +209,9 @@ The only difference between single type and multi type byte readers in C++ is th
 
 ```c++
 fixture.RegisterByteReader("MY_TYPE_READER_ID",
-    [](const u16 InTypeId, const std::span<const std::byte> InData)
+    [](const stf::u16 InTypeId, const std::span<const std::byte> InData)
     {
-        auto val = std::make_unique_for_overwrite<u32[]>(InTypeId);
+        auto val = std::make_unique_for_overwrite<stf::u32[]>(InTypeId);
         std::memcpy(val.get(), InData.data(), InData.size_bytes());
 
         std::stringstream ret;
@@ -277,7 +277,7 @@ If an assert were to fail that involves the `MyIntsSpan` then the bytes written 
 
 The relevant code from this example is the following:
 
-```
+```c++
 namespace ttl
 {
     template<>
@@ -321,8 +321,6 @@ There were 0 successful asserts and 1 failed assertions
 ```
 
 As you can see our failed asserted data is what we wrote in the `write` function of the `ttl::byte_writer` specialization rather than the the simple `Start` and `End` indices.
-
-
 ---
 
 [Top](#byte-readers-and-writers)

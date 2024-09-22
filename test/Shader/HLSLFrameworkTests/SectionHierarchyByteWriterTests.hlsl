@@ -16,15 +16,15 @@ void SectionHierarchyByteWriterTests()
     EmptyCallable nullCallable;
     SCENARIO("")
     {
-        ShaderTestPrivate::PerThreadScratchData data;
+        stf::detail::PerThreadScratchData data;
         ttl::zero(data);
 
-        uint vec[ShaderTestPrivate::NumSections / 4];
+        uint vec[stf::detail::NumSections / 4];
         ttl::zero(vec);
 
         SECTION("GIVEN Uninitialized THEN Properties are as expected")
         {
-            ShaderTestPrivate::SectionHierarchy sh;
+            stf::detail::SectionHierarchy sh;
             sh.Scratch = data;
             ASSERT(AreEqual, ttl::bytes_required(sh), 0u);
             ASSERT(AreEqual, ttl::alignment_required(sh), 4u);
@@ -36,7 +36,7 @@ void SectionHierarchyByteWriterTests()
 
             SECTION("THEN Properties are as expected")
             {
-                ShaderTestPrivate::SectionHierarchy sh;
+                stf::detail::SectionHierarchy sh;
                 sh.Scratch = data;
                 ASSERT(AreEqual, ttl::bytes_required(sh), 4u);
                 ASSERT(AreEqual, ttl::alignment_required(sh), 4u);
@@ -46,7 +46,7 @@ void SectionHierarchyByteWriterTests()
 
             SECTION("WHEN Bytes Written")
             {
-                ShaderTestPrivate::SectionHierarchy sh;
+                stf::detail::SectionHierarchy sh;
                 sh.Scratch = data;
                 ttl::write_bytes(vec, 0, sh);
 
@@ -62,7 +62,7 @@ void SectionHierarchyByteWriterTests()
 
                 SECTION("THEN Properties are as expected")
                 {
-                    ShaderTestPrivate::SectionHierarchy sh;
+                    stf::detail::SectionHierarchy sh;
                     sh.Scratch = data;
                     ASSERT(AreEqual, ttl::bytes_required(sh), 4u);
                     ASSERT(AreEqual, ttl::alignment_required(sh), 4u);
@@ -75,7 +75,7 @@ void SectionHierarchyByteWriterTests()
 
                     SECTION("THEN 4 Bytes still required")
                     {
-                        ShaderTestPrivate::SectionHierarchy sh;
+                        stf::detail::SectionHierarchy sh;
                         sh.Scratch = data;
                         ASSERT(AreEqual, ttl::bytes_required(sh), 4u);
                         ASSERT(AreEqual, ttl::alignment_required(sh), 4u);
@@ -83,7 +83,7 @@ void SectionHierarchyByteWriterTests()
 
                     SECTION("AND WHEN bytes written")
                     {
-                        ShaderTestPrivate::SectionHierarchy sh;
+                        stf::detail::SectionHierarchy sh;
                         sh.Scratch = data;
                         ttl::write_bytes(vec, 0, sh);
 
@@ -101,7 +101,7 @@ void SectionHierarchyByteWriterTests()
 
                         SECTION("THEN 8 Bytes is required")
                         {
-                            ShaderTestPrivate::SectionHierarchy sh;
+                            stf::detail::SectionHierarchy sh;
                             sh.Scratch = data;
                             ASSERT(AreEqual, ttl::bytes_required(sh), 8u);
                             ASSERT(AreEqual, ttl::alignment_required(sh), 4u);
@@ -109,7 +109,7 @@ void SectionHierarchyByteWriterTests()
 
                         SECTION("AND WHEN bytes written")
                         {
-                            ShaderTestPrivate::SectionHierarchy sh;
+                            stf::detail::SectionHierarchy sh;
                             sh.Scratch = data;
                             ttl::write_bytes(vec, 0, sh);
                             
@@ -129,7 +129,7 @@ void SectionHierarchyByteWriterTests()
 
                             SECTION("THEN 4 Bytes now required")
                             {
-                                ShaderTestPrivate::SectionHierarchy sh;
+                                stf::detail::SectionHierarchy sh;
                                 sh.Scratch = data;
                                 ASSERT(AreEqual, ttl::bytes_required(sh), 4u);
                                 ASSERT(AreEqual, ttl::alignment_required(sh), 4u);
@@ -137,7 +137,7 @@ void SectionHierarchyByteWriterTests()
 
                             SECTION("AND WHEN bytes written")
                             {
-                                ShaderTestPrivate::SectionHierarchy sh;
+                                stf::detail::SectionHierarchy sh;
                                 sh.Scratch = data;
                                 ttl::write_bytes(vec, 0, sh);
 
@@ -156,7 +156,7 @@ void SectionHierarchyByteWriterTests()
 
                         SECTION("THEN 4 Bytes still required")
                         {
-                            ShaderTestPrivate::SectionHierarchy sh;
+                            stf::detail::SectionHierarchy sh;
                             sh.Scratch = data;
                             ASSERT(AreEqual, ttl::bytes_required(sh), 4u);
                             ASSERT(AreEqual, ttl::alignment_required(sh), 4u);
@@ -164,7 +164,7 @@ void SectionHierarchyByteWriterTests()
 
                         SECTION("AND WHEN bytes written")
                         {
-                            ShaderTestPrivate::SectionHierarchy sh;
+                            stf::detail::SectionHierarchy sh;
                             sh.Scratch = data;
                             ttl::write_bytes(vec, 0, sh);
 

@@ -1,4 +1,4 @@
-#include "/Test/STF/ShaderTestFramework.hlsli"
+#include "/Test/stf/ShaderTestFramework.hlsli"
 
 struct TestTypeWithoutId
 {
@@ -31,7 +31,7 @@ namespace ttl
     };
 }
 
-namespace STF
+namespace stf
 {
     template<> struct ByteReaderTraits<TestTypeWithReaderId1> : ByteReaderTraitsBase<TEST_READER_1>{};
     template<> struct ByteReaderTraits<TestTypeWithReaderId2> : ByteReaderTraitsBase<TEST_READER_2>{};
@@ -43,7 +43,7 @@ void GIVEN_FailedSingleAssert_WHEN_NoReaderId_THEN_HasExpectedResults()
 {
     TestTypeWithoutId t;
     t.Value = 12345678u;
-    STF::IsTrue(t, 42);
+    stf::IsTrue(t, 42);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -52,7 +52,7 @@ void GIVEN_FailedSingleAssert_WHEN_ReaderId_THEN_HasExpectedResults()
 {
     TestTypeWithReaderId1 t;
     t.Value = 12345678u;
-    STF::IsTrue(t, 42);
+    stf::IsTrue(t, 42);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -63,8 +63,8 @@ void GIVEN_FailedTwoSingleAsserts_WHEN_FirstNoReaderIdSecondHasReaderId_THEN_Has
     TestTypeWithReaderId1 u;
     u.Value = 12345678u;
     t.Value = 87654321u;
-    STF::IsTrue(t, 42);
-    STF::IsTrue(u, 42);
+    stf::IsTrue(t, 42);
+    stf::IsTrue(u, 42);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -73,10 +73,10 @@ void GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveSameReaderId_THEN_HasExpectedResu
 {
     TestTypeWithReaderId1 t;
     t.Value = 12345678u;
-    STF::IsTrue(t, 42);
+    stf::IsTrue(t, 42);
 
     t.Value = 1234u;
-    STF::IsTrue(t, 42);
+    stf::IsTrue(t, 42);
 }
 
 [RootSignature(SHADER_TEST_RS)]
@@ -88,6 +88,6 @@ void GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveDifferentReaderId_THEN_HasExpecte
 
     t.Value = 12345678u;
     u.Value = 87654321u;
-    STF::IsTrue(t, 42);
-    STF::IsTrue(u, 42);
+    stf::IsTrue(t, 42);
+    stf::IsTrue(u, 42);
 }

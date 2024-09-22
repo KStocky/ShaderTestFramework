@@ -4,6 +4,7 @@
 
 SCENARIO("HLSLFrameworkTests - Macros - STAMP")
 {
+    using namespace stf;
     ShaderTestFixture fixture(
         ShaderTestFixture::FixtureDesc
         {

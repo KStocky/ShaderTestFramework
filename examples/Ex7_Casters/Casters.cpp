@@ -4,21 +4,21 @@
 
 SCENARIO("Example7Tests - Caster")
 {
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
+    stf::ShaderTestFixture fixture(
+        stf::ShaderTestFixture::FixtureDesc
         {
             // We can add virtual shader directory mappings to our shader test environment
             // Here we are saying that if a file path begins with "/Shader" then it is a virtual file directory
             // and should be replaced with the path that evaluates from current_path()/SHADER_SRC
             // std::filesystem::current_path() returns the current working directory
             // We set both the current working directory and the SHADER_SRC macro in our cmake script.
-            .Mappings{VirtualShaderDirectoryMapping{"/Shader", std::filesystem::current_path() / SHADER_SRC}}
+            .Mappings{ stf::VirtualShaderDirectoryMapping{ "/Shader", std::filesystem::current_path() / SHADER_SRC } }
         });
 
     // RunTest takes a desc that describes the test setup
     // In this case we give the HLSL source code, entry function name and thread group count.
     REQUIRE(fixture.RunTest(
-        ShaderTestFixture::RuntimeTestDesc
+        stf::ShaderTestFixture::RuntimeTestDesc
         {
             .CompilationEnv
             {

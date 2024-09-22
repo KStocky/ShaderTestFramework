@@ -9,17 +9,17 @@ SCENARIO("Example2Tests")
     // and should be replaced with the path that evaluates from current_path()/SHADER_SRC
     // std::filesystem::current_path() returns the current working directory
     // We set both the current working directory and the SHADER_SRC macro in our cmake script.
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
+    stf::ShaderTestFixture fixture(
+        stf::ShaderTestFixture::FixtureDesc
         {
-            .Mappings{ VirtualShaderDirectoryMapping{"/Shader", std::filesystem::current_path() / SHADER_SRC} }
+            .Mappings{ stf::VirtualShaderDirectoryMapping{"/Shader", std::filesystem::current_path() / SHADER_SRC} }
         }
     );
     
     // RunTest takes a desc that describes the test setup
     // In this case we give the HLSL source code, entry function name and thread group count.
     REQUIRE(fixture.RunTest(
-        ShaderTestFixture::RuntimeTestDesc
+        stf::ShaderTestFixture::RuntimeTestDesc
         {
             .CompilationEnv
             {

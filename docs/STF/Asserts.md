@@ -10,19 +10,19 @@ All code snippets for this document will be taken from ([Ex4_Asserts](../../exam
 
 ## Assertions Provided
 
-Shader Test Framework currently provides the following assertion functions in the `STF` namespace
+Shader Test Framework currently provides the following assertion functions in the `stf` namespace
 
-1. `STF::IsTrue` - Takes a single argument. If it evaluates to true, the assertion passes
-2. `STF::IsFalse` - Takes a single argument. If it evaluates to false, the assertion passes
-3. `STF::AreEqual` - Takes two arguments of the EXACT same type. If calling `operator==` on these two arguments evaluates to true, the assertion passes
-4. `STF::NotEqual` - Takes two arguments of the EXACT same type. If calling `operator==` on these two arguments evaluates to false, the assertion passes
-5. `STF::Fail` - Takes no arguments. Calling this will instantly add a failing assertion.
+1. `stf::IsTrue` - Takes a single argument. If it evaluates to true, the assertion passes
+2. `stf::IsFalse` - Takes a single argument. If it evaluates to false, the assertion passes
+3. `stf::AreEqual` - Takes two arguments of the EXACT same type. If calling `operator==` on these two arguments evaluates to true, the assertion passes
+4. `stf::NotEqual` - Takes two arguments of the EXACT same type. If calling `operator==` on these two arguments evaluates to false, the assertion passes
+5. `stf::Fail` - Takes no arguments. Calling this will instantly add a failing assertion.
 
-The first 4 of these assertions can be used by any vector form of uint, int, float and bool. e.g. `STF::AreEqual(uint3(1,2,3), uint(1,2,3));` would compile and succeed. `STF::AreEqual(uint3(2,2,3), uint(1,2,3));` would compile and fail.
+The first 4 of these assertions can be used by any vector form of uint, int, float and bool. e.g. `stf::AreEqual(uint3(1,2,3), uint(1,2,3));` would compile and succeed. `stf::AreEqual(uint3(2,2,3), uint(1,2,3));` would compile and fail.
 
 ## The ASSERT Macro
 
-To improve the provided assertion functions, Shader Test Framework, also provides the `ASSERT` macro. This macro can be used with any of the above assertion functions. e.g. you can either write `STF::IsTrue(condition)` OR `ASSERT(IsTrue, condition)` to assert that a variable called `condition` is true. To demonstrate the usefulness of this macro, let's have a look at running the tests in ([AssertTests.hlsl](../../examples/Ex4_Asserts/ShaderCode/AssertTests.hlsl)). If only the `FailingStandardAsserts` are run:
+To improve the provided assertion functions, Shader Test Framework, also provides the `ASSERT` macro. This macro can be used with any of the above assertion functions. e.g. you can either write `stf::IsTrue(condition)` OR `ASSERT(IsTrue, condition)` to assert that a variable called `condition` is true. To demonstrate the usefulness of this macro, let's have a look at running the tests in ([AssertTests.hlsl](../../examples/Ex4_Asserts/ShaderCode/AssertTests.hlsl)). If only the `FailingStandardAsserts` are run:
 
 ```c++
 [RootSignature(SHADER_TEST_RS)]

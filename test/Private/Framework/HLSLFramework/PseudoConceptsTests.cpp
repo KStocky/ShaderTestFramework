@@ -5,6 +5,7 @@
 
 SCENARIO("HLSLFrameworkTests - Concepts")
 {
+    using namespace stf;
     ShaderTestFixture fixture(
         ShaderTestFixture::FixtureDesc
         {

@@ -13,28 +13,28 @@
  [numthreads(1,1,1)]
  void GIVEN_TwoEqualInts_WHEN_NotEqualCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
  {
-     STF::NotEqual(4, 4);
+     ASSERT(NotEqual, 4, 4);
  }
  
  [RootSignature(SHADER_TEST_RS)]
  [numthreads(1,1,1)]
  void GIVEN_TwoNotEqualInts_WHEN_NotEqualCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
  {
-     STF::NotEqual(4, 5);
+     ASSERT(NotEqual, 4, 5);
  }
 
  [RootSignature(SHADER_TEST_RS)]
  [numthreads(1,1,1)]
  void GIVEN_TwoEqualFloat4_WHEN_NotEqualCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
  {
-     STF::NotEqual(float4(1.0, 2.5, 3.5, 5.75), float4(1.0, 2.5, 3.5, 5.75));
+     ASSERT(NotEqual, float4(1.0, 2.5, 3.5, 5.75), float4(1.0, 2.5, 3.5, 5.75));
  }
  
  [RootSignature(SHADER_TEST_RS)]
  [numthreads(1,1,1)]
  void GIVEN_TwoNotEqualFloat4_WHEN_NotEqualCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
  {
-     STF::NotEqual(float4(1.0, 2.5, 3.5, 5.75), float4(2.0, 2.5, 3.5, 5.75));
+     ASSERT(NotEqual, float4(1.0, 2.5, 3.5, 5.75), float4(2.0, 2.5, 3.5, 5.75));
  }
 
  [RootSignature(SHADER_TEST_RS)]
@@ -42,7 +42,7 @@
  void GIVEN_TwoEqualNamedInts_WHEN_NotEqualCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
  {
      static const int expected = 4;
-     STF::NotEqual(4, expected);
+     ASSERT(NotEqual, 4, expected);
  }
  
  [RootSignature(SHADER_TEST_RS)]
@@ -50,7 +50,7 @@
  void GIVEN_TwoNotEqualNamedInts_WHEN_NotEqualCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
  {
      static const int expected = 5;
-     STF::NotEqual(4, expected);
+     ASSERT(NotEqual, 4, expected);
  }
 
  [RootSignature(SHADER_TEST_RS)]
@@ -58,7 +58,7 @@
  void GIVEN_TwoEqualNamedFloat4_WHEN_NotEqualCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
  {
      static const float4 expected = float4(1.0, 2.5, 3.5, 5.75);
-     STF::NotEqual(float4(1.0, 2.5, 3.5, 5.75), expected);
+     ASSERT(NotEqual, float4(1.0, 2.5, 3.5, 5.75), expected);
  }
  
  [RootSignature(SHADER_TEST_RS)]
@@ -66,7 +66,7 @@
  void GIVEN_TwoNotEqualNamedFloat4_WHEN_NotEqualCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
  {
      static const float4 expected = float4(2.0, 2.5, 3.5, 5.75);
-     STF::NotEqual(float4(1.0, 2.5, 3.5, 5.75), expected);
+     ASSERT(NotEqual, float4(1.0, 2.5, 3.5, 5.75), expected);
  }
 
  [RootSignature(SHADER_TEST_RS)]
@@ -78,7 +78,7 @@
 
      left.Value = 42;
      right.Value = 42;
-     STF::NotEqual(left, right);
+     ASSERT(NotEqual, left, right);
  }
 
  [RootSignature(SHADER_TEST_RS)]
@@ -90,5 +90,5 @@
 
      left.Value = 42;
      right.Value = 43;
-     STF::NotEqual(left, right);
+     ASSERT(NotEqual, left, right);
  }

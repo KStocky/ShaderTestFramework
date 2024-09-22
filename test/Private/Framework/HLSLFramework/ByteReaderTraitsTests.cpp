@@ -5,6 +5,7 @@
 
 SCENARIO("HLSLFrameworkTests - ByteReaderTraits")
 {
+    using namespace stf;
     ShaderTestFixture fixture(
         ShaderTestFixture::FixtureDesc
         {

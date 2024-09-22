@@ -5,6 +5,7 @@
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - String - StringByteWriter")
 {
+    using namespace stf;
     auto testName = GENERATE
     (
         "GIVEN_EmptyString_WHEN_BytesRequiredQueried_THEN_ZeroReturned",

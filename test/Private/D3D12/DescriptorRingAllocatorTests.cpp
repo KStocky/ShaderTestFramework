@@ -6,6 +6,7 @@
 
 SCENARIO("DescriptorRingAllocatorTests")
 {
+    using namespace stf;
 	SECTION("Empty allocator tests")
 	{
 		auto [given, allocator] = GENERATE(

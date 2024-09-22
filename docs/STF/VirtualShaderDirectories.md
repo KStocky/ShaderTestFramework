@@ -13,7 +13,7 @@
 
 ## An Introduction to Virtual Shader Directories
 
-It can be useful to have virtual mappings to directories for asset like files. This decouples the actual location of the asset files themselves on disk, from the directory structure of the assets. A good example of the use of Virtual Paths is [Unreal Engine](https://docs.unrealengine.com/4.26/en-US/Basics/AssetsAndPackages/). In Unreal Engine, a game's Content folder will be mapped to the virtual path, "/Game". Similarly, plugins can provide their own virtual path mappings for shaders of that plugin.
+It can be useful to have virtual mappings to directories for asset like files. This decouples the actual location of the asset files themselves on disk, from the directory structure of the assets. A good example of the use of Virtual Paths is [Unreal Engine](https://dev.epicgames.com/documentation/en-us/unreal-engine/overview-of-shaders-in-plugins-unreal-engine#unrealshaderfiles). In Unreal Engine, a game's Content folder will be mapped to the virtual path, "/Game". Similarly, plugins can provide their own virtual path mappings for shaders of that plugin.
 
 Shader Test Framework provides a very similar system for handling a test suite's shader files. An example project of this has been provided with ([Ex2_VirtualShaderDirectories](../../examples/Ex2_VirtualShaderPaths))
 
@@ -24,9 +24,9 @@ The following sections will be refering to ([Ex2_VirtualShaderDirectories](../..
 ### Asset Dependency Management Library
 Shader files are essentially asset files. They are files that do not take part in the build of the final executable, but are still part of the project. Therefore, for STF to use them, STF must be able to find them on disk and load them. To give test writers the flexiblity of defining where a test suite's shaders are, STF provides a CMake library, called AssetDependencyManagement, that aids in the handling of asset files. This library has 3 main functions:
 
-1) asset_dependency_init - This function will initialize the library for a specified target. This function takes a single parameter which is the name of the target that you will be using this library for.
-2) target_add_asset_directory - This function will set up an asset mapping for a particular directory. This functions 3 parameters. The first is the target that this asset mapping is to be applied to. The second is the ABSOLUTE path of the directory that is to be mapped. The third is the RELATIVE path from the target's executable that the source directory will be mapped to.
-3) copy_all_dependent_assets - This function will add a post build step to your target which will copy all directories mapped using target_add_asset_directory for your target AND all targets that this target depends upon. This ensures that a target doesn't need to worry about any dependencies that may also need to have asset files copied around. This is all handled automatically. This function takes a single parameter which is the name of the target.
+1) `asset_dependency_init` - This function will initialize the library for a specified target. This function takes a single parameter which is the name of the target that you will be using this library for.
+2) `target_add_asset_directory` - This function will set up an asset mapping for a particular directory. This functions 3 parameters. The first is the target that this asset mapping is to be applied to. The second is the ABSOLUTE path of the directory that is to be mapped. The third is the RELATIVE path from the target's executable that the source directory will be mapped to.
+3) `copy_all_dependent_assets` - This function will add a post build step to your target which will copy all directories mapped using target_add_asset_directory for your target AND all targets that this target depends upon. This ensures that a target doesn't need to worry about any dependencies that may also need to have asset files copied around. This is all handled automatically. This function takes a single parameter which is the name of the target.
 
 Below are the relevant lines from ([Ex2_VirtualShaderDirectories](../../examples/Ex2_VirtualShaderPaths/CMakeLists.txt)). 
 
@@ -69,9 +69,9 @@ This will set a private define (so any other target that depends on this one wil
 
 The following section will be referring to ([VirtualShaderPaths.cpp](../../examples/Ex2_VirtualShaderPaths/VirtualShaderPaths.cpp)). Just like the CMakeLists.txt that we went through [above](#dealing-with-shader-directories-using-cmake), this C++ file is commented to explain what is going on. However, this document will be going into more detail.
 
-When creating our `ShaderTestFixture` for a shader test suite we are able to create virtual mappings of directories that both the Shader Compiler and the fixture itself will use. To create a mapping we simply append to the `ShaderTestFixture::Desc::Mappings` member. 
+When creating our `stf::ShaderTestFixture` for a shader test suite we are able to create virtual mappings of directories that both the Shader Compiler and the fixture itself will use. To create a mapping we simply populate the `stf::ShaderTestFixture::FixtureDesc::Mappings` member. 
 
-Mappings is a `std::vector<VirtualShaderDirectoryMapping>`. `VirtualShaderDirectoryMapping` is defined as follows:
+Mappings is a `std::vector<stf::VirtualShaderDirectoryMapping>`. `stf::VirtualShaderDirectoryMapping` is defined as follows:
 
 ```c++
 struct VirtualShaderDirectoryMapping
@@ -86,15 +86,27 @@ struct VirtualShaderDirectoryMapping
 
 If a path that either the `ShaderTestFixture` or the shader compiler comes across starts with a known virtual path, that virtual path will be replaced with the associated `RealPath`.
 
-Below is the relevant line from ([VirtualShaderPaths.cpp](../../examples/Ex2_VirtualShaderPaths/VirtualShaderPaths.cpp)) that creates a virtual mapping
+Below is the relevant lines from ([VirtualShaderPaths.cpp](../../examples/Ex2_VirtualShaderPaths/VirtualShaderPaths.cpp)) that creates a virtual mapping
 
-`desc.Mappings.emplace_back(VirtualShaderDirectoryMapping{"/Shader", std::filesystem::current_path() / SHADER_SRC});`
+```c++
+stf::ShaderTestFixture fixture(
+    stf::ShaderTestFixture::FixtureDesc
+    {
+        .Mappings{ stf::VirtualShaderDirectoryMapping{"/Shader", std::filesystem::current_path() / SHADER_SRC} }
+    }
+);
+```
 
 [`std::filesystem::current_path()`](https://en.cppreference.com/w/cpp/filesystem/current_path) returns the current Working Directory path of the process. `SHADER_SRC` is the define that we created in [Passing Directory Mappings from CMake to C++](#passing-directory-mappings-from-cmake-to-c). Therefore this mapping will map the shader directory that we created in [Asset Dependency Management Library](#asset-dependency-management-library) to the virtual directory `"/Shader"`.
 
-This mapping is then used in the following line:
+This mapping is then used when we are specifying the `Source` in the `stf::ShaderTestFixture::RuntimeTestDesc`:
 
-`desc.Source = std::filesystem::path{ "/Shader/MyShaderTests.hlsl" };`
+```c++
+.CompilationEnv
+{
+    .Source = std::filesystem::path{ "/Shader/MyShaderTests.hlsl" }
+},
+```
 
 Here we are telling the fixture that our shader that we want to compile is in the directory that is represented by the virtual directory `"/Shader"`
 

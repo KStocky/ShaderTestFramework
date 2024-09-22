@@ -10,6 +10,7 @@ using namespace ShaderCompilerTestsCommon;
 
 SCENARIO("ShaderModelTests")
 {
+    using namespace stf;
     auto [name, shaderType, flags, successCondition] =
         GENERATE
         (

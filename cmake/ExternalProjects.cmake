@@ -26,25 +26,6 @@ function(add_catch2 IN_TARGET)
     return()
 endfunction()
 
-function(add_tl_expected IN_TARGET)
-
-    FetchContent_Declare(tl_expected
-        GIT_REPOSITORY https://github.com/TartanLlama/expected.git
-        GIT_TAG master
-        )
-    
-    FetchContent_GetProperties(tl_expected)
-    if (NOT tl_expected_POPULATED)
-        FetchContent_Populate(tl_expected)
-    endif()
-
-    file(GLOB_RECURSE EXPECTED_HEADERS "${tl_expected_SOURCE_DIR}/include/*.h*" )
-    target_include_directories(${IN_TARGET} PUBLIC ${tl_expected_SOURCE_DIR}/include)
-    target_sources(${IN_TARGET} PRIVATE ${EXPECTED_HEADERS})
-    source_group(TREE ${tl_expected_SOURCE_DIR}/include PREFIX "ThirdParty/tl-expected" FILES ${EXPECTED_HEADERS})
-    return()
-endfunction()
-
 function(add_tuplet IN_TARGET)
     FetchContent_Declare(
         Tuplet

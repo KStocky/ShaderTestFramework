@@ -4,6 +4,7 @@
 
 namespace TypeListTests
 {
+    using namespace stf;
 	using TypeList1 = TypeList<int, float, double>;
 	using TypeList2 = TypeList<double, char, int, short>;
 	using TypeList3 = TypeList<int&, const float&>;

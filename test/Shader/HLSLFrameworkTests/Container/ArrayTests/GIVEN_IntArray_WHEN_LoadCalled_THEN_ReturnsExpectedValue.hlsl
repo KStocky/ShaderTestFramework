@@ -9,5 +9,5 @@ void GIVEN_IntArray_WHEN_LoadCalled_THEN_ReturnsExpectedValue(uint3 DispatchThre
     span.Data[1] = 53;
     const int actual = span.load(0);
 
-    STF::AreEqual(42, actual);
+    ASSERT(AreEqual, 42, actual);
 }

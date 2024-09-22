@@ -5,6 +5,7 @@
 
 namespace EnumReflectionTests
 {
+    using namespace stf;
 	enum class ETestScoped
 	{
 		One = -23,

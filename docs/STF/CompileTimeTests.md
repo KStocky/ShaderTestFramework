@@ -36,17 +36,26 @@ The following code from [CompileTimeTests.cpp](../../examples/Ex5_CompileTimeTes
 
 SCENARIO("Example5Tests")
 {
-    ShaderTestFixture::Desc desc{};
-    desc.Mappings.emplace_back(VirtualShaderDirectoryMapping{"/Shader", std::filesystem::current_path() / SHADER_SRC});
-    desc.Source = std::filesystem::path{ "/Shader/ConditionalTypeTests.hlsl" };
+    stf::ShaderTestFixture fixture(
+        stf::ShaderTestFixture::FixtureDesc
+        {
+            .Mappings{ stf::VirtualShaderDirectoryMapping{"/Shader", std::filesystem::current_path() / SHADER_SRC} }
+        });
 
-    ShaderTestFixture fixture(std::move(desc));
-    
-    REQUIRE(fixture.RunCompileTimeTest());
+    REQUIRE(fixture.RunCompileTimeTest(
+        stf::ShaderTestFixture::CompileTestDesc
+        {
+            .CompilationEnv
+            {
+                .Source = std::filesystem::path{ "/Shader/ConditionalTypeTests.hlsl" }
+            },
+            .TestName = "Example5Tests"
+        })
+    );
 }
 ```
 
-The main difference is that we are calling `ShaderTestFixture::RunCompileTimeTest` to run the test. Compile Time Tests are not executed. Therefore an entry function name and a dispatch configuration is not required.
+The main difference is that we are calling `ShaderTestFixture::RunCompileTimeTest` to run the test. Compile Time Tests are not executed. Therefore a dispatch configuration is not required. An entry function also doesn't need to be specified, however giving a name to the test improves test failure reporting.
 
 ### HLSL
 
@@ -76,9 +85,8 @@ The implementation can be found in [ConditionalType.hlsli](../../examples/Ex5_Co
 ```c++
 #include "/Shader/ConditionalType.hlsli"
 
-STATIC_ASSERT((ttl::is_same<int, ConditionalType<true, int, float>::Type>::value));
-STATIC_ASSERT((ttl::is_same<float, ConditionalType<false, int, float>::Type>::value));
-
+_Static_assert(ttl::is_same<int, ConditionalType<true, int, float>::Type>::value);
+_Static_assert(ttl::is_same<float, ConditionalType<false, int, float>::Type>::value);
 ```
 
 Here we are not including the full testing framework as we do not need it. We just need `_Static_assert`. And we are just putting our `_Static_assert`s in the global namespace. `_Static_assert`s can appear anywhere a declaration can. They are not confined to being written in functions like `ASSERT`. Each `_Static_assert` has its condition surrounded by an extra set of parentheses due to the fact that it is a macro and we have commas in our condition (`ttl::is_same<T,T>::value`). As mentioned in the [C++](#c) section, there is no entry function required.

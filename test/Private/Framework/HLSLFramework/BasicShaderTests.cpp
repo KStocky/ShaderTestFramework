@@ -10,6 +10,7 @@
 
 SCENARIO("BasicShaderTests")
 {
+    using namespace stf;
     auto [testName, shouldSucceed] = GENERATE
     (
         table<std::string, bool>

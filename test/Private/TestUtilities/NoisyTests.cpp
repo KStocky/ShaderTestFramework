@@ -75,7 +75,7 @@ SCENARIO("Noisy - DefaultNoisyLogger")
 
         WHEN("Event called")
         {
-            static constexpr i32 expectedEventId = 42;
+            static constexpr stf::i32 expectedEventId = 42;
             noisy.Event(expectedEventId);
 
             THEN("Expected event with that id to have a value of 1")
@@ -152,24 +152,9 @@ SCENARIO("Noisy - DefaultNoisyLogger")
             }
         }
 
-        WHEN("Move assigned")
-        {
-            noisy1 = std::move(noisy2);
-
-            THEN("Num Move Assignments is 1")
-            {
-                REQUIRE(DefaultNoisyLogger::LogData ==
-                    DefaultLogData
-                    {
-                        .NumConstructions = 2,
-                        .NumMoveAssignments = 1
-                    });
-            }
-        }
-
         WHEN("Event called on first")
         {
-            static constexpr i32 expectedFirstEventId = 42;
+            static constexpr stf::i32 expectedFirstEventId = 42;
 
             noisy1.Event(expectedFirstEventId);
 
@@ -206,7 +191,7 @@ SCENARIO("Noisy - DefaultNoisyLogger")
 
             AND_WHEN("Second event id called on second noisy")
             {
-                static constexpr i32 expectedSecondEventId = 2;
+                static constexpr stf::i32 expectedSecondEventId = 2;
                 noisy2.Event(expectedSecondEventId);
 
                 THEN("Expected first event to have 2 calls")
@@ -222,6 +207,21 @@ SCENARIO("Noisy - DefaultNoisyLogger")
                             .NumConstructions = 2
                         });
                 }
+            }
+        }
+
+        WHEN("Move assigned")
+        {
+            noisy1 = std::move(noisy2);
+
+            THEN("Num Move Assignments is 1")
+            {
+                REQUIRE(DefaultNoisyLogger::LogData ==
+                    DefaultLogData
+                    {
+                        .NumConstructions = 2,
+                        .NumMoveAssignments = 1
+                    });
             }
         }
     }

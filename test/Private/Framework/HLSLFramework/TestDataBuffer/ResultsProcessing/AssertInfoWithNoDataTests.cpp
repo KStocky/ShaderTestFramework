@@ -5,35 +5,36 @@
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - AssertInfoWithNoData")
 {
+    using namespace stf;
     auto [testName, numRecordedAsserts, failedAsserts, numSucceeded, numFailed, dims] = GENERATE
     (
-        table<std::string, u32, std::vector<STF::FailedAssert>, u32 , u32, uint3>
+        table<std::string, u32, std::vector<FailedAssert>, u32 , u32, uint3>
         (
             {
                 std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_ZeroAssertsMade_THEN_HasExpectedResults", 10,
-                std::vector<STF::FailedAssert>{}, 0, 0, uint3(1,1,1) },
+                std::vector<FailedAssert>{}, 0, 0, uint3(1,1,1) },
                 std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_NonZeroSuccessfulAssertsMade_THEN_HasExpectedResults", 10,
-                std::vector<STF::FailedAssert>{}, 2, 0, uint3(1,1,1) },
+                std::vector<FailedAssert>{}, 2, 0, uint3(1,1,1) },
                 std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_FailedAssertNoTypeId_THEN_HasExpectedResults", 10,
-                std::vector{STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0 }}}, 0, 1, uint3(1,1,1) },
+                std::vector{FailedAssert{{}, {}, AssertMetaData{42, 0, 0 }}}, 0, 1, uint3(1,1,1) },
                 std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_TwoFailedAssert_THEN_HasExpectedResults", 10,
-                std::vector{STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0}},
-                STF::FailedAssert{{}, {}, STF::AssertMetaData{32, 0, 0}}}, 0, 2, uint3(1,1,1) },
+                std::vector{FailedAssert{{}, {}, AssertMetaData{42, 0, 0}},
+                FailedAssert{{}, {}, AssertMetaData{32, 0, 0}}}, 0, 2, uint3(1,1,1) },
                 std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_FailedAssertWithLineId_THEN_HasExpectedResults", 10,
-                std::vector{STF::FailedAssert{{}, {}, STF::AssertMetaData{59, 0, 0}}}, 0, 1, uint3(1,1,1) },
+                std::vector{FailedAssert{{}, {}, AssertMetaData{59, 0, 0}}}, 0, 1, uint3(1,1,1) },
                 std::tuple{ "GIVEN_AssertInfoCapacityWithFlatThreadId_WHEN_FailedAssert_THEN_HasExpectedResults", 10,
-                std::vector{STF::FailedAssert{{}, {}, STF::AssertMetaData{66, 12, 1}}}, 0, 1, uint3(1,1,1) },
+                std::vector{FailedAssert{{}, {}, AssertMetaData{66, 12, 1}}}, 0, 1, uint3(1,1,1) },
                 std::tuple{ "GIVEN_AssertInfoCapacityWithFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults", 10,
-                std::vector{STF::FailedAssert{{}, {}, STF::AssertMetaData{66, 12, 2}}}, 0, 1, uint3(24,1,1) },
+                std::vector{FailedAssert{{}, {}, AssertMetaData{66, 12, 2}}}, 0, 1, uint3(24,1,1) },
                 std::tuple{ "GIVEN_AssertInfoCapacityWithNonFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults", 10,
-                std::vector{STF::FailedAssert{{}, {}, STF::AssertMetaData{66, 4, 2}}}, 0, 1, uint3(3,3,3) },
+                std::vector{FailedAssert{{}, {}, AssertMetaData{66, 4, 2}}}, 0, 1, uint3(3,3,3) },
                 std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_MoreFailedAssertsThanCapacity_THEN_HasExpectedResults", 1,
-                std::vector{STF::FailedAssert{{}, {}, STF::AssertMetaData{42, 0, 0 }}}, 0, 2, uint3(1,1,1) },
+                std::vector{FailedAssert{{}, {}, AssertMetaData{42, 0, 0 }}}, 0, 2, uint3(1,1,1) },
             }
         )
     );
 
-    const STF::TestRunResults expected
+    const TestRunResults expected
     {
         .FailedAsserts = std::move(failedAsserts),
         .NumSucceeded = numSucceeded,
