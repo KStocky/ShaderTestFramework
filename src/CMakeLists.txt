@@ -146,7 +146,7 @@ target_link_libraries(ShaderTestFramework PRIVATE d3d12.lib dxgi.lib DXC dxguid.
 if (${STF_DISABLE_UNITY_STF})
     set_target_properties(ShaderTestFramework PROPERTIES UNITY_BUILD OFF)
 endif()
-add_tl_expected(ShaderTestFramework)
+
 add_tuplet(ShaderTestFramework)
 add_float16(ShaderTestFramework)
 
