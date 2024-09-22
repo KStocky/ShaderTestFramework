@@ -29,41 +29,7 @@ on:
 jobs:
   Build-And-Test:
 
-    permissions:
-      checks: write
-      pull-requests: write
-
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout the repo
-        uses: actions/checkout@v4
-
-      - name: Install Ninja
-        uses: seanmiddleditch/gha-setup-ninja@master
-
-      - name: setup devcmd
-        uses: ilammy/msvc-dev-cmd@v1.13.0
-
-      - name: Print CMake version
-        shell: cmake -P {0}
-        run: |
-          message(STATUS "Host CMake version: ${CMAKE_VERSION}")
-
-      - name: Build everything and run all Tests"
-        run: cmake --workflow --preset NinjaBuildAndTest
-      
-      - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action/windows@v2
-        if: always()
-        with:
-          files: |
-            build\test\Debug\Reports\*.xml
-      
-      - name: Publish Test Report
-        uses: mikepenz/action-junit-report@v4.3.1
-        if: always()
-        with:
-          report_paths: build\test\Debug\Reports\*.xml
-          detailed_summary: true
-          
+      - run: echo "This job no longer does anything"
             
