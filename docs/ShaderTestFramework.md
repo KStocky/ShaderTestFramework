@@ -19,3 +19,7 @@ From this reference page you should be able to navigate to all the documentation
 ## Reference
 
 - [Test Template Library (TTL)](./TTL/TTL.md)
+
+## Credits
+
+- [Third Party Libraries used by STF](./ThirdPartyLibraries.md)

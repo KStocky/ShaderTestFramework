@@ -76,3 +76,8 @@ void OptionalTests()
 - [Tutorial](./docs/Tutorial.md)
 - [Reference](./docs/ShaderTestFramework.md)
 - [Example Repository](https://github.com/KStocky/ShaderTestFrameworkExamples)
+
+## Libraries Used
+
+Shader Test Framework makes use of lots of third party libraries. Users should not have to worry about these dependencies as the CMake build scripts should handle all of that for you. But I think it is important to give credit where credit is due.
+You can find a full list of all the libraries used [here](./docs/ThirdPartyLibraries.md)
