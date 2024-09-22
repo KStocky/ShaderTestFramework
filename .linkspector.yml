@@ -1,0 +1,6 @@
+dirs:
+  - .
+useGitIgnore: true
+
+ignorePatterns:
+  - pattern: 'https://dev.epicgames.com'
