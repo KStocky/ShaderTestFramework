@@ -62,7 +62,7 @@ jobs:
   Push-Checks:
     needs: [If-Code-Changes, If-Docs-Change]
 
-    if: ${{ always() }}
+    if: ${{ !failure() && !cancelled() }}
     name: Push Checks
     runs-on: ubuntu-latest
     steps:
