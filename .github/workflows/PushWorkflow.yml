@@ -62,9 +62,12 @@ jobs:
   Push-Checks:
     needs: [If-Code-Changes, If-Docs-Change]
 
-    if: always()
+    if: ${{ always() }}
     name: Push Checks
     runs-on: ubuntu-latest
+    steps:
+      - name: Check
+        run: echo "finished"
 
           
             
