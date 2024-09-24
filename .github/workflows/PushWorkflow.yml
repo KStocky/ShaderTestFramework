@@ -67,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check Dependent Jobs
-        uses: lwhiteley/dependent-jobs-result-check@v3
+        uses: lwhiteley/dependent-jobs-result-check@main
         id: statuses
         with:
             statuses: failure,cancelled
