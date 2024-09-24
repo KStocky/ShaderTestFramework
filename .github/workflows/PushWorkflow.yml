@@ -62,12 +62,20 @@ jobs:
   Push-Checks:
     needs: [If-Code-Changes, If-Docs-Change]
 
-    if: ${{ !failure() && !cancelled() }}
+    if: always()
     name: Push Checks
     runs-on: ubuntu-latest
     steps:
-      - name: Check
-        run: echo "finished"
+      - name: Check Dependent Jobs
+        uses: lwhiteley/dependent-jobs-result-check@v3
+        id: statuses
+        with:
+            statuses: failure,cancelled
+            dependencies: ${{ toJSON(needs) }}
+
+      - name: Evaluate
+        if: fromJSON(steps.statuses.outputs.found)
+        run: exit 1
 
           
             
