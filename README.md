@@ -11,7 +11,7 @@
 
 An automation testing framework for testing shader code. Based on Catch2. It uses D3D12 and requires HLSL 202x
 
-It is a framework that is intended to be used with another testing framework such as [Catch2](https://github.com/catchorg/Cat2/tree/devel) to add shader testing capabilities to your already existing test suite. It is currently very experimental, meaning that every merge to main will likely break all old code. The purpose of this project is to explore how we can write unit tests in HLSL.
+It is a framework that is intended to be used with another testing framework such as [Catch2](https://github.com/catchorg/Cat/tree/devel) to add shader testing capabilities to your already existing test suite. It is currently very experimental, meaning that every merge to main will likely break all old code. The purpose of this project is to explore how we can write unit tests in HLSL.
 
 ## Getting Started
 
