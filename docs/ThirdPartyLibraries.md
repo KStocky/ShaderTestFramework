@@ -16,3 +16,7 @@
 | [Publish Test Results](https://github.com/EnricoMi/publish-unit-test-result-action) | Github action for reporting test results at the end of a github workflow |
 | [action-junit-report ](https://github.com/mikepenz/action-junit-report) | Github action for reporting test results at the end of a github workflow |
 | [Linkspector](https://github.com/UmbrellaDocs/action-linkspector) | Github action for validating that links aren't broken in documentation |
+| [setup-msvc-dev](https://github.com/TheMrMilchmann/setup-msvc-dev) | Github Action which will set up an MSVC Development environment |
+| [Bring Your Own Badge](https://github.com/RubbaBoy/BYOB) | Github action for creating custom badges using [Badgen](https://badgen.net/) |
+| [Dynamic Badges Action](https://github.com/Schneegans/dynamic-badges-action) | Github action for creating custom badges using [shields.io](https://shields.io/) |
+| [dependent-jobs-result-check](https://github.com/lwhiteley/dependent-jobs-result-check) | Github action for aggregating the results of dependent jobs |
