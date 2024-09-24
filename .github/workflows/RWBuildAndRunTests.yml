@@ -1,4 +1,4 @@
-name: RW Build And Run Tests
+name: Build And Run Tests
 
 on:
  workflow_call:
