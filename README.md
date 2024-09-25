@@ -1,7 +1,6 @@
 # ShaderTestFramework
 
-![Tests](https://github.com/KStocky/ShaderTestFramework/actions/workflows/RWBuildAndRunTests.yml/badge.svg)
-![Link Validation](https://github.com/KStocky/ShaderTestFramework/actions/workflows/RWLinkValidation.yml/badge.svg)
+![Tests And Validation](https://github.com/KStocky/ShaderTestFramework/actions/workflows/PushWorkflow.yml/badge.svg)
 ![Minimum MSVC Version](https://byob.yarr.is/KStocky/ShaderTestFramework/MinMSVCVersion)
 ![Minimum CMake Version](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/KStocky/fc80ff760df6627ccc295d486a54824c/raw/MinCMakeVersion.json)
 
