@@ -47,6 +47,7 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/UserDefinedVector.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/VariadicMacro.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ResourceBinding/ArrayOfBuffers.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ResourceBinding/ManyTypesOfBindings.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ResourceBinding/SingleInputBuffer.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ResourceBinding/UnboundedArrayOfBuffers.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderIncludeHandlerTests/Include.hlsli
