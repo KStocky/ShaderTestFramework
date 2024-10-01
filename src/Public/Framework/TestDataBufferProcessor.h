@@ -80,23 +80,7 @@ namespace stf
         Results(FailedShaderCompilationResult InError);
         Results(TestRunResults InResults);
 
-        template<typename ThisType>
-        operator bool(this ThisType&& InThis)
-        {
-            return std::visit(OverloadSet{
-            [](std::monostate)
-            {
-                return false;
-            },
-            [](const TestRunResults& InTestResults)
-            {
-                return InTestResults.NumFailed == 0;
-            },
-            [](const FailedShaderCompilationResult&)
-            {
-                return false;
-            } }, InThis.m_Result);
-        }
+        operator bool() const;
 
         const TestRunResults* GetTestResults() const;
         const FailedShaderCompilationResult* GetFailedCompilationResult() const;

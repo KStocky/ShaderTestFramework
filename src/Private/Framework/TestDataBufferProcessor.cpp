@@ -53,6 +53,23 @@ namespace stf
     {
     }
 
+    Results::operator bool() const
+    {
+        return std::visit(OverloadSet{
+        [](std::monostate)
+        {
+            return false;
+        },
+        [](const TestRunResults& InTestResults)
+        {
+            return InTestResults.NumFailed == 0;
+        },
+        [](const FailedShaderCompilationResult&)
+        {
+            return false;
+        } }, m_Result);
+    }
+
     const TestRunResults* Results::GetTestResults() const
     {
         return std::get_if<TestRunResults>(&m_Result);
