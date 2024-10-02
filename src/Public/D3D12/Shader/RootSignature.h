@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Utility/MoveOnly.h"
 #include "Platform.h"
+#include "Utility/MoveOnly.h"
 #include "Utility/Pointer.h"
 
 #include <d3d12.h>
@@ -22,23 +22,9 @@ namespace stf
         RootSignature() = default;
         RootSignature(CreationParams InParams);
 
-        template<typename ThisType>
-        D3D12_ROOT_SIGNATURE_DESC1 GetDesc(this ThisType&& InThis)
-        {
-            return std::forward<ThisType>(InThis).m_Deserializer->GetUnconvertedRootSignatureDesc()->Desc_1_1;
-        }
-
-        template<typename ThisType>
-        ID3D12RootSignature* GetRaw(this ThisType&& InThis)
-        {
-            return std::forward<ThisType>(InThis).m_RootSig.Get();
-        }
-
-        template<typename ThisType>
-        operator ID3D12RootSignature* (this ThisType&& InThis)
-        {
-            return std::forward<ThisType>(InThis).GetRaw();
-        }
+        const D3D12_VERSIONED_ROOT_SIGNATURE_DESC* GetDesc() const;
+        ID3D12RootSignature* GetRaw() const;
+        operator ID3D12RootSignature* () const;
 
     private:
 
