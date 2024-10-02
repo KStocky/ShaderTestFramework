@@ -170,7 +170,7 @@ namespace stf
             return PipelineState(PipelineState::CreationParams{ std::move(raw) });
         }
 
-        RootSignature CreateRootSignature(const D3D12_ROOT_SIGNATURE_DESC1& InDesc) const;
+        RootSignature CreateRootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC& InDesc) const;
         RootSignature CreateRootSignature(const CompiledShaderData& InShader) const;
 
         void CreateShaderResourceView(const GPUResource& InResource, const DescriptorHandle InHandle) const;
