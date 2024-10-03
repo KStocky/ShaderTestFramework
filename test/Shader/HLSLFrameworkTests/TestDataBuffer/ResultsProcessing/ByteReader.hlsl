@@ -37,7 +37,6 @@ namespace stf
     template<> struct ByteReaderTraits<TestTypeWithReaderId2> : ByteReaderTraitsBase<TEST_READER_2>{};
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void GIVEN_FailedSingleAssert_WHEN_NoReaderId_THEN_HasExpectedResults()
 {
@@ -46,7 +45,6 @@ void GIVEN_FailedSingleAssert_WHEN_NoReaderId_THEN_HasExpectedResults()
     stf::IsTrue(t, 42);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void GIVEN_FailedSingleAssert_WHEN_ReaderId_THEN_HasExpectedResults()
 {
@@ -55,7 +53,6 @@ void GIVEN_FailedSingleAssert_WHEN_ReaderId_THEN_HasExpectedResults()
     stf::IsTrue(t, 42);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void GIVEN_FailedTwoSingleAsserts_WHEN_FirstNoReaderIdSecondHasReaderId_THEN_HasExpectedResults()
 {
@@ -67,7 +64,6 @@ void GIVEN_FailedTwoSingleAsserts_WHEN_FirstNoReaderIdSecondHasReaderId_THEN_Has
     stf::IsTrue(u, 42);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveSameReaderId_THEN_HasExpectedResults()
 {
@@ -79,7 +75,6 @@ void GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveSameReaderId_THEN_HasExpectedResu
     stf::IsTrue(t, 42);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveDifferentReaderId_THEN_HasExpectedResults()
 {

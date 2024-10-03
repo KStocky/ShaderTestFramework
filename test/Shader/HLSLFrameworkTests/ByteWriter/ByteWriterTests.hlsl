@@ -1,6 +1,5 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_FundamentalType_WHEN_HasWriterQueried_THEN_False()
 {
@@ -19,7 +18,6 @@ void GIVEN_FundamentalType_WHEN_HasWriterQueried_THEN_False()
     ASSERT(IsFalse, ttl::byte_writer<float4>::has_writer);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_FundamentalType_WHEN_BytesRequiredQueried_THEN_ExpectedNumberReturned()
 {
@@ -38,7 +36,6 @@ void GIVEN_FundamentalType_WHEN_BytesRequiredQueried_THEN_ExpectedNumberReturned
     ASSERT(AreEqual, 16u, ttl::bytes_required(float4(1.0l, 2.0l, 3.0l, 4.0l)));
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_FundamentalType_WHEN_AlignmentRequiredQueried_THEN_ExpectedNumberReturned()
 {
@@ -66,14 +63,12 @@ struct NoWriter
     float16_t c;
 };
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_TypeWithNoWriter_WHEN_HasWriterQueried_THEN_False()
 {
     ASSERT(IsFalse, ttl::byte_writer<NoWriter>::has_writer);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_TypeWithNoWriter_WHEN_BytesRequiredQueried_THEN_ReturnsSizeOfStruct()
 {
@@ -81,7 +76,6 @@ void GIVEN_TypeWithNoWriter_WHEN_BytesRequiredQueried_THEN_ReturnsSizeOfStruct()
     ASSERT(AreEqual, (uint)sizeof(NoWriter), ttl::bytes_required(test));
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_TypeWithNoWriter_WHEN_AlignmentRequiredQueried_THEN_ExpectedNumberReturned()
 {
@@ -118,14 +112,12 @@ namespace ttl
     };
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_TypeWithWriter_WHEN_HasWriterQueried_THEN_True()
 {
     ASSERT(IsTrue, ttl::byte_writer<StructWithWriter>::has_writer);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_TypeWithWriter_WHEN_BytesRequiredQueried_THEN_ExpectedNumberReturned()
 {
@@ -134,7 +126,6 @@ void GIVEN_TypeWithWriter_WHEN_BytesRequiredQueried_THEN_ExpectedNumberReturned(
     ASSERT(AreEqual, 4u, ttl::bytes_required(test));
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_TypeWithWriter_WHEN_AlignmentRequiredQueried_THEN_ExpectedNumberReturned()
 {
@@ -143,7 +134,6 @@ void GIVEN_TypeWithWriter_WHEN_AlignmentRequiredQueried_THEN_ExpectedNumberRetur
     ASSERT(AreEqual, 16u, ttl::alignment_required(test));
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_UIntBufferAndTypeWithWriter_WHEN_WriteCalled_THEN_BytesSuccessfullyWritten()
 {

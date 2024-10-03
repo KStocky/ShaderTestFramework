@@ -9,7 +9,6 @@ struct EmptyCallable
     }
 };
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void SectionHierarchyByteWriterTests()
 {

@@ -8,7 +8,6 @@ struct StaticArrayTest
 
 static StaticArrayTest globalArray[100];
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed(uint3 DispatchThreadId : SV_DispatchThreadID)
 {

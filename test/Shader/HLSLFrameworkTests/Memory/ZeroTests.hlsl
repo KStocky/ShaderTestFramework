@@ -7,7 +7,6 @@ struct Test
     bool c;
 };
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_ObjectIsInitialized_WHEN_Zeroed_THEN_AllMembersAreZeroed()
 {
@@ -23,7 +22,6 @@ void GIVEN_ObjectIsInitialized_WHEN_Zeroed_THEN_AllMembersAreZeroed()
     ASSERT(AreEqual, false, t.c);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_ObjectIsUnitialized_WHEN_Zeroed_THEN_AllMembersAreZeroed()
 {
@@ -36,7 +34,6 @@ void GIVEN_ObjectIsUnitialized_WHEN_Zeroed_THEN_AllMembersAreZeroed()
     ASSERT(AreEqual, false, t.c);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_NoObjectAlreadyExists_WHEN_Zeroed_THEN_AllMembersOfReturnedObjectAreZeroed()
 {

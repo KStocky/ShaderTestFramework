@@ -1,19 +1,16 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_ZeroSectionsWithStrings_WHEN_ZeroAssertsFailed_THEN_HasExpectedResults()
 {
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_ZeroSectionsWithStrings_WHEN_AssertsFailed_THEN_HasExpectedResults()
 {
     ASSERT(AreEqual, 42, 34);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_OneScenario_WHEN_AssertsFailedInScenario_THEN_HasExpectedResults()
 {
@@ -23,7 +20,6 @@ void GIVEN_OneScenario_WHEN_AssertsFailedInScenario_THEN_HasExpectedResults()
     }
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_OneSection_WHEN_AssertsFailedInSection_THEN_HasExpectedResults()
 {
@@ -36,7 +32,6 @@ void GIVEN_OneSection_WHEN_AssertsFailedInSection_THEN_HasExpectedResults()
     }
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_OneSection_WHEN_AssertsFailedOutsideSection_THEN_HasExpectedResults()
 {
@@ -50,7 +45,6 @@ void GIVEN_OneSection_WHEN_AssertsFailedOutsideSection_THEN_HasExpectedResults()
     }
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_TwoNonNestedSection_WHEN_AssertsFailedInFirstSection_THEN_HasExpectedResults()
 {
@@ -67,7 +61,6 @@ void GIVEN_TwoNonNestedSection_WHEN_AssertsFailedInFirstSection_THEN_HasExpected
     }
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_TwoNonNestedSection_WHEN_AssertsFailedInSecondSection_THEN_HasExpectedResults()
 {
@@ -84,7 +77,6 @@ void GIVEN_TwoNonNestedSection_WHEN_AssertsFailedInSecondSection_THEN_HasExpecte
     }
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_NestedSections_WHEN_AssertsInEachSection_THEN_HasExpectedResults()
 {
@@ -112,7 +104,6 @@ void GIVEN_NestedSections_WHEN_AssertsInEachSection_THEN_HasExpectedResults()
     }
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(32, 1, 1)]
 void GIVEN_NestedSectionsWithMultipleThreads_WHEN_AssertsInEachSection_THEN_HasExpectedResults(uint3 InThreadId : SV_DispatchThreadID)
 {

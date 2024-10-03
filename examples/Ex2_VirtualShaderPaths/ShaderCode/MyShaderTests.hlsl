@@ -6,7 +6,6 @@
 // This is defined by the framework itself.
 #include "/Test/STF/ShaderTestFramework.hlsli"
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void Example2Test()
 {

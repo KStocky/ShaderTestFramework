@@ -105,7 +105,6 @@ ShaderTestFramework provides assert failure formatting for all native types prov
 ```c++
 #include "/Test/STF/ShaderTestFramework.hlsli"
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void MinimalTestEntryFunction()
 {
@@ -319,7 +318,6 @@ Up until now, we have been writing HLSL code directly in our C++ in strings. How
 
 Shader Test Framework provides a mechanism to help test writers, write tests that both minimise code repetition and also ensure that their tests are easy to reason about and follow. They are very similar to [Catch2](https://github.com/catchorg/Catch2/)s `TEST_CASE`s and `SECTION`s, and look like the following:
 ```c++
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void OptionalTestsWithScenariosAndSections()
 {

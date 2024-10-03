@@ -64,7 +64,6 @@ The following tests can be found in [OptionalTests.hlsl](../../examples/Ex3_Scen
 The first test we might write for this class could be something like the following:
 
 ```c++
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void GIVEN_InvalidOptional_WHEN_ValidityQueried_THEN_NotValid()
 {
@@ -78,7 +77,6 @@ void GIVEN_InvalidOptional_WHEN_ValidityQueried_THEN_NotValid()
 This test is written in the GIVEN_WHEN_THEN style. We first create an optional\<T>, then call reset on it, then assert that it is not valid. This works fine and passes when we run it. Now we know that Reset works as intended. Then next test we might want to write could be something like this:
 
 ```c++
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void GIVEN_InvalidOptional_WHEN_GetOrDefaultCalled_THEN_DefaultReturned()
 {
@@ -117,7 +115,6 @@ void GIVEN_InvalidOptional_WHEN_GetOrDefaultCalled_THEN_DefaultReturned()
     ASSERT(AreEqual, expectedValue, opt.GetOrDefault(expectedValue));
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void OptionalTestsWithoutScenariosAndSections()
 {
@@ -141,7 +138,6 @@ void GIVEN_InvalidOptional_WHEN_GetOrDefaultCalled_THEN_DefaultReturned(const Op
     ASSERT(AreEqual, expectedValue, InOpt.GetOrDefault(expectedValue));
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void OptionalTestsWithoutScenariosAndSections()
 {
@@ -173,7 +169,6 @@ void GIVEN_InvalidOptional_WHEN_ValueSet_THEN_GetReturnsValue(Optional<int> InOp
     ASSERT( AreEqual, expectedValue, InOpt.GetOrDefault(defaultValue));
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void OptionalTestsWithoutScenariosAndSections()
 {
@@ -196,7 +191,6 @@ It is this problem that Scenarios and Sections can help with.
 As we saw in [Testing Optional\<T> without Scenarios And Sections](#testing-optionalt-without-scenarios-and-sections) trying to write test code that does not involve repeating ourselves can lead to tests that are hard to read and scattered in terms of their placement in test files. Shader Test Framework provides Scenarios and Sections as an alternative way of structuring tests, with an aim of improving readability and reducing code repitition. Below is how we might write the tests shown in the previous section except with using scenarios and sections.
 
 ```c++
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void OptionalTestsWithScenariosAndSections()
 {
@@ -280,7 +274,6 @@ As noted in [Following the Execution Line by Line](#following-the-execution-line
 Code that we run on the GPU is naturally going to be multi-threaded. Most examples for this framework will use single threaded compute shaders for the sake of simplicity, however, it is not realistic to expect tests to always be written in this way. So if we change our previous test suite to run on 32 threads in a thread group like so:
 
 ```c++
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(32, 1, 1)]
 void OptionalTestsWithScenariosAndSectionsAndThreadIds(uint3 DTid : SV_DispatchThreadID)
 {
@@ -347,7 +340,6 @@ assertions: 3 | 2 passed | 1 failed
 This error states that there were 127 successful asserts and 1 failed one. Trying to track down this in a real test could be a nightmare. Obviously in this case it is very easy to see which thread produced the assert. It is very clearly the thread with threadid (16,0,0). But let's assume that we don't know that for the sake of this example. Shader Test Framework makes tracking down issues like this where an assert only fails on one thread out of many quite easy. STF provides a function that can be called at the start of a test called `stf::RegisterThreadID`. Passing the thread id to this function will provide the framework with ability to tag each failed assert with its associated thread id. So we can change the start of our test to the following:
 
 ```c++
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(32, 1, 1)]
 void OptionalTestsWithScenariosAndSectionsAndThreadIds(uint3 DTid : SV_DispatchThreadID)
 {

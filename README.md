@@ -30,7 +30,6 @@ Shader Test Framework also provides [Ninja Build](https://ninja-build.org/) pres
 ## Example Shader Unit Test
 
 ```c++
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void OptionalTests()
 {

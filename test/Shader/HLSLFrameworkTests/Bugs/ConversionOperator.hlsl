@@ -15,7 +15,6 @@ struct TestStruct
     }
 };
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_StaticObject_WHEN_ConversionOperatorCalled_THEN_Fails(uint3 DispatchThreadId : SV_DispatchThreadID)
 {

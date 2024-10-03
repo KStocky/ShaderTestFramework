@@ -4,7 +4,6 @@ _Static_assert(
     ttl::size_of<stf::detail::HLSLAssertMetaData>::value == 32u, 
     "The size of this struct must match the size of HLSLAssertMetaData in TestDataBufferProcessor.h");
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_ZeroAssertsRecorded_WHEN_Ran_THEN_AssertBufferInfoAsExpected()
 {
@@ -19,7 +18,6 @@ void GIVEN_ZeroAssertsRecorded_WHEN_Ran_THEN_AssertBufferInfoAsExpected()
     ASSERT(AreEqual, bufferSize, resourceSize);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_FiveAssertsRecordedAndNoData_WHEN_Ran_THEN_AssertBufferInfoAsExpected()
 {
@@ -34,7 +32,6 @@ void GIVEN_FiveAssertsRecordedAndNoData_WHEN_Ran_THEN_AssertBufferInfoAsExpected
     ASSERT(AreEqual, bufferSize, resourceSize);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_FiveAssertsRecordedAnd200BytesOfData_WHEN_Ran_THEN_AssertBufferInfoAsExpected()
 {
@@ -50,7 +47,6 @@ void GIVEN_FiveAssertsRecordedAnd200BytesOfData_WHEN_Ran_THEN_AssertBufferInfoAs
     ASSERT(AreEqual, bufferSize, resourceSize);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_FiveAssertsRecordedAndNonMultipleOf8BytesOfData_WHEN_Ran_THEN_AssertBufferInfoAsExpected()
 {

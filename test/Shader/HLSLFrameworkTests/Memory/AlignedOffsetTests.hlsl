@@ -1,6 +1,5 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_IndexIsAlreadyAligned_WHEN_Aligned_THEN_ReturnsSameIndex()
 {
@@ -10,7 +9,6 @@ void GIVEN_IndexIsAlreadyAligned_WHEN_Aligned_THEN_ReturnsSameIndex()
     ASSERT(AreEqual, index, ttl::aligned_offset(index, alignment));
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_IndexIsZero_WHEN_Aligned_THEN_ReturnsZero()
 {
@@ -20,7 +18,6 @@ void GIVEN_IndexIsZero_WHEN_Aligned_THEN_ReturnsZero()
     ASSERT(AreEqual, index, ttl::aligned_offset(index, alignment));
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_IndexIsOneMinusAlignment_WHEN_Aligned_THEN_Alignment()
 {
@@ -30,7 +27,6 @@ void GIVEN_IndexIsOneMinusAlignment_WHEN_Aligned_THEN_Alignment()
     ASSERT(AreEqual, alignment, ttl::aligned_offset(index, alignment));
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_IndexIsNotAligned_WHEN_Aligned_THEN_ReturnsNextMultipleOfAlignment()
 {

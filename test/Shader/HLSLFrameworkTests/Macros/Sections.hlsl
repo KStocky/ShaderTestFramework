@@ -1,6 +1,5 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_EmptySection_WHEN_RanUsingSingle_THEN_NoAssertMade(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -12,7 +11,6 @@ void GIVEN_EmptySection_WHEN_RanUsingSingle_THEN_NoAssertMade(uint3 DispatchThre
     }
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_SingleSection_WHEN_RanUsingSingle_THEN_SectionsEnteredOnce(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -28,7 +26,6 @@ void GIVEN_SingleSection_WHEN_RanUsingSingle_THEN_SectionsEnteredOnce(uint3 Disp
     ASSERT(AreEqual, 1, num);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_TwoSections_WHEN_RanUsingSingle_THEN_EachSectionIsEnteredOnce(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -52,7 +49,6 @@ void GIVEN_TwoSections_WHEN_RanUsingSingle_THEN_EachSectionIsEnteredOnce(uint3 D
     
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_RanUsingSingle_THEN_EachSectionIsEnteredOnce(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -82,7 +78,6 @@ void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_RanUsingSingle_THEN_EachSe
     ASSERT(AreEqual, 1, num3);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void GIVEN_TwoSubSectionsWithTwoNestedSubsections_WHEN_RanUsingSingle_THEN_ExpectedSubsectionEntryOccurs(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -120,7 +115,6 @@ void GIVEN_TwoSubSectionsWithTwoNestedSubsections_WHEN_RanUsingSingle_THEN_Expec
     ASSERT(AreEqual, 1, num4);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void GIVEN_ThreeLevelsDeepSections_WHEN_RanUsingSingle_THEN_ExpectedSubsectionEntryOccurs(uint3 DispatchThreadId : SV_DispatchThreadID)
 {

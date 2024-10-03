@@ -150,7 +150,6 @@ struct DebugPrinter
     printer.StringSize = printer.ByteCount;                  \
 } while(0)
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void MatesPrinter()
 {

@@ -41,7 +41,6 @@ namespace SFINAETemplateSpecialization
 	}
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
