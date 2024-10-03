@@ -3,7 +3,6 @@
 
 #include "/Test/STF/ByteReaderTraits.hlsli"
 #include "/Test/STF/FrameworkResources.hlsli"
-#include "/Test/STF/RootSignature.hlsli"
 #include "/Test/STF/SectionManagement.hlsli"
 
 #include "/Test/TTL/byte_writer.hlsli"
