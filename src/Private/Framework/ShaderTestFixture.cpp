@@ -9,6 +9,9 @@
 #include "D3D12/CommandEngine.h"
 #include "D3D12/GPUDevice.h"
 
+#include <d3d12shader.h>
+#include <d3dx12/d3dx12.h>
+
 #include <format>
 #include <sstream>
 #include <ranges>
@@ -191,18 +194,21 @@ namespace stf
                             InContext->SetBufferUAV(assertBuffer);
                             InContext->SetBufferUAV(allocationBuffer);
 
-                            const auto assertSection = testDataLayout.GetAssertSection();
-                            const auto stringSection = testDataLayout.GetStringSection();
-                            const auto sectionSection = testDataLayout.GetSectionInfoSection();
-                            std::array params
+                            if (rootSignature.GetDesc()->Desc_1_1.NumParameters > 0)
                             {
-                                dimX, dimY, dimZ, 1u,
-                                0u, 0u, 0u, 0u,
-                                assertSection.Begin(), assertSection.NumMeta(), assertSection.SizeInBytesOfData(), assertSection.SizeInBytesOfSection(),
-                                stringSection.Begin(), stringSection.NumMeta(), stringSection.SizeInBytesOfData(), stringSection.SizeInBytesOfSection(),
-                                sectionSection.Begin(), sectionSection.NumMeta(), sectionSection.SizeInBytesOfData(), sectionSection.SizeInBytesOfSection()
-                            };
-                            InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
+                                const auto assertSection = testDataLayout.GetAssertSection();
+                                const auto stringSection = testDataLayout.GetStringSection();
+                                const auto sectionSection = testDataLayout.GetSectionInfoSection();
+                                std::array params
+                                {
+                                    dimX, dimY, dimZ, 1u,
+                                    0u, 0u, 0u, 0u,
+                                    assertSection.Begin(), assertSection.NumMeta(), assertSection.SizeInBytesOfData(), assertSection.SizeInBytesOfSection(),
+                                    stringSection.Begin(), stringSection.NumMeta(), stringSection.SizeInBytesOfData(), stringSection.SizeInBytesOfSection(),
+                                    sectionSection.Begin(), sectionSection.NumMeta(), sectionSection.SizeInBytesOfData(), sectionSection.SizeInBytesOfSection()
+                                };
+                                InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
+                            }
                         }
                     );
 
@@ -314,7 +320,49 @@ namespace stf
 
     RootSignature ShaderTestFixture::CreateRootSignature(const CompiledShaderData& InShaderData) const
     {
-        return m_Device.CreateRootSignature(InShaderData);
+        const auto refl = InShaderData.GetReflection();
+
+        ThrowIfFalse(refl);
+
+        D3D12_SHADER_DESC shaderDesc{};
+        refl->GetDesc(&shaderDesc);
+
+        std::vector<CD3DX12_ROOT_PARAMETER1> parameters;
+        parameters.reserve(shaderDesc.BoundResources);
+
+        u32 totalNumValues = 0;
+        for (u32 boundIndex = 0; boundIndex < shaderDesc.BoundResources; ++boundIndex)
+        {
+            D3D12_SHADER_INPUT_BIND_DESC bindDesc{};
+            refl->GetResourceBindingDesc(boundIndex, &bindDesc);
+
+            ThrowIfFalse(bindDesc.Type == D3D_SIT_CBUFFER);
+
+            const auto constantBuffer = refl->GetConstantBufferByName(bindDesc.Name);
+            D3D12_SHADER_BUFFER_DESC bufferDesc{};
+            ThrowIfFailed(constantBuffer->GetDesc(&bufferDesc));
+            auto& parameter = parameters.emplace_back();
+            const u32 numValues = bufferDesc.Size / sizeof(u32);
+            totalNumValues += numValues;
+
+            ThrowIfFalse(totalNumValues < 64, "Limit of shader inputs reached");
+
+            parameter.InitAsConstants(numValues, bindDesc.BindPoint, bindDesc.Space);
+        }
+
+        CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSig{};
+        rootSig.Init_1_1(static_cast<u32>(parameters.size()), parameters.data(), 0u, nullptr,
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_VERTEX_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_CBV_SRV_UAV_HEAP_DIRECTLY_INDEXED
+        );
+
+        return m_Device.CreateRootSignature(rootSig);
     }
 
     GPUResource ShaderTestFixture::CreateAssertBuffer(const u64 InSizeInBytes) const
