@@ -279,6 +279,39 @@ SCENARIO("ShaderReflectionTests - Resource binding")
                     REQUIRE(bindDesc.BindCount == 1);
                     REQUIRE(bindDesc.uFlags == D3D_SIF_USERPACKED);
                 }
+
+                AND_WHEN("Buffer is inspected")
+                {
+                    const auto constantBuffer = reflection->GetConstantBufferByName(bindDesc.Name);
+
+                    THEN("Buffer is valid")
+                    {
+                        REQUIRE(constantBuffer);
+                    }
+
+                    D3D12_SHADER_BUFFER_DESC bufferDesc;
+                    constantBuffer->GetDesc(&bufferDesc);
+
+                    THEN("Buffer is as expected")
+                    {
+                        REQUIRE(std::string_view{ bufferDesc.Name } == "MyConstantBuffer");
+                        REQUIRE(bufferDesc.Type == D3D_CT_CBUFFER);
+                        REQUIRE(bufferDesc.Variables == 1u);
+                        REQUIRE(bufferDesc.Size == 32u);
+                        REQUIRE(bufferDesc.uFlags == 0u);
+                    }
+
+                    THEN("Variable is as expected")
+                    {
+                        const auto variable = constantBuffer->GetVariableByIndex(0);
+                        
+                        D3D12_SHADER_VARIABLE_DESC varDesc{};
+                        variable->GetDesc(&varDesc);
+                        REQUIRE(std::string_view{ varDesc.Name } == "MyConstantBuffer");
+                        REQUIRE(varDesc.StartOffset == 0u);
+                        REQUIRE(varDesc.uFlags == D3D_SVF_USED);
+                    }
+                }
             }
 
             AND_WHEN("Third bound resource is inspected")
