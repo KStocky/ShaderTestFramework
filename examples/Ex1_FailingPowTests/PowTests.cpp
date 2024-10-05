@@ -45,7 +45,6 @@ SCENARIO("PowTests")
                             return ret;
                         }
 
-                        [RootSignature(SHADER_TEST_RS)]
                         [numthreads(1, 1, 1)]
                         void RunPowTests()
                         {

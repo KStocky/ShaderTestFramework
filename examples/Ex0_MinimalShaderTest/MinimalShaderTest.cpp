@@ -24,7 +24,6 @@ SCENARIO("MinimalShaderTestExample")
                         // Include the test framework
                         #include "/Test/STF/ShaderTestFramework.hlsli"
 
-                        [RootSignature(SHADER_TEST_RS)]
                         [numthreads(1, 1, 1)]
                         void MinimalTestEntryFunction()
                         {
