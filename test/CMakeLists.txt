@@ -46,10 +46,10 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/TernaryInTypeTrait.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/UserDefinedVector.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/VariadicMacro.hlsl
-    Shader/D3D12/Shader/ShaderCompilerTests/ResourceBinding/ArrayOfBuffers.hlsl
-    Shader/D3D12/Shader/ShaderCompilerTests/ResourceBinding/ManyTypesOfBindings.hlsl
-    Shader/D3D12/Shader/ShaderCompilerTests/ResourceBinding/SingleInputBuffer.hlsl
-    Shader/D3D12/Shader/ShaderCompilerTests/ResourceBinding/UnboundedArrayOfBuffers.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ReflectionTests/ArrayOfBuffers.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ReflectionTests/ManyTypesOfBindings.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ReflectionTests/SingleInputBuffer.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ReflectionTests/UnboundedArrayOfBuffers.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderIncludeHandlerTests/Include.hlsli
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderIncludeHandlerTests/ShaderWithInclude.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/ClosestHitShaderWithAttributes.hlsl
@@ -129,7 +129,7 @@ set(SOURCES
     Private/D3D12/DescriptorRingAllocatorTests.cpp
     Private/D3D12/DescriptorTests.cpp
     Private/D3D12/Shader/HLSLTests.cpp
-    Private/D3D12/Shader/ResourceBindingTests.cpp
+    Private/D3D12/Shader/ReflectionTests.cpp
     Private/D3D12/Shader/ShaderIncludeHandlerTests.cpp
     Private/D3D12/Shader/ShaderHashTests.cpp
     Private/D3D12/Shader/ShaderModelTests.cpp
