@@ -30,7 +30,7 @@ SCENARIO("ShaderReflectionTests")
         WHEN("when compiled")
         {
             auto compiler = CreateCompiler();
-            const auto job = CreateCompilationJob(EShaderType::Compute, D3D_SHADER_MODEL_6_0, EHLSLVersion::Default, {}, std::format("/Tests/ResourceBinding/{}.hlsl", name));
+            const auto job = CreateCompilationJob(EShaderType::Compute, D3D_SHADER_MODEL_6_0, EHLSLVersion::Default, {}, std::format("/Tests/ReflectionTests/{}.hlsl", name));
             const auto result = compiler.CompileShader(job);
 
             REQUIRE(result.has_value());
@@ -69,7 +69,7 @@ SCENARIO("ShaderReflectionTests")
     GIVEN("Shader with varied bindings is compiled")
     {
         auto compiler = CreateCompiler();
-        const auto job = CreateCompilationJob(EShaderType::Compute, D3D_SHADER_MODEL_6_6, EHLSLVersion::v202x, {}, "/Tests/ResourceBinding/ManyTypesOfBindings.hlsl");
+        const auto job = CreateCompilationJob(EShaderType::Compute, D3D_SHADER_MODEL_6_6, EHLSLVersion::v202x, {}, "/Tests/ReflectionTests/ManyTypesOfBindings.hlsl");
         const auto result = compiler.CompileShader(job);
 
         REQUIRE(result.has_value());
