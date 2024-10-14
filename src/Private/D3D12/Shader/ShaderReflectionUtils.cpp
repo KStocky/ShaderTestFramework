@@ -17,7 +17,7 @@ namespace stf
         {
             for (u32 memberIndex = 0; memberIndex < typeDesc.Members; ++memberIndex)
             {
-                if (ContainsArray(InType.GetMemberTypeByIndex(memberIndex)))
+                if (IsOrContainsArray(*InType.GetMemberTypeByIndex(memberIndex)))
                 {
                     return true;
                 }
