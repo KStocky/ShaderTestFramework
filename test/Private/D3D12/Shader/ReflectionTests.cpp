@@ -87,7 +87,7 @@ SCENARIO("ShaderReflectionTests")
             {
                 D3D12_SHADER_DESC shaderDesc;
                 REQUIRE(SUCCEEDED(reflection->GetDesc(&shaderDesc)));
-                REQUIRE(shaderDesc.BoundResources == 5);
+                REQUIRE(shaderDesc.BoundResources == 6);
                 REQUIRE(shaderDesc.ConstantBuffers == 4);
             }
 
@@ -350,6 +350,22 @@ SCENARIO("ShaderReflectionTests")
             {
                 D3D12_SHADER_INPUT_BIND_DESC bindDesc{};
                 reflection->GetResourceBindingDesc(4, &bindDesc);
+
+                THEN("Has expected desc")
+                {
+                    REQUIRE(std::string_view{ bindDesc.Name } == "MyConstantBuffer.tex1D");
+                    REQUIRE(bindDesc.Type == D3D_SIT_TEXTURE);
+                    REQUIRE(bindDesc.Space == 0);
+                    REQUIRE(bindDesc.BindPoint == 1);
+                    REQUIRE(bindDesc.BindCount == 1);
+                    REQUIRE(bindDesc.uFlags == 0);
+                }
+            }
+
+            AND_WHEN("Sixth bound resource is inspected")
+            {
+                D3D12_SHADER_INPUT_BIND_DESC bindDesc{};
+                reflection->GetResourceBindingDesc(5, &bindDesc);
 
                 THEN("Has expected desc")
                 {
