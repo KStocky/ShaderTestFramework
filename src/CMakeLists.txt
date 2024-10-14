@@ -42,6 +42,7 @@ set(SOURCES
     Public/D3D12/Shader/ShaderCompiler.h
     Public/D3D12/Shader/ShaderEnums.h
     Public/D3D12/Shader/ShaderHash.h
+    Public/D3D12/Shader/ShaderReflectionUtils.h
     Public/D3D12/Shader/VirtualShaderDirectoryMapping.h
     Public/D3D12/Shader/VirtualShaderDirectoryMappingManager.h
     Public/Framework/HLSLTypes.h
@@ -86,6 +87,7 @@ set(SOURCES
     Private/D3D12/Shader/PipelineState.cpp
     Private/D3D12/Shader/RootSignature.cpp
     Private/D3D12/Shader/ShaderCompiler.cpp
+    Private/D3D12/Shader/ShaderReflectionUtils.cpp
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManager.cpp
     Private/Framework/PIXCapturer.cpp
     Private/Framework/ShaderTestFixture.cpp

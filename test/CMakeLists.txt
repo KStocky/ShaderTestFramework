@@ -63,6 +63,15 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/PixelShaderWithSamplerFeedback.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/PixelShaderWithSV_Barycentrics.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/TemplatedByteAddressBuffer.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/ConstantBufferCanBeBoundToRootConstants/ArrayBufferStruct.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/ConstantBufferCanBeBoundToRootConstants/NonArrayBufferStructContainsArray.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/ConstantBufferCanBeBoundToRootConstants/NonArrayBufferStructContainsMemberThatContainsArray.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/ConstantBufferCanBeBoundToRootConstants/NonArrayBufferWithNoArrayMembers.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/ConstantBufferCanBeBoundToRootConstants/StructIsOver64Bytes.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/IsOrContainsArray/ArrayBufferStruct.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/IsOrContainsArray/NonArrayBufferStructContainsArray.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/IsOrContainsArray/NonArrayBufferStructContainsMemberThatContainsArray.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/IsOrContainsArray/NonArrayBufferWithNoArrayMembers.hlsl
     Shader/HLSLFrameworkTests/Asserts/AreEqual.hlsl
     Shader/HLSLFrameworkTests/Asserts/Fail.hlsl
     Shader/HLSLFrameworkTests/Asserts/IsFalse.hlsl
@@ -133,6 +142,7 @@ set(SOURCES
     Private/D3D12/Shader/ShaderIncludeHandlerTests.cpp
     Private/D3D12/Shader/ShaderHashTests.cpp
     Private/D3D12/Shader/ShaderModelTests.cpp
+    Private/D3D12/Shader/ShaderReflectionUtilsTests.cpp
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManagerTests.cpp
     Private/Framework/HLSLFramework/Asserts/AreEqualTests.cpp
     Private/Framework/HLSLFramework/Asserts/FailTests.cpp
