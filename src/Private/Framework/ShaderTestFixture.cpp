@@ -70,11 +70,10 @@ namespace stf
             return RunTestImpl(std::move(InTestDesc), false);
         }
 
-        const auto firstResult = RunTestImpl(InTestDesc, false);
-        const bool compilationFailed = firstResult.GetFailedCompilationResult();
+        auto firstResult = RunTestImpl(InTestDesc, false);
         const bool succeeded = firstResult;
 
-        if (succeeded || compilationFailed || !requestedRetryOnFail)
+        if (succeeded)
         {
             return firstResult;
         }
@@ -89,7 +88,7 @@ namespace stf
 
         if (!compileResult.has_value())
         {
-            return Results{ {compileResult.error()} };
+            return Results{ { .Type = ETestRunErrorType::ShaderCompilation, .Error = compileResult.error() } };
         }
 
         return Results{ TestRunResults{} };
@@ -132,7 +131,10 @@ namespace stf
         {
             return Results
             {
-                FailedShaderCompilationResult{compileResult.error()}
+                {
+                    .Type = ETestRunErrorType::ShaderCompilation,
+                    .Error = compileResult.error()
+                }
             };
         }
 

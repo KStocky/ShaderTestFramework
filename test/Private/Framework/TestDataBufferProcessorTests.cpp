@@ -205,8 +205,8 @@ namespace TestDataBufferProcessorTests
             (
                 {
                     std::tuple{ "Default constructed", Results{}, false },
-                    std::tuple{ "Constructed from empty string", Results{FailedShaderCompilationResult{""}}, false},
-                    std::tuple{ "Constructed from non-empty string", Results{FailedShaderCompilationResult{"Hello"}}, false },
+                    std::tuple{ "Constructed from empty string", Results{ ErrorTypeAndDescription{ ETestRunErrorType::Unknown, ""} }, false},
+                    std::tuple{ "Constructed from non-empty string", Results{ ErrorTypeAndDescription{ ETestRunErrorType::Unknown, ""} }, false },
                     std::tuple{ "Zero Failed test run", Results{ TestRunResults{} }, true },
                     std::tuple{ "Non-zero failed test run", Results{ TestRunResults{ {}, {}, {}, 0, 1, uint3{} } }, false }
                 }
