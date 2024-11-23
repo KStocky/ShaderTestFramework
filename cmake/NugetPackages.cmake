@@ -6,7 +6,7 @@ function(nuget_get_agility_sdk IN_TARGET OUT_SUCCEEDED OUT_INCLUDE_PATH OUT_BINA
 
     set(MAJOR_VER "1")
     set(MINOR_VER "614")
-    set(PATCH_VER "0")
+    set(PATCH_VER "1")
 
     nuget_pkg_get(${IN_TARGET} "Microsoft.Direct3D.D3D12" "${MAJOR_VER}.${MINOR_VER}.${PATCH_VER}" ${OUT_SUCCEEDED} PKG_PATH)
 
@@ -21,7 +21,7 @@ endfunction()
 
 function(nuget_get_dxc IN_TARGET OUT_SUCCEEDED OUT_INCLUDE_PATH OUT_BINARY_PATH OUT_LIB_PATH)
 
-    nuget_pkg_get(${IN_TARGET} "Microsoft.Direct3D.DXC" "1.8.2405.17" ${OUT_SUCCEEDED} PKG_PATH)
+    nuget_pkg_get(${IN_TARGET} "Microsoft.Direct3D.DXC" "1.8.2407.12" ${OUT_SUCCEEDED} PKG_PATH)
 
     if (${${OUT_SUCCEEDED}})
         set(${OUT_INCLUDE_PATH} "${PKG_PATH}/build/native/include")
@@ -34,7 +34,7 @@ endfunction()
 
 function(nuget_get_warp IN_TARGET OUT_SUCCEEDED OUT_BINARY_PATH)
 
-    nuget_pkg_get(${IN_TARGET} "Microsoft.Direct3D.WARP" "1.0.12" ${OUT_SUCCEEDED} PKG_PATH)
+    nuget_pkg_get(${IN_TARGET} "Microsoft.Direct3D.WARP" "1.0.13" ${OUT_SUCCEEDED} PKG_PATH)
 
     if (${${OUT_SUCCEEDED}})
         set(${OUT_BINARY_PATH} "${PKG_PATH}/build/native/bin/x64")
