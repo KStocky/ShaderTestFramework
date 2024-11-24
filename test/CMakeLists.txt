@@ -67,7 +67,7 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/ConstantBufferCanBeBoundToRootConstants/NonArrayBufferStructContainsArray.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/ConstantBufferCanBeBoundToRootConstants/NonArrayBufferStructContainsMemberThatContainsArray.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/ConstantBufferCanBeBoundToRootConstants/NonArrayBufferWithNoArrayMembers.hlsl
-    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/ConstantBufferCanBeBoundToRootConstants/StructIsOver64Bytes.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/ConstantBufferCanBeBoundToRootConstants/StructIsOver64Uints.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/IsOrContainsArray/ArrayBufferStruct.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/IsOrContainsArray/NonArrayBufferStructContainsArray.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/IsOrContainsArray/NonArrayBufferStructContainsMemberThatContainsArray.hlsl
@@ -139,8 +139,9 @@ set(SOURCES
     Private/D3D12/DescriptorTests.cpp
     Private/D3D12/Shader/HLSLTests.cpp
     Private/D3D12/Shader/ReflectionTests.cpp
-    Private/D3D12/Shader/ShaderIncludeHandlerTests.cpp
+    Private/D3D12/Shader/ShaderBindingTests.cpp
     Private/D3D12/Shader/ShaderHashTests.cpp
+    Private/D3D12/Shader/ShaderIncludeHandlerTests.cpp
     Private/D3D12/Shader/ShaderModelTests.cpp
     Private/D3D12/Shader/ShaderReflectionUtilsTests.cpp
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManagerTests.cpp

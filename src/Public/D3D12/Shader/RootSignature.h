@@ -4,6 +4,8 @@
 #include "Utility/MoveOnly.h"
 #include "Utility/Pointer.h"
 
+#include <unordered_map>
+
 #include <d3d12.h>
 
 namespace stf

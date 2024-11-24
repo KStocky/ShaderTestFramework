@@ -1,5 +1,6 @@
 
 #include "D3D12/Shader/ShaderReflectionUtils.h"
+#include "Utility/Exception.h"
 
 namespace stf
 {
@@ -31,8 +32,8 @@ namespace stf
     {
         D3D12_SHADER_BUFFER_DESC bufferDesc;
         ThrowIfFailed(InBuffer.GetDesc(&bufferDesc));
-
-        if (bufferDesc.Size > 64)
+        static constexpr u32 RootConstantsSizeLimit = 64 * sizeof(u32);
+        if (bufferDesc.Size > RootConstantsSizeLimit)
         {
             return false;
         }

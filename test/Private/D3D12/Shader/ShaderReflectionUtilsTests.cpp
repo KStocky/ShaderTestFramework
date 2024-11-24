@@ -94,7 +94,7 @@ SCENARIO("ConstantBufferCanBeBoundToRootConstants")
                     std::tuple{"NonArrayBufferStructContainsArray", false},
                     std::tuple{"NonArrayBufferStructContainsMemberThatContainsArray", false},
                     std::tuple{"ArrayBufferStruct", false},
-                    std::tuple{"StructIsOver64Bytes", false},
+                    std::tuple{"StructIsOver64UInts", false},
                 }
             )
         );
