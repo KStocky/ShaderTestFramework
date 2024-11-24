@@ -205,43 +205,43 @@ TEST_CASE_PERSISTENT_FIXTURE(AssertInfoWithDataTestsFixture, "HLSLFrameworkTests
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment2_THEN_HasExpectedResults",
-                    TestRunResults{ {FailedAssert{serialize(Tuple<u16, u16>{24u, 42u}), {}, AssertMetaData{42, 0, 0}, 2}}, {}, {}, 0, 1, uint3(1,1,1)},
+                    TestRunResults{ {FailedAssert{serialize(Tuple{static_cast<u16>(24u), static_cast<u16>(42u)}), {}, AssertMetaData{42, 0, 0}, 2}}, {}, {}, 0, 1, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment2_THEN_HasExpectedResults",
-                    TestRunResults{ {FailedAssert{serialize(Tuple<u16, u16>{24u, 42u}), {}, AssertMetaData{42, 0, 0}, 2}, FailedAssert{serialize(Tuple<u16, u16>{1024u, 4u}), {}, AssertMetaData{42, 0, 0}, 2}}, {}, {}, 0, 2, uint3(1,1,1)},
+                    TestRunResults{ {FailedAssert{serialize(Tuple{static_cast<u16>(24u), static_cast<u16>(42u)}), {}, AssertMetaData{42, 0, 0}, 2}, FailedAssert{serialize(Tuple{static_cast<u16>(1024u), static_cast<u16>(4u)}), {}, AssertMetaData{42, 0, 0}, 2}}, {}, {}, 0, 2, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment8_THEN_HasExpectedResults",
-                    TestRunResults{ {FailedAssert{serialize(Tuple<u64, u64>{24u, 42u}), {}, AssertMetaData{42, 0, 0}, 10}}, {}, {}, 0, 1, uint3(1,1,1)},
+                    TestRunResults{ {FailedAssert{serialize(Tuple<u64, u64>{24ul, 42ul}), {}, AssertMetaData{42, 0, 0}, 10}}, {}, {}, 0, 1, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment8_THEN_HasExpectedResults",
-                    TestRunResults{ {FailedAssert{serialize(Tuple<u64, u64>{24u, 42u}), {}, AssertMetaData{42, 0, 0}, 10}, FailedAssert{serialize(Tuple<u64, u64>{1024u, 4u}), {}, AssertMetaData{42, 0, 0}, 10}}, {}, {}, 0, 2, uint3(1,1,1)},
+                    TestRunResults{ {FailedAssert{serialize(Tuple<u64, u64>{24ul, 42lu}), {}, AssertMetaData{42, 0, 0}, 10}, FailedAssert{serialize(Tuple<u64, u64>{1024u, 4u}), {}, AssertMetaData{42, 0, 0}, 10}}, {}, {}, 0, 2, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign2SecondAlign8_THEN_HasExpectedResults",
-                    TestRunResults{ {FailedAssert{serialize(Tuple<u16, u16>{24u, 42u}), {}, AssertMetaData{42, 0, 0}, 2}, FailedAssert{serialize(Tuple<u64, u64>{1024u, 4u}), {}, AssertMetaData{42, 0, 0}, 10}}, {}, {}, 0, 2, uint3(1,1,1)},
+                    TestRunResults{ {FailedAssert{serialize(Tuple{static_cast<u16>(24u), static_cast<u16>(42u)}), {}, AssertMetaData{42, 0, 0}, 2}, FailedAssert{serialize(Tuple<u64, u64>{1024ul, 4ul}), {}, AssertMetaData{42, 0, 0}, 10}}, {}, {}, 0, 2, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign8SecondAlign2_THEN_HasExpectedResults",
-                    TestRunResults{ {FailedAssert{serialize(Tuple<u64, u64>{24u, 42u}), {}, AssertMetaData{42, 0, 0}, 10}, FailedAssert{serialize(Tuple<u16, u16>{1024u, 4u}), {}, AssertMetaData{42, 0, 0}, 2}}, {}, {}, 0, 2, uint3(1,1,1)},
+                    TestRunResults{ {FailedAssert{serialize(Tuple<u64, u64>{24ul, 42ul}), {}, AssertMetaData{42, 0, 0}, 10}, FailedAssert{serialize(Tuple{static_cast<u16>(1024u), static_cast<u16>(4u)}), {}, AssertMetaData{42, 0, 0}, 2}}, {}, {}, 0, 2, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment2_THEN_HasExpectedResults",
-                    TestRunResults{ {FailedAssert{serialize(Tuple<u16>{24u}), {}, AssertMetaData{42, 0, 0}, 2}}, {}, {}, 0, 1, uint3(1,1,1)},
+                    TestRunResults{ {FailedAssert{serialize(Tuple{static_cast<u16>(24u)}), {}, AssertMetaData{42, 0, 0}, 2}}, {}, {}, 0, 1, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple

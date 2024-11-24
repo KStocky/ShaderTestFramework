@@ -185,6 +185,7 @@ set(SOURCES
     Private/Utility/EnumReflectionTests.cpp
     Private/Utility/FunctionTraitsTests.cpp
     Private/Utility/LambdaTests.cpp
+    Private/Utility/TupleTests.cpp
     Private/Utility/TypeListTests.cpp
     Private/Utility/TypeTraitsTests.cpp
     Public/D3D12/Shader/ShaderCompilerTestsCommon.h
