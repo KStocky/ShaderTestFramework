@@ -77,6 +77,10 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/Asserts/IsFalse.hlsl
     Shader/HLSLFrameworkTests/Asserts/IsTrue.hlsl
     Shader/HLSLFrameworkTests/Asserts/NotEqual.hlsl
+    Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/GlobalBindings.hlsl
+    Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/GlobalBindingsTooLarge.hlsl
+    Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/MultipleConstantBuffers.hlsl
+    Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/WithArray.hlsl
     Shader/HLSLFrameworkTests/Bugs/ConversionOperator.hlsl
     Shader/HLSLFrameworkTests/ByteReaderTraits/ByteReaderTraitsTests.hlsl
     Shader/HLSLFrameworkTests/ByteWriter/ByteWriterTests.hlsl
@@ -150,6 +154,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/Asserts/IsFalseTests.cpp
     Private/Framework/HLSLFramework/Asserts/IsTrueTests.cpp
     Private/Framework/HLSLFramework/Asserts/NotEqualTests.cpp
+    Private/Framework/HLSLFramework/Binding/ValueBindingsTests.cpp
     Private/Framework/HLSLFramework/Container/ArrayTests.cpp
     Private/Framework/HLSLFramework/Macros/AssertMacroTests.cpp
     Private/Framework/HLSLFramework/Macros/NumArgsTests.cpp

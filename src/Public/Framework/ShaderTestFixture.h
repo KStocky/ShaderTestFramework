@@ -65,6 +65,7 @@ namespace stf
         {
             CompilationEnvDesc CompilationEnv;
             std::string_view TestName;
+            std::vector<ShaderBinding> Bindings;
             uint3 ThreadGroupCount{};
             TestDataBufferLayoutDesc TestDataLayout
             {
@@ -128,7 +129,6 @@ namespace stf
         PipelineState CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const;
         Expected<ReflectionResults, ErrorTypeAndDescription> ProcessShaderReflection(const CompiledShaderData& InShaderData) const;
         Expected<void, ErrorTypeAndDescription> PopulateTestConstantBuffers(ReflectionResults& InOutReflectionResults, const std::span<const ShaderBinding> InBindings) const;
-        Expected<void, ErrorTypeAndDescription> PopulateBindings(const CompiledShaderData& InShaderData);
         GPUResource CreateAssertBuffer(const u64 InSizeInBytes) const;
         GPUResource CreateReadbackBuffer(const u64 InSizeInBytes) const;
         DescriptorHandle CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap, const u32 InIndex) const;

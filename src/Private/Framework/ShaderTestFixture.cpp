@@ -167,17 +167,17 @@ namespace stf
 
         if (reflectionData.value().RootParamBuffers.size() > 0)
         {
-            const std::vector<ShaderBinding> frameworkBindings
-            {
-                {"stf::detail::DispatchDimensions", uint3{dimX, dimY, dimZ}},
-                {"stf::detail::AllocationBufferIndex", 1u},
-                {"stf::detail::TestDataBufferIndex", 0u},
-                {"stf::detail::Asserts", testDataLayout.GetAssertSection()},
-                {"stf::detail::Strings", testDataLayout.GetStringSection()},
-                {"stf::detail::Sections", testDataLayout.GetSectionInfoSection()}
-            };
+            InTestDesc.Bindings.append_range
+            (std::array{
+                ShaderBinding{ "stf::detail::DispatchDimensions", uint3{dimX, dimY, dimZ} },
+                ShaderBinding{ "stf::detail::AllocationBufferIndex", 1u },
+                ShaderBinding{ "stf::detail::TestDataBufferIndex", 0u },
+                ShaderBinding{ "stf::detail::Asserts", testDataLayout.GetAssertSection() },
+                ShaderBinding{ "stf::detail::Strings", testDataLayout.GetStringSection() },
+                ShaderBinding{ "stf::detail::Sections", testDataLayout.GetSectionInfoSection() }
+            });
 
-            const auto populateResult = PopulateTestConstantBuffers(reflectionData.value(), frameworkBindings);
+            const auto populateResult = PopulateTestConstantBuffers(reflectionData.value(), InTestDesc.Bindings);
             if (!populateResult)
             {
                 return Results{ populateResult.error() };
