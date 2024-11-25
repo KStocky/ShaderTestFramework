@@ -1,6 +1,7 @@
 
 #include <Platform.h>
 #include <D3D12/Shader/ShaderBinding.h>
+#include <Framework/HLSLTypes.h>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/catch_template_test_macros.hpp>
@@ -28,34 +29,32 @@ namespace ShaderBindingConstructionTests
     static_assert(!TestConstruction<NotTriviallyCopyable>, "Expected a shader binding to not be valid for this type");
 }
 
-TEST_CASE("ShaderBindingTests")
+namespace ShaderBindingTestsPrivate
 {
-    using namespace stf;
-
-    auto Cast = []<typename T>(const std::span<const std::byte> InData) -> T
+    template<typename T>
+    T Cast(const std::span<const std::byte> InData)
     {
         T ret;
         std::memcpy(&ret, InData.data(), sizeof(T));
         return ret;
-    };
-
-    SECTION("An int initialized to zero")
-    {
-        const std::string name = "Test";
-        const i32 data = 0;
-        ShaderBinding test(name, data);
-        const auto actualData = Cast.operator()<i32>(test.GetBindingData());
-
-        REQUIRE(test.GetName() == name);
-        REQUIRE(data == actualData);
     }
+}
 
-    SECTION("An int initialized to non zero")
+namespace ShaderBindingTemplateTests
+{
+    using namespace stf;
+    TEMPLATE_TEST_CASE_SIG("Templated ShaderBindingTests", "[template][nttp]", ((typename T, T Val), T, Val),
+        (i32, 0), (i32, 123456789),
+        (float, 0.0f), (float, 42.5f),
+        (float4, float4{0.0f, 1.0, 100.0, 1000.0f})
+    )
     {
+        using namespace ShaderBindingTestsPrivate;
+
         const std::string name = "Test";
-        const i32 data = 123456789;
+        const T data = Val;
         ShaderBinding test(name, data);
-        const auto actualData = Cast.operator()<i32>(test.GetBindingData());
+        const T actualData = Cast<T>(test.GetBindingData());
 
         REQUIRE(test.GetName() == name);
         REQUIRE(data == actualData);
