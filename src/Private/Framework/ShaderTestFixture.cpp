@@ -70,11 +70,13 @@ namespace stf
             return RunTestImpl(std::move(InTestDesc), false);
         }
 
-        auto firstResult = RunTestImpl(InTestDesc, false);
-        const bool succeeded = firstResult;
-
-        if (succeeded)
+        if (auto firstResult = RunTestImpl(InTestDesc, false))
         {
+            return firstResult;
+        }
+        else if (auto testRunError = firstResult.GetTestRunError())
+        {
+            // There is no point in retrying the test if the test setup or shader compilation failed.
             return firstResult;
         }
 
