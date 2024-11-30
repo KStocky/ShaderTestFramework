@@ -55,7 +55,6 @@ SCENARIO("MinimalShaderTestExample")
                             // Include the test framework
                             #include "/Test/STF/ShaderTestFramework.hlsli"
 
-                            [RootSignature(SHADER_TEST_RS)]
                             [numthreads(1, 1, 1)]
                             void MinimalTestEntryFunction()
                             {
@@ -155,7 +154,6 @@ SCENARIO("PowTests")
                             return ret;
                         }
 
-                        [RootSignature(SHADER_TEST_RS)]
                         [numthreads(1, 1, 1)]
                         void RunPowTests()
                         {
@@ -233,7 +231,6 @@ SCENARIO("PowTests")
                             return ret;
                         }
 
-                        [RootSignature(SHADER_TEST_RS)]
                         [numthreads(1, 1, 1)]
                         void RunPowTests()
                         {
