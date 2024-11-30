@@ -17,7 +17,6 @@ namespace ttl
     };
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_StructDoesHaveOverloadOfCast_WHEN_CastCalled_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
 {

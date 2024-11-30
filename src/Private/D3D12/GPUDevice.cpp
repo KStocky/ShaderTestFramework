@@ -248,15 +248,11 @@ namespace stf
         return Fence(Fence::CreationParams{ std::move(fence), InInitialValue });
     }
 
-    RootSignature GPUDevice::CreateRootSignature(const D3D12_ROOT_SIGNATURE_DESC1& InDesc) const
+    RootSignature GPUDevice::CreateRootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC& InDesc) const
     {
-        D3D12_VERSIONED_ROOT_SIGNATURE_DESC desc;
-        desc.Version = D3D_ROOT_SIGNATURE_VERSION_1_1;
-        desc.Desc_1_1 = InDesc;
-
         ComPtr<ID3DBlob> signature;
         ComPtr<ID3DBlob> error;
-        ThrowIfFailed(D3D12SerializeVersionedRootSignature(&desc, signature.GetAddressOf(), error.GetAddressOf()));
+        ThrowIfFailed(D3D12SerializeVersionedRootSignature(&InDesc, signature.GetAddressOf(), error.GetAddressOf()));
 
         ComPtr<ID3D12RootSignature> rootSignatureObject;
         ThrowIfFailed(m_Device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(rootSignatureObject.GetAddressOf())));
@@ -277,7 +273,9 @@ namespace stf
 
         const auto desc = deserializer->GetUnconvertedRootSignatureDesc();
 
-        return CreateRootSignature(desc->Desc_1_1);
+        ThrowIfFalse(desc != nullptr);
+
+        return CreateRootSignature(*desc);
     }
 
     void GPUDevice::CreateShaderResourceView(const GPUResource& InResource, const DescriptorHandle InHandle) const

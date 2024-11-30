@@ -17,13 +17,11 @@ namespace ttl
     };
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoCapacity_WHEN_ZeroAssertsMade_THEN_HasExpectedResults()
 {
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoCapacity_WHEN_NonZeroSuccessfulAssertsMade_THEN_HasExpectedResults()
 {
@@ -31,7 +29,6 @@ void GIVEN_AssertInfoCapacity_WHEN_NonZeroSuccessfulAssertsMade_THEN_HasExpected
     ASSERT(IsFalse, false);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoCapacity_WHEN_FailedAssertNoTypeId_THEN_HasExpectedResults()
 {
@@ -40,7 +37,6 @@ void GIVEN_AssertInfoCapacity_WHEN_FailedAssertNoTypeId_THEN_HasExpectedResults(
     stf::IsTrue(t, 42);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoCapacity_WHEN_TwoFailedAssert_THEN_HasExpectedResults()
 {
@@ -50,7 +46,6 @@ void GIVEN_AssertInfoCapacity_WHEN_TwoFailedAssert_THEN_HasExpectedResults()
     stf::IsTrue(t, 32);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoCapacity_WHEN_FailedAssertWithLineId_THEN_HasExpectedResults()
 {
@@ -59,7 +54,6 @@ void GIVEN_AssertInfoCapacity_WHEN_FailedAssertWithLineId_THEN_HasExpectedResult
     ASSERT(IsTrue, t);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoCapacityWithFlatThreadId_WHEN_FailedAssert_THEN_HasExpectedResults()
 {
@@ -69,7 +63,6 @@ void GIVEN_AssertInfoCapacityWithFlatThreadId_WHEN_FailedAssert_THEN_HasExpected
     stf::IsTrue(t, 66);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(24, 1, 1)]
 void GIVEN_AssertInfoCapacityWithFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -83,7 +76,6 @@ void GIVEN_AssertInfoCapacityWithFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpect
     }
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(3, 3, 3)]
 void GIVEN_AssertInfoCapacityWithNonFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -97,7 +89,6 @@ void GIVEN_AssertInfoCapacityWithNonFlat3DThreadId_WHEN_FailedAssert_THEN_HasExp
     }
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoCapacity_WHEN_MoreFailedAssertsThanCapacity_THEN_HasExpectedResults()
 {

@@ -1,5 +1,6 @@
 #include "Framework/TestDataBufferProcessor.h"
 
+#include "Utility/EnumReflection.h"
 #include "Utility/Exception.h"
 #include "Utility/Math.h"
 
@@ -43,7 +44,7 @@ namespace stf
         return "";
     }
 
-    Results::Results(FailedShaderCompilationResult InError)
+    Results::Results(ErrorTypeAndDescription InError)
         : m_Result(std::move(InError))
     {
     }
@@ -53,14 +54,31 @@ namespace stf
     {
     }
 
+    Results::operator bool() const
+    {
+        return std::visit(OverloadSet{
+        [](std::monostate)
+        {
+            return false;
+        },
+        [](const TestRunResults& InTestResults)
+        {
+            return InTestResults.NumFailed == 0;
+        },
+        [](const ErrorTypeAndDescription&)
+        {
+            return false;
+        } }, m_Result);
+    }
+
     const TestRunResults* Results::GetTestResults() const
     {
         return std::get_if<TestRunResults>(&m_Result);
     }
 
-    const FailedShaderCompilationResult* Results::GetFailedCompilationResult() const
+    const ErrorTypeAndDescription* Results::GetTestRunError() const
     {
-		return std::get_if<FailedShaderCompilationResult>(&m_Result);
+		return std::get_if<ErrorTypeAndDescription>(&m_Result);
     }
 
     std::string DefaultByteReader(const u16, std::span<const std::byte> InBytes)
@@ -185,9 +203,9 @@ namespace stf
         return InOs;
     }
 
-    std::ostream& operator<<(std::ostream& InOs, const FailedShaderCompilationResult& In)
+    std::ostream& operator<<(std::ostream& InOs, const ErrorTypeAndDescription& In)
     {
-        InOs << In.Error;
+        InOs << "Type: " << Enum::ScopedName(In.Type) << "\n Description: " << In.Error;
         return InOs;
     }
 
@@ -204,7 +222,7 @@ namespace stf
                 {
                     InOs << InTestResults;
                 },
-                [&InOs](const FailedShaderCompilationResult& InCompilationError)
+                [&InOs](const ErrorTypeAndDescription& InCompilationError)
                 {
                     InOs << InCompilationError;
                 }

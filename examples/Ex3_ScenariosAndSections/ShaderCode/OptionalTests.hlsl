@@ -35,7 +35,6 @@ void GIVEN_InvalidOptional_WHEN_ValueSet_THEN_GetReturnsValue(Optional<int> InOp
     ASSERT(AreEqual,  expectedValue, InOpt.GetOrDefault(defaultValue));
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void OptionalTestsWithoutScenariosAndSections()
 {
@@ -48,7 +47,6 @@ void OptionalTestsWithoutScenariosAndSections()
     GIVEN_InvalidOptional_WHEN_ValueSet_THEN_GetReturnsValue(opt);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void OptionalTestsWithScenariosAndSections()
 {
@@ -87,7 +85,6 @@ void OptionalTestsWithScenariosAndSections()
     }
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(32, 1, 1)]
 void OptionalTestsWithScenariosAndSectionsAndThreadIds(uint3 DTid : SV_DispatchThreadID)
 {

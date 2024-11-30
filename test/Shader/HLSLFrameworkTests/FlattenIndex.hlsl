@@ -1,6 +1,5 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_UnitCubeAndZeroIndex_WHEN_Flattened_THEN_ReturnsZero(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -11,7 +10,6 @@ void GIVEN_UnitCubeAndZeroIndex_WHEN_Flattened_THEN_ReturnsZero(uint3 DispatchTh
     ASSERT(AreEqual, 0u, flattened);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_CubeSide10AndZeroIndex_WHEN_Flattened_THEN_ReturnsZero(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -22,7 +20,6 @@ void GIVEN_CubeSide10AndZeroIndex_WHEN_Flattened_THEN_ReturnsZero(uint3 Dispatch
     ASSERT(AreEqual, 0u, flattened);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_CubeSide10AndIndicesDifferentByOneInX_WHEN_BothFlattened_THEN_DifferenceIsOne(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -36,7 +33,6 @@ void GIVEN_CubeSide10AndIndicesDifferentByOneInX_WHEN_BothFlattened_THEN_Differe
     ASSERT(AreEqual, 1u, flattened2 - flattened1);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_CubeSide10AndIndicesDifferentByOneInY_WHEN_BothFlattened_THEN_DifferenceIsTen(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -50,7 +46,6 @@ void GIVEN_CubeSide10AndIndicesDifferentByOneInY_WHEN_BothFlattened_THEN_Differe
     ASSERT(AreEqual, 10u, flattened2 - flattened1);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_CubeSide10AndIndicesDifferentByOneInZ_WHEN_BothFlattened_THEN_DifferenceIs100(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -64,7 +59,6 @@ void GIVEN_CubeSide10AndIndicesDifferentByOneInZ_WHEN_BothFlattened_THEN_Differe
     ASSERT(AreEqual, 100u, flattened2 - flattened1);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_CubeSide3_WHEN_IndicesIncrementedInXThenYThenZ_AND_WHEN_Flattened_THEN_DifferenceIs1(uint3 DispatchThreadId : SV_DispatchThreadID)
 {

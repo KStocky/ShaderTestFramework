@@ -3,7 +3,6 @@
 #include "/Test/TTL/models.hlsli"
 #include "/Test/TTL/string.hlsli"
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_EmptyString_WHEN_CharacterAppended_THEN_DataIsAsExpected()
 {
@@ -16,7 +15,6 @@ void GIVEN_EmptyString_WHEN_CharacterAppended_THEN_DataIsAsExpected()
     ASSERT(AreEqual, buff.Size, 1u);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_EmptyString_WHEN_AttemptingToAppendTwoCharactersAtOnce_THEN_OnlyTheFirstIsAppended()
 {
@@ -30,7 +28,6 @@ void GIVEN_EmptyString_WHEN_AttemptingToAppendTwoCharactersAtOnce_THEN_OnlyTheFi
     ASSERT(AreEqual, buff.Size, 1u);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_EmptyString_WHEN_FourCharactersAppended_THEN_DataIsAsExpected()
 {
@@ -52,7 +49,6 @@ void GIVEN_EmptyString_WHEN_FourCharactersAppended_THEN_DataIsAsExpected()
     ASSERT(AreEqual, buff.Size, 4u);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_EmptyString_WHEN_FiveCharactersAppended_THEN_DataIsAsExpected()
 {
@@ -77,7 +73,6 @@ void GIVEN_EmptyString_WHEN_FiveCharactersAppended_THEN_DataIsAsExpected()
     ASSERT(AreEqual, buff.Size, 5u);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_EmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsEmpty()
 {
@@ -88,7 +83,6 @@ void GIVEN_EmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsEmpty()
     ASSERT(AreEqual, str1.Size, 1u);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_NonEmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsAsExpected()
 {
@@ -99,7 +93,6 @@ void GIVEN_NonEmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsAsExpected()
     ASSERT(AreEqual, str1.Size, 6u);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_TwoNonEmptyStringCreator_WHEN_Executed_THEN_BothStringsAreAsExpected()
 {
@@ -114,7 +107,6 @@ void GIVEN_TwoNonEmptyStringCreator_WHEN_Executed_THEN_BothStringsAreAsExpected(
     ASSERT(AreEqual, str2.Size, 4u);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_FullString_WHEN_AppendCalled_THEN_AppendFails()
 {

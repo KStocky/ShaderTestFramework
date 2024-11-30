@@ -29,23 +29,11 @@ namespace stf
         CompiledShaderData() = default;
         CompiledShaderData(ShaderCompilerToken, CreationParams InParams);
 
-        template<typename ThisType>
-        decltype(auto) GetCompiledShader(this ThisType&& InThis)
-        {
-            return std::forward<ThisType>(InThis).m_CompiledShader.Get();
-        }
+        IDxcBlob* GetCompiledShader() const;
 
-        template<typename ThisType>
-        decltype(auto) GetShaderHash(this ThisType&& InThis)
-        {
-            return std::forward<ThisType>(InThis).m_Hash;
-        }
+        const std::optional<ShaderHash>& GetShaderHash() const;
 
-        template<typename ThisType>
-        decltype(auto) GetReflection(this ThisType&& InThis)
-        {
-            return std::forward<ThisType>(InThis).m_Reflection;
-        }
+        ID3D12ShaderReflection* GetReflection() const;
 
     private:
 

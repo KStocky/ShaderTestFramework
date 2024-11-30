@@ -14,7 +14,8 @@
 5. [Working with Shader Files using Virtual Shader Directories](#working-with-shader-files-using-virtual-shader-directories)
 6. [SCENARIOs and SECTIONs](#scenarios-and-sections)
 7. [Assertions](#assertions)
-8. [Compile Time Tests](#compile-time-tests)
+8. [Bindings](#bindings)
+9. [Compile Time Tests](#compile-time-tests)
 
 ## Requirements
 
@@ -55,7 +56,6 @@ SCENARIO("MinimalShaderTestExample")
                             // Include the test framework
                             #include "/Test/STF/ShaderTestFramework.hlsli"
 
-                            [RootSignature(SHADER_TEST_RS)]
                             [numthreads(1, 1, 1)]
                             void MinimalTestEntryFunction()
                             {
@@ -105,7 +105,6 @@ ShaderTestFramework provides assert failure formatting for all native types prov
 ```c++
 #include "/Test/STF/ShaderTestFramework.hlsli"
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void MinimalTestEntryFunction()
 {
@@ -156,7 +155,6 @@ SCENARIO("PowTests")
                             return ret;
                         }
 
-                        [RootSignature(SHADER_TEST_RS)]
                         [numthreads(1, 1, 1)]
                         void RunPowTests()
                         {
@@ -234,7 +232,6 @@ SCENARIO("PowTests")
                             return ret;
                         }
 
-                        [RootSignature(SHADER_TEST_RS)]
                         [numthreads(1, 1, 1)]
                         void RunPowTests()
                         {
@@ -319,7 +316,6 @@ Up until now, we have been writing HLSL code directly in our C++ in strings. How
 
 Shader Test Framework provides a mechanism to help test writers, write tests that both minimise code repetition and also ensure that their tests are easy to reason about and follow. They are very similar to [Catch2](https://github.com/catchorg/Catch2/)s `TEST_CASE`s and `SECTION`s, and look like the following:
 ```c++
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void OptionalTestsWithScenariosAndSections()
 {
@@ -364,6 +360,10 @@ Please refer to [Scenarios and Sections](./STF/ScenariosAndSections.md) for more
 ## Assertions
 
 To read more about the other assertion features that Shader Test Framework provides, the [Asserts](./STF/Asserts.md) documentation is the place to go.
+
+## Bindings
+
+Test writers can set constant buffer data for tests so that algorithms written in shader code can be tested with data that is passed in from C++ code. the [Bindings](./STF/Bindings.md) documentation is the place to go to read more about setting constant buffer data.
 
 ## Compile Time Tests
 

@@ -11,7 +11,6 @@ void FailingFundamentalAsserts()
     ASSERT(AreEqual, bool2x2(true, true, false, false), bool2x2(false, false, true, true));
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void Tests()
 {

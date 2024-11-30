@@ -65,11 +65,20 @@ namespace stf
         friend std::ostream& operator<<(std::ostream& InOs, const TestRunResults& In);
     };
 
-    struct FailedShaderCompilationResult
+    enum class ETestRunErrorType
     {
+        Unknown,
+        ShaderCompilation,
+        Binding,
+        RootSignatureGeneration
+    };
+
+    struct ErrorTypeAndDescription
+    {
+        ETestRunErrorType Type;
         std::string Error;
-        friend auto operator<=>(const FailedShaderCompilationResult&, const FailedShaderCompilationResult&) = default;
-        friend std::ostream& operator<<(std::ostream& InOs, const FailedShaderCompilationResult& In);
+        friend auto operator<=>(const ErrorTypeAndDescription&, const ErrorTypeAndDescription&) = default;
+        friend std::ostream& operator<<(std::ostream& InOs, const ErrorTypeAndDescription& In);
     };
 
     class Results
@@ -77,34 +86,18 @@ namespace stf
     public:
 
         Results() = default;
-        Results(FailedShaderCompilationResult InError);
+        Results(ErrorTypeAndDescription InError);
         Results(TestRunResults InResults);
 
-        template<typename ThisType>
-        operator bool(this ThisType&& InThis)
-        {
-            return std::visit(OverloadSet{
-            [](std::monostate)
-            {
-                return false;
-            },
-            [](const TestRunResults& InTestResults)
-            {
-                return InTestResults.NumFailed == 0;
-            },
-            [](const FailedShaderCompilationResult&)
-            {
-                return false;
-            } }, InThis.m_Result);
-        }
+        operator bool() const;
 
         const TestRunResults* GetTestResults() const;
-        const FailedShaderCompilationResult* GetFailedCompilationResult() const;
+        const ErrorTypeAndDescription* GetTestRunError() const;
 
         friend std::ostream& operator<<(std::ostream& InOs, const Results& In);
 
     private:
-        std::variant<std::monostate, TestRunResults, FailedShaderCompilationResult> m_Result;
+        std::variant<std::monostate, TestRunResults, ErrorTypeAndDescription> m_Result;
     };
 
     std::vector<FailedAssert> ProcessFailedAsserts(const TestDataSection<HLSLAssertMetaData>& InAssertSection, const u32 InNumFailed, const std::span<const std::byte> InTestData, const MultiTypeByteReaderMap& InByteReaderMap);

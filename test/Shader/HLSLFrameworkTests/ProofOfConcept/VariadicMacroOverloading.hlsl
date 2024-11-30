@@ -43,7 +43,6 @@
 #define IF_WITH_PARAMS(...) IF_WITH_PARAMS_IMPL(IF_WITH_PARAMS_, PP_NARG(__VA_ARGS__), __VA_ARGS__)
 #define VARIADIC_OVERLOAD_PARAMS(...) IF_WITH_PARAMS(__VA_ARGS__)
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void VariadicMacroOverloading(uint3 DispatchThreadId : SV_DispatchThreadID)
 {

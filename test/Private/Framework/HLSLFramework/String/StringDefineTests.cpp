@@ -90,7 +90,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                     THEN("Shader should fail compilation with expected error")
                     {
                         CAPTURE(results);
-                        const auto actual = results.GetFailedCompilationResult();
+                        const auto actual = results.GetTestRunError();
                         REQUIRE(actual);
 
                         std::stringstream stream;

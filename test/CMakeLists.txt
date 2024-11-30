@@ -46,9 +46,10 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/TernaryInTypeTrait.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/UserDefinedVector.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/VariadicMacro.hlsl
-    Shader/D3D12/Shader/ShaderCompilerTests/ResourceBinding/ArrayOfBuffers.hlsl
-    Shader/D3D12/Shader/ShaderCompilerTests/ResourceBinding/SingleInputBuffer.hlsl
-    Shader/D3D12/Shader/ShaderCompilerTests/ResourceBinding/UnboundedArrayOfBuffers.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ReflectionTests/ArrayOfBuffers.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ReflectionTests/ManyTypesOfBindings.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ReflectionTests/SingleInputBuffer.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ReflectionTests/UnboundedArrayOfBuffers.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderIncludeHandlerTests/Include.hlsli
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderIncludeHandlerTests/ShaderWithInclude.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/ClosestHitShaderWithAttributes.hlsl
@@ -62,11 +63,24 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/PixelShaderWithSamplerFeedback.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/PixelShaderWithSV_Barycentrics.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/ShaderModelTests/TemplatedByteAddressBuffer.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/ConstantBufferCanBeBoundToRootConstants/ArrayBufferStruct.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/ConstantBufferCanBeBoundToRootConstants/NonArrayBufferStructContainsArray.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/ConstantBufferCanBeBoundToRootConstants/NonArrayBufferStructContainsMemberThatContainsArray.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/ConstantBufferCanBeBoundToRootConstants/NonArrayBufferWithNoArrayMembers.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/ConstantBufferCanBeBoundToRootConstants/StructIsOver64Uints.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/IsOrContainsArray/ArrayBufferStruct.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/IsOrContainsArray/NonArrayBufferStructContainsArray.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/IsOrContainsArray/NonArrayBufferStructContainsMemberThatContainsArray.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/ShaderReflectionUtilsTests/IsOrContainsArray/NonArrayBufferWithNoArrayMembers.hlsl
     Shader/HLSLFrameworkTests/Asserts/AreEqual.hlsl
     Shader/HLSLFrameworkTests/Asserts/Fail.hlsl
     Shader/HLSLFrameworkTests/Asserts/IsFalse.hlsl
     Shader/HLSLFrameworkTests/Asserts/IsTrue.hlsl
     Shader/HLSLFrameworkTests/Asserts/NotEqual.hlsl
+    Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/GlobalBindings.hlsl
+    Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/GlobalBindingsTooLarge.hlsl
+    Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/MultipleConstantBuffers.hlsl
+    Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/WithArray.hlsl
     Shader/HLSLFrameworkTests/Bugs/ConversionOperator.hlsl
     Shader/HLSLFrameworkTests/ByteReaderTraits/ByteReaderTraitsTests.hlsl
     Shader/HLSLFrameworkTests/ByteWriter/ByteWriterTests.hlsl
@@ -128,16 +142,19 @@ set(SOURCES
     Private/D3D12/DescriptorRingAllocatorTests.cpp
     Private/D3D12/DescriptorTests.cpp
     Private/D3D12/Shader/HLSLTests.cpp
-    Private/D3D12/Shader/ResourceBindingTests.cpp
-    Private/D3D12/Shader/ShaderIncludeHandlerTests.cpp
+    Private/D3D12/Shader/ReflectionTests.cpp
+    Private/D3D12/Shader/ShaderBindingTests.cpp
     Private/D3D12/Shader/ShaderHashTests.cpp
+    Private/D3D12/Shader/ShaderIncludeHandlerTests.cpp
     Private/D3D12/Shader/ShaderModelTests.cpp
+    Private/D3D12/Shader/ShaderReflectionUtilsTests.cpp
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManagerTests.cpp
     Private/Framework/HLSLFramework/Asserts/AreEqualTests.cpp
     Private/Framework/HLSLFramework/Asserts/FailTests.cpp
     Private/Framework/HLSLFramework/Asserts/IsFalseTests.cpp
     Private/Framework/HLSLFramework/Asserts/IsTrueTests.cpp
     Private/Framework/HLSLFramework/Asserts/NotEqualTests.cpp
+    Private/Framework/HLSLFramework/Binding/ValueBindingsTests.cpp
     Private/Framework/HLSLFramework/Container/ArrayTests.cpp
     Private/Framework/HLSLFramework/Macros/AssertMacroTests.cpp
     Private/Framework/HLSLFramework/Macros/NumArgsTests.cpp

@@ -1,6 +1,5 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_IntArray_WHEN_LoadCalled_THEN_ReturnsExpectedValue(uint3 DispatchThreadId : SV_DispatchThreadID)
 {

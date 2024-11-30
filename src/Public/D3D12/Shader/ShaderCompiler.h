@@ -26,11 +26,13 @@ namespace stf
     {
     public:
 
+        using ToStringResult = Expected<std::string, std::string>;
+
         ShaderCodeSource() = default;
         ShaderCodeSource(std::string InSourceCode);
         ShaderCodeSource(fs::path InSourcePath);
 
-        std::string ToString(const VirtualShaderDirectoryMappingManager& InManager) const;
+        ToStringResult ToString(const VirtualShaderDirectoryMappingManager& InManager) const;
 
     private:
         std::variant<std::monostate, std::string, fs::path> m_Source;

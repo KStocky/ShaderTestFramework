@@ -7,7 +7,6 @@ struct EmptyCallable
     }
 };
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -22,7 +21,6 @@ void GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce(uint3 DispatchThreadI
     ASSERT(AreEqual, 1, num);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_SingleSubsection_WHEN_RanUsingWhile_THEN_SectionsEntered2Times(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -42,7 +40,6 @@ void GIVEN_SingleSubsection_WHEN_RanUsingWhile_THEN_SectionsEntered2Times(uint3 
     ASSERT(AreEqual, 2, num);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_TwoSubsections_WHEN_RanUsingWhile_THEN_SectionsEntered4Times(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -67,7 +64,6 @@ void GIVEN_TwoSubsections_WHEN_RanUsingWhile_THEN_SectionsEntered4Times(uint3 Di
     ASSERT(AreEqual, 4, num);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_RanUsingWhile_THEN_SectionsEntered5Times(uint3 DispatchThreadId : SV_DispatchThreadID)
 {

@@ -8,4 +8,19 @@ namespace stf
         , m_Hash(std::move(InParams.Hash))
     {
     }
+
+    IDxcBlob* CompiledShaderData::GetCompiledShader() const
+    {
+        return m_CompiledShader.Get();
+    }
+
+    const std::optional<ShaderHash>& CompiledShaderData::GetShaderHash() const
+    {
+        return m_Hash;
+    }
+
+    ID3D12ShaderReflection* CompiledShaderData::GetReflection() const
+    {
+        return m_Reflection.Get();
+    }
 }

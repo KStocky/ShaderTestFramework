@@ -3,11 +3,14 @@
 #include "D3D12/CommandEngine.h"
 #include "D3D12/GPUDevice.h"
 #include "D3D12/GPUResource.h"
+#include "D3D12/Shader/ShaderBinding.h"
 #include "D3D12/Shader/ShaderCompiler.h"
 #include "Framework/HLSLTypes.h"
 #include "Framework/TestDataBufferLayout.h"
 #include "Framework/TestDataBufferProcessor.h"
 #include "Stats/StatSystem.h"
+#include "Utility/Expected.h"
+#include "Utility/TransparentStringHash.h"
 #include <optional>
 #include <vector>
 
@@ -62,6 +65,7 @@ namespace stf
         {
             CompilationEnvDesc CompilationEnv;
             std::string_view TestName;
+            std::vector<ShaderBinding> Bindings;
             uint3 ThreadGroupCount{};
             TestDataBufferLayoutDesc TestDataLayout
             {
@@ -103,13 +107,28 @@ namespace stf
         using ScopedDuration = ScopedCPUDurationStat<StatSystemGetter>;
         static std::vector<TimedStat> cachedStats;
 
+        struct BindingInfo
+        {
+            u32 RootParamIndex = 0;
+            u32 OffsetIntoBuffer = 0;
+            u32 BindingSize = 0;
+        };
+
+        struct ReflectionResults
+        {
+            RootSignature RootSig;
+            std::unordered_map<std::string, BindingInfo, TransparentStringHash, std::equal_to<>> NameToBindingInfo;
+            std::unordered_map<u32, std::vector<u32>> RootParamBuffers;
+        };
+
         Results RunTestImpl(RuntimeTestDesc InTestDesc, const bool InIsFailureRetry);
 
         CompilationResult CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const;
         CommandEngine CreateCommandEngine() const;
         DescriptorHeap CreateDescriptorHeap() const;
         PipelineState CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const;
-        RootSignature CreateRootSignature(const CompiledShaderData& InShaderData) const;
+        Expected<ReflectionResults, ErrorTypeAndDescription> ProcessShaderReflection(const CompiledShaderData& InShaderData) const;
+        Expected<void, ErrorTypeAndDescription> PopulateTestConstantBuffers(ReflectionResults& InOutReflectionResults, const std::span<const ShaderBinding> InBindings) const;
         GPUResource CreateAssertBuffer(const u64 InSizeInBytes) const;
         GPUResource CreateReadbackBuffer(const u64 InSizeInBytes) const;
         DescriptorHandle CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap, const u32 InIndex) const;

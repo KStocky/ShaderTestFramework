@@ -4,10 +4,13 @@
 #include "Framework/HLSLTypes.h"
 #include "Framework/PIXCapturer.h"
 #include "Utility/EnumReflection.h"
-#include "Utility/Math.h"
 
 #include "D3D12/CommandEngine.h"
 #include "D3D12/GPUDevice.h"
+#include "D3D12/Shader/ShaderReflectionUtils.h"
+
+#include <d3d12shader.h>
+#include <d3dx12/d3dx12.h>
 
 #include <format>
 #include <sstream>
@@ -67,12 +70,13 @@ namespace stf
             return RunTestImpl(std::move(InTestDesc), false);
         }
 
-        const auto firstResult = RunTestImpl(InTestDesc, false);
-        const bool compilationFailed = firstResult.GetFailedCompilationResult();
-        const bool succeeded = firstResult;
-
-        if (succeeded || compilationFailed || !requestedRetryOnFail)
+        if (auto firstResult = RunTestImpl(InTestDesc, false))
         {
+            return firstResult;
+        }
+        else if (auto testRunError = firstResult.GetTestRunError())
+        {
+            // There is no point in retrying the test if the test setup or shader compilation failed.
             return firstResult;
         }
 
@@ -86,7 +90,7 @@ namespace stf
 
         if (!compileResult.has_value())
         {
-            return Results{ {compileResult.error()} };
+            return Results{ { .Type = ETestRunErrorType::ShaderCompilation, .Error = compileResult.error() } };
         }
 
         return Results{ TestRunResults{} };
@@ -129,14 +133,22 @@ namespace stf
         {
             return Results
             {
-                FailedShaderCompilationResult{compileResult.error()}
+                {
+                    .Type = ETestRunErrorType::ShaderCompilation,
+                    .Error = compileResult.error()
+                }
             };
         }
 
         auto engine = CreateCommandEngine();
         auto resourceHeap = CreateDescriptorHeap();
-        auto rootSignature = CreateRootSignature(compileResult.value());
-        auto pipelineState = CreatePipelineState(rootSignature, compileResult->GetCompiledShader());
+        auto reflectionData = ProcessShaderReflection(compileResult.value());
+
+        if (!reflectionData)
+        {
+            return Results{ reflectionData.error() };
+        }
+        auto pipelineState = CreatePipelineState(reflectionData.value().RootSig, compileResult->GetCompiledShader());
 
         const auto [dimX, dimY, dimZ] =
             [&compileResult, threadGroupCount = InTestDesc.ThreadGroupCount]()
@@ -155,6 +167,25 @@ namespace stf
 
         const TestDataBufferLayout testDataLayout{ InTestDesc.TestDataLayout };
 
+        if (reflectionData.value().RootParamBuffers.size() > 0)
+        {
+            InTestDesc.Bindings.append_range
+            (std::array{
+                ShaderBinding{ "stf::detail::DispatchDimensions", uint3{dimX, dimY, dimZ} },
+                ShaderBinding{ "stf::detail::AllocationBufferIndex", 1u },
+                ShaderBinding{ "stf::detail::TestDataBufferIndex", 0u },
+                ShaderBinding{ "stf::detail::Asserts", testDataLayout.GetAssertSection() },
+                ShaderBinding{ "stf::detail::Strings", testDataLayout.GetStringSection() },
+                ShaderBinding{ "stf::detail::Sections", testDataLayout.GetSectionInfoSection() }
+            });
+
+            const auto populateResult = PopulateTestConstantBuffers(reflectionData.value(), InTestDesc.Bindings);
+            if (!populateResult)
+            {
+                return Results{ populateResult.error() };
+            }
+        }
+
         const u64 bufferSizeInBytes = std::max(testDataLayout.GetSizeOfTestData(), 4u);
         auto assertBuffer = CreateAssertBuffer(bufferSizeInBytes);
         auto allocationBuffer = CreateAssertBuffer(28ull);
@@ -171,14 +202,12 @@ namespace stf
             engine.Execute(InTestDesc.TestName,
                 [&resourceHeap,
                 &pipelineState,
-                &rootSignature,
+                &reflectionData,
                 &assertBuffer,
                 &allocationBuffer,
                 &readBackBuffer,
                 &readBackAllocationBuffer,
                 threadGroupCount = InTestDesc.ThreadGroupCount,
-                testDataLayout,
-                dimX, dimY, dimZ,
                 this]
                 (ScopedCommandContext& InContext)
                 {
@@ -187,22 +216,14 @@ namespace stf
                         {
                             InContext->SetPipelineState(pipelineState);
                             InContext->SetDescriptorHeaps(resourceHeap);
-                            InContext->SetComputeRootSignature(rootSignature);
+                            InContext->SetComputeRootSignature(reflectionData.value().RootSig);
                             InContext->SetBufferUAV(assertBuffer);
                             InContext->SetBufferUAV(allocationBuffer);
 
-                            const auto assertSection = testDataLayout.GetAssertSection();
-                            const auto stringSection = testDataLayout.GetStringSection();
-                            const auto sectionSection = testDataLayout.GetSectionInfoSection();
-                            std::array params
+                            for (const auto& [paramIndex, buffer] : reflectionData.value().RootParamBuffers)
                             {
-                                dimX, dimY, dimZ, 1u,
-                                0u, 0u, 0u, 0u,
-                                assertSection.Begin(), assertSection.NumMeta(), assertSection.SizeInBytesOfData(), assertSection.SizeInBytesOfSection(),
-                                stringSection.Begin(), stringSection.NumMeta(), stringSection.SizeInBytesOfData(), stringSection.SizeInBytesOfSection(),
-                                sectionSection.Begin(), sectionSection.NumMeta(), sectionSection.SizeInBytesOfData(), sectionSection.SizeInBytesOfSection()
-                            };
-                            InContext->SetComputeRoot32BitConstants(0, std::span{ params }, 0);
+                                InContext->SetComputeRoot32BitConstants(paramIndex, std::span{ buffer }, 0);
+                            }
                         }
                     );
 
@@ -312,9 +333,156 @@ namespace stf
         return m_Device.CreatePipelineState(desc);
     }
 
-    RootSignature ShaderTestFixture::CreateRootSignature(const CompiledShaderData& InShaderData) const
+    Expected<ShaderTestFixture::ReflectionResults, ErrorTypeAndDescription> ShaderTestFixture::ProcessShaderReflection(const CompiledShaderData& InShaderData) const
     {
-        return m_Device.CreateRootSignature(InShaderData);
+        const auto refl = InShaderData.GetReflection();
+        std::unordered_map<std::string, BindingInfo, TransparentStringHash, std::equal_to<>> nameToBindingInfo;
+        std::unordered_map<u32, std::vector<u32>> rootParamBuffers;
+
+        if (!refl)
+        {
+            return std::unexpected(ErrorTypeAndDescription
+                {
+                    .Type = ETestRunErrorType::RootSignatureGeneration,
+                    .Error = "No reflection data generated. Did you compile your shader as a lib? Libs do not generate reflection data"
+                });
+        }
+
+        D3D12_SHADER_DESC shaderDesc{};
+        refl->GetDesc(&shaderDesc);
+
+        std::vector<CD3DX12_ROOT_PARAMETER1> parameters;
+        parameters.reserve(shaderDesc.BoundResources);
+
+        u32 totalNumValues = 0;
+        for (u32 boundIndex = 0; boundIndex < shaderDesc.BoundResources; ++boundIndex)
+        {
+            D3D12_SHADER_INPUT_BIND_DESC bindDesc{};
+            refl->GetResourceBindingDesc(boundIndex, &bindDesc);
+
+            if (bindDesc.Type != D3D_SIT_CBUFFER)
+            {
+                return std::unexpected(ErrorTypeAndDescription
+                    {
+                        .Type = ETestRunErrorType::RootSignatureGeneration,
+                        .Error = "Only constant buffers are supported for binding."
+                    });
+            }
+
+            const auto constantBuffer = refl->GetConstantBufferByName(bindDesc.Name);
+            D3D12_SHADER_BUFFER_DESC bufferDesc{};
+            ThrowIfFailed(constantBuffer->GetDesc(&bufferDesc));
+
+            if (!ConstantBufferCanBeBoundToRootConstants(*constantBuffer))
+            {
+                return std::unexpected(ErrorTypeAndDescription
+                    {
+                        .Type = ETestRunErrorType::RootSignatureGeneration,
+                        .Error = std::format("Constant Buffer: {} can not be stored in root constants", bufferDesc.Name)
+                    });
+            }
+
+            const u32 numValues = bufferDesc.Size / sizeof(u32);
+            totalNumValues += numValues;
+
+            if (totalNumValues > 64)
+            {
+                return std::unexpected(ErrorTypeAndDescription
+                    {
+                        .Type = ETestRunErrorType::RootSignatureGeneration,
+                        .Error = "Limit of 64 uints reached"
+                    });
+            }
+
+            if (bufferDesc.Name != nullptr && std::string_view{ bufferDesc.Name } == std::string_view{ "$Globals" })
+            {
+                for (u32 globalIndex = 0; globalIndex < bufferDesc.Variables; ++globalIndex)
+                {
+                    auto var = constantBuffer->GetVariableByIndex(globalIndex);
+                    D3D12_SHADER_VARIABLE_DESC varDesc{};
+                    var->GetDesc(&varDesc);
+
+                    nameToBindingInfo.emplace(
+                        std::string{ varDesc.Name }, 
+                        BindingInfo{ 
+                            .RootParamIndex = static_cast<u32>(parameters.size()), 
+                            .OffsetIntoBuffer = varDesc.StartOffset,
+                            .BindingSize = varDesc.Size
+                        });
+                }
+            }
+            else
+            {
+                nameToBindingInfo.emplace(
+                    std::string{ bindDesc.Name }, 
+                    BindingInfo{ 
+                        .RootParamIndex = static_cast<u32>(parameters.size()), 
+                        .OffsetIntoBuffer = 0,
+                        .BindingSize = bufferDesc.Size
+                    });
+            }
+
+            rootParamBuffers[static_cast<u32>(parameters.size())].resize(bufferDesc.Size / sizeof(u32));
+
+            auto& parameter = parameters.emplace_back();
+            parameter.InitAsConstants(numValues, bindDesc.BindPoint, bindDesc.Space);
+        }
+
+        CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSig{};
+        rootSig.Init_1_1(static_cast<u32>(parameters.size()), parameters.data(), 0u, nullptr,
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_VERTEX_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_CBV_SRV_UAV_HEAP_DIRECTLY_INDEXED
+        );
+
+        return ReflectionResults{ 
+            .RootSig = m_Device.CreateRootSignature(rootSig), 
+            .NameToBindingInfo = std::move(nameToBindingInfo),
+            .RootParamBuffers = std::move(rootParamBuffers)
+        };
+    }
+
+    Expected<void, ErrorTypeAndDescription> ShaderTestFixture::PopulateTestConstantBuffers(
+        ReflectionResults& InOutReflectionResults, 
+        const std::span<const ShaderBinding> InBindings) const
+    {
+        for (const auto& binding : InBindings)
+        {
+            const auto bindingInfo = InOutReflectionResults.NameToBindingInfo.find(binding.GetName());
+            if (bindingInfo == InOutReflectionResults.NameToBindingInfo.cend())
+            {
+                return Unexpected(ErrorTypeAndDescription
+                {
+                    .Type = ETestRunErrorType::Binding,
+                    .Error = std::format("No shader binding named {} found in test shader", binding.GetName())
+                });
+            }
+
+            auto& bindingBuffer = InOutReflectionResults.RootParamBuffers[bindingInfo->second.RootParamIndex];
+
+            ThrowIfFalse(bindingBuffer.size() > 0, "Shader binding buffer has a size of zero. It should have been created and initialized when processing the reflection data");
+        
+            const auto bindingData = binding.GetBindingData();
+            if (bindingData.size_bytes() > bindingInfo->second.BindingSize)
+            {
+                return
+                    Unexpected(ErrorTypeAndDescription
+                    {
+                        .Type = ETestRunErrorType::Binding,
+                        .Error = std::format("Shader binding {0} provided is larger than the expected binding size", binding.GetName())
+                    });
+            }
+
+            const u32 uintIndex = bindingInfo->second.OffsetIntoBuffer / sizeof(u32);
+            std::memcpy(bindingBuffer.data() + uintIndex, bindingData.data(), bindingData.size_bytes());
+        }
+
+        return {};
     }
 
     GPUResource ShaderTestFixture::CreateAssertBuffer(const u64 InSizeInBytes) const

@@ -11,6 +11,7 @@ From this reference page you should be able to navigate to all the documentation
 ## Test Framework Concepts
 
 - [Asserts](./STF/Asserts.md)
+- [Bindings](./STF/Bindings.md)
 - [Byte Readers and Writers](./STF/ByteReadersAndWriters.md)
 - [Compile Time Tests](./STF/CompileTimeTests.md)
 - [Scenarios and Sections](./STF/ScenariosAndSections.md)

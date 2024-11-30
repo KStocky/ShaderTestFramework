@@ -21,7 +21,6 @@ namespace stf
     struct ByteReaderTraits<MyType> : ByteReaderTraitsBase<MY_TYPE_READER_ID>{};
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void Test()
 {

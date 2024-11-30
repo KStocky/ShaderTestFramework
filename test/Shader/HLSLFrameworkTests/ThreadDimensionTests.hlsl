@@ -1,6 +1,5 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
 
- [RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_SingleThreadDispatched_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -9,7 +8,6 @@ void GIVEN_SingleThreadDispatched_WHEN_DispatchDimensionsQueried_THEN_IsAsExpect
     ASSERT(AreEqual, expectedDim, stf::detail::DispatchDimensions);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_SingleThreadPerGroupAnd10Groups_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -17,7 +15,7 @@ void GIVEN_SingleThreadPerGroupAnd10Groups_WHEN_DispatchDimensionsQueried_THEN_I
 
     ASSERT(AreEqual, expectedDim, stf::detail::DispatchDimensions);
 }
-[RootSignature(SHADER_TEST_RS)]
+
 [numthreads(10,10,10)]
 void GIVEN_SingleGroupWithGroupSizeOf10_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -25,7 +23,7 @@ void GIVEN_SingleGroupWithGroupSizeOf10_WHEN_DispatchDimensionsQueried_THEN_IsAs
 
     ASSERT(AreEqual, expectedDim, stf::detail::DispatchDimensions);
 }
-[RootSignature(SHADER_TEST_RS)]
+
 [numthreads(2,2,2)]
 void GIVEN_GroupWithSide2WithGroupSizeOfSide2_WHEN_DispatchDimensionsQueried_THEN_IsAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
 {

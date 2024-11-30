@@ -7,7 +7,6 @@ struct EmptyCallable
     }
 };
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_EmptyScenario_WHEN_Ran_THEN_NoAssertMade(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -16,7 +15,6 @@ void GIVEN_EmptyScenario_WHEN_Ran_THEN_NoAssertMade(uint3 DispatchThreadId : SV_
     }
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_ScenarioWithNoSections_WHEN_Ran_THEN_FunctionOnlyEnteredOnce(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -28,7 +26,6 @@ void GIVEN_ScenarioWithNoSections_WHEN_Ran_THEN_FunctionOnlyEnteredOnce(uint3 Di
     }
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -51,7 +48,6 @@ void GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce(uint3 DispatchThreadI
     }
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_TwoSections_WHEN_Ran_THEN_EachSectionIsEnteredOnce(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -93,7 +89,6 @@ void GIVEN_TwoSections_WHEN_Ran_THEN_EachSectionIsEnteredOnce(uint3 DispatchThre
     }
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -146,7 +141,6 @@ void GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnte
     }
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_ScenarioWithoutId_WHEN_Ran_THEN_IdIsNone(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -157,7 +151,6 @@ void GIVEN_ScenarioWithoutId_WHEN_Ran_THEN_IdIsNone(uint3 DispatchThreadId : SV_
     ASSERT(AreEqual, stf::detail::EThreadIDType::None, stf::detail::Scratch.ThreadID.Type);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(42,1,1)]
 void GIVEN_ScenarioWithDispatchThreadId_WHEN_Ran_THEN_IdIsInt3(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
@@ -169,7 +162,6 @@ void GIVEN_ScenarioWithDispatchThreadId_WHEN_Ran_THEN_IdIsInt3(uint3 DispatchThr
     ASSERT(AreEqual, stf::detail::EThreadIDType::Int3, stf::detail::Scratch.ThreadID.Type);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(42,1,1)]
 void GIVEN_ScenarioWithIntId_WHEN_Ran_THEN_IdIsInt()
 {

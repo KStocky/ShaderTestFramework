@@ -34,7 +34,6 @@ void FailingAssertsWithMacro()
     ASSERT(NotEqual, 42, 42);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1, 1, 1)]
 void AssertTests()
 {

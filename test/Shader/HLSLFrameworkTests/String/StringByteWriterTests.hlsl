@@ -1,7 +1,6 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
 #include "/Test/TTL/string.hlsli"
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_EmptyString_WHEN_BytesRequiredQueried_THEN_ZeroReturned()
 {
@@ -10,7 +9,6 @@ void GIVEN_EmptyString_WHEN_BytesRequiredQueried_THEN_ZeroReturned()
     ASSERT(AreEqual, ttl::bytes_required(buff), 0u);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_StringWithMultipleOf4Characters_WHEN_BytesRequiredQueried_THEN_BytesRequiredIsSameAsNumberOfChars()
 {
@@ -24,7 +22,6 @@ void GIVEN_StringWithMultipleOf4Characters_WHEN_BytesRequiredQueried_THEN_BytesR
     ASSERT(AreEqual, ttl::bytes_required(buff), buff.Size);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_StringWithNonMultipleOf4Characters_WHEN_BytesRequiredQueried_THEN_BytesRequiredIsNextMultipleOf4()
 {
@@ -39,7 +36,6 @@ void GIVEN_StringWithNonMultipleOf4Characters_WHEN_BytesRequiredQueried_THEN_Byt
     ASSERT(AreEqual, ttl::bytes_required(buff), ttl::aligned_offset(buff.Size, 4u));
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_String_WHEN_AlignmentRequiredQueried_THEN_FourReturned()
 {
@@ -48,7 +44,6 @@ void GIVEN_String_WHEN_AlignmentRequiredQueried_THEN_FourReturned()
     ASSERT(AreEqual, ttl::alignment_required(buff), 4u);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_EmptyString_WHEN_WriteCalled_THEN_NothingWritten()
 {
@@ -64,7 +59,6 @@ void GIVEN_EmptyString_WHEN_WriteCalled_THEN_NothingWritten()
     ASSERT(AreEqual, vec[0], expectedVal);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_StringWith4Characters_WHEN_WriteCalled_THEN_4CharactersWritten()
 {
@@ -83,7 +77,6 @@ void GIVEN_StringWith4Characters_WHEN_WriteCalled_THEN_4CharactersWritten()
     ASSERT(AreEqual, vec[0], expectedVal);
 }
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_StringWith5Characters_WHEN_WriteCalled_THEN_5CharactersWritten()
 {

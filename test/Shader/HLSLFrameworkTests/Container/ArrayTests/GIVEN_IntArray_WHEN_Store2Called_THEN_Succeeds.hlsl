@@ -1,6 +1,5 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void GIVEN_IntArray_WHEN_Store2Called_THEN_Succeeds(uint3 DispatchThreadId : SV_DispatchThreadID)
 {

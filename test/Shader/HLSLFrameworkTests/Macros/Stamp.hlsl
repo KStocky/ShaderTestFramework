@@ -2,7 +2,6 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
 #include "/Test/TTL/macro.hlsli"
 
-[RootSignature(SHADER_TEST_RS)]
 [numthreads(1,1,1)]
 void StampTests()
 {
