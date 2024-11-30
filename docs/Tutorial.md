@@ -14,7 +14,8 @@
 5. [Working with Shader Files using Virtual Shader Directories](#working-with-shader-files-using-virtual-shader-directories)
 6. [SCENARIOs and SECTIONs](#scenarios-and-sections)
 7. [Assertions](#assertions)
-8. [Compile Time Tests](#compile-time-tests)
+8. [Bindings](#bindings)
+9. [Compile Time Tests](#compile-time-tests)
 
 ## Requirements
 
@@ -359,6 +360,10 @@ Please refer to [Scenarios and Sections](./STF/ScenariosAndSections.md) for more
 ## Assertions
 
 To read more about the other assertion features that Shader Test Framework provides, the [Asserts](./STF/Asserts.md) documentation is the place to go.
+
+## Bindings
+
+Test writers can set constant buffer data for tests so that algorithms written in shader code can be tested with data that is passed in from C++ code. the [Bindings](./STF/Bindings.md) documentation is the place to go to read more about setting constant buffer data.
 
 ## Compile Time Tests
 
