@@ -192,8 +192,8 @@ namespace stf
         auto readBackBuffer = CreateReadbackBuffer(bufferSizeInBytes);
         auto readBackAllocationBuffer = CreateReadbackBuffer(28ull);
 
-        const auto assertUAV = CreateAssertBufferUAV(assertBuffer, resourceHeap, 0);
-        const auto allocationUAV = CreateAssertBufferUAV(allocationBuffer, resourceHeap, 1);
+        const auto assertUAV = CreateAssertBufferUAV(*assertBuffer, resourceHeap, 0);
+        const auto allocationUAV = CreateAssertBufferUAV(*allocationBuffer, resourceHeap, 1);
 
         {
             ScopedDuration testExecution("ShaderTestFixture::RunTest Test Execution");
@@ -217,8 +217,8 @@ namespace stf
                             InContext->SetPipelineState(pipelineState);
                             InContext->SetDescriptorHeaps(resourceHeap);
                             InContext->SetComputeRootSignature(reflectionData.value().RootSig);
-                            InContext->SetBufferUAV(assertBuffer);
-                            InContext->SetBufferUAV(allocationBuffer);
+                            InContext->SetBufferUAV(*assertBuffer);
+                            InContext->SetBufferUAV(*allocationBuffer);
 
                             for (const auto& [paramIndex, buffer] : reflectionData.value().RootParamBuffers)
                             {
@@ -237,8 +237,8 @@ namespace stf
                     InContext.Section("Results readback",
                         [&](ScopedCommandContext& InContext)
                         {
-                            InContext->CopyBufferResource(readBackBuffer, assertBuffer);
-                            InContext->CopyBufferResource(readBackAllocationBuffer, allocationBuffer);
+                            InContext->CopyBufferResource(*readBackBuffer, *assertBuffer);
+                            InContext->CopyBufferResource(*readBackAllocationBuffer, *allocationBuffer);
                         }
                     );
                 }
@@ -249,7 +249,7 @@ namespace stf
 
         {
             ScopedDuration readbackScope(std::format("ShaderTestFixture::ReadbackResults: {}", InTestDesc.TestName));
-            return ReadbackResults(readBackAllocationBuffer, readBackBuffer, uint3(dimX, dimY, dimZ), testDataLayout);
+            return ReadbackResults(*readBackAllocationBuffer, *readBackBuffer, uint3(dimX, dimY, dimZ), testDataLayout);
         }
     }
 
@@ -485,7 +485,7 @@ namespace stf
         return {};
     }
 
-    GPUResource ShaderTestFixture::CreateAssertBuffer(const u64 InSizeInBytes) const
+    SharedPtr<GPUResource> ShaderTestFixture::CreateAssertBuffer(const u64 InSizeInBytes) const
     {
         const auto heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
         const auto resourceDesc = CD3DX12_RESOURCE_DESC1::Buffer(InSizeInBytes, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
@@ -493,7 +493,7 @@ namespace stf
         return m_Device->CreateCommittedResource(heapProps, D3D12_HEAP_FLAG_NONE, resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED);
     }
 
-    GPUResource ShaderTestFixture::CreateReadbackBuffer(const u64 InSizeInBytes) const
+    SharedPtr<GPUResource> ShaderTestFixture::CreateReadbackBuffer(const u64 InSizeInBytes) const
     {
         const auto heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_READBACK);
         const auto resourceDesc = CD3DX12_RESOURCE_DESC1::Buffer(InSizeInBytes);

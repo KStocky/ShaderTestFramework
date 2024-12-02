@@ -140,7 +140,7 @@ namespace stf
         CommandList CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandList") const;
         CommandQueue CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName = "DefaultCommandQueue") const;
 
-        GPUResource CreateCommittedResource(
+        SharedPtr<GPUResource> CreateCommittedResource(
             const D3D12_HEAP_PROPERTIES& InHeapProps,
             const D3D12_HEAP_FLAGS InFlags,
             const D3D12_RESOURCE_DESC1& InResourceDesc,

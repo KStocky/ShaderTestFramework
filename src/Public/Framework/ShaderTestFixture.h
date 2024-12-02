@@ -130,8 +130,8 @@ namespace stf
         PipelineState CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const;
         Expected<ReflectionResults, ErrorTypeAndDescription> ProcessShaderReflection(const CompiledShaderData& InShaderData) const;
         Expected<void, ErrorTypeAndDescription> PopulateTestConstantBuffers(ReflectionResults& InOutReflectionResults, const std::span<const ShaderBinding> InBindings) const;
-        GPUResource CreateAssertBuffer(const u64 InSizeInBytes) const;
-        GPUResource CreateReadbackBuffer(const u64 InSizeInBytes) const;
+        SharedPtr<GPUResource> CreateAssertBuffer(const u64 InSizeInBytes) const;
+        SharedPtr<GPUResource> CreateReadbackBuffer(const u64 InSizeInBytes) const;
         DescriptorHandle CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap, const u32 InIndex) const;
         Results ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer, const uint3 InDispatchDimensions, const TestDataBufferLayout& InTestDataLayout) const;
         void PopulateDefaultByteReaders();

@@ -205,7 +205,7 @@ namespace stf
         return CommandQueue(CommandQueue::CreationParams{ std::move(raw), std::move(CreateFence(0ull)) });
     }
 
-    GPUResource GPUDevice::CreateCommittedResource(const D3D12_HEAP_PROPERTIES& InHeapProps, const D3D12_HEAP_FLAGS InFlags, const D3D12_RESOURCE_DESC1& InResourceDesc, const D3D12_BARRIER_LAYOUT InInitialLayout, const D3D12_CLEAR_VALUE* InClearValue, const std::span<DXGI_FORMAT> InCastableFormats, const std::string_view InName) const
+    SharedPtr<GPUResource> GPUDevice::CreateCommittedResource(const D3D12_HEAP_PROPERTIES& InHeapProps, const D3D12_HEAP_FLAGS InFlags, const D3D12_RESOURCE_DESC1& InResourceDesc, const D3D12_BARRIER_LAYOUT InInitialLayout, const D3D12_CLEAR_VALUE* InClearValue, const std::span<DXGI_FORMAT> InCastableFormats, const std::string_view InName) const
     {
         ComPtr<ID3D12Resource2> raw{ nullptr };
 
@@ -222,7 +222,7 @@ namespace stf
                 IID_PPV_ARGS(raw.GetAddressOf()))
         );
         SetName(raw.Get(), InName);
-        return GPUResource(GPUResource::CreationParams{ std::move(raw), InClearValue ? std::optional{*InClearValue} : std::nullopt, {D3D12_BARRIER_SYNC_NONE, D3D12_BARRIER_ACCESS_NO_ACCESS, InInitialLayout} });
+        return MakeShared<GPUResource>(GPUResource::CreationParams{ std::move(raw), InClearValue ? std::optional{*InClearValue} : std::nullopt, {D3D12_BARRIER_SYNC_NONE, D3D12_BARRIER_ACCESS_NO_ACCESS, InInitialLayout} });
     }
 
     DescriptorHeap GPUDevice::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName) const
