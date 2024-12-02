@@ -7,6 +7,7 @@
 
 #include "Utility/FunctionTraits.h"
 #include "Utility/Lambda.h"
+#include "Utility/Pointer.h"
 
 #include <WinPixEventRuntime/pix3.h>
 
@@ -65,7 +66,7 @@ namespace stf
         {
             CommandList List;
             CommandQueue Queue;
-            GPUDevice Device;
+            SharedPtr<GPUDevice> Device;
         };
 
         CommandEngine() = default;
@@ -78,7 +79,7 @@ namespace stf
                 {
                     if (m_Allocators.size() == 0 || !m_Queue.HasFencePointBeenReached(m_Allocators.front().FencePoint))
                     {
-                        return m_Device.CreateCommandAllocator
+                        return m_Device->CreateCommandAllocator
                         (
                             D3D12_COMMAND_LIST_TYPE_DIRECT,
                             "Command Allocator"
@@ -103,7 +104,7 @@ namespace stf
                 {
                     if (m_Allocators.size() == 0 || !m_Queue.HasFencePointBeenReached(m_Allocators.front().FencePoint))
                     {
-                        return m_Device.CreateCommandAllocator
+                        return m_Device->CreateCommandAllocator
                         (
                             D3D12_COMMAND_LIST_TYPE_DIRECT,
                             "Command Allocator"
@@ -144,7 +145,7 @@ namespace stf
             Fence::FencePoint FencePoint;
         };
 
-        GPUDevice m_Device;
+        SharedPtr<GPUDevice> m_Device;
         CommandQueue m_Queue;
         CommandList m_List;
         RingBuffer<FencedAllocator> m_Allocators;

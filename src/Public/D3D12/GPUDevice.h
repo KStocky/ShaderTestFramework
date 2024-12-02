@@ -11,6 +11,7 @@
 #include "D3D12/Shader/RootSignature.h"
 #include "Platform.h"
 #include "Utility/Exception.h"
+#include "Utility/Object.h"
 #include "Utility/Pointer.h"
 
 #include <span>
@@ -104,7 +105,7 @@ namespace stf
         std::is_same_v<T, D3D12_COMPUTE_PIPELINE_STATE_DESC> ||
         std::is_same_v<T, D3DX12_MESH_SHADER_PIPELINE_STATE_DESC>;
 
-    class GPUDevice
+    class GPUDevice : Object
     {
     public:
 
@@ -130,10 +131,6 @@ namespace stf
 
         GPUDevice() = default;
         GPUDevice(const CreationParams InDesc);
-        GPUDevice(const GPUDevice&) = default;
-        GPUDevice(GPUDevice&&) = default;
-        GPUDevice& operator=(const GPUDevice&) = default;
-        GPUDevice& operator=(GPUDevice&&) = default;
         ~GPUDevice();
 
         bool IsValid() const;

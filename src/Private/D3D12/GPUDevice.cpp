@@ -154,22 +154,18 @@ namespace stf
 
     GPUDevice::~GPUDevice()
     {
-        const bool wasValid = IsValid();
-        const bool hasZeroRefs = m_Device.Reset() == 0;
 
-        if (wasValid && hasZeroRefs)
+        m_Device.Reset();
+        // Described in https://stackoverflow.com/questions/46802508/d3d12-unavoidable-leak-report
+        ComPtr<IDXGIDebug1> dxgiDebug;
+        if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
         {
-            // Described in https://stackoverflow.com/questions/46802508/d3d12-unavoidable-leak-report
-            ComPtr<IDXGIDebug1> dxgiDebug;
-            if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
-            {
-                dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_FLAGS(DXGI_DEBUG_RLO_SUMMARY | DXGI_DEBUG_RLO_IGNORE_INTERNAL));
-            }
+            dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_FLAGS(DXGI_DEBUG_RLO_SUMMARY | DXGI_DEBUG_RLO_IGNORE_INTERNAL));
+        }
 
-            if (m_PixHandle)
-            {
-                FreeLibrary(m_PixHandle);
-            }
+        if (m_PixHandle)
+        {
+            FreeLibrary(m_PixHandle);
         }
     }
 

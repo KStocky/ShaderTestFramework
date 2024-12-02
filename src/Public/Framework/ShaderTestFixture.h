@@ -10,6 +10,7 @@
 #include "Framework/TestDataBufferProcessor.h"
 #include "Stats/StatSystem.h"
 #include "Utility/Expected.h"
+#include "Utility/Pointer.h"
 #include "Utility/TransparentStringHash.h"
 #include <optional>
 #include <vector>
@@ -137,7 +138,7 @@ namespace stf
 
         bool ShouldTakeCapture(const EGPUCaptureMode InCaptureMode, const bool InIsFailureRetry) const;
 
-        GPUDevice m_Device;
+        SharedPtr<GPUDevice> m_Device;
         ShaderCompiler m_Compiler;
         MultiTypeByteReaderMap m_ByteReaderMap;
         std::vector<ShaderMacro> m_Defines;

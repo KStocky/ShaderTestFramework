@@ -36,7 +36,7 @@ namespace stf
     std::vector<TimedStat> ShaderTestFixture::cachedStats;
 
     ShaderTestFixture::ShaderTestFixture(FixtureDesc InParams)
-        : m_Device(InParams.GPUDeviceParams)
+        : m_Device(MakeShared<GPUDevice>(InParams.GPUDeviceParams))
         , m_Compiler(CreateShaderCompiler(std::move(InParams.Mappings)))
         , m_ByteReaderMap()
         , m_Defines()
@@ -98,7 +98,7 @@ namespace stf
 
     bool ShaderTestFixture::IsValid() const
     {
-        return m_Device.IsValid();
+        return m_Device->IsValid();
     }
 
     bool ShaderTestFixture::IsUsingAgilitySDK() const
@@ -108,7 +108,7 @@ namespace stf
             return false;
         }
 
-        return m_Device.GetHardwareInfo().FeatureInfo.EnhancedBarriersSupport;
+        return m_Device->GetHardwareInfo().FeatureInfo.EnhancedBarriersSupport;
     }
 
     std::vector<TimedStat> ShaderTestFixture::GetTestStats()
@@ -282,13 +282,13 @@ namespace stf
 
     CommandEngine ShaderTestFixture::CreateCommandEngine() const
     {
-        auto commandList = m_Device.CreateCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
+        auto commandList = m_Device->CreateCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
         D3D12_COMMAND_QUEUE_DESC queueDesc;
         queueDesc.NodeMask = 0;
         queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
         queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
         queueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
-        auto commandQueue = m_Device.CreateCommandQueue(queueDesc);
+        auto commandQueue = m_Device->CreateCommandQueue(queueDesc);
 
         return CommandEngine(CommandEngine::CreationParams{ std::move(commandList), std::move(commandQueue), m_Device });
     }
@@ -317,7 +317,7 @@ namespace stf
         desc.NodeMask = 0;
         desc.NumDescriptors = 2;
         desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-        return m_Device.CreateDescriptorHeap(desc);
+        return m_Device->CreateDescriptorHeap(desc);
     }
 
     PipelineState ShaderTestFixture::CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const
@@ -330,7 +330,7 @@ namespace stf
         desc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
         desc.NodeMask = 0;
         desc.pRootSignature = InRootSig;
-        return m_Device.CreatePipelineState(desc);
+        return m_Device->CreatePipelineState(desc);
     }
 
     Expected<ShaderTestFixture::ReflectionResults, ErrorTypeAndDescription> ShaderTestFixture::ProcessShaderReflection(const CompiledShaderData& InShaderData) const
@@ -441,7 +441,7 @@ namespace stf
         );
 
         return ReflectionResults{ 
-            .RootSig = m_Device.CreateRootSignature(rootSig), 
+            .RootSig = m_Device->CreateRootSignature(rootSig), 
             .NameToBindingInfo = std::move(nameToBindingInfo),
             .RootParamBuffers = std::move(rootParamBuffers)
         };
@@ -490,14 +490,14 @@ namespace stf
         const auto heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
         const auto resourceDesc = CD3DX12_RESOURCE_DESC1::Buffer(InSizeInBytes, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
 
-        return m_Device.CreateCommittedResource(heapProps, D3D12_HEAP_FLAG_NONE, resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED);
+        return m_Device->CreateCommittedResource(heapProps, D3D12_HEAP_FLAG_NONE, resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED);
     }
 
     GPUResource ShaderTestFixture::CreateReadbackBuffer(const u64 InSizeInBytes) const
     {
         const auto heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_READBACK);
         const auto resourceDesc = CD3DX12_RESOURCE_DESC1::Buffer(InSizeInBytes);
-        return m_Device.CreateCommittedResource(heapProps, D3D12_HEAP_FLAG_NONE, resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED);
+        return m_Device->CreateCommittedResource(heapProps, D3D12_HEAP_FLAG_NONE, resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED);
     }
 
     DescriptorHandle ShaderTestFixture::CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap, const u32 InIndex) const
@@ -511,7 +511,7 @@ namespace stf
         uavDesc.Buffer.StructureByteStride = 0;
         uavDesc.Format = DXGI_FORMAT_R32_TYPELESS;
         uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
-        m_Device.CreateUnorderedAccessView(InAssertBuffer, uavDesc, uav);
+        m_Device->CreateUnorderedAccessView(InAssertBuffer, uavDesc, uav);
         return uav;
     }
 
@@ -728,7 +728,7 @@ namespace stf
     bool ShaderTestFixture::ShouldTakeCapture(const EGPUCaptureMode InCaptureMode, const bool InIsFailureRetry) const
     {
         const bool takeCaptureIfAble = InCaptureMode == EGPUCaptureMode::On || (InIsFailureRetry && InCaptureMode == EGPUCaptureMode::CaptureOnFailure);
-        return m_Device.IsGPUCaptureEnabled() && takeCaptureIfAble;
+        return m_Device->IsGPUCaptureEnabled() && takeCaptureIfAble;
     }
 }
 
