@@ -149,7 +149,8 @@ namespace stf
             const std::span<DXGI_FORMAT> InCastableFormats = {},
             const std::string_view InName = "DefaultResource"
         ) const;
-        DescriptorHeap CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName = "DefaultDescriptorHeap") const;
+
+        SharedPtr<DescriptorHeap> CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName = "DefaultDescriptorHeap") const;
 
         Fence CreateFence(const u64 InInitialValue, const std::string_view InName = "DefaultFence") const;
 

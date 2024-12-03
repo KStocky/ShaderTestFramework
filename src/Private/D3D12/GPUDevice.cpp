@@ -225,14 +225,14 @@ namespace stf
         return MakeShared<GPUResource>(GPUResource::CreationParams{ std::move(raw), InClearValue ? std::optional{*InClearValue} : std::nullopt, {D3D12_BARRIER_SYNC_NONE, D3D12_BARRIER_ACCESS_NO_ACCESS, InInitialLayout} });
     }
 
-    DescriptorHeap GPUDevice::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName) const
+    SharedPtr<DescriptorHeap> GPUDevice::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName) const
     {
         ComPtr<ID3D12DescriptorHeap> heap = nullptr;
         ThrowIfFailed(m_Device->CreateDescriptorHeap(&InDesc, IID_PPV_ARGS(heap.GetAddressOf())));
 
         SetName(heap.Get(), InName);
         const u32 descriptorSize = GetDescriptorSize(InDesc.Type);
-        return DescriptorHeap(DescriptorHeap::Desc{ std::move(heap), descriptorSize });
+        return MakeShared<DescriptorHeap>(DescriptorHeap::Desc{ std::move(heap), descriptorSize });
     }
 
     Fence GPUDevice::CreateFence(const u64 InInitialValue, const std::string_view InName) const

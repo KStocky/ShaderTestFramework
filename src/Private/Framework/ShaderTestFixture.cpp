@@ -192,8 +192,8 @@ namespace stf
         auto readBackBuffer = CreateReadbackBuffer(bufferSizeInBytes);
         auto readBackAllocationBuffer = CreateReadbackBuffer(28ull);
 
-        const auto assertUAV = CreateAssertBufferUAV(*assertBuffer, resourceHeap, 0);
-        const auto allocationUAV = CreateAssertBufferUAV(*allocationBuffer, resourceHeap, 1);
+        const auto assertUAV = CreateAssertBufferUAV(*assertBuffer, *resourceHeap, 0);
+        const auto allocationUAV = CreateAssertBufferUAV(*allocationBuffer, *resourceHeap, 1);
 
         {
             ScopedDuration testExecution("ShaderTestFixture::RunTest Test Execution");
@@ -215,7 +215,7 @@ namespace stf
                         [&](ScopedCommandContext& InContext)
                         {
                             InContext->SetPipelineState(pipelineState);
-                            InContext->SetDescriptorHeaps(resourceHeap);
+                            InContext->SetDescriptorHeaps(*resourceHeap);
                             InContext->SetComputeRootSignature(reflectionData.value().RootSig);
                             InContext->SetBufferUAV(*assertBuffer);
                             InContext->SetBufferUAV(*allocationBuffer);
@@ -310,7 +310,7 @@ namespace stf
         );
     }
 
-    DescriptorHeap ShaderTestFixture::CreateDescriptorHeap() const
+    SharedPtr<DescriptorHeap> ShaderTestFixture::CreateDescriptorHeap() const
     {
         D3D12_DESCRIPTOR_HEAP_DESC desc;
         desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
