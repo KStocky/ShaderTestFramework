@@ -17,7 +17,7 @@ namespace stf
         struct CreationParams
         {
             ComPtr<ID3D12CommandQueue> Queue;
-            Fence Fence{};
+            SharedPtr<Fence> Fence{};
         };
 
         CommandQueue() = default;
@@ -43,6 +43,6 @@ namespace stf
     private:
 
         ComPtr<ID3D12CommandQueue> m_Queue = nullptr;
-        Fence m_Fence;
+        SharedPtr<Fence> m_Fence = nullptr;
     };
 }

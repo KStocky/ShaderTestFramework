@@ -235,13 +235,13 @@ namespace stf
         return MakeShared<DescriptorHeap>(DescriptorHeap::Desc{ std::move(heap), descriptorSize });
     }
 
-    Fence GPUDevice::CreateFence(const u64 InInitialValue, const std::string_view InName) const
+    SharedPtr<Fence> GPUDevice::CreateFence(const u64 InInitialValue, const std::string_view InName) const
     {
         ComPtr<ID3D12Fence1> fence = nullptr;
 
         ThrowIfFailed(m_Device->CreateFence(InInitialValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(fence.GetAddressOf())));
         SetName(fence.Get(), InName);
-        return Fence(Fence::CreationParams{ std::move(fence), InInitialValue });
+        return MakeShared<Fence>(Fence::CreationParams{ std::move(fence), InInitialValue });
     }
 
     RootSignature GPUDevice::CreateRootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC& InDesc) const

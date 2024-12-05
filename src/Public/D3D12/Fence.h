@@ -1,13 +1,14 @@
 #pragma once
-#include "Utility/MoveOnly.h"
 #include "Platform.h"
+
+#include "Utility/Object.h"
 #include "Utility/Pointer.h"
 
 #include <d3d12.h>
 
 namespace stf
 {
-    class Fence : MoveOnly
+    class Fence : Object
     {
     public:
 
@@ -35,9 +36,6 @@ namespace stf
 
         Fence() = default;
         Fence(CreationParams InParams);
-        Fence(Fence&& In) noexcept;
-
-        Fence& operator=(Fence&& In) noexcept;
 
         [[nodiscard]] FencePoint Signal(ID3D12CommandQueue* InQueue);
         Expected<void, bool> WaitCPU(const FencePoint& InFencePoint) const;

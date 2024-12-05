@@ -35,17 +35,17 @@ namespace stf
 
     bool CommandQueue::HasFencePointBeenReached(const Fence::FencePoint& InFencePoint) const
     {
-        return ThrowIfUnexpected(m_Fence.HasCompleted(InFencePoint));
+        return ThrowIfUnexpected(m_Fence->HasCompleted(InFencePoint));
     }
 
     Fence::FencePoint CommandQueue::Signal()
     {
-        return m_Fence.Signal(m_Queue.Get());
+        return m_Fence->Signal(m_Queue.Get());
     }
 
     void CommandQueue::WaitOnFence(const Fence::FencePoint& InFencePoint)
     {
-        ThrowIfUnexpected(m_Fence.WaitCPU(InFencePoint));
+        ThrowIfUnexpected(m_Fence->WaitCPU(InFencePoint));
     }
 
     void CommandQueue::SyncWithQueue(CommandQueue& InQueue)
@@ -77,7 +77,7 @@ namespace stf
 
     const Fence& CommandQueue::GetFence() const
     {
-        return m_Fence;
+        return *m_Fence;
     }
 
     D3D12_COMMAND_LIST_TYPE CommandQueue::GetType() const

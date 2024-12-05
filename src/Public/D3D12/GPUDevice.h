@@ -152,7 +152,7 @@ namespace stf
 
         SharedPtr<DescriptorHeap> CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName = "DefaultDescriptorHeap") const;
 
-        Fence CreateFence(const u64 InInitialValue, const std::string_view InName = "DefaultFence") const;
+        SharedPtr<Fence> CreateFence(const u64 InInitialValue, const std::string_view InName = "DefaultFence") const;
 
         template<PipelineStateDescType T>
         PipelineState CreatePipelineState(const T& InDesc) const
