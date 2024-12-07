@@ -64,7 +64,7 @@ namespace stf
 
         struct CreationParams
         {
-            CommandList List;
+            SharedPtr<CommandList> List;
             CommandQueue Queue;
             SharedPtr<GPUDevice> Device;
         };
@@ -89,12 +89,12 @@ namespace stf
                     return std::move(ThrowIfUnexpected(m_Allocators.pop_front()).Allocator);
                 }();
 
-            m_List.Reset(allocator);
-            ScopedCommandContext context(CommandEngineToken{}, &m_List);
+            m_List->Reset(allocator);
+            ScopedCommandContext context(CommandEngineToken{}, m_List.get());
             InFunc(context);
 
             m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue.Signal() });
-            m_Queue.ExecuteCommandList(m_List);
+            m_Queue.ExecuteCommandList(*m_List);
         }
 
         template<ExecuteLambdaType InLambdaType>
@@ -114,12 +114,12 @@ namespace stf
                     return std::move(ThrowIfUnexpected(m_Allocators.pop_front()).Allocator);
                 }();
 
-            m_List.Reset(*allocator);
-            ScopedCommandContext context(CommandEngineToken{}, &m_List);
+            m_List->Reset(*allocator);
+            ScopedCommandContext context(CommandEngineToken{}, m_List.get());
             InFunc(context);
 
             m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue.Signal() });
-            m_Queue.ExecuteCommandList(m_List);
+            m_Queue.ExecuteCommandList(*m_List);
         }
 
         template<ExecuteLambdaType InLambdaType>
@@ -147,7 +147,7 @@ namespace stf
 
         SharedPtr<GPUDevice> m_Device;
         CommandQueue m_Queue;
-        CommandList m_List;
+        SharedPtr<CommandList> m_List;
         RingBuffer<FencedAllocator> m_Allocators;
     };
 }

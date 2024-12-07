@@ -188,13 +188,13 @@ namespace stf
         return MakeShared<CommandAllocator>(CommandAllocator::CreationParams{ std::move(allocator), InType });
     }
 
-    CommandList GPUDevice::CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const
+    SharedPtr<CommandList> GPUDevice::CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const
     {
         ComPtr<ID3D12GraphicsCommandList9> list = nullptr;
 
         ThrowIfFailed(m_Device->CreateCommandList1(0, InType, D3D12_COMMAND_LIST_FLAG_NONE, IID_PPV_ARGS(list.GetAddressOf())));
         SetName(list.Get(), InName);
-        return CommandList(CommandList::CreationParams{ std::move(list) });
+        return MakeShared<CommandList>(CommandList::CreationParams{ std::move(list) });
     }
 
     CommandQueue GPUDevice::CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName) const
