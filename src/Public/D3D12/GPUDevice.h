@@ -168,8 +168,8 @@ namespace stf
             return MakeShared<PipelineState>(PipelineState::CreationParams{ std::move(raw) });
         }
 
-        RootSignature CreateRootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC& InDesc) const;
-        RootSignature CreateRootSignature(const CompiledShaderData& InShader) const;
+        SharedPtr<RootSignature> CreateRootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC& InDesc) const;
+        SharedPtr<RootSignature> CreateRootSignature(const CompiledShaderData& InShader) const;
 
         void CreateShaderResourceView(const GPUResource& InResource, const DescriptorHandle InHandle) const;
         void CreateUnorderedAccessView(const GPUResource& InResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc, const DescriptorHandle InHandle) const;

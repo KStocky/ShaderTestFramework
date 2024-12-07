@@ -148,7 +148,7 @@ namespace stf
         {
             return Results{ reflectionData.error() };
         }
-        auto pipelineState = CreatePipelineState(reflectionData.value().RootSig, compileResult->GetCompiledShader());
+        auto pipelineState = CreatePipelineState(*reflectionData.value().RootSig, compileResult->GetCompiledShader());
 
         const auto [dimX, dimY, dimZ] =
             [&compileResult, threadGroupCount = InTestDesc.ThreadGroupCount]()
@@ -216,7 +216,7 @@ namespace stf
                         {
                             InContext->SetPipelineState(*pipelineState);
                             InContext->SetDescriptorHeaps(*resourceHeap);
-                            InContext->SetComputeRootSignature(reflectionData.value().RootSig);
+                            InContext->SetComputeRootSignature(*reflectionData.value().RootSig);
                             InContext->SetBufferUAV(*assertBuffer);
                             InContext->SetBufferUAV(*allocationBuffer);
 

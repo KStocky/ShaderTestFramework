@@ -117,7 +117,7 @@ namespace stf
 
         struct ReflectionResults
         {
-            RootSignature RootSig;
+            SharedPtr<RootSignature> RootSig;
             std::unordered_map<std::string, BindingInfo, TransparentStringHash, std::equal_to<>> NameToBindingInfo;
             std::unordered_map<u32, std::vector<u32>> RootParamBuffers;
         };

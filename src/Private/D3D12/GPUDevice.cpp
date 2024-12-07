@@ -244,7 +244,7 @@ namespace stf
         return MakeShared<Fence>(Fence::CreationParams{ std::move(fence), InInitialValue });
     }
 
-    RootSignature GPUDevice::CreateRootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC& InDesc) const
+    SharedPtr<RootSignature> GPUDevice::CreateRootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC& InDesc) const
     {
         ComPtr<ID3DBlob> signature;
         ComPtr<ID3DBlob> error;
@@ -255,10 +255,10 @@ namespace stf
 
         ComPtr<ID3D12VersionedRootSignatureDeserializer> deserializer;
         ThrowIfFailed(D3D12CreateVersionedRootSignatureDeserializer(signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(deserializer.GetAddressOf())));
-        return RootSignature(RootSignature::CreationParams{ std::move(rootSignatureObject), std::move(deserializer), std::move(signature) });
+        return MakeShared<RootSignature>(RootSignature::CreationParams{ std::move(rootSignatureObject), std::move(deserializer), std::move(signature) });
     }
 
-    RootSignature GPUDevice::CreateRootSignature(const CompiledShaderData& InShader) const
+    SharedPtr<RootSignature> GPUDevice::CreateRootSignature(const CompiledShaderData& InShader) const
     {
         ComPtr<ID3D12RootSignature> rootSignatureObject;
         const auto codeBlob = InShader.GetCompiledShader();
