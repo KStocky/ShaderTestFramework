@@ -12,25 +12,9 @@ namespace stf
     {
     }
 
-    CommandQueue::CommandQueue(CommandQueue&& In) noexcept
-        : m_Queue(std::move(In.m_Queue))
-        , m_Fence(std::move(In.m_Fence))
-    {
-    }
-
-    CommandQueue& CommandQueue::operator=(CommandQueue&& In) noexcept
-    {
-        m_Queue = std::move(In.m_Queue);
-        m_Fence = std::move(In.m_Fence);
-        return *this;
-    }
-
     CommandQueue::~CommandQueue()
     {
-        if (m_Queue)
-        {
-            FlushQueue();
-        }
+        FlushQueue();
     }
 
     bool CommandQueue::HasFencePointBeenReached(const Fence::FencePoint& InFencePoint) const
@@ -45,7 +29,7 @@ namespace stf
 
     void CommandQueue::WaitOnFence(const Fence::FencePoint& InFencePoint)
     {
-        ThrowIfUnexpected(m_Fence->WaitCPU(InFencePoint));
+        m_Fence->WaitCPU(InFencePoint);
     }
 
     void CommandQueue::SyncWithQueue(CommandQueue& InQueue)

@@ -138,7 +138,7 @@ namespace stf
 
         SharedPtr<CommandAllocator> CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandAllocator") const;
         SharedPtr<CommandList> CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandList") const;
-        CommandQueue CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName = "DefaultCommandQueue") const;
+        SharedPtr<CommandQueue> CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName = "DefaultCommandQueue") const;
 
         SharedPtr<GPUResource> CreateCommittedResource(
             const D3D12_HEAP_PROPERTIES& InHeapProps,

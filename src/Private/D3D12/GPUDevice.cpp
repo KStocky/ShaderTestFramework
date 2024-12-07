@@ -197,12 +197,12 @@ namespace stf
         return MakeShared<CommandList>(CommandList::CreationParams{ std::move(list) });
     }
 
-    CommandQueue GPUDevice::CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName) const
+    SharedPtr<CommandQueue> GPUDevice::CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName) const
     {
         ComPtr<ID3D12CommandQueue> raw = nullptr;
         ThrowIfFailed(m_Device->CreateCommandQueue(&InDesc, IID_PPV_ARGS(raw.GetAddressOf())));
         SetName(raw.Get(), InName);
-        return CommandQueue(CommandQueue::CreationParams{ std::move(raw), std::move(CreateFence(0ull)) });
+        return MakeShared<CommandQueue>(CommandQueue::CreationParams{ std::move(raw), std::move(CreateFence(0ull)) });
     }
 
     SharedPtr<GPUResource> GPUDevice::CreateCommittedResource(const D3D12_HEAP_PROPERTIES& InHeapProps, const D3D12_HEAP_FLAGS InFlags, const D3D12_RESOURCE_DESC1& InResourceDesc, const D3D12_BARRIER_LAYOUT InInitialLayout, const D3D12_CLEAR_VALUE* InClearValue, const std::span<DXGI_FORMAT> InCastableFormats, const std::string_view InName) const

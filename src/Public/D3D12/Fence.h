@@ -38,7 +38,7 @@ namespace stf
         Fence(CreationParams InParams);
 
         [[nodiscard]] FencePoint Signal(ID3D12CommandQueue* InQueue);
-        Expected<void, bool> WaitCPU(const FencePoint& InFencePoint) const;
+        bool WaitCPU(const FencePoint& InFencePoint) const;
         void WaitOnQueue(ID3D12CommandQueue* InQueue) const;
         Expected<bool, bool> HasCompleted(const FencePoint& InFencePoint) const;
 

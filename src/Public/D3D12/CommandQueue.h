@@ -1,7 +1,7 @@
 #pragma once
 
 #include "D3D12/Fence.h"
-#include "Utility/MoveOnly.h"
+#include "Utility/Object.h"
 #include "Utility/Pointer.h"
 
 #include <d3d12.h>
@@ -10,7 +10,7 @@ namespace stf
 {
     class CommandList;
 
-    class CommandQueue : MoveOnly
+    class CommandQueue : Object
     {
     public:
 
@@ -22,8 +22,6 @@ namespace stf
 
         CommandQueue() = default;
         CommandQueue(CreationParams InParams);
-        CommandQueue(CommandQueue&& In) noexcept;
-        CommandQueue& operator=(CommandQueue&& In) noexcept;
         ~CommandQueue();
 
         bool HasFencePointBeenReached(const Fence::FencePoint& InFencePoint) const;

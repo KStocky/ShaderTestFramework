@@ -65,7 +65,7 @@ namespace stf
         struct CreationParams
         {
             SharedPtr<CommandList> List;
-            CommandQueue Queue;
+            SharedPtr<CommandQueue> Queue;
             SharedPtr<GPUDevice> Device;
         };
 
@@ -77,7 +77,7 @@ namespace stf
         {
             auto allocator = [this]()
                 {
-                    if (m_Allocators.size() == 0 || !m_Queue.HasFencePointBeenReached(m_Allocators.front().FencePoint))
+                    if (m_Allocators.size() == 0 || !m_Queue->HasFencePointBeenReached(m_Allocators.front().FencePoint))
                     {
                         return m_Device->CreateCommandAllocator
                         (
@@ -93,8 +93,8 @@ namespace stf
             ScopedCommandContext context(CommandEngineToken{}, m_List.get());
             InFunc(context);
 
-            m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue.Signal() });
-            m_Queue.ExecuteCommandList(*m_List);
+            m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue->Signal() });
+            m_Queue->ExecuteCommandList(*m_List);
         }
 
         template<ExecuteLambdaType InLambdaType>
@@ -102,7 +102,7 @@ namespace stf
         {
             auto allocator = [this]()
                 {
-                    if (m_Allocators.size() == 0 || !m_Queue.HasFencePointBeenReached(m_Allocators.front().FencePoint))
+                    if (m_Allocators.size() == 0 || !m_Queue->HasFencePointBeenReached(m_Allocators.front().FencePoint))
                     {
                         return m_Device->CreateCommandAllocator
                         (
@@ -118,24 +118,18 @@ namespace stf
             ScopedCommandContext context(CommandEngineToken{}, m_List.get());
             InFunc(context);
 
-            m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue.Signal() });
-            m_Queue.ExecuteCommandList(*m_List);
+            m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue->Signal() });
+            m_Queue->ExecuteCommandList(*m_List);
         }
 
         template<ExecuteLambdaType InLambdaType>
         void Execute(const std::string_view InName, InLambdaType&& InFunc)
         {
-            PIXScopedEvent(m_Queue.GetRaw(), 0ull, "%s", InName.data());
+            PIXScopedEvent(m_Queue->GetRaw(), 0ull, "%s", InName.data());
             Execute(std::forward<InLambdaType>(InFunc));
         }
 
         void Flush();
-
-        template<typename ThisType>
-        auto&& GetQueue(this ThisType&& InSelf)
-        {
-            return std::forward<ThisType>(InSelf).m_Queue;
-        }
 
     private:
 
@@ -146,7 +140,7 @@ namespace stf
         };
 
         SharedPtr<GPUDevice> m_Device;
-        CommandQueue m_Queue;
+        SharedPtr<CommandQueue> m_Queue;
         SharedPtr<CommandList> m_List;
         RingBuffer<FencedAllocator> m_Allocators;
     };

@@ -12,6 +12,6 @@ namespace stf
 
     void CommandEngine::Flush()
     {
-        m_Queue.FlushQueue();
+        m_Queue->FlushQueue();
     }
 }
