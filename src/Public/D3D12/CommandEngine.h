@@ -114,7 +114,7 @@ namespace stf
                     return std::move(ThrowIfUnexpected(m_Allocators.pop_front()).Allocator);
                 }();
 
-            m_List.Reset(allocator);
+            m_List.Reset(*allocator);
             ScopedCommandContext context(CommandEngineToken{}, &m_List);
             InFunc(context);
 
@@ -141,7 +141,7 @@ namespace stf
 
         struct FencedAllocator
         {
-            CommandAllocator Allocator;
+            SharedPtr<CommandAllocator> Allocator;
             Fence::FencePoint FencePoint;
         };
 

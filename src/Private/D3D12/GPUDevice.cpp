@@ -179,13 +179,13 @@ namespace stf
         return m_PixHandle != nullptr;
     }
 
-    CommandAllocator GPUDevice::CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const
+    SharedPtr<CommandAllocator> GPUDevice::CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const
     {
         ComPtr<ID3D12CommandAllocator> allocator = nullptr;
 
         ThrowIfFailed(m_Device->CreateCommandAllocator(InType, IID_PPV_ARGS(allocator.GetAddressOf())));
         SetName(allocator.Get(), InName);
-        return CommandAllocator(CommandAllocator::CreationParams{ std::move(allocator), InType });
+        return MakeShared<CommandAllocator>(CommandAllocator::CreationParams{ std::move(allocator), InType });
     }
 
     CommandList GPUDevice::CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const

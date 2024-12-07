@@ -128,7 +128,7 @@ namespace stf
 
     void CommandList::Reset(CommandAllocator& InAllocator)
     {
-        ThrowIfUnexpected(InAllocator.Reset());
+        InAllocator.Reset();
         ThrowIfFailed(m_List->Reset(InAllocator, nullptr));
     }
 
