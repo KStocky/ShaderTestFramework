@@ -155,7 +155,7 @@ namespace stf
         SharedPtr<Fence> CreateFence(const u64 InInitialValue, const std::string_view InName = "DefaultFence") const;
 
         template<PipelineStateDescType T>
-        PipelineState CreatePipelineState(const T& InDesc) const
+        SharedPtr<PipelineState> CreatePipelineState(const T& InDesc) const
         {
             CD3DX12_PIPELINE_STATE_STREAM5 rawStream(InDesc);
             const D3D12_PIPELINE_STATE_STREAM_DESC desc
@@ -165,7 +165,7 @@ namespace stf
             };
             ComPtr<ID3D12PipelineState> raw = nullptr;
             ThrowIfFailed(m_Device->CreatePipelineState(&desc, IID_PPV_ARGS(raw.GetAddressOf())));
-            return PipelineState(PipelineState::CreationParams{ std::move(raw) });
+            return MakeShared<PipelineState>(PipelineState::CreationParams{ std::move(raw) });
         }
 
         RootSignature CreateRootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC& InDesc) const;

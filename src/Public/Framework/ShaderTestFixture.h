@@ -127,7 +127,7 @@ namespace stf
         CompilationResult CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const;
         CommandEngine CreateCommandEngine() const;
         SharedPtr<DescriptorHeap> CreateDescriptorHeap() const;
-        PipelineState CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const;
+        SharedPtr<PipelineState> CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const;
         Expected<ReflectionResults, ErrorTypeAndDescription> ProcessShaderReflection(const CompiledShaderData& InShaderData) const;
         Expected<void, ErrorTypeAndDescription> PopulateTestConstantBuffers(ReflectionResults& InOutReflectionResults, const std::span<const ShaderBinding> InBindings) const;
         SharedPtr<GPUResource> CreateAssertBuffer(const u64 InSizeInBytes) const;

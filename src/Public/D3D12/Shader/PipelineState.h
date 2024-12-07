@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Utility/MoveOnly.h"
+#include "Utility/Object.h"
 #include "Utility/Pointer.h"
 
 #include <d3d12.h>
 
 namespace stf
 {
-    class PipelineState : MoveOnly
+    class PipelineState : Object
     {
     public:
 
@@ -19,16 +19,14 @@ namespace stf
         PipelineState() = default;
         PipelineState(CreationParams InParams) noexcept;
 
-        template<typename ThisType>
-        ID3D12PipelineState* GetRaw(this ThisType&& InThis)
+        ID3D12PipelineState* GetRaw() const
         {
-            return std::forward<ThisType>(InThis).m_Raw.Get();
+            return m_Raw.Get();
         }
 
-        template<typename ThisType>
-        operator ID3D12PipelineState* (this ThisType&& InThis)
+        operator ID3D12PipelineState* () const
         {
-            return std::forward<ThisType>(InThis).GetRaw();
+            return GetRaw();
         }
 
         D3D12_CACHED_PIPELINE_STATE GetCachedState() const;

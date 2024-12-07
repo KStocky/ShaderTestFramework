@@ -214,7 +214,7 @@ namespace stf
                     InContext.Section("Test Setup",
                         [&](ScopedCommandContext& InContext)
                         {
-                            InContext->SetPipelineState(pipelineState);
+                            InContext->SetPipelineState(*pipelineState);
                             InContext->SetDescriptorHeaps(*resourceHeap);
                             InContext->SetComputeRootSignature(reflectionData.value().RootSig);
                             InContext->SetBufferUAV(*assertBuffer);
@@ -320,7 +320,7 @@ namespace stf
         return m_Device->CreateDescriptorHeap(desc);
     }
 
-    PipelineState ShaderTestFixture::CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const
+    SharedPtr<PipelineState> ShaderTestFixture::CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const
     {
         D3D12_COMPUTE_PIPELINE_STATE_DESC desc;
         desc.CachedPSO.CachedBlobSizeInBytes = 0;
