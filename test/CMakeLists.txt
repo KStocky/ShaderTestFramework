@@ -202,6 +202,7 @@ set(SOURCES
     Private/Utility/EnumReflectionTests.cpp
     Private/Utility/FunctionTraitsTests.cpp
     Private/Utility/LambdaTests.cpp
+    Private/Utility/ObjectTests.cpp
     Private/Utility/TupleTests.cpp
     Private/Utility/TypeListTests.cpp
     Private/Utility/TypeTraitsTests.cpp

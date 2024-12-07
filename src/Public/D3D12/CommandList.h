@@ -1,8 +1,8 @@
 #pragma once
-
-#include "Utility/MoveOnly.h"
 #include "Platform.h"
 #include "Utility/Concepts.h"
+
+#include "Utility/Object.h"
 #include "Utility/Pointer.h"
 
 #include <bit>
@@ -21,7 +21,7 @@ namespace stf
     template<typename T>
     concept RootSigConstantType = std::is_trivial_v<T> && sizeof(T) == 4;
 
-    class CommandList : MoveOnly
+    class CommandList : Object
     {
     public:
 

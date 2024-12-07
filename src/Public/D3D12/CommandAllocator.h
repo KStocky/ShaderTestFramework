@@ -1,14 +1,14 @@
 #pragma once
 
 #include "Platform.h"
-#include "Utility/MoveOnly.h"
+#include "Utility/Object.h"
 #include "Utility/Pointer.h"
 
 #include <d3d12.h>
 
 namespace stf
 {
-    class CommandAllocator : MoveOnly
+    class CommandAllocator : Object
     {
     public:
 
@@ -25,7 +25,7 @@ namespace stf
 
         D3D12_COMMAND_LIST_TYPE GetType() const;
 
-        ExpectedHRes<void> Reset();
+        void Reset();
 
     private:
 

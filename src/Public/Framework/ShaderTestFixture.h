@@ -10,6 +10,7 @@
 #include "Framework/TestDataBufferProcessor.h"
 #include "Stats/StatSystem.h"
 #include "Utility/Expected.h"
+#include "Utility/Pointer.h"
 #include "Utility/TransparentStringHash.h"
 #include <optional>
 #include <vector>
@@ -116,7 +117,7 @@ namespace stf
 
         struct ReflectionResults
         {
-            RootSignature RootSig;
+            SharedPtr<RootSignature> RootSig;
             std::unordered_map<std::string, BindingInfo, TransparentStringHash, std::equal_to<>> NameToBindingInfo;
             std::unordered_map<u32, std::vector<u32>> RootParamBuffers;
         };
@@ -125,19 +126,19 @@ namespace stf
 
         CompilationResult CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const;
         CommandEngine CreateCommandEngine() const;
-        DescriptorHeap CreateDescriptorHeap() const;
-        PipelineState CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const;
+        SharedPtr<DescriptorHeap> CreateDescriptorHeap() const;
+        SharedPtr<PipelineState> CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const;
         Expected<ReflectionResults, ErrorTypeAndDescription> ProcessShaderReflection(const CompiledShaderData& InShaderData) const;
         Expected<void, ErrorTypeAndDescription> PopulateTestConstantBuffers(ReflectionResults& InOutReflectionResults, const std::span<const ShaderBinding> InBindings) const;
-        GPUResource CreateAssertBuffer(const u64 InSizeInBytes) const;
-        GPUResource CreateReadbackBuffer(const u64 InSizeInBytes) const;
+        SharedPtr<GPUResource> CreateAssertBuffer(const u64 InSizeInBytes) const;
+        SharedPtr<GPUResource> CreateReadbackBuffer(const u64 InSizeInBytes) const;
         DescriptorHandle CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap, const u32 InIndex) const;
         Results ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer, const uint3 InDispatchDimensions, const TestDataBufferLayout& InTestDataLayout) const;
         void PopulateDefaultByteReaders();
 
         bool ShouldTakeCapture(const EGPUCaptureMode InCaptureMode, const bool InIsFailureRetry) const;
 
-        GPUDevice m_Device;
+        SharedPtr<GPUDevice> m_Device;
         ShaderCompiler m_Compiler;
         MultiTypeByteReaderMap m_ByteReaderMap;
         std::vector<ShaderMacro> m_Defines;

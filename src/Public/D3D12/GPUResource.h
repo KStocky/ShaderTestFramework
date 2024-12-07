@@ -1,7 +1,6 @@
 #pragma once
-
-#include "Utility/MoveOnly.h"
 #include "Platform.h"
+#include "Utility/Object.h"
 #include "Utility/Pointer.h"
 
 #include <optional>
@@ -35,10 +34,9 @@ namespace stf
         MappedResource& operator=(const MappedResource&) = delete;
         ~MappedResource();
 
-        template<typename ThisType>
-        std::span<const std::byte> Get(this ThisType&& InThis)
+        std::span<const std::byte> Get() const
         {
-            return std::forward<ThisType>(InThis).m_MappedData;
+            return m_MappedData;
         }
 
     private:
@@ -47,7 +45,7 @@ namespace stf
         std::span<const std::byte> m_MappedData;
     };
 
-    class GPUResource : MoveOnly
+    class GPUResource : Object
     {
     public:
 

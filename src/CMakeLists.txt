@@ -66,6 +66,7 @@ set(SOURCES
     Public/Utility/Lambda.h
     Public/Utility/Math.h
     Public/Utility/MoveOnly.h
+    Public/Utility/Object.h
     Public/Utility/OverloadSet.h
     Public/Utility/Pointer.h
     Public/Utility/Time.h

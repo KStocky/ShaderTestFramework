@@ -8,34 +8,17 @@ namespace stf
     {
     }
 
-    Fence::Fence(Fence&& In) noexcept
-        : m_Fence(std::exchange(In.m_Fence, nullptr))
-        , m_NextValue(std::exchange(In.m_NextValue, 0))
-    {
-    }
-
-    Fence& Fence::operator=(Fence&& In) noexcept
-    {
-        if (this != &In)
-        {
-            m_Fence = std::exchange(In.m_Fence, nullptr);
-            m_NextValue = std::exchange(In.m_NextValue, 0);
-        }
-
-        return *this;
-    }
-
     Fence::FencePoint Fence::Signal(ID3D12CommandQueue* InQueue)
     {
         InQueue->Signal(m_Fence.Get(), m_NextValue);
         return { m_Fence.Get(), m_NextValue++ };
     }
 
-    Expected<void, bool> Fence::WaitCPU(const FencePoint& InFencePoint) const
+    bool Fence::WaitCPU(const FencePoint& InFencePoint) const
     {
         if (!Validate(InFencePoint))
         {
-            return Unexpected{ false };
+            return false;
         }
         const u64 currentValue = m_Fence->GetCompletedValue();
 
@@ -47,7 +30,7 @@ namespace stf
             WaitForSingleObject(event, INFINITE);
         }
 
-        return{};
+        return true;
     }
 
     void Fence::WaitOnQueue(ID3D12CommandQueue* InQueue) const

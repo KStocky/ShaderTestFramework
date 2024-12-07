@@ -7,6 +7,7 @@
 
 #include "Utility/FunctionTraits.h"
 #include "Utility/Lambda.h"
+#include "Utility/Pointer.h"
 
 #include <WinPixEventRuntime/pix3.h>
 
@@ -63,9 +64,9 @@ namespace stf
 
         struct CreationParams
         {
-            CommandList List;
-            CommandQueue Queue;
-            GPUDevice Device;
+            SharedPtr<CommandList> List;
+            SharedPtr<CommandQueue> Queue;
+            SharedPtr<GPUDevice> Device;
         };
 
         CommandEngine() = default;
@@ -76,9 +77,9 @@ namespace stf
         {
             auto allocator = [this]()
                 {
-                    if (m_Allocators.size() == 0 || !m_Queue.HasFencePointBeenReached(m_Allocators.front().FencePoint))
+                    if (m_Allocators.size() == 0 || !m_Queue->HasFencePointBeenReached(m_Allocators.front().FencePoint))
                     {
-                        return m_Device.CreateCommandAllocator
+                        return m_Device->CreateCommandAllocator
                         (
                             D3D12_COMMAND_LIST_TYPE_DIRECT,
                             "Command Allocator"
@@ -88,12 +89,12 @@ namespace stf
                     return std::move(ThrowIfUnexpected(m_Allocators.pop_front()).Allocator);
                 }();
 
-            m_List.Reset(allocator);
-            ScopedCommandContext context(CommandEngineToken{}, &m_List);
+            m_List->Reset(allocator);
+            ScopedCommandContext context(CommandEngineToken{}, m_List.get());
             InFunc(context);
 
-            m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue.Signal() });
-            m_Queue.ExecuteCommandList(m_List);
+            m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue->Signal() });
+            m_Queue->ExecuteCommandList(*m_List);
         }
 
         template<ExecuteLambdaType InLambdaType>
@@ -101,9 +102,9 @@ namespace stf
         {
             auto allocator = [this]()
                 {
-                    if (m_Allocators.size() == 0 || !m_Queue.HasFencePointBeenReached(m_Allocators.front().FencePoint))
+                    if (m_Allocators.size() == 0 || !m_Queue->HasFencePointBeenReached(m_Allocators.front().FencePoint))
                     {
-                        return m_Device.CreateCommandAllocator
+                        return m_Device->CreateCommandAllocator
                         (
                             D3D12_COMMAND_LIST_TYPE_DIRECT,
                             "Command Allocator"
@@ -113,40 +114,34 @@ namespace stf
                     return std::move(ThrowIfUnexpected(m_Allocators.pop_front()).Allocator);
                 }();
 
-            m_List.Reset(allocator);
-            ScopedCommandContext context(CommandEngineToken{}, &m_List);
+            m_List->Reset(*allocator);
+            ScopedCommandContext context(CommandEngineToken{}, m_List.get());
             InFunc(context);
 
-            m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue.Signal() });
-            m_Queue.ExecuteCommandList(m_List);
+            m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue->Signal() });
+            m_Queue->ExecuteCommandList(*m_List);
         }
 
         template<ExecuteLambdaType InLambdaType>
         void Execute(const std::string_view InName, InLambdaType&& InFunc)
         {
-            PIXScopedEvent(m_Queue.GetRaw(), 0ull, "%s", InName.data());
+            PIXScopedEvent(m_Queue->GetRaw(), 0ull, "%s", InName.data());
             Execute(std::forward<InLambdaType>(InFunc));
         }
 
         void Flush();
 
-        template<typename ThisType>
-        auto&& GetQueue(this ThisType&& InSelf)
-        {
-            return std::forward<ThisType>(InSelf).m_Queue;
-        }
-
     private:
 
         struct FencedAllocator
         {
-            CommandAllocator Allocator;
+            SharedPtr<CommandAllocator> Allocator;
             Fence::FencePoint FencePoint;
         };
 
-        GPUDevice m_Device;
-        CommandQueue m_Queue;
-        CommandList m_List;
+        SharedPtr<GPUDevice> m_Device;
+        SharedPtr<CommandQueue> m_Queue;
+        SharedPtr<CommandList> m_List;
         RingBuffer<FencedAllocator> m_Allocators;
     };
 }

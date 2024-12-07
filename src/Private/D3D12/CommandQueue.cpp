@@ -12,40 +12,24 @@ namespace stf
     {
     }
 
-    CommandQueue::CommandQueue(CommandQueue&& In) noexcept
-        : m_Queue(std::move(In.m_Queue))
-        , m_Fence(std::move(In.m_Fence))
-    {
-    }
-
-    CommandQueue& CommandQueue::operator=(CommandQueue&& In) noexcept
-    {
-        m_Queue = std::move(In.m_Queue);
-        m_Fence = std::move(In.m_Fence);
-        return *this;
-    }
-
     CommandQueue::~CommandQueue()
     {
-        if (m_Queue)
-        {
-            FlushQueue();
-        }
+        FlushQueue();
     }
 
     bool CommandQueue::HasFencePointBeenReached(const Fence::FencePoint& InFencePoint) const
     {
-        return ThrowIfUnexpected(m_Fence.HasCompleted(InFencePoint));
+        return ThrowIfUnexpected(m_Fence->HasCompleted(InFencePoint));
     }
 
     Fence::FencePoint CommandQueue::Signal()
     {
-        return m_Fence.Signal(m_Queue.Get());
+        return m_Fence->Signal(m_Queue.Get());
     }
 
     void CommandQueue::WaitOnFence(const Fence::FencePoint& InFencePoint)
     {
-        ThrowIfUnexpected(m_Fence.WaitCPU(InFencePoint));
+        m_Fence->WaitCPU(InFencePoint);
     }
 
     void CommandQueue::SyncWithQueue(CommandQueue& InQueue)
@@ -77,7 +61,7 @@ namespace stf
 
     const Fence& CommandQueue::GetFence() const
     {
-        return m_Fence;
+        return *m_Fence;
     }
 
     D3D12_COMMAND_LIST_TYPE CommandQueue::GetType() const

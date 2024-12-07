@@ -11,6 +11,7 @@
 #include "D3D12/Shader/RootSignature.h"
 #include "Platform.h"
 #include "Utility/Exception.h"
+#include "Utility/Object.h"
 #include "Utility/Pointer.h"
 
 #include <span>
@@ -104,7 +105,7 @@ namespace stf
         std::is_same_v<T, D3D12_COMPUTE_PIPELINE_STATE_DESC> ||
         std::is_same_v<T, D3DX12_MESH_SHADER_PIPELINE_STATE_DESC>;
 
-    class GPUDevice
+    class GPUDevice : Object
     {
     public:
 
@@ -130,20 +131,16 @@ namespace stf
 
         GPUDevice() = default;
         GPUDevice(const CreationParams InDesc);
-        GPUDevice(const GPUDevice&) = default;
-        GPUDevice(GPUDevice&&) = default;
-        GPUDevice& operator=(const GPUDevice&) = default;
-        GPUDevice& operator=(GPUDevice&&) = default;
         ~GPUDevice();
 
         bool IsValid() const;
         bool IsGPUCaptureEnabled() const;
 
-        CommandAllocator CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandAllocator") const;
-        CommandList CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandList") const;
-        CommandQueue CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName = "DefaultCommandQueue") const;
+        SharedPtr<CommandAllocator> CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandAllocator") const;
+        SharedPtr<CommandList> CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName = "DefaultCommandList") const;
+        SharedPtr<CommandQueue> CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName = "DefaultCommandQueue") const;
 
-        GPUResource CreateCommittedResource(
+        SharedPtr<GPUResource> CreateCommittedResource(
             const D3D12_HEAP_PROPERTIES& InHeapProps,
             const D3D12_HEAP_FLAGS InFlags,
             const D3D12_RESOURCE_DESC1& InResourceDesc,
@@ -152,12 +149,13 @@ namespace stf
             const std::span<DXGI_FORMAT> InCastableFormats = {},
             const std::string_view InName = "DefaultResource"
         ) const;
-        DescriptorHeap CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName = "DefaultDescriptorHeap") const;
 
-        Fence CreateFence(const u64 InInitialValue, const std::string_view InName = "DefaultFence") const;
+        SharedPtr<DescriptorHeap> CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName = "DefaultDescriptorHeap") const;
+
+        SharedPtr<Fence> CreateFence(const u64 InInitialValue, const std::string_view InName = "DefaultFence") const;
 
         template<PipelineStateDescType T>
-        PipelineState CreatePipelineState(const T& InDesc) const
+        SharedPtr<PipelineState> CreatePipelineState(const T& InDesc) const
         {
             CD3DX12_PIPELINE_STATE_STREAM5 rawStream(InDesc);
             const D3D12_PIPELINE_STATE_STREAM_DESC desc
@@ -167,11 +165,11 @@ namespace stf
             };
             ComPtr<ID3D12PipelineState> raw = nullptr;
             ThrowIfFailed(m_Device->CreatePipelineState(&desc, IID_PPV_ARGS(raw.GetAddressOf())));
-            return PipelineState(PipelineState::CreationParams{ std::move(raw) });
+            return MakeShared<PipelineState>(PipelineState::CreationParams{ std::move(raw) });
         }
 
-        RootSignature CreateRootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC& InDesc) const;
-        RootSignature CreateRootSignature(const CompiledShaderData& InShader) const;
+        SharedPtr<RootSignature> CreateRootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC& InDesc) const;
+        SharedPtr<RootSignature> CreateRootSignature(const CompiledShaderData& InShader) const;
 
         void CreateShaderResourceView(const GPUResource& InResource, const DescriptorHandle InHandle) const;
         void CreateUnorderedAccessView(const GPUResource& InResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc, const DescriptorHandle InHandle) const;

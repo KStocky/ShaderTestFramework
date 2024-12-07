@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Platform.h"
-#include "Utility/MoveOnly.h"
+#include "Utility/Object.h"
 #include "Utility/Pointer.h"
 
 #include <unordered_map>
@@ -10,7 +10,7 @@
 
 namespace stf
 {
-    class RootSignature : MoveOnly
+    class RootSignature : Object
     {
     public:
 

@@ -154,22 +154,18 @@ namespace stf
 
     GPUDevice::~GPUDevice()
     {
-        const bool wasValid = IsValid();
-        const bool hasZeroRefs = m_Device.Reset() == 0;
 
-        if (wasValid && hasZeroRefs)
+        m_Device.Reset();
+        // Described in https://stackoverflow.com/questions/46802508/d3d12-unavoidable-leak-report
+        ComPtr<IDXGIDebug1> dxgiDebug;
+        if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
         {
-            // Described in https://stackoverflow.com/questions/46802508/d3d12-unavoidable-leak-report
-            ComPtr<IDXGIDebug1> dxgiDebug;
-            if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
-            {
-                dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_FLAGS(DXGI_DEBUG_RLO_SUMMARY | DXGI_DEBUG_RLO_IGNORE_INTERNAL));
-            }
+            dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_FLAGS(DXGI_DEBUG_RLO_SUMMARY | DXGI_DEBUG_RLO_IGNORE_INTERNAL));
+        }
 
-            if (m_PixHandle)
-            {
-                FreeLibrary(m_PixHandle);
-            }
+        if (m_PixHandle)
+        {
+            FreeLibrary(m_PixHandle);
         }
     }
 
@@ -183,33 +179,33 @@ namespace stf
         return m_PixHandle != nullptr;
     }
 
-    CommandAllocator GPUDevice::CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const
+    SharedPtr<CommandAllocator> GPUDevice::CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const
     {
         ComPtr<ID3D12CommandAllocator> allocator = nullptr;
 
         ThrowIfFailed(m_Device->CreateCommandAllocator(InType, IID_PPV_ARGS(allocator.GetAddressOf())));
         SetName(allocator.Get(), InName);
-        return CommandAllocator(CommandAllocator::CreationParams{ std::move(allocator), InType });
+        return MakeShared<CommandAllocator>(CommandAllocator::CreationParams{ std::move(allocator), InType });
     }
 
-    CommandList GPUDevice::CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const
+    SharedPtr<CommandList> GPUDevice::CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const
     {
         ComPtr<ID3D12GraphicsCommandList9> list = nullptr;
 
         ThrowIfFailed(m_Device->CreateCommandList1(0, InType, D3D12_COMMAND_LIST_FLAG_NONE, IID_PPV_ARGS(list.GetAddressOf())));
         SetName(list.Get(), InName);
-        return CommandList(CommandList::CreationParams{ std::move(list) });
+        return MakeShared<CommandList>(CommandList::CreationParams{ std::move(list) });
     }
 
-    CommandQueue GPUDevice::CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName) const
+    SharedPtr<CommandQueue> GPUDevice::CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName) const
     {
         ComPtr<ID3D12CommandQueue> raw = nullptr;
         ThrowIfFailed(m_Device->CreateCommandQueue(&InDesc, IID_PPV_ARGS(raw.GetAddressOf())));
         SetName(raw.Get(), InName);
-        return CommandQueue(CommandQueue::CreationParams{ std::move(raw), std::move(CreateFence(0ull)) });
+        return MakeShared<CommandQueue>(CommandQueue::CreationParams{ std::move(raw), std::move(CreateFence(0ull)) });
     }
 
-    GPUResource GPUDevice::CreateCommittedResource(const D3D12_HEAP_PROPERTIES& InHeapProps, const D3D12_HEAP_FLAGS InFlags, const D3D12_RESOURCE_DESC1& InResourceDesc, const D3D12_BARRIER_LAYOUT InInitialLayout, const D3D12_CLEAR_VALUE* InClearValue, const std::span<DXGI_FORMAT> InCastableFormats, const std::string_view InName) const
+    SharedPtr<GPUResource> GPUDevice::CreateCommittedResource(const D3D12_HEAP_PROPERTIES& InHeapProps, const D3D12_HEAP_FLAGS InFlags, const D3D12_RESOURCE_DESC1& InResourceDesc, const D3D12_BARRIER_LAYOUT InInitialLayout, const D3D12_CLEAR_VALUE* InClearValue, const std::span<DXGI_FORMAT> InCastableFormats, const std::string_view InName) const
     {
         ComPtr<ID3D12Resource2> raw{ nullptr };
 
@@ -226,29 +222,29 @@ namespace stf
                 IID_PPV_ARGS(raw.GetAddressOf()))
         );
         SetName(raw.Get(), InName);
-        return GPUResource(GPUResource::CreationParams{ std::move(raw), InClearValue ? std::optional{*InClearValue} : std::nullopt, {D3D12_BARRIER_SYNC_NONE, D3D12_BARRIER_ACCESS_NO_ACCESS, InInitialLayout} });
+        return MakeShared<GPUResource>(GPUResource::CreationParams{ std::move(raw), InClearValue ? std::optional{*InClearValue} : std::nullopt, {D3D12_BARRIER_SYNC_NONE, D3D12_BARRIER_ACCESS_NO_ACCESS, InInitialLayout} });
     }
 
-    DescriptorHeap GPUDevice::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName) const
+    SharedPtr<DescriptorHeap> GPUDevice::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName) const
     {
         ComPtr<ID3D12DescriptorHeap> heap = nullptr;
         ThrowIfFailed(m_Device->CreateDescriptorHeap(&InDesc, IID_PPV_ARGS(heap.GetAddressOf())));
 
         SetName(heap.Get(), InName);
         const u32 descriptorSize = GetDescriptorSize(InDesc.Type);
-        return DescriptorHeap(DescriptorHeap::Desc{ std::move(heap), descriptorSize });
+        return MakeShared<DescriptorHeap>(DescriptorHeap::Desc{ std::move(heap), descriptorSize });
     }
 
-    Fence GPUDevice::CreateFence(const u64 InInitialValue, const std::string_view InName) const
+    SharedPtr<Fence> GPUDevice::CreateFence(const u64 InInitialValue, const std::string_view InName) const
     {
         ComPtr<ID3D12Fence1> fence = nullptr;
 
         ThrowIfFailed(m_Device->CreateFence(InInitialValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(fence.GetAddressOf())));
         SetName(fence.Get(), InName);
-        return Fence(Fence::CreationParams{ std::move(fence), InInitialValue });
+        return MakeShared<Fence>(Fence::CreationParams{ std::move(fence), InInitialValue });
     }
 
-    RootSignature GPUDevice::CreateRootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC& InDesc) const
+    SharedPtr<RootSignature> GPUDevice::CreateRootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC& InDesc) const
     {
         ComPtr<ID3DBlob> signature;
         ComPtr<ID3DBlob> error;
@@ -259,10 +255,10 @@ namespace stf
 
         ComPtr<ID3D12VersionedRootSignatureDeserializer> deserializer;
         ThrowIfFailed(D3D12CreateVersionedRootSignatureDeserializer(signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(deserializer.GetAddressOf())));
-        return RootSignature(RootSignature::CreationParams{ std::move(rootSignatureObject), std::move(deserializer), std::move(signature) });
+        return MakeShared<RootSignature>(RootSignature::CreationParams{ std::move(rootSignatureObject), std::move(deserializer), std::move(signature) });
     }
 
-    RootSignature GPUDevice::CreateRootSignature(const CompiledShaderData& InShader) const
+    SharedPtr<RootSignature> GPUDevice::CreateRootSignature(const CompiledShaderData& InShader) const
     {
         ComPtr<ID3D12RootSignature> rootSignatureObject;
         const auto codeBlob = InShader.GetCompiledShader();

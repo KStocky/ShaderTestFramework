@@ -1,16 +1,16 @@
 #pragma once
 
+#include "Platform.h"
 #include "D3D12/Descriptor.h"
 #include "Utility/Expected.h"
-#include "Utility/MoveOnly.h"
-#include "Platform.h"
+#include "Utility/Object.h"
 #include "Utility/Pointer.h"
 
 #include <d3d12.h>
 
 namespace stf
 {
-    class DescriptorHeap : MoveOnly
+    class DescriptorHeap : Object
     {
     public:
 
@@ -38,16 +38,14 @@ namespace stf
         D3D12_DESCRIPTOR_HEAP_TYPE GetType() const noexcept;
         D3D12_DESCRIPTOR_HEAP_FLAGS GetAccess() const;
 
-        template<typename ThisType>
-        ID3D12DescriptorHeap* GetRaw(this ThisType&& InThis)
+        ID3D12DescriptorHeap* GetRaw() const
         {
-            return std::forward<ThisType>(InThis).m_Heap.Get();
+            return m_Heap.Get();
         }
 
-        template<typename ThisType>
-        operator ID3D12DescriptorHeap* (this ThisType&& InThis)
+        operator ID3D12DescriptorHeap*() const
         {
-            return std::forward<ThisType>(InThis).GetRaw();
+            return GetRaw();
         }
 
     private:

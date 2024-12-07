@@ -1,5 +1,7 @@
 #include "D3D12/CommandAllocator.h"
 
+#include "Utility/Exception.h"
+
 namespace stf
 {
     CommandAllocator::CommandAllocator(CreationParams InParams)
@@ -23,14 +25,8 @@ namespace stf
         return m_Type;
     }
 
-    ExpectedHRes<void> CommandAllocator::Reset()
+    void CommandAllocator::Reset()
     {
-        if (const auto hres = m_Allocator->Reset();
-            FAILED(hres))
-        {
-            return Unexpected(hres);
-        }
-
-        return {};
+        ThrowIfFailed(m_Allocator->Reset());
     }
 }

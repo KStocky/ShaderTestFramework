@@ -19,7 +19,7 @@ namespace stf
     void CommandList::CopyBufferResource(GPUResource& InDest, GPUResource& InSource)
     {
         const auto prevSourceBarrier = InSource.GetBarrier();
-        const auto prevDestBarrier = InSource.GetBarrier();
+        const auto prevDestBarrier = InDest.GetBarrier();
 
         GPUEnhancedBarrier newSourceBarrier
         {
@@ -36,7 +36,7 @@ namespace stf
         };
 
         InSource.SetBarrier(newSourceBarrier);
-        InSource.SetBarrier(newDestBarrier);
+        InDest.SetBarrier(newDestBarrier);
 
         D3D12_BUFFER_BARRIER bufferBarriers[] =
         {
@@ -52,7 +52,7 @@ namespace stf
                 newDestBarrier.Sync,
                 prevDestBarrier.Access,
                 newDestBarrier.Access,
-                InSource
+                InDest
             )
         };
 
@@ -128,7 +128,7 @@ namespace stf
 
     void CommandList::Reset(CommandAllocator& InAllocator)
     {
-        ThrowIfUnexpected(InAllocator.Reset());
+        InAllocator.Reset();
         ThrowIfFailed(m_List->Reset(InAllocator, nullptr));
     }
 
