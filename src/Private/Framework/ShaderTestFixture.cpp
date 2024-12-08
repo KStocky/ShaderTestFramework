@@ -199,7 +199,7 @@ namespace stf
             ScopedDuration testExecution("ShaderTestFixture::RunTest Test Execution");
             const auto capturer = PIXCapturer(InTestDesc.TestName, takeCapture);
 
-            engine.Execute(InTestDesc.TestName,
+            engine->Execute(InTestDesc.TestName,
                 [&resourceHeap,
                 &pipelineState,
                 &reflectionData,
@@ -244,7 +244,7 @@ namespace stf
                 }
             );
 
-            engine.Flush();
+            engine->Flush();
         }
 
         {
@@ -498,13 +498,6 @@ namespace stf
         const auto heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_READBACK);
         const auto resourceDesc = CD3DX12_RESOURCE_DESC1::Buffer(InSizeInBytes);
         return m_Device->CreateCommittedResource(heapProps, D3D12_HEAP_FLAG_NONE, resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED);
-    }
-
-    GPUResource ShaderTestFixture::CreateConstantBuffer(const u64 InSizeInBytes) const
-    {
-        const auto heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-        const auto resourceDesc = CD3DX12_RESOURCE_DESC1::Buffer(InSizeInBytes);
-        return m_Device.CreateCommittedResource(heapProps, D3D12_HEAP_FLAG_NONE, resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED);
     }
 
     DescriptorHandle ShaderTestFixture::CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap, const u32 InIndex) const
