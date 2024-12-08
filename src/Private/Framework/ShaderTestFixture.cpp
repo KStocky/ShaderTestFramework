@@ -280,7 +280,7 @@ namespace stf
         return m_Compiler.CompileShader(job);
     }
 
-    CommandEngine ShaderTestFixture::CreateCommandEngine() const
+    SharedPtr<CommandEngine> ShaderTestFixture::CreateCommandEngine() const
     {
         auto commandList = m_Device->CreateCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
         D3D12_COMMAND_QUEUE_DESC queueDesc;
@@ -290,7 +290,7 @@ namespace stf
         queueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
         auto commandQueue = m_Device->CreateCommandQueue(queueDesc);
 
-        return CommandEngine(CommandEngine::CreationParams{ std::move(commandList), std::move(commandQueue), m_Device });
+        return MakeShared<CommandEngine>(CommandEngine::CreationParams{ std::move(commandList), std::move(commandQueue), m_Device });
     }
 
     void ShaderTestFixture::RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader)
@@ -498,6 +498,13 @@ namespace stf
         const auto heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_READBACK);
         const auto resourceDesc = CD3DX12_RESOURCE_DESC1::Buffer(InSizeInBytes);
         return m_Device->CreateCommittedResource(heapProps, D3D12_HEAP_FLAG_NONE, resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED);
+    }
+
+    GPUResource ShaderTestFixture::CreateConstantBuffer(const u64 InSizeInBytes) const
+    {
+        const auto heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+        const auto resourceDesc = CD3DX12_RESOURCE_DESC1::Buffer(InSizeInBytes);
+        return m_Device.CreateCommittedResource(heapProps, D3D12_HEAP_FLAG_NONE, resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED);
     }
 
     DescriptorHandle ShaderTestFixture::CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap, const u32 InIndex) const

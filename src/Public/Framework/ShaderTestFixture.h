@@ -125,7 +125,7 @@ namespace stf
         Results RunTestImpl(RuntimeTestDesc InTestDesc, const bool InIsFailureRetry);
 
         CompilationResult CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const;
-        CommandEngine CreateCommandEngine() const;
+        SharedPtr<CommandEngine> CreateCommandEngine() const;
         SharedPtr<DescriptorHeap> CreateDescriptorHeap() const;
         SharedPtr<PipelineState> CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const;
         Expected<ReflectionResults, ErrorTypeAndDescription> ProcessShaderReflection(const CompiledShaderData& InShaderData) const;

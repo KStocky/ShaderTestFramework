@@ -7,6 +7,7 @@
 
 #include "Utility/FunctionTraits.h"
 #include "Utility/Lambda.h"
+#include "Utility/Object.h"
 #include "Utility/Pointer.h"
 
 #include <WinPixEventRuntime/pix3.h>
@@ -58,7 +59,7 @@ namespace stf
         CommandList* m_List = nullptr;
     };
 
-    class CommandEngine
+    class CommandEngine : Object
     {
     public:
 
