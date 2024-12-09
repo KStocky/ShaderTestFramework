@@ -52,6 +52,7 @@ set(SOURCES
     Public/Framework/TestDataBufferLayout.h
     Public/Framework/TestDataBufferProcessor.h
     Public/Framework/TestDataBufferStructs.h
+    Public/Framework/TypeByteReader.h
     Public/Platform.h
     Public/Stats/ScopedObject.h
     Public/Stats/StatSystem.h
@@ -97,6 +98,7 @@ set(SOURCES
     Private/Framework/TestDataBufferLayout.cpp
     Private/Framework/TestDataBufferProcessor.cpp
     Private/Framework/TestDataBufferStructs.cpp
+    Private/Framework/TypeByteReader.cpp
     Private/Stats/StatSystem.cpp
 )
 
