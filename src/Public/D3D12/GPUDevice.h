@@ -24,6 +24,9 @@
 
 namespace stf
 {
+    template<typename T>
+    using ExpectedHRes = Expected<T, HRESULT>;
+
     struct GPUAdapterInfo
     {
         std::wstring Name;

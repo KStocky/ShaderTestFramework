@@ -1,6 +1,5 @@
 #pragma once
 #define WIN32_LEAN_AND_MEAN
-#include "Utility/Expected.h"
 #include "Utility/Float.h"
 #include <cstdint>
 #include <Windows.h>
@@ -20,9 +19,6 @@ namespace stf
     using f16 = float16_t;
     using f32 = float;
     using f64 = double;
-
-    template<typename T>
-    using ExpectedHRes = Expected<T, HRESULT>;
 }
 
 #if _MSC_VER >= 1929 // VS2019 v16.10 and later (_MSC_FULL_VER >= 192829913 for VS 2019 v16.9)
