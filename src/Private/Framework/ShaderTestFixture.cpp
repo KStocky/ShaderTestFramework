@@ -86,14 +86,18 @@ namespace stf
     Results ShaderTestFixture::RunCompileTimeTest(CompileTestDesc InTestDesc)
     {
         ScopedDuration scope(std::format("ShaderTestFixture::RunCompileTimeTest: {}", InTestDesc.TestName));
-        const auto compileResult = CompileShader("", EShaderType::Lib, std::move(InTestDesc.CompilationEnv), false);
-
-        if (!compileResult.has_value())
-        {
-            return Results{ { .Type = ETestRunErrorType::ShaderCompilation, .Error = compileResult.error() } };
-        }
-
-        return Results{ TestRunResults{} };
+        return CompileShader("", EShaderType::Lib, std::move(InTestDesc.CompilationEnv), false)
+            .transform(
+                [](SharedPtr<ShaderTestShader>)
+                {
+                    return Results{ TestRunResults{} };
+                })
+            .or_else(
+                [](ErrorTypeAndDescription InError) -> Expected<Results, std::monostate>
+                {
+                    return Results{ std::move(InError) };
+                }
+            ).value();
     }
 
     bool ShaderTestFixture::IsValid() const
@@ -127,133 +131,124 @@ namespace stf
                 .Definition = enableStrings ? "1" : "0"
             }
         );
-        const auto compileResult = CompileShader(InTestDesc.TestName, EShaderType::Compute, std::move(InTestDesc.CompilationEnv), takeCapture);
 
-        if (!compileResult.has_value())
-        {
-            return Results
-            {
+        return CompileShader(InTestDesc.TestName, EShaderType::Compute, std::move(InTestDesc.CompilationEnv), takeCapture)
+            .and_then(
+                [](SharedPtr<ShaderTestShader> InShader) -> Expected<SharedPtr<ShaderTestShader>, ErrorTypeAndDescription>
                 {
-                    .Type = ETestRunErrorType::ShaderCompilation,
-                    .Error = compileResult.error()
-                }
-            };
-        }
-
-        auto engine = CreateCommandEngine();
-        auto resourceHeap = CreateDescriptorHeap();
-        auto reflectionData = ProcessShaderReflection(compileResult.value());
-
-        if (!reflectionData)
-        {
-            return Results{ reflectionData.error() };
-        }
-        auto pipelineState = CreatePipelineState(*reflectionData.value().RootSig, compileResult->GetCompiledShader());
-
-        const auto [dimX, dimY, dimZ] =
-            [&compileResult, threadGroupCount = InTestDesc.ThreadGroupCount]()
-            {
-                u32 threadX = 0;
-                u32 threadY = 0;
-                u32 threadZ = 0;
-                compileResult->GetReflection()->GetThreadGroupSize(&threadX, &threadY, &threadZ);
-
-                const u32 dimX = threadX * threadGroupCount.x;
-                const u32 dimY = threadY * threadGroupCount.y;
-                const u32 dimZ = threadZ * threadGroupCount.z;
-
-                return Tuple{ dimX, dimY, dimZ };
-            }();
-
-        const TestDataBufferLayout testDataLayout{ InTestDesc.TestDataLayout };
-
-        if (reflectionData.value().RootParamBuffers.size() > 0)
-        {
-            InTestDesc.Bindings.append_range
-            (std::array{
-                ShaderBinding{ "stf::detail::DispatchDimensions", uint3{dimX, dimY, dimZ} },
-                ShaderBinding{ "stf::detail::AllocationBufferIndex", 1u },
-                ShaderBinding{ "stf::detail::TestDataBufferIndex", 0u },
-                ShaderBinding{ "stf::detail::Asserts", testDataLayout.GetAssertSection() },
-                ShaderBinding{ "stf::detail::Strings", testDataLayout.GetStringSection() },
-                ShaderBinding{ "stf::detail::Sections", testDataLayout.GetSectionInfoSection() }
-            });
-
-            const auto populateResult = PopulateTestConstantBuffers(reflectionData.value(), InTestDesc.Bindings);
-            if (!populateResult)
-            {
-                return Results{ populateResult.error() };
-            }
-        }
-
-        const u64 bufferSizeInBytes = std::max(testDataLayout.GetSizeOfTestData(), 4u);
-        auto assertBuffer = CreateAssertBuffer(bufferSizeInBytes);
-        auto allocationBuffer = CreateAssertBuffer(28ull);
-        auto readBackBuffer = CreateReadbackBuffer(bufferSizeInBytes);
-        auto readBackAllocationBuffer = CreateReadbackBuffer(28ull);
-
-        const auto assertUAV = CreateAssertBufferUAV(*assertBuffer, *resourceHeap, 0);
-        const auto allocationUAV = CreateAssertBufferUAV(*allocationBuffer, *resourceHeap, 1);
-
-        {
-            ScopedDuration testExecution("ShaderTestFixture::RunTest Test Execution");
-            const auto capturer = PIXCapturer(InTestDesc.TestName, takeCapture);
-
-            engine->Execute(InTestDesc.TestName,
-                [&resourceHeap,
-                &pipelineState,
-                &reflectionData,
-                &assertBuffer,
-                &allocationBuffer,
-                &readBackBuffer,
-                &readBackAllocationBuffer,
-                threadGroupCount = InTestDesc.ThreadGroupCount,
-                this]
-                (ScopedCommandContext& InContext)
-                {
-                    InContext.Section("Test Setup",
-                        [&](ScopedCommandContext& InContext)
-                        {
-                            InContext->SetPipelineState(*pipelineState);
-                            InContext->SetDescriptorHeaps(*resourceHeap);
-                            InContext->SetComputeRootSignature(*reflectionData.value().RootSig);
-                            InContext->SetBufferUAV(*assertBuffer);
-                            InContext->SetBufferUAV(*allocationBuffer);
-
-                            for (const auto& [paramIndex, buffer] : reflectionData.value().RootParamBuffers)
+                    auto res = InShader->Init();
+                    return std::move(res)
+                        .transform(
+                            [shader = std::move(InShader)]()
                             {
-                                InContext->SetComputeRoot32BitConstants(paramIndex, std::span{ buffer }, 0);
+                                return std::move(shader);
                             }
-                        }
-                    );
+                        );
+                })
+            .and_then(
+                [this, &InTestDesc, takeCapture](SharedPtr<ShaderTestShader> InShader)
+                {
+                    const TestDataBufferLayout testDataLayout{ InTestDesc.TestDataLayout };
 
-                    InContext.Section("Test Dispatch",
-                        [threadGroupCount](ScopedCommandContext& InContext)
-                        {
-                            InContext->Dispatch(threadGroupCount.x, threadGroupCount.y, threadGroupCount.z);
-                        }
-                    );
 
-                    InContext.Section("Results readback",
-                        [&](ScopedCommandContext& InContext)
-                        {
-                            InContext->CopyBufferResource(*readBackBuffer, *assertBuffer);
-                            InContext->CopyBufferResource(*readBackAllocationBuffer, *allocationBuffer);
-                        }
-                    );
+                    InTestDesc.Bindings.append_range
+                    (std::array{
+                        ShaderBinding{ "stf::detail::DispatchDimensions", InShader->GetThreadGroupSize() * InTestDesc.ThreadGroupCount },
+                        ShaderBinding{ "stf::detail::AllocationBufferIndex", 1u },
+                        ShaderBinding{ "stf::detail::TestDataBufferIndex", 0u },
+                        ShaderBinding{ "stf::detail::Asserts", testDataLayout.GetAssertSection() },
+                        ShaderBinding{ "stf::detail::Strings", testDataLayout.GetStringSection() },
+                        ShaderBinding{ "stf::detail::Sections", testDataLayout.GetSectionInfoSection() }
+                        });
+
+                    auto bindRes = InShader->BindConstantBufferData(InTestDesc.Bindings);
+
+                    return std::move(bindRes)
+                        .transform(
+                            [this, &InTestDesc, shader = std::move(InShader), testDataLayout, takeCapture]()
+                            {
+                                auto engine = CreateCommandEngine();
+                                auto resourceHeap = CreateDescriptorHeap();
+
+
+                                auto pipelineState = CreatePipelineState(*shader->GetRootSig(), shader->GetCompiledShader());
+                                const u64 bufferSizeInBytes = std::max(testDataLayout.GetSizeOfTestData(), 4u);
+                                auto assertBuffer = CreateAssertBuffer(bufferSizeInBytes);
+                                auto allocationBuffer = CreateAssertBuffer(28ull);
+                                auto readBackBuffer = CreateReadbackBuffer(bufferSizeInBytes);
+                                auto readBackAllocationBuffer = CreateReadbackBuffer(28ull);
+
+                                const auto assertUAV = CreateAssertBufferUAV(*assertBuffer, *resourceHeap, 0);
+                                const auto allocationUAV = CreateAssertBufferUAV(*allocationBuffer, *resourceHeap, 1);
+
+                                {
+                                    ScopedDuration testExecution("ShaderTestFixture::RunTest Test Execution");
+                                    const auto capturer = PIXCapturer(InTestDesc.TestName, takeCapture);
+
+                                    engine->Execute(InTestDesc.TestName,
+                                        [&resourceHeap,
+                                        &pipelineState,
+                                        &assertBuffer,
+                                        &allocationBuffer,
+                                        &readBackBuffer,
+                                        &readBackAllocationBuffer,
+                                        threadGroupCount = InTestDesc.ThreadGroupCount,
+                                        &shader,
+                                        this]
+                                        (ScopedCommandContext& InContext)
+                                        {
+                                            InContext.Section("Test Setup",
+                                                [&](ScopedCommandContext& InContext)
+                                                {
+                                                    InContext->SetPipelineState(*pipelineState);
+                                                    InContext->SetDescriptorHeaps(*resourceHeap);
+                                                    InContext->SetComputeRootSignature(*shader->GetRootSig());
+                                                    InContext->SetBufferUAV(*assertBuffer);
+                                                    InContext->SetBufferUAV(*allocationBuffer);
+
+                                                    shader->SetConstantBufferData(*InContext);
+                                                }
+                                            );
+
+                                            InContext.Section("Test Dispatch",
+                                                [threadGroupCount](ScopedCommandContext& InContext)
+                                                {
+                                                    InContext->Dispatch(threadGroupCount.x, threadGroupCount.y, threadGroupCount.z);
+                                                }
+                                            );
+
+                                            InContext.Section("Results readback",
+                                                [&](ScopedCommandContext& InContext)
+                                                {
+                                                    InContext->CopyBufferResource(*readBackBuffer, *assertBuffer);
+                                                    InContext->CopyBufferResource(*readBackAllocationBuffer, *allocationBuffer);
+                                                }
+                                            );
+                                        }
+                                    );
+
+                                    engine->Flush();
+                                }
+
+                                {
+                                    ScopedDuration readbackScope(std::format("ShaderTestFixture::ReadbackResults: {}", InTestDesc.TestName));
+                                    return ReadbackResults(*readBackAllocationBuffer, *readBackBuffer, shader->GetThreadGroupSize() * InTestDesc.ThreadGroupCount, testDataLayout);
+                                }
+                            }
+                        );
+
+                    
                 }
-            );
-
-            engine->Flush();
-        }
-
-        {
-            ScopedDuration readbackScope(std::format("ShaderTestFixture::ReadbackResults: {}", InTestDesc.TestName));
-            return ReadbackResults(*readBackAllocationBuffer, *readBackBuffer, uint3(dimX, dimY, dimZ), testDataLayout);
-        }
+            )
+            .or_else(
+                [](ErrorTypeAndDescription InError) -> Expected<Results, std::monostate>
+                {
+                    return Results{ std::move(InError) };
+                }
+            ).value();
     }
 
-    CompilationResult ShaderTestFixture::CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const
+    Expected<SharedPtr<ShaderTestShader>, ErrorTypeAndDescription> ShaderTestFixture::CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const
     {
         ScopedDuration scope(std::format("ShaderTestFixture::CompileShader: {}", InName));
         ShaderCompilationJobDesc job;
@@ -277,7 +272,22 @@ namespace stf
             job.Flags = Enum::MakeFlags(EShaderCompileFlags::SkipOptimization, EShaderCompileFlags::O0);
         }
 
-        return m_Compiler.CompileShader(job);
+        return m_Compiler
+            .CompileShader(job)
+            .transform(
+                [this](CompiledShaderData InData)
+                {
+                    return MakeShared<ShaderTestShader>(ShaderTestShader::CreationParams{ .ShaderData = std::move(InData), .Device = m_Device });
+                })
+            .transform_error(
+                [](std::string InError)
+                {
+                    return ErrorTypeAndDescription
+                    {
+                        .Type = ETestRunErrorType::ShaderCompilation,
+                        .Error = std::move(InError)
+                    };
+                });
     }
 
     SharedPtr<CommandEngine> ShaderTestFixture::CreateCommandEngine() const

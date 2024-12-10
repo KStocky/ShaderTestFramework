@@ -48,6 +48,11 @@ namespace stf
             return m_List;
         }
 
+        CommandList& operator*() const
+        {
+            return *m_List;
+        }
+
         template<ExecuteLambdaType InLambdaType>
         void Section(const std::string_view InName, InLambdaType&& InFunc)
         {

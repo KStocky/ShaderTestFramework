@@ -50,6 +50,7 @@ set(SOURCES
     Public/Framework/PIXCapturer.h
     Public/Framework/ShaderTestCommon.h
     Public/Framework/ShaderTestFixture.h
+    Public/Framework/ShaderTestShader.h
     Public/Framework/TestDataBufferLayout.h
     Public/Framework/TestDataBufferProcessor.h
     Public/Framework/TestDataBufferStructs.h
@@ -97,6 +98,7 @@ set(SOURCES
     Private/Framework/PIXCapturer.cpp
     Private/Framework/ShaderTestCommon.cpp
     Private/Framework/ShaderTestFixture.cpp
+    Private/Framework/ShaderTestShader.cpp
     Private/Framework/TestDataBufferLayout.cpp
     Private/Framework/TestDataBufferProcessor.cpp
     Private/Framework/TestDataBufferStructs.cpp

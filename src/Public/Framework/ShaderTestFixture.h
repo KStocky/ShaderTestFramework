@@ -6,6 +6,7 @@
 #include "D3D12/Shader/ShaderBinding.h"
 #include "D3D12/Shader/ShaderCompiler.h"
 #include "Framework/HLSLTypes.h"
+#include "Framework/ShaderTestShader.h"
 #include "Framework/TestDataBufferLayout.h"
 #include "Framework/TestDataBufferProcessor.h"
 #include "Stats/StatSystem.h"
@@ -124,7 +125,7 @@ namespace stf
 
         Results RunTestImpl(RuntimeTestDesc InTestDesc, const bool InIsFailureRetry);
 
-        CompilationResult CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const;
+        Expected<SharedPtr<ShaderTestShader>, ErrorTypeAndDescription> CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const;
         SharedPtr<CommandEngine> CreateCommandEngine() const;
         SharedPtr<DescriptorHeap> CreateDescriptorHeap() const;
         SharedPtr<PipelineState> CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const;
