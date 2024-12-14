@@ -21,7 +21,7 @@ namespace stf
         const D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle{ m_Heap->GetCPUDescriptorHandleForHeapStart().ptr + offset };
         const D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle{ gpuPtr + offset };
 
-        return DescriptorRange(DescriptorHandle{ cpuHandle, gpuHandle }, InNum, m_DescriptorSize);
+        return DescriptorRange(DescriptorHandle{ cpuHandle, gpuHandle, InBeginIndex }, InNum, m_DescriptorSize);
     }
 
     DescriptorHeap::Expected<DescriptorHandle> DescriptorHeap::CreateDescriptorHandle(const u32 InIndex) const

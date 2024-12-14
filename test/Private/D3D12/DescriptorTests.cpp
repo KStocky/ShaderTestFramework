@@ -86,8 +86,9 @@ SCENARIO("DescriptorRangeTests")
 		static constexpr u32 num = 20;
 		static constexpr u32 expectedSize = increment * num;
 		static constexpr u64 startAddress = 42;
+        static constexpr u32 startHeapIndex = 4;
 		
-		DescriptorRange range{ DescriptorHandle{{startAddress}, {startAddress}}, num, increment };
+		DescriptorRange range{ DescriptorHandle{{startAddress}, {startAddress}, startHeapIndex}, num, increment };
 
 		REQUIRE(range.IsValidRange());
 
@@ -109,8 +110,10 @@ SCENARIO("DescriptorRangeTests")
 			THEN("address is as expected")
 			{
 				static constexpr u64 expectedAddress = startAddress + increment * index;
+                static constexpr u32 expectedHeapIndex = startHeapIndex + index;
 
 				REQUIRE(handle->GetCPUHandle().ptr == expectedAddress);
+                REQUIRE(handle->GetHeapIndex() == expectedHeapIndex);
 			}
 		}
 
@@ -130,8 +133,9 @@ SCENARIO("DescriptorRangeTests")
 		{
 			static constexpr u32 expectedIndex = num - 1;
 			static constexpr u64 address = startAddress + increment * expectedIndex;
+            static constexpr u32 heapIndex = startHeapIndex + expectedIndex;
 
-			const auto maybeIndex = range.GetIndex(DescriptorHandle{ {address}, {address} });
+			const auto maybeIndex = range.GetIndex(DescriptorHandle{ {address}, {address}, heapIndex });
 
 			THEN("index is as expected")
 			{
@@ -144,8 +148,9 @@ SCENARIO("DescriptorRangeTests")
 		{
 			static constexpr u32 expectedIndex = num + 1;
 			static constexpr u64 address = startAddress + increment * expectedIndex;
+            static constexpr u32 heapIndex = startHeapIndex + expectedIndex;
 
-			const auto maybeIndex = range.GetIndex(DescriptorHandle{ {address}, {address} });
+			const auto maybeIndex = range.GetIndex(DescriptorHandle{ {address}, {address}, expectedIndex });
 
 			THEN("invalid handle error returned")
 			{

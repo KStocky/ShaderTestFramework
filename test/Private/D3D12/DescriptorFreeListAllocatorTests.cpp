@@ -44,7 +44,7 @@ SCENARIO("DescriptorFreeListAllocatorTests")
 		static constexpr u32 increment = 2;
 		static constexpr u32 numAllocationsBefore = capacity - 2;
 		static constexpr u32 expectedSize = numAllocationsBefore + 1;
-		const auto allocatorRange = DescriptorRange({ {}, {} }, capacity, increment);
+		const auto allocatorRange = DescriptorRange({ {}, {}, 0 }, capacity, increment);
 		DescriptorFreeListAllocator allocator{ allocatorRange };
 
 		WHEN("Allocate")
@@ -65,7 +65,7 @@ SCENARIO("DescriptorFreeListAllocatorTests")
 		static constexpr u32 increment = 2;
 		static constexpr u32 numAllocationsBefore = capacity - 1;
 		static constexpr u32 expectedSize = numAllocationsBefore + 1;
-		const auto allocatorRange = DescriptorRange({ {}, {} }, capacity, increment);
+		const auto allocatorRange = DescriptorRange({ {}, {}, 0 }, capacity, increment);
 		DescriptorFreeListAllocator allocator{ allocatorRange };
 
 		for ([[maybe_unused]] const auto allocations : std::ranges::iota_view(0u, numAllocationsBefore))
@@ -91,7 +91,7 @@ SCENARIO("DescriptorFreeListAllocatorTests")
 		static constexpr u32 increment = 2;
 		static constexpr u32 numAllocationsBefore = capacity;
 		static constexpr u32 expectedSize = numAllocationsBefore;
-		const auto allocatorRange = DescriptorRange({ {}, {} }, capacity, increment);
+		const auto allocatorRange = DescriptorRange({ {}, {}, 0 }, capacity, increment);
 		DescriptorFreeListAllocator allocator{ allocatorRange };
 
 		for ([[maybe_unused]] const auto allocations : std::ranges::iota_view(0u, numAllocationsBefore))
@@ -118,7 +118,7 @@ SCENARIO("DescriptorFreeListAllocatorTests")
 		static constexpr u32 capacity = 2;
 		static constexpr u32 increment = 2;
 		static constexpr u32 expectedSize = 0;
-		const auto allocatorRange = DescriptorRange({ {}, {} }, capacity, increment);
+		const auto allocatorRange = DescriptorRange({ {}, {}, 0 }, capacity, increment);
 		DescriptorFreeListAllocator allocator{ allocatorRange };
 
 		WHEN("descriptor is released")
@@ -141,8 +141,8 @@ SCENARIO("DescriptorFreeListAllocatorTests")
 		static constexpr u32 capacity = 2;
 		static constexpr u32 increment = 2;
 		static constexpr u32 expectedSize = 0;
-		const auto allocatorRange = DescriptorRange({ {}, {} }, capacity, increment);
-		const auto allocatorRange2 = DescriptorRange({ {capacity}, {capacity} }, capacity, increment);
+		const auto allocatorRange = DescriptorRange({ {}, {}, 0 }, capacity, increment);
+		const auto allocatorRange2 = DescriptorRange({ {capacity}, {capacity}, capacity }, capacity, increment);
 		DescriptorFreeListAllocator allocator{ allocatorRange };
 		WHEN("Descriptor is released")
 		{
@@ -163,7 +163,7 @@ SCENARIO("DescriptorFreeListAllocatorTests")
 		static constexpr u32 capacity = 2;
 		static constexpr u32 increment = 2;
 		static constexpr u32 expectedSize = 0;
-		const auto allocatorRange = DescriptorRange({ {}, {} }, capacity, increment);
+		const auto allocatorRange = DescriptorRange({ {}, {}, 0 }, capacity, increment);
 		DescriptorFreeListAllocator allocator{ allocatorRange };
 
 		const auto handle = allocator.Allocate();
