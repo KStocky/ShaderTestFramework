@@ -29,6 +29,11 @@ namespace stf
         return CreateDescriptorRange(InIndex, 1).transform([](const auto& InRange) { return *InRange[0]; });
     }
 
+    DescriptorRange DescriptorHeap::GetHeapRange() const
+    {
+        return ThrowIfUnexpected(CreateDescriptorRange(0, GetNumDescriptors()));
+    }
+
     u32 DescriptorHeap::GetNumDescriptors() const noexcept
     {
         return m_Heap->GetDesc().NumDescriptors;
