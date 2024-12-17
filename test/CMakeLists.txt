@@ -140,6 +140,7 @@ set(SOURCES
     Private/D3D12/CommandEngineTests.cpp
     Private/D3D12/CommandListTests.cpp
     Private/D3D12/DescriptorFreeListAllocatorTests.cpp
+    Private/D3D12/DescriptorHeapTests.cpp
     Private/D3D12/DescriptorRingAllocatorTests.cpp
     Private/D3D12/DescriptorTests.cpp
     Private/D3D12/Shader/HLSLTests.cpp
