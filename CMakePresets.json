@@ -20,6 +20,10 @@
       "architecture": {
         "value": "x64",
         "strategy": "external"
+      },
+      "toolset": {
+        "strategy": "external",
+        "value": "version=14.42"
       }
     },
     {
