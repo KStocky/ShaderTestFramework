@@ -145,9 +145,9 @@ namespace stf
         }
 
         template<typename ThisType, size_t... InIndices, typename... InOtherCallParamTypes>
-        static constexpr RetType Apply(std::index_sequence<InIndices...>, ThisType&& InThis, InOtherCallParamTypes&&... InParams) noexcept(noexcept(std::invoke(const_cast<std::remove_const_t<decltype(InFunc)>&>(InFunc), Deref(Get<InIndices>(std::forward<ThisType>(InThis).m_Captures))..., std::forward<InOtherCallParamTypes>(InParams)...)))
+        static constexpr RetType Apply(std::index_sequence<InIndices...>, ThisType&& InThis, InOtherCallParamTypes&&... InParams) noexcept(noexcept(std::invoke(const_cast<std::remove_const_t<decltype(InFunc)>&>(InFunc), Deref(get<InIndices>(std::forward<ThisType>(InThis).m_Captures))..., std::forward<InOtherCallParamTypes>(InParams)...)))
         {
-            return std::invoke(const_cast<std::remove_const_t<decltype(InFunc)>&>(InFunc), Deref(Get<InIndices>(std::forward<ThisType>(InThis).m_Captures))..., std::forward<InOtherCallParamTypes>(InParams)...);
+            return std::invoke(const_cast<std::remove_const_t<decltype(InFunc)>&>(InFunc), Deref(get<InIndices>(std::forward<ThisType>(InThis).m_Captures))..., std::forward<InOtherCallParamTypes>(InParams)...);
         }
 
         STF_NO_UNIQUE_ADDRESS

@@ -72,6 +72,20 @@ TEST_CASE_PERSISTENT_FIXTURE(DescriptorManagerTestPrivate::Fixture, "Descriptor 
             THEN("Succeeds")
             {
                 REQUIRE(firstAllocationResult.has_value());
+                REQUIRE(1 == manager->GetCapacity());
+                REQUIRE(1 == manager->GetSize());
+            }
+
+            AND_WHEN("Allocation released")
+            {
+                auto firstReleaseResult = manager->ReleaseUAV(firstAllocationResult.value());
+
+                THEN("Succeeds")
+                {
+                    REQUIRE(firstReleaseResult.has_value());
+                    REQUIRE(1 == manager->GetCapacity());
+                    REQUIRE(0 == manager->GetSize());
+                }
             }
         }
     }

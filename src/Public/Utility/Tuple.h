@@ -14,8 +14,8 @@ namespace stf
         tuplet::tuple<InTypes...>;
 #endif
 
-    template <size_t I, typename Tup>
-    constexpr decltype(auto) Get(Tup&& tup) {
-        return get<I>(std::forward<Tup>(tup));
+    template <class... T>
+    constexpr Tuple<T&...> tie(T&... t) {
+        return { t... };
     }
 }
