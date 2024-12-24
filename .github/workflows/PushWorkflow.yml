@@ -32,7 +32,8 @@ jobs:
               - '**/CMakeLists.txt'
               - '**.cmake'
               - '**/RWBuildAndRunTests.yml'
-              - '**/PushWorkflow.yml' 
+              - '**/PushWorkflow.yml'
+              - '**CMakePresets.json'
             docs:
               - '**.md'
               - '**/RWLinkValidation.yml'
