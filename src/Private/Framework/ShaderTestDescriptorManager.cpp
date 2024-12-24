@@ -93,8 +93,8 @@ namespace stf
 
         const auto oldGPUHeap = m_GPUHeap;
 
-        std::tie(m_CPUDescriptors, m_CPUHeap) = copyDescriptorsToNewHeap(m_CPUDescriptors, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
-        std::tie(m_GPUDescriptors, m_GPUHeap) = copyDescriptorsToNewHeap(m_CPUDescriptors, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
+        stf::tie(m_CPUDescriptors, m_CPUHeap) = copyDescriptorsToNewHeap(m_CPUDescriptors, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
+        stf::tie(m_GPUDescriptors, m_GPUHeap) = copyDescriptorsToNewHeap(m_CPUDescriptors, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
 
         return oldGPUHeap;
     }
