@@ -122,6 +122,32 @@ SCENARIO("RingBufferTests")
 				REQUIRE(expected == actual);
 			}
 		}
+
+        WHEN("resized to same size")
+        {
+            static constexpr u64 newCapacity = capacity;
+            const auto resizeResult = buffer.resize(newCapacity);
+
+            THEN("succeeds")
+            {
+                REQUIRE(resizeResult.has_value());
+                REQUIRE(newCapacity == buffer.capacity());
+                REQUIRE(0 == buffer.size());
+            }
+        }
+
+        WHEN("resized to greater size")
+        {
+            static constexpr u64 newCapacity = capacity + 5;
+            const auto resizeResult = buffer.resize(newCapacity);
+
+            THEN("succeeds")
+            {
+                REQUIRE(resizeResult.has_value());
+                REQUIRE(newCapacity == buffer.capacity());
+                REQUIRE(0 == buffer.size());
+            }
+        }
 	}
 
 	GIVEN("Non zero capacity")
@@ -151,6 +177,43 @@ SCENARIO("RingBufferTests")
 				REQUIRE(expected == buffer.front().Num);
 			}
 		}
+
+        WHEN("Resized to something smaller")
+        {
+            const auto resizeResult = buffer.resize(size - 1);
+
+            THEN("fails")
+            {
+                REQUIRE_FALSE(resizeResult.has_value());
+                REQUIRE(resizeResult.error() == RingBuffer<MoveableType>::EErrorType::AttemptedShrink);
+            }
+        }
+
+        WHEN("resized to same size")
+        {
+            static constexpr u64 newCapacity = size;
+            const auto resizeResult = buffer.resize(newCapacity);
+
+            THEN("succeeds")
+            {
+                REQUIRE(resizeResult.has_value());
+                REQUIRE(newCapacity == buffer.capacity());
+                REQUIRE(0 == buffer.size());
+            }
+        }
+
+        WHEN("resized to greater size")
+        {
+            static constexpr u64 newCapacity = size + 5;
+            const auto resizeResult = buffer.resize(newCapacity);
+
+            THEN("succeeds")
+            {
+                REQUIRE(resizeResult.has_value());
+                REQUIRE(newCapacity == buffer.capacity());
+                REQUIRE(0 == buffer.size());
+            }
+        }
 	}
 
 	GIVEN("two items exist")
@@ -211,5 +274,57 @@ SCENARIO("RingBufferTests")
 				REQUIRE(expected == actual);
 			}
 		}
+
+        WHEN("Resized to something smaller")
+        {
+            const auto resizeResult = buffer.resize(capacity - 1);
+
+            THEN("fails")
+            {
+                REQUIRE_FALSE(resizeResult.has_value());
+                REQUIRE(resizeResult.error() == RingBuffer<MoveableType>::EErrorType::AttemptedShrink);
+            }
+        }
+
+        WHEN("resized to same size")
+        {
+            static constexpr u64 newCapacity = capacity;
+            const auto resizeResult = buffer.resize(newCapacity);
+
+            THEN("succeeds")
+            {
+                REQUIRE(resizeResult.has_value());
+                REQUIRE(newCapacity == buffer.capacity());
+                REQUIRE(2 == buffer.size());
+            }
+        }
+
+        WHEN("resized to greater size")
+        {
+            static constexpr u64 newCapacity = capacity + 5;
+            const auto resizeResult = buffer.resize(newCapacity);
+
+            THEN("succeeds")
+            {
+                REQUIRE(resizeResult.has_value());
+                REQUIRE(newCapacity == buffer.capacity());
+                REQUIRE(2 == buffer.size());
+            }
+
+            AND_WHEN("iterated on")
+            {
+                u32 actual = 0;
+                for (const auto element : buffer)
+                {
+                    ++actual;
+                }
+
+                THEN("two iterations")
+                {
+                    static constexpr u32 expected = 2;
+                    REQUIRE(expected == actual);
+                }
+            }
+        }
 	}
 };
