@@ -74,6 +74,8 @@ namespace stf
 
         const u32 numAdded = InNewSize - m_NumDescriptors;
 
+        m_FreeList.resize(InNewSize);
+        m_FreeSet.reserve(InNewSize);
         std::ranges::generate_n(std::back_inserter(m_FreeList), numAdded, [index = m_NumDescriptors]() mutable { return index++; });
         std::ranges::generate_n(std::back_inserter(m_FreeSet), numAdded, []() { return true; });
         m_NumDescriptors = InNewSize;
