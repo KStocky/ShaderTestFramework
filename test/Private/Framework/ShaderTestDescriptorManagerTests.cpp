@@ -86,6 +86,68 @@ TEST_CASE_PERSISTENT_FIXTURE(DescriptorManagerTestPrivate::Fixture, "Descriptor 
                     REQUIRE(1 == manager->GetCapacity());
                     REQUIRE(0 == manager->GetSize());
                 }
+
+                AND_WHEN("Allocation made")
+                {
+                    auto secondAllocationResult = manager->CreateUAV(resource, uavDesc);
+
+                    THEN("Succeeds")
+                    {
+                        REQUIRE(secondAllocationResult.has_value());
+                        REQUIRE(1 == manager->GetCapacity());
+                        REQUIRE(1 == manager->GetSize());
+                    }
+                }
+
+                AND_WHEN("Same allocation released")
+                {
+                    auto secondReleaseResult = manager->ReleaseUAV(firstAllocationResult.value());
+
+                    THEN("Fails")
+                    {
+                        REQUIRE_FALSE(secondReleaseResult.has_value());
+                        REQUIRE(secondReleaseResult.error() == ShaderTestDescriptorManager::EErrorType::DescriptorAlreadyFree);
+                        REQUIRE(1 == manager->GetCapacity());
+                        REQUIRE(0 == manager->GetSize());
+                    }
+                }
+            }
+
+            AND_WHEN("Allocation made")
+            {
+                auto secondAllocationResult = manager->CreateUAV(resource, uavDesc);
+
+                THEN("Fails")
+                {
+                    REQUIRE_FALSE(secondAllocationResult.has_value());
+                    REQUIRE(secondAllocationResult.error() == ShaderTestDescriptorManager::EErrorType::AllocatorFull);
+                    REQUIRE(1 == manager->GetCapacity());
+                    REQUIRE(1 == manager->GetSize());
+                }
+            }
+
+            AND_WHEN("Manager is resized to 4")
+            {
+                auto firstResizeResult = manager->Resize(4);
+
+                THEN("Resize succeeds")
+                {
+                    REQUIRE(firstResizeResult.has_value());
+                    REQUIRE(4 == manager->GetCapacity());
+                    REQUIRE(1 == manager->GetSize());
+                }
+
+                AND_WHEN("Another allocation made")
+                {
+                    auto secondAllocationResult = manager->CreateUAV(resource, uavDesc);
+
+                    THEN("Succeeds")
+                    {
+                        REQUIRE(secondAllocationResult.has_value());
+                        REQUIRE(4 == manager->GetCapacity());
+                        REQUIRE(2 == manager->GetSize());
+                    }
+                }
             }
         }
     }
