@@ -151,4 +151,108 @@ TEST_CASE_PERSISTENT_FIXTURE(DescriptorManagerTestPrivate::Fixture, "Descriptor 
             }
         }
     }
+
+    GIVEN("A full descriptor manager")
+    {
+        auto manager = MakeShared<ShaderTestDescriptorManager>(
+            ShaderTestDescriptorManager::CreationParams{
+                .Device = device,
+                .InitialSize = 4
+            });
+        using ResultType = decltype(manager->CreateUAV(resource, uavDesc));
+
+        std::vector<ResultType> uavs;
+
+        for (i32 i = 0; i < 4; ++i)
+        {
+            uavs.push_back(manager->CreateUAV(resource, uavDesc));
+        }
+
+        THEN("State is as expected")
+        {
+            for (const auto& uav : uavs)
+            {
+                REQUIRE(uav.has_value());
+            }
+
+            REQUIRE(4 == manager->GetCapacity());
+            REQUIRE(4 == manager->GetSize());
+        }
+
+        THEN("All uavs are unique")
+        {
+            for (i32 i = 0; i < 3; ++i)
+            {
+                for (i32 j = i + 1; j < 4; ++j)
+                {
+                    REQUIRE(uavs[i].value().Handle.GetIndex() != uavs[j].value().Handle.GetIndex());
+                }
+            }
+        }
+
+        WHEN("Allocation made")
+        {
+            auto allocationResult = manager->CreateUAV(resource, uavDesc);
+
+            THEN("Fails")
+            {
+                REQUIRE_FALSE(allocationResult.has_value());
+                REQUIRE(allocationResult.error() == ShaderTestDescriptorManager::EErrorType::AllocatorFull);
+                REQUIRE(4 == manager->GetCapacity());
+                REQUIRE(4 == manager->GetSize());
+            }
+        }
+
+        WHEN("Second uav released")
+        {
+            auto releaseResult = manager->ReleaseUAV(uavs[1].value());
+
+            THEN("release succeeds")
+            {
+                REQUIRE(releaseResult.has_value());
+                REQUIRE(4 == manager->GetCapacity());
+                REQUIRE(3 == manager->GetSize());
+            }
+
+            AND_WHEN("Another allocation made")
+            {
+                auto secondAllocationResult = manager->CreateUAV(resource, uavDesc);
+
+                THEN("Allocation succeeds")
+                {
+                    REQUIRE(secondAllocationResult.has_value());
+                    REQUIRE(4 == manager->GetCapacity());
+                    REQUIRE(4 == manager->GetSize());
+                    REQUIRE(secondAllocationResult.value().Handle.GetIndex() == uavs[1].value().Handle.GetIndex());
+                }
+            }
+        }
+
+        WHEN("Resized")
+        {
+            auto resizeResult = manager->Resize(8);
+
+            THEN("State is as expected")
+            {
+                REQUIRE(8 == manager->GetCapacity());
+                REQUIRE(4 == manager->GetSize());
+            }
+
+            AND_WHEN("Another allocation made")
+            {
+                auto secondAllocationResult = manager->CreateUAV(resource, uavDesc);
+                THEN("allocation succeeds")
+                {
+                    REQUIRE(secondAllocationResult.has_value());
+                    REQUIRE(8 == manager->GetCapacity());
+                    REQUIRE(5 == manager->GetSize());
+
+                    for (const auto& uav : uavs)
+                    {
+                        REQUIRE(uav.value().Handle.GetIndex() != secondAllocationResult.value().Handle.GetIndex());
+                    }
+                }
+            }
+        }
+    }
 }
