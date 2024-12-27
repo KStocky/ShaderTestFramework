@@ -7,7 +7,7 @@ jobs:
     LinkValidator:
 
         name: Validate Links
-        runs-on: ubuntu-24.04
+        runs-on: ubuntu-22.04
         steps:
             - name: Checkout
               uses: actions/checkout@v4
