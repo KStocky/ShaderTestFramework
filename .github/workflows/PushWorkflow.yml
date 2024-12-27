@@ -37,7 +37,9 @@ jobs:
             docs:
               - '**.md'
               - '**/RWLinkValidation.yml'
-              - - '**/PushWorkflow.yml'  
+              - - '**/PushWorkflow.yml'
+            non-unity:
+              - '**/CMakeLists.txt'
 
   If-Code-Changes:
     
@@ -58,10 +60,18 @@ jobs:
 
     name: Docs Change Checks
     uses: ./.github/workflows/RWLinkValidation.yml
+
+  If-Non-Unity-Change:
+
+    needs: Determine-Jobs-To-Run
+    if: ${{ needs.Determine-Jobs-To-Run.outputs.non-unity == 'true' }}
+
+    name: Non Unity build checks
+    uses: ./.github/workflows/RWNonUnityBuild.yml
    
 
   Push-Checks:
-    needs: [If-Code-Changes, If-Docs-Change]
+    needs: [If-Code-Changes, If-Docs-Change, If-Non-Unity-Change]
 
     if: always()
     name: Push Checks
