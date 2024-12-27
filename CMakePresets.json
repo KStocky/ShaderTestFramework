@@ -36,6 +36,7 @@
     {
       "name": "NinjaNonUnity",
       "inherits": "NinjaBase",
+      "binaryDir": "buildNonUnity",
       "cacheVariables": {
         "STF_DISABLE_UNITY_STF": true
       }

@@ -42,7 +42,9 @@ jobs:
             non-unity:
               - '**/CMakeLists.txt'
               - '**/RWNonUnityBuild.yml'
-              - '**/PushWorkflow.yml' 
+              - '**/PushWorkflow.yml'
+              - '**.cpp'
+              - '**.h' 
 
   If-Code-Changes:
     
