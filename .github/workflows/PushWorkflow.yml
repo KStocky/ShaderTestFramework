@@ -40,6 +40,7 @@ jobs:
               - - '**/PushWorkflow.yml'
             non-unity:
               - '**/CMakeLists.txt'
+              - '**/RWNonUnityBuild.yml'
 
   If-Code-Changes:
     
