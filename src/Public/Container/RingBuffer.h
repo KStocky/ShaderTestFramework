@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Utility/Exception.h"
 #include "Utility/Expected.h"
 #include "Platform.h"
 #include <optional>

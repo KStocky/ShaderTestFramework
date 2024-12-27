@@ -1,5 +1,7 @@
 #include "D3D12/DescriptorHeap.h"
 
+#include "Utility/Exception.h"
+
 namespace stf
 {
     DescriptorHeap::DescriptorHeap(Desc InParams) noexcept
