@@ -37,10 +37,11 @@ jobs:
             docs:
               - '**.md'
               - '**/RWLinkValidation.yml'
-              - - '**/PushWorkflow.yml'
+              - '**/PushWorkflow.yml'
             non-unity:
               - '**/CMakeLists.txt'
               - '**/RWNonUnityBuild.yml'
+              - '**/PushWorkflow.yml' 
 
   If-Code-Changes:
     

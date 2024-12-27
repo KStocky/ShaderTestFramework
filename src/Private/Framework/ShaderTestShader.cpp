@@ -1,5 +1,6 @@
 
 #include "Framework/ShaderTestShader.h"
+#include "D3D12/Shader/ShaderReflectionUtils.h"
 
 namespace stf
 {
