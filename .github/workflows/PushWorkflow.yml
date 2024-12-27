@@ -13,6 +13,7 @@ jobs:
     outputs:
       code: ${{ steps.filter.outputs.code }}
       docs: ${{ steps.filter.outputs.docs }}
+      non-unity: ${{ steps.filter.outputs.non-unity }}
 
     steps:
       - name: Checkout
@@ -38,7 +39,7 @@ jobs:
               - '**.md'
               - '**/RWLinkValidation.yml'
               - '**/PushWorkflow.yml'
-            nonUnity:
+            non-unity:
               - '**/CMakeLists.txt'
               - '**/RWNonUnityBuild.yml'
               - '**/PushWorkflow.yml' 
@@ -66,7 +67,7 @@ jobs:
   If-Non-Unity-Change:
 
     needs: Determine-Jobs-To-Run
-    if: ${{ needs.Determine-Jobs-To-Run.outputs.nonUnity == 'true' }}
+    if: ${{ needs.Determine-Jobs-To-Run.outputs.non-unity == 'true' }}
 
     name: Non Unity build checks
     uses: ./.github/workflows/RWNonUnityBuild.yml
