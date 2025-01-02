@@ -3,9 +3,19 @@
 namespace stf
 {
     CommandEngine::CommandEngine(CreationParams InParams)
-        : m_Device(std::move(InParams.Device))
-        , m_Queue(std::move(InParams.Queue))
-        , m_List(std::move(InParams.List))
+        : m_Device(InParams.Device)
+        , m_Queue(InParams.Device->CreateCommandQueue(
+            {
+                .Type = D3D12_COMMAND_LIST_TYPE_DIRECT,
+                .Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL,
+                .Flags = D3D12_COMMAND_QUEUE_FLAG_NONE,
+                .NodeMask = 0
+            },
+            "Command Engine Direct Queue"))
+        , m_List(InParams.Device->CreateCommandList(
+            D3D12_COMMAND_LIST_TYPE_DIRECT,
+            "Command Engine Direct List"
+        ))
         , m_Allocators()
     {
     }

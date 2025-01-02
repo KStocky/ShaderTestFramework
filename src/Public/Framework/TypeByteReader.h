@@ -21,6 +21,22 @@ namespace stf
 
     using MultiTypeByteReaderMap = std::vector<MultiTypeByteReader>;
 
+    class TypeReaderIndex
+    {
+    public:
+
+        explicit TypeReaderIndex(u32 InIndex);
+
+        operator u32() const;
+        u32 GetIndex() const;
+
+        friend auto operator<=>(const TypeReaderIndex&, const TypeReaderIndex&) = default;
+
+    private:
+
+        u32 m_Index = 0;
+    };
+
     template<HLSLTypeTriviallyConvertibleType T>
     SingleTypeByteReader CreateSingleTypeReader()
     {

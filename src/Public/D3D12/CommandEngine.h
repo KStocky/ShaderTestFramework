@@ -70,12 +70,9 @@ namespace stf
 
         struct CreationParams
         {
-            SharedPtr<CommandList> List;
-            SharedPtr<CommandQueue> Queue;
             SharedPtr<GPUDevice> Device;
         };
 
-        CommandEngine() = default;
         CommandEngine(CreationParams InParams);
 
         template<CommandEngineFuncType InLambdaType>

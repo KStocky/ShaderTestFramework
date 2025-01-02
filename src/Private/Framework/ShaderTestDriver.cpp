@@ -1,6 +1,7 @@
 
 #include "Framework/ShaderTestDriver.h"
 #include "Framework/ShaderTestCommon.h"
+#include "Framework/TestDataBufferProcessor.h"
 
 #include <d3dx12/d3dx12.h>
 
@@ -24,47 +25,60 @@ namespace stf
         };
     }
 
-    static SharedPtr<CommandEngine> CreateCommandEngine(SharedPtr<GPUDevice> InDevice)
-    {
-        auto commandList = InDevice->CreateCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
-        D3D12_COMMAND_QUEUE_DESC queueDesc;
-        queueDesc.NodeMask = 0;
-        queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-        queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-        queueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
-        auto commandQueue = InDevice->CreateCommandQueue(queueDesc);
-
-        return MakeShared<CommandEngine>(CommandEngine::CreationParams{ std::move(commandList), std::move(commandQueue), InDevice });
-    }
-
     ShaderTestDriver::ShaderTestDriver(CreationParams InParams)
         : m_Device(std::move(InParams.Device))
+        , m_CommandEngine(MakeShared<CommandEngine>(
+            CommandEngine::CreationParams
+            {
+                .Device = m_Device
+            }
+        ))
+        , m_DescriptorManager(MakeShared<ShaderTestDescriptorManager>(
+            ShaderTestDescriptorManager::CreationParams{
+                .Device = m_Device,
+                .InitialSize = 16
+            }
+        ))
     {
-        m_CommandEngine = CreateCommandEngine();
-        m_DescriptorHeap = CreateDescriptorHeap();
     }
 
     SharedPtr<GPUResource> ShaderTestDriver::CreateBuffer(const D3D12_HEAP_TYPE InType, const D3D12_RESOURCE_DESC1& InDesc)
     {
-        const auto heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+        const auto heapProps = CD3DX12_HEAP_PROPERTIES(InType);
 
         return m_Device->CreateCommittedResource(heapProps, D3D12_HEAP_FLAG_NONE, InDesc, D3D12_BARRIER_LAYOUT_UNDEFINED);
     }
 
-    ShaderTestDriver::UAV ShaderTestDriver::CreateUAV(SharedPtr<GPUResource> InResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc)
+    ShaderTestUAV ShaderTestDriver::CreateUAV(SharedPtr<GPUResource> InResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc)
     {
+        return ThrowIfUnexpected(m_DescriptorManager->CreateUAV(InResource, InDesc)
+            .or_else(
+                [&, this](const ShaderTestDescriptorManager::EErrorType InErrorType) -> Expected<ShaderTestUAV, ShaderTestDescriptorManager::EErrorType>
+                {
+                    switch (InErrorType)
+                    {
+                        case ShaderTestDescriptorManager::EErrorType::AllocatorFull:
+                        {
+                            m_DeferredDeletedDescriptorHeaps.push_back(
+                                ThrowIfUnexpected(m_DescriptorManager->Resize(m_DescriptorManager->GetCapacity() * 2)));
+                            return m_DescriptorManager->CreateUAV(InResource, InDesc);
+                        }
+                    }
 
+                    return Unexpected{ InErrorType };
+                }
+            ));
     }
 
-    u32 ShaderTestDriver::RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader)
+    TypeReaderIndex ShaderTestDriver::RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader)
     {
         const u32 typeId = static_cast<u32>(m_ByteReaderMap.size());
         m_ByteReaderMap.push_back(std::move(InByteReader));
 
-        return typeId;
+        return TypeReaderIndex{ typeId };
     }
 
-    u32 ShaderTestDriver::RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader)
+    TypeReaderIndex ShaderTestDriver::RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader)
     {
         return RegisterByteReader(std::move(InTypeIDName),
             [byteReader = std::move(InByteReader)](const u16, const std::span<const std::byte> InData)
@@ -77,7 +91,7 @@ namespace stf
     Results ShaderTestDriver::RunShaderTest(const ShaderTestShader& InShader, const TestDataBufferLayout& InTestBufferLayout, const std::string_view InTestName, const uint3 InDispatchConfig)
     {
         auto pipelineState = CreatePipelineState(*InShader.GetRootSig(), InShader.GetCompiledShader());
-        const u64 bufferSizeInBytes = std::max(InTestBufferLayout.GetSizeOfTestData(), 4u);
+        const u32 bufferSizeInBytes = std::max(InTestBufferLayout.GetSizeOfTestData(), 4u);
         static constexpr u32 allocationBufferSizeInBytes = sizeof(AllocationBufferData);
         auto assertBuffer = CreateBuffer(D3D12_HEAP_TYPE_DEFAULT, CD3DX12_RESOURCE_DESC1::Buffer(bufferSizeInBytes, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS));
         auto allocationBuffer = CreateBuffer(D3D12_HEAP_TYPE_DEFAULT, CD3DX12_RESOURCE_DESC1::Buffer(allocationBufferSizeInBytes, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS));
@@ -104,7 +118,7 @@ namespace stf
                         [&](ScopedCommandContext& InContext)
                         {
                             InContext->SetPipelineState(*pipelineState);
-                            InContext->SetDescriptorHeaps(*m_DescriptorHeap);
+                            m_DescriptorManager->SetDescriptorHeap(*InContext);
                             InContext->SetComputeRootSignature(*InShader.GetRootSig());
                             InContext->SetBufferUAV(*assertBuffer);
                             InContext->SetBufferUAV(*allocationBuffer);
@@ -131,21 +145,12 @@ namespace stf
             );
 
             m_CommandEngine->Flush();
+            m_DeferredDeletedDescriptorHeaps.clear();
         }
 
         {
             return ReadbackResults(*readBackAllocationBuffer, *readBackBuffer, InShader.GetThreadGroupSize() * InDispatchConfig, InTestBufferLayout);
         }
-    }
-
-    SharedPtr<DescriptorHeap> ShaderTestDriver::CreateDescriptorHeap() const
-    {
-        D3D12_DESCRIPTOR_HEAP_DESC desc;
-        desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-        desc.NodeMask = 0;
-        desc.NumDescriptors = 2;
-        desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-        return m_Device->CreateDescriptorHeap(desc);
     }
 
     SharedPtr<PipelineState> ShaderTestDriver::CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const
@@ -167,10 +172,6 @@ namespace stf
                 },
                 .Flags = D3D12_PIPELINE_STATE_FLAG_NONE
             });
-    }
-
-    void ShaderTestDriver::ResizeDescriptorHeap(const u32 InNewSize)
-    {
     }
 
     Results ShaderTestDriver::ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer, const uint3 InDispatchDimensions, const TestDataBufferLayout& InTestDataLayout) const

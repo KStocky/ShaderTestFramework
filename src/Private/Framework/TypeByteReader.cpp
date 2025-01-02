@@ -5,6 +5,21 @@
 
 namespace stf
 {
+    TypeReaderIndex::TypeReaderIndex(u32 InIndex)
+        : m_Index(InIndex)
+    {
+    }
+
+    TypeReaderIndex::operator u32() const
+    {
+        return GetIndex();
+    }
+
+    u32 TypeReaderIndex::GetIndex() const
+    {
+        return m_Index;
+    }
+
     std::string DefaultByteReader(const u16, std::span<const std::byte> InBytes)
     {
         std::string ret;

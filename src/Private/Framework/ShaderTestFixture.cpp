@@ -167,7 +167,7 @@ namespace stf
                         .transform(
                             [this, &InTestDesc, shader = std::move(InShader), testDataLayout, takeCapture]()
                             {
-                                auto engine = CreateCommandEngine();
+                                auto engine = MakeShared<CommandEngine>(CommandEngine::CreationParams{ .Device = m_Device });
                                 auto resourceHeap = CreateDescriptorHeap();
 
 
@@ -288,19 +288,6 @@ namespace stf
                         .Error = std::move(InError)
                     };
                 });
-    }
-
-    SharedPtr<CommandEngine> ShaderTestFixture::CreateCommandEngine() const
-    {
-        auto commandList = m_Device->CreateCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
-        D3D12_COMMAND_QUEUE_DESC queueDesc;
-        queueDesc.NodeMask = 0;
-        queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-        queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-        queueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
-        auto commandQueue = m_Device->CreateCommandQueue(queueDesc);
-
-        return MakeShared<CommandEngine>(CommandEngine::CreationParams{ std::move(commandList), std::move(commandQueue), m_Device });
     }
 
     void ShaderTestFixture::RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader)
