@@ -11,6 +11,7 @@
 #include "Framework/TestDataBufferLayout.h"
 #include "Framework/TypeByteReader.h"
 
+#include "Utility/Expected.h"
 #include "Utility/Object.h"
 #include "Utility/Pointer.h"
 
@@ -29,6 +30,15 @@ namespace stf
             SharedPtr<GPUDevice> Device;
         };
 
+        struct TestDesc
+        {
+            ShaderTestShader& Shader;
+            const TestDataBufferLayout& TestBufferLayout;
+            std::vector<ShaderBinding> Bindings;
+            std::string_view TestName;
+            uint3 DispatchConfig;
+        };
+
         ShaderTestDriver(CreationParams InParams);
 
         SharedPtr<GPUResource> CreateBuffer(const D3D12_HEAP_TYPE InType, const D3D12_RESOURCE_DESC1& InDesc);
@@ -37,7 +47,7 @@ namespace stf
         TypeReaderIndex RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader);
         TypeReaderIndex RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader);
 
-        Results RunShaderTest(const ShaderTestShader& InShader, const TestDataBufferLayout& InTestBufferLayout, const std::string_view InTestName, const uint3 InDispatchConfig);
+        Expected<Results, ErrorTypeAndDescription> RunShaderTest(TestDesc InTestDesc);
 
     private:
 

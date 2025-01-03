@@ -1,16 +1,8 @@
 #include "Framework/ShaderTestFixture.h"
 
-#include "Framework/TestDataBufferProcessor.h"
-#include "Framework/HLSLTypes.h"
 #include "Framework/PIXCapturer.h"
 #include "Utility/EnumReflection.h"
-
-#include "D3D12/CommandEngine.h"
 #include "D3D12/GPUDevice.h"
-#include "D3D12/Shader/ShaderReflectionUtils.h"
-
-#include <d3d12shader.h>
-#include <d3dx12/d3dx12.h>
 
 #include <format>
 #include <sstream>
@@ -37,8 +29,13 @@ namespace stf
 
     ShaderTestFixture::ShaderTestFixture(FixtureDesc InParams)
         : m_Device(MakeShared<GPUDevice>(InParams.GPUDeviceParams))
+        , m_TestDriver(MakeShared<ShaderTestDriver>(
+            ShaderTestDriver::CreationParams
+            {
+                .Device = m_Device
+            }
+        ))
         , m_Compiler(CreateShaderCompiler(std::move(InParams.Mappings)))
-        , m_ByteReaderMap()
         , m_Defines()
     {
         cachedStats.clear();
@@ -100,21 +97,6 @@ namespace stf
             ).value();
     }
 
-    bool ShaderTestFixture::IsValid() const
-    {
-        return m_Device->IsValid();
-    }
-
-    bool ShaderTestFixture::IsUsingAgilitySDK() const
-    {
-        if (!IsValid())
-        {
-            return false;
-        }
-
-        return m_Device->GetHardwareInfo().FeatureInfo.EnhancedBarriersSupport;
-    }
-
     std::vector<TimedStat> ShaderTestFixture::GetTestStats()
     {
         return cachedStats;
@@ -148,98 +130,16 @@ namespace stf
             .and_then(
                 [this, &InTestDesc, takeCapture](SharedPtr<ShaderTestShader> InShader)
                 {
-                    const TestDataBufferLayout testDataLayout{ InTestDesc.TestDataLayout };
-
-
-                    InTestDesc.Bindings.append_range
-                    (std::array{
-                        ShaderBinding{ "stf::detail::DispatchDimensions", InShader->GetThreadGroupSize() * InTestDesc.ThreadGroupCount },
-                        ShaderBinding{ "stf::detail::AllocationBufferIndex", 1u },
-                        ShaderBinding{ "stf::detail::TestDataBufferIndex", 0u },
-                        ShaderBinding{ "stf::detail::Asserts", testDataLayout.GetAssertSection() },
-                        ShaderBinding{ "stf::detail::Strings", testDataLayout.GetStringSection() },
-                        ShaderBinding{ "stf::detail::Sections", testDataLayout.GetSectionInfoSection() }
+                    const auto capturer = PIXCapturer(InTestDesc.TestName, takeCapture);
+                    return m_TestDriver->RunShaderTest(
+                        {
+                            .Shader = *InShader,
+                            .TestBufferLayout{ InTestDesc.TestDataLayout },
+                            .Bindings = std::move(InTestDesc.Bindings),
+                            .TestName = InTestDesc.TestName,
+                            .DispatchConfig = InTestDesc.ThreadGroupCount
                         });
-
-                    auto bindRes = InShader->BindConstantBufferData(InTestDesc.Bindings);
-
-                    return std::move(bindRes)
-                        .transform(
-                            [this, &InTestDesc, shader = std::move(InShader), testDataLayout, takeCapture]()
-                            {
-                                auto engine = MakeShared<CommandEngine>(CommandEngine::CreationParams{ .Device = m_Device });
-                                auto resourceHeap = CreateDescriptorHeap();
-
-
-                                auto pipelineState = CreatePipelineState(*shader->GetRootSig(), shader->GetCompiledShader());
-                                const u64 bufferSizeInBytes = std::max(testDataLayout.GetSizeOfTestData(), 4u);
-                                auto assertBuffer = CreateAssertBuffer(bufferSizeInBytes);
-                                auto allocationBuffer = CreateAssertBuffer(28ull);
-                                auto readBackBuffer = CreateReadbackBuffer(bufferSizeInBytes);
-                                auto readBackAllocationBuffer = CreateReadbackBuffer(28ull);
-
-                                const auto assertUAV = CreateAssertBufferUAV(*assertBuffer, *resourceHeap, 0);
-                                const auto allocationUAV = CreateAssertBufferUAV(*allocationBuffer, *resourceHeap, 1);
-
-                                {
-                                    ScopedDuration testExecution("ShaderTestFixture::RunTest Test Execution");
-                                    const auto capturer = PIXCapturer(InTestDesc.TestName, takeCapture);
-
-                                    engine->Execute(InTestDesc.TestName,
-                                        [&resourceHeap,
-                                        &pipelineState,
-                                        &assertBuffer,
-                                        &allocationBuffer,
-                                        &readBackBuffer,
-                                        &readBackAllocationBuffer,
-                                        threadGroupCount = InTestDesc.ThreadGroupCount,
-                                        &shader,
-                                        this]
-                                        (ScopedCommandContext& InContext)
-                                        {
-                                            InContext.Section("Test Setup",
-                                                [&](ScopedCommandContext& InContext)
-                                                {
-                                                    InContext->SetPipelineState(*pipelineState);
-                                                    InContext->SetDescriptorHeaps(*resourceHeap);
-                                                    InContext->SetComputeRootSignature(*shader->GetRootSig());
-                                                    InContext->SetBufferUAV(*assertBuffer);
-                                                    InContext->SetBufferUAV(*allocationBuffer);
-
-                                                    shader->SetConstantBufferData(*InContext);
-                                                }
-                                            );
-
-                                            InContext.Section("Test Dispatch",
-                                                [threadGroupCount](ScopedCommandContext& InContext)
-                                                {
-                                                    InContext->Dispatch(threadGroupCount.x, threadGroupCount.y, threadGroupCount.z);
-                                                }
-                                            );
-
-                                            InContext.Section("Results readback",
-                                                [&](ScopedCommandContext& InContext)
-                                                {
-                                                    InContext->CopyBufferResource(*readBackBuffer, *assertBuffer);
-                                                    InContext->CopyBufferResource(*readBackAllocationBuffer, *allocationBuffer);
-                                                }
-                                            );
-                                        }
-                                    );
-
-                                    engine->Flush();
-                                }
-
-                                {
-                                    ScopedDuration readbackScope(std::format("ShaderTestFixture::ReadbackResults: {}", InTestDesc.TestName));
-                                    return ReadbackResults(*readBackAllocationBuffer, *readBackBuffer, shader->GetThreadGroupSize() * InTestDesc.ThreadGroupCount, testDataLayout);
-                                }
-                            }
-                        );
-
-                    
-                }
-            )
+                })
             .or_else(
                 [](ErrorTypeAndDescription InError) -> Expected<Results, std::monostate>
                 {
@@ -292,9 +192,8 @@ namespace stf
 
     void ShaderTestFixture::RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader)
     {
-        const u32 typeId = static_cast<u32>(m_ByteReaderMap.size());
-        m_Defines.push_back(ShaderMacro{ std::move(InTypeIDName), std::format("{}", typeId) });
-        m_ByteReaderMap.push_back(std::move(InByteReader));
+        const auto readerId = m_TestDriver->RegisterByteReader(InTypeIDName, std::move(InByteReader));
+        m_Defines.push_back(ShaderMacro{ std::move(InTypeIDName), std::format("{}", readerId.GetIndex()) });
     }
 
     void ShaderTestFixture::RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader)
@@ -305,74 +204,6 @@ namespace stf
                 return byteReader(InData);
             }
         );
-    }
-
-    SharedPtr<DescriptorHeap> ShaderTestFixture::CreateDescriptorHeap() const
-    {
-        D3D12_DESCRIPTOR_HEAP_DESC desc;
-        desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-        desc.NodeMask = 0;
-        desc.NumDescriptors = 2;
-        desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-        return m_Device->CreateDescriptorHeap(desc);
-    }
-
-    SharedPtr<PipelineState> ShaderTestFixture::CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const
-    {
-        D3D12_COMPUTE_PIPELINE_STATE_DESC desc;
-        desc.CachedPSO.CachedBlobSizeInBytes = 0;
-        desc.CachedPSO.pCachedBlob = nullptr;
-        desc.CS.BytecodeLength = InShader->GetBufferSize();
-        desc.CS.pShaderBytecode = InShader->GetBufferPointer();
-        desc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
-        desc.NodeMask = 0;
-        desc.pRootSignature = InRootSig;
-        return m_Device->CreatePipelineState(desc);
-    }
-
-    SharedPtr<GPUResource> ShaderTestFixture::CreateAssertBuffer(const u64 InSizeInBytes) const
-    {
-        const auto heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
-        const auto resourceDesc = CD3DX12_RESOURCE_DESC1::Buffer(InSizeInBytes, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
-
-        return m_Device->CreateCommittedResource(heapProps, D3D12_HEAP_FLAG_NONE, resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED);
-    }
-
-    SharedPtr<GPUResource> ShaderTestFixture::CreateReadbackBuffer(const u64 InSizeInBytes) const
-    {
-        const auto heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_READBACK);
-        const auto resourceDesc = CD3DX12_RESOURCE_DESC1::Buffer(InSizeInBytes);
-        return m_Device->CreateCommittedResource(heapProps, D3D12_HEAP_FLAG_NONE, resourceDesc, D3D12_BARRIER_LAYOUT_UNDEFINED);
-    }
-
-    DescriptorHandle ShaderTestFixture::CreateAssertBufferUAV(const GPUResource& InAssertBuffer, const DescriptorHeap& InHeap, const u32 InIndex) const
-    {
-        const auto uav = ThrowIfUnexpected(InHeap.CreateDescriptorHandle(InIndex));
-        D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc;
-        uavDesc.Buffer.CounterOffsetInBytes = 0;
-        uavDesc.Buffer.FirstElement = 0;
-        uavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_RAW;
-        uavDesc.Buffer.NumElements = static_cast<u32>(InAssertBuffer.GetDesc().Width) / 4;
-        uavDesc.Buffer.StructureByteStride = 0;
-        uavDesc.Format = DXGI_FORMAT_R32_TYPELESS;
-        uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
-        m_Device->CreateUnorderedAccessView(InAssertBuffer, uavDesc, uav);
-        return uav;
-    }
-
-    Results ShaderTestFixture::ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer, const uint3 InDispatchDimensions, const TestDataBufferLayout& InTestDataLayout) const
-    {
-        const auto mappedAllocationData = InAllocationBuffer.Map();
-        const auto allocationData = mappedAllocationData.Get();
-
-        AllocationBufferData data;
-
-        std::memcpy(&data, allocationData.data(), sizeof(AllocationBufferData));
-
-        const auto mappedAssertData = InAssertBuffer.Map();
-        const auto assertData = mappedAssertData.Get();
-
-        return ProcessTestDataBuffer(data, InDispatchDimensions, InTestDataLayout, assertData, m_ByteReaderMap);
     }
 
     namespace ShaderTestFixturePrivate

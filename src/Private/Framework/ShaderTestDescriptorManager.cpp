@@ -112,6 +112,7 @@ namespace stf
 
     void ShaderTestDescriptorManager::SetDescriptorHeap(CommandList& InCommandList)
     {
+        m_Device->CopyDescriptors(m_GPUDescriptors, m_CPUDescriptors, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
         InCommandList.SetDescriptorHeaps(*m_GPUHeap);
     }
 }
