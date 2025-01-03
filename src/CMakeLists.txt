@@ -24,6 +24,7 @@ asset_dependency_init(ShaderTestFramework)
 set(SOURCES
     Public/Container/RingBuffer.h
     Public/D3D12/AgilityDefinitions.h
+    Public/D3D12/BindlessFreeListAllocator.h
     Public/D3D12/CommandAllocator.h
     Public/D3D12/CommandEngine.h
     Public/D3D12/CommandList.h
@@ -48,10 +49,15 @@ set(SOURCES
     Public/D3D12/Shader/VirtualShaderDirectoryMappingManager.h
     Public/Framework/HLSLTypes.h
     Public/Framework/PIXCapturer.h
+    Public/Framework/ShaderTestCommon.h
+    Public/Framework/ShaderTestDescriptorManager.h
+    Public/Framework/ShaderTestDriver.h
     Public/Framework/ShaderTestFixture.h
+    Public/Framework/ShaderTestShader.h
     Public/Framework/TestDataBufferLayout.h
     Public/Framework/TestDataBufferProcessor.h
     Public/Framework/TestDataBufferStructs.h
+    Public/Framework/TypeByteReader.h
     Public/Platform.h
     Public/Stats/ScopedObject.h
     Public/Stats/StatSystem.h
@@ -74,6 +80,7 @@ set(SOURCES
     Public/Utility/Type.h
     Public/Utility/TypeList.h
     Public/Utility/TypeTraits.h
+    Private/D3D12/BindlessFreeListAllocator.cpp
     Private/D3D12/CommandAllocator.cpp
     Private/D3D12/CommandEngine.cpp
     Private/D3D12/CommandList.cpp
@@ -93,10 +100,15 @@ set(SOURCES
     Private/D3D12/Shader/ShaderReflectionUtils.cpp
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManager.cpp
     Private/Framework/PIXCapturer.cpp
+    Private/Framework/ShaderTestCommon.cpp
+    Private/Framework/ShaderTestDescriptorManager.cpp
+    Private/Framework/ShaderTestDriver.cpp
     Private/Framework/ShaderTestFixture.cpp
+    Private/Framework/ShaderTestShader.cpp
     Private/Framework/TestDataBufferLayout.cpp
     Private/Framework/TestDataBufferProcessor.cpp
     Private/Framework/TestDataBufferStructs.cpp
+    Private/Framework/TypeByteReader.cpp
     Private/Stats/StatSystem.cpp
 )
 

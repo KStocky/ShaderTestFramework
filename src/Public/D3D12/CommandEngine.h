@@ -7,6 +7,7 @@
 
 #include "Utility/FunctionTraits.h"
 #include "Utility/Lambda.h"
+#include "Utility/Object.h"
 #include "Utility/Pointer.h"
 
 #include <WinPixEventRuntime/pix3.h>
@@ -47,6 +48,11 @@ namespace stf
             return m_List;
         }
 
+        CommandList& operator*() const
+        {
+            return *m_List;
+        }
+
         template<ExecuteLambdaType InLambdaType>
         void Section(const std::string_view InName, InLambdaType&& InFunc)
         {
@@ -58,18 +64,15 @@ namespace stf
         CommandList* m_List = nullptr;
     };
 
-    class CommandEngine
+    class CommandEngine : Object
     {
     public:
 
         struct CreationParams
         {
-            SharedPtr<CommandList> List;
-            SharedPtr<CommandQueue> Queue;
             SharedPtr<GPUDevice> Device;
         };
 
-        CommandEngine() = default;
         CommandEngine(CreationParams InParams);
 
         template<CommandEngineFuncType InLambdaType>

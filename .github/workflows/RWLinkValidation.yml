@@ -7,13 +7,13 @@ jobs:
     LinkValidator:
 
         name: Validate Links
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-22.04
         steps:
             - name: Checkout
               uses: actions/checkout@v4
 
             - name: Run linkspector
-              uses: umbrelladocs/action-linkspector@v1.2.1
+              uses: umbrelladocs/action-linkspector@v1.2.4
               with:
                 fail_on_error: true
                 filter_mode: nofilter

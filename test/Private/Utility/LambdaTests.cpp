@@ -62,10 +62,10 @@ namespace LambdaTypeTests
 
 		static constexpr auto Ret = CaptureReorder();
 
-		static_assert(Get<0>(Ret) == 4.0);
-		static_assert(Get<1>(Ret) == false);
-		static_assert(Get<2>(Ret) == 2.0);
-		static_assert(Get<3>(Ret) == true);
+		static_assert(get<0>(Ret) == 4.0);
+		static_assert(get<1>(Ret) == false);
+		static_assert(get<2>(Ret) == 2.0);
+		static_assert(get<3>(Ret) == true);
 	}
 
 	void CaptureTests()

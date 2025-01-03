@@ -11,13 +11,12 @@ namespace stf
     {
     public:
 
-        DescriptorHandle()
-            : DescriptorHandle({}, {})
-        {}
+        DescriptorHandle() = default;
 
-        DescriptorHandle(D3D12_CPU_DESCRIPTOR_HANDLE InCPUHandle, D3D12_GPU_DESCRIPTOR_HANDLE InGPUHandle)
+        DescriptorHandle(D3D12_CPU_DESCRIPTOR_HANDLE InCPUHandle, D3D12_GPU_DESCRIPTOR_HANDLE InGPUHandle, u32 InHeapIndex)
             : m_CPUAddress(InCPUHandle)
             , m_GPUAddress(InGPUHandle)
+            , m_HeapIndex(InHeapIndex)
         {
         }
 
@@ -31,10 +30,16 @@ namespace stf
             return m_GPUAddress;
         }
 
+        u32 GetHeapIndex() const
+        {
+            return m_HeapIndex;
+        }
+
     private:
 
         D3D12_CPU_DESCRIPTOR_HANDLE m_CPUAddress{ 0 };
         D3D12_GPU_DESCRIPTOR_HANDLE m_GPUAddress{ 0 };
+        u32 m_HeapIndex{ 0 };
     };
 
     class DescriptorRange
@@ -82,7 +87,7 @@ namespace stf
 
             D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle{ m_Start.GetCPUHandle().ptr + m_Increment * InIndex };
             D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle{ m_Start.GetGPUHandle().ptr + m_Increment * InIndex };
-            return DescriptorHandle(cpuHandle, gpuHandle);
+            return DescriptorHandle(cpuHandle, gpuHandle, m_Start.GetHeapIndex() + InIndex);
         }
 
         u32 GetSize() const

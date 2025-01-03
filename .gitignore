@@ -33,6 +33,7 @@ bld/
 [Ll]og/
 [Ll]ogs/
 [Bb]uild/
+[Bb]uildNonUnity/
 **/[Nn]uget/
 **/[Ee]xtern/
 

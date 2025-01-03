@@ -1,0 +1,23 @@
+name: Non Unity Build
+
+on:
+ workflow_call:
+  
+jobs:
+  Build:
+
+    name: Build
+
+    runs-on: windows-latest
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+
+      - name: Install Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: setup devcmd
+        uses: ilammy/msvc-dev-cmd@v1.13.0
+
+      - name: Build non-unity"
+        run: cmake --workflow --preset NinjaNonUnityBuild

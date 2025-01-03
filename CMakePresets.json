@@ -7,19 +7,38 @@
   },
   "configurePresets": [
     {
-      "name": "Ninja",
+      "name": "NinjaBase",
+      "hidden": true,
       "binaryDir": "build",
       "generator": "Ninja Multi-Config",
       "cacheVariables": {
         "CMAKE_UNITY_BUILD": true,
         "STF_ENABLE_TESTING": true,
         "STF_INCLUDE_EXAMPLES": true,
-        "STF_DISABLE_UNITY_STF": false,
         "STF_STRICT_COMPILATION": true
       },
       "architecture": {
         "value": "x64",
         "strategy": "external"
+      },
+      "toolset": {
+        "strategy": "external",
+        "value": "version=14.42"
+      }
+    },
+    {
+      "name": "Ninja",
+      "inherits": "NinjaBase",
+      "cacheVariables": {
+        "STF_DISABLE_UNITY_STF": false
+      }
+    },
+    {
+      "name": "NinjaNonUnity",
+      "inherits": "NinjaBase",
+      "binaryDir": "buildNonUnity",
+      "cacheVariables": {
+        "STF_DISABLE_UNITY_STF": true
       }
     },
     {
@@ -30,7 +49,7 @@
         "CMAKE_UNITY_BUILD": true,
         "STF_ENABLE_TESTING": true,
         "STF_INCLUDE_EXAMPLES": true,
-        "STF_DISABLE_UNITY_STF": true,
+        "STF_DISABLE_UNITY_STF": false,
         "STF_STRICT_COMPILATION": true
       }
     }
@@ -39,6 +58,11 @@
     {
       "name": "Ninja",
       "configurePreset": "Ninja",
+      "configuration": "Debug"
+    },
+    {
+      "name": "NinjaNonUnity",
+      "configurePreset": "NinjaNonUnity",
       "configuration": "Debug"
     },
     {
@@ -75,6 +99,19 @@
         },
         {
           "name": "Ninja",
+          "type": "build"
+        }
+      ]
+    },
+    {
+      "name": "NinjaNonUnityBuild",
+      "steps": [
+        {
+          "name": "NinjaNonUnity",
+          "type": "configure"
+        },
+        {
+          "name": "NinjaNonUnity",
           "type": "build"
         }
       ]

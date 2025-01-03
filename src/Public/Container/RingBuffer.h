@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Utility/Exception.h"
 #include "Utility/Expected.h"
 #include "Platform.h"
 #include <optional>
@@ -28,7 +29,8 @@ namespace stf
         enum class EErrorType
         {
             Success,
-            EmptyBuffer
+            EmptyBuffer,
+            AttemptedShrink
         };
 
         template<typename T>
@@ -154,7 +156,7 @@ namespace stf
         {
             if (m_Size == capacity())
             {
-                Resize();
+                ThrowIfUnexpected(resize(m_Size * 2));
             }
 
             m_Data[m_TailIndex] = In;
@@ -167,7 +169,7 @@ namespace stf
         {
             if (m_Size == capacity())
             {
-                Resize();
+                ThrowIfUnexpected(resize(m_Size * 2));
             }
 
             m_Data[m_TailIndex] = std::move(In);
@@ -275,12 +277,21 @@ namespace stf
             return m_Data[m_HeadIndex].value();
         }
 
-    private:
-
-        void Resize()
+        Expected<void> resize(const u64 InNewSize)
         {
+            const u64 newCapacity = InNewSize + 1;
+            if (newCapacity < m_Data.size())
+            {
+                return Unexpected{ EErrorType::AttemptedShrink };
+            }
+
+            if (newCapacity == m_Data.size())
+            {
+                return {};
+            }
+
             std::vector<std::optional<T>> buffer;
-            buffer.resize(m_Data.size() + 1);
+            buffer.resize(newCapacity);
 
             for (auto index = 0ll; index < m_Size; ++index)
             {
@@ -291,7 +302,11 @@ namespace stf
             m_Data = std::move(buffer);
             m_HeadIndex = 0;
             m_TailIndex = m_Size;
+
+            return {};
         }
+
+    private:
 
         u64 AdvanceIndex(const u64 InIndex, const u64 InOffset = 1) const
         {

@@ -156,11 +156,11 @@ namespace TestDataBufferProcessorTests
             auto address = InOutBytes.data() + oldSize;
             std::memcpy(address, &sizeAndAlign, sizeof(u32));
             address += AlignedOffset(sizeof(u32), align);
-            std::memcpy(address, &Get<0>(InPairData), size);
+            std::memcpy(address, &get<0>(InPairData), size);
             address += AlignedOffset(size, 4);
             std::memcpy(address, &sizeAndAlign, sizeof(u32));
             address += AlignedOffset(sizeof(u32), align);
-            std::memcpy(address, &Get<1>(InPairData), size);
+            std::memcpy(address, &get<1>(InPairData), size);
         }
 
         template<typename T>

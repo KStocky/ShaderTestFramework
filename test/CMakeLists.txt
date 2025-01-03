@@ -136,9 +136,11 @@ set(SHADER_SOURCES
 
 set(SOURCES
     Private/Container/RingBufferTests.cpp
+    Private/D3D12/BindlessFreeListAllocatorTests.cpp
     Private/D3D12/CommandEngineTests.cpp
     Private/D3D12/CommandListTests.cpp
     Private/D3D12/DescriptorFreeListAllocatorTests.cpp
+    Private/D3D12/DescriptorHeapTests.cpp
     Private/D3D12/DescriptorRingAllocatorTests.cpp
     Private/D3D12/DescriptorTests.cpp
     Private/D3D12/Shader/HLSLTests.cpp
@@ -190,6 +192,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/TTLTypeTraitsTests.cpp
     Private/Framework/HLSLTypesTests.cpp
     Private/Framework/SectionsInHLSLProofOfConceptTests.cpp
+    Private/Framework/ShaderTestDescriptorManagerTests.cpp
     Private/Framework/ShaderTestFixtureTests.cpp
     Private/Framework/TestDataBufferLayoutTests.cpp
     Private/Framework/TestDataBufferProcessorTests.cpp

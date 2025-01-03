@@ -274,6 +274,15 @@ namespace stf
         return CreateRootSignature(*desc);
     }
 
+    void GPUDevice::CopyDescriptors(const DescriptorRange& InDestination, const DescriptorRange& InSource, const D3D12_DESCRIPTOR_HEAP_TYPE InType) const
+    {
+        m_Device->CopyDescriptorsSimple(
+            InSource.GetSize(),
+            ThrowIfUnexpected(InDestination.First()).GetCPUHandle(),
+            ThrowIfUnexpected(InSource.First()).GetCPUHandle(),
+            InType);
+    }
+
     void GPUDevice::CreateShaderResourceView(const GPUResource& InResource, const DescriptorHandle InHandle) const
     {
         m_Device->CreateShaderResourceView(InResource, nullptr, InHandle.GetCPUHandle());

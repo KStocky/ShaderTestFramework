@@ -51,11 +51,11 @@ TEST_CASE_PERSISTENT_FIXTURE(AssertInfoWithDataTestsFixture, "HLSLFrameworkTests
             auto address = InOutBytes.data() + oldSize;
             std::memcpy(address, &sizeAndAlign, sizeof(u32));
             address += AlignedOffset(sizeof(u32), align);
-            std::memcpy(address, &Get<0>(InVal), size);
+            std::memcpy(address, &get<0>(InVal), size);
             address += AlignedOffset(size, 4);
             std::memcpy(address, &sizeAndAlign, sizeof(u32));
             address += AlignedOffset(sizeof(u32), align);
-            std::memcpy(address, &Get<1>(InVal), size);
+            std::memcpy(address, &get<1>(InVal), size);
         }
     };
 
@@ -65,8 +65,6 @@ TEST_CASE_PERSISTENT_FIXTURE(AssertInfoWithDataTestsFixture, "HLSLFrameworkTests
         (serializeImpl(InVals, ret), ...);
         return ret;
     };
-
-    auto test = serialize(32u, 1024u);
 
     static constexpr u32 expectedValueLeft = 34u;
     static constexpr u32 expectedValueRight = 12345678u;
@@ -241,7 +239,7 @@ TEST_CASE_PERSISTENT_FIXTURE(AssertInfoWithDataTestsFixture, "HLSLFrameworkTests
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment2_THEN_HasExpectedResults",
-                    TestRunResults{ {FailedAssert{serialize(Tuple{static_cast<u16>(24u)}), {}, AssertMetaData{42, 0, 0}, 2}}, {}, {}, 0, 1, uint3(1,1,1)},
+                    TestRunResults{ {FailedAssert{serialize(static_cast<u16>(24u)), {}, AssertMetaData{42, 0, 0}, 2}}, {}, {}, 0, 1, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple

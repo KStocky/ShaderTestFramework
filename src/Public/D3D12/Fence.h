@@ -1,6 +1,7 @@
 #pragma once
 #include "Platform.h"
 
+#include "Utility/Expected.h"
 #include "Utility/Object.h"
 #include "Utility/Pointer.h"
 
