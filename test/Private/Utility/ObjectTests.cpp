@@ -15,7 +15,7 @@ namespace stf::ObjectTests::ObjectClassTests
 namespace stf::ObjectTests::ObjectTypeConceptTests
 {
     struct NotInheritedFromObject {};
-    struct NotInheritedFromObjectTakesObjectToken { NotInheritedFromObjectTakesObjectToken(ObjectToken In) {} };
+    struct NotInheritedFromObjectTakesObjectToken { NotInheritedFromObjectTakesObjectToken(ObjectToken) {} };
     struct PrivateInherit : private Object { PrivateInherit(ObjectToken In) : Object(In) {} };
     struct PublicInherit : public Object { PublicInherit(ObjectToken In) : Object(In) {} };
 
@@ -29,7 +29,7 @@ namespace stf::ObjectTests::ObjectTypeConceptTests
 namespace stf::ObjectTests::ObjectTypeConstructionTests
 {
     struct NotInheritedFromObject {};
-    struct NotInheritedFromObjectTakesObjectToken { NotInheritedFromObjectTakesObjectToken(ObjectToken In) {} };
+    struct NotInheritedFromObjectTakesObjectToken { NotInheritedFromObjectTakesObjectToken(ObjectToken) {} };
     struct PrivateInherit : private Object { PrivateInherit(ObjectToken In) : Object(In) {} };
     struct PublicInherit : public Object { PublicInherit(ObjectToken In) : Object(In) {} };
 
