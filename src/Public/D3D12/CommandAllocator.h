@@ -8,7 +8,8 @@
 
 namespace stf
 {
-    class CommandAllocator : Object
+    class CommandAllocator 
+        : public Object
     {
     public:
 
@@ -18,7 +19,7 @@ namespace stf
             D3D12_COMMAND_LIST_TYPE Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
         };
 
-        CommandAllocator(CreationParams InParams);
+        CommandAllocator(ObjectToken, CreationParams InParams);
 
         ID3D12CommandAllocator* GetRaw() const;
         operator ID3D12CommandAllocator* () const;

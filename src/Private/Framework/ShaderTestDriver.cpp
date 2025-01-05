@@ -25,15 +25,16 @@ namespace stf
         };
     }
 
-    ShaderTestDriver::ShaderTestDriver(CreationParams InParams)
-        : m_Device(std::move(InParams.Device))
-        , m_CommandEngine(MakeShared<CommandEngine>(
+    ShaderTestDriver::ShaderTestDriver(ObjectToken InToken, CreationParams InParams)
+        : Object(InToken)
+        , m_Device(std::move(InParams.Device))
+        , m_CommandEngine(Object::New<CommandEngine>(
             CommandEngine::CreationParams
             {
                 .Device = m_Device
             }
         ))
-        , m_DescriptorManager(MakeShared<ShaderTestDescriptorManager>(
+        , m_DescriptorManager(Object::New<ShaderTestDescriptorManager>(
             ShaderTestDescriptorManager::CreationParams{
                 .Device = m_Device,
                 .InitialSize = 16

@@ -21,7 +21,8 @@ namespace stf
         BindlessFreeListAllocator::BindlessIndex Handle;
     };
 
-    class ShaderTestDescriptorManager : Object
+    class ShaderTestDescriptorManager 
+        : public Object
     {
     public:
 
@@ -42,7 +43,7 @@ namespace stf
         template<typename T>
         using Expected = Expected<T, EErrorType>;
 
-        ShaderTestDescriptorManager(CreationParams InParams);
+        ShaderTestDescriptorManager(ObjectToken, CreationParams InParams);
 
         [[nodiscard]] Expected<ShaderTestUAV> CreateUAV(SharedPtr<GPUResource> InResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc);
         Expected<void> ReleaseUAV(const ShaderTestUAV& InUAV);

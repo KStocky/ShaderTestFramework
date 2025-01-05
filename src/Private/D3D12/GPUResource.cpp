@@ -4,8 +4,9 @@
 
 namespace stf
 {
-    GPUResource::GPUResource(CreationParams InParams) noexcept
-        : m_Resource(std::move(InParams.Resource))
+    GPUResource::GPUResource(ObjectToken InToken, CreationParams InParams) noexcept
+        : Object(InToken)
+        , m_Resource(std::move(InParams.Resource))
         , m_ClearValue(InParams.ClearValue)
         , m_CurrentBarrier(InParams.InitialBarrier)
     {

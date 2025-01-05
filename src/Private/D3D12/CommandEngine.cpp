@@ -2,8 +2,9 @@
 
 namespace stf
 {
-    CommandEngine::CommandEngine(CreationParams InParams)
-        : m_Device(InParams.Device)
+    CommandEngine::CommandEngine(ObjectToken InToken, CreationParams InParams)
+        : Object(InToken)
+        , m_Device(InParams.Device)
         , m_Queue(InParams.Device->CreateCommandQueue(
             {
                 .Type = D3D12_COMMAND_LIST_TYPE_DIRECT,

@@ -6,8 +6,9 @@
 
 namespace stf
 {
-    CommandQueue::CommandQueue(CreationParams InParams)
-        : m_Queue(std::move(InParams.Queue))
+    CommandQueue::CommandQueue(ObjectToken InToken, CreationParams InParams)
+        : Object(InToken)
+        , m_Queue(std::move(InParams.Queue))
         , m_Fence(std::move(InParams.Fence))
     {
     }

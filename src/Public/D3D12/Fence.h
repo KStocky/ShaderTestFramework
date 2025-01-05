@@ -9,7 +9,8 @@
 
 namespace stf
 {
-    class Fence : Object
+    class Fence 
+        : public Object
     {
     public:
 
@@ -35,8 +36,7 @@ namespace stf
             u64 InitialValue = 0;
         };
 
-        Fence() = default;
-        Fence(CreationParams InParams);
+        Fence(ObjectToken, CreationParams InParams);
 
         [[nodiscard]] FencePoint Signal(ID3D12CommandQueue* InQueue);
         bool WaitCPU(const FencePoint& InFencePoint) const;

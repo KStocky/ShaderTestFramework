@@ -10,7 +10,8 @@ namespace stf
 {
     class CommandList;
 
-    class CommandQueue : Object
+    class CommandQueue 
+        : public Object
     {
     public:
 
@@ -21,7 +22,7 @@ namespace stf
         };
 
         CommandQueue() = default;
-        CommandQueue(CreationParams InParams);
+        CommandQueue(ObjectToken, CreationParams InParams);
         ~CommandQueue();
 
         bool HasFencePointBeenReached(const Fence::FencePoint& InFencePoint) const;

@@ -21,7 +21,8 @@
 
 namespace stf
 {
-    class ShaderTestDriver : Object
+    class ShaderTestDriver 
+        : public Object
     {
     public:
 
@@ -39,7 +40,7 @@ namespace stf
             uint3 DispatchConfig;
         };
 
-        ShaderTestDriver(CreationParams InParams);
+        ShaderTestDriver(ObjectToken, CreationParams InParams);
 
         SharedPtr<GPUResource> CreateBuffer(const D3D12_HEAP_TYPE InType, const D3D12_RESOURCE_DESC1& InDesc);
         ShaderTestUAV CreateUAV(SharedPtr<GPUResource> InResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc);

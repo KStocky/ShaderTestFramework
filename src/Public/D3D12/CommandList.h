@@ -21,7 +21,8 @@ namespace stf
     template<typename T>
     concept RootSigConstantType = std::is_trivial_v<T> && sizeof(T) == 4;
 
-    class CommandList : Object
+    class CommandList 
+        : public Object
     {
     public:
 
@@ -30,8 +31,7 @@ namespace stf
             ComPtr<ID3D12GraphicsCommandList9> List = nullptr;
         };
 
-        CommandList() = default;
-        CommandList(CreationParams InParams);
+        CommandList(ObjectToken, CreationParams InParams);
 
         void CopyBufferResource(GPUResource& InDest, GPUResource& InSource);
 

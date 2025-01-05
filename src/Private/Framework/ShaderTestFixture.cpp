@@ -28,8 +28,8 @@ namespace stf
     std::vector<TimedStat> ShaderTestFixture::cachedStats;
 
     ShaderTestFixture::ShaderTestFixture(FixtureDesc InParams)
-        : m_Device(MakeShared<GPUDevice>(InParams.GPUDeviceParams))
-        , m_TestDriver(MakeShared<ShaderTestDriver>(
+        : m_Device(Object::New<GPUDevice>(InParams.GPUDeviceParams))
+        , m_TestDriver(Object::New<ShaderTestDriver>(
             ShaderTestDriver::CreationParams
             {
                 .Device = m_Device
@@ -177,7 +177,7 @@ namespace stf
             .transform(
                 [this](CompiledShaderData InData)
                 {
-                    return MakeShared<ShaderTestShader>(ShaderTestShader::CreationParams{ .ShaderData = std::move(InData), .Device = m_Device });
+                    return Object::New<ShaderTestShader>(ShaderTestShader::CreationParams{ .ShaderData = std::move(InData), .Device = m_Device });
                 })
             .transform_error(
                 [](std::string InError)

@@ -11,8 +11,9 @@
 
 namespace stf
 {
-    CommandList::CommandList(CreationParams InParams)
-        : m_List(std::move(InParams.List))
+    CommandList::CommandList(ObjectToken InToken, CreationParams InParams)
+        : Object(InToken)
+        , m_List(std::move(InParams.List))
     {
     }
 

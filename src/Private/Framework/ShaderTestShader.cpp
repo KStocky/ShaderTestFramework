@@ -4,8 +4,9 @@
 
 namespace stf
 {
-    ShaderTestShader::ShaderTestShader(CreationParams InParams)
-        : m_ShaderData(std::move(InParams.ShaderData))
+    ShaderTestShader::ShaderTestShader(ObjectToken InToken, CreationParams InParams)
+        : Object(InToken)
+        , m_ShaderData(std::move(InParams.ShaderData))
         , m_Device(std::move(InParams.Device))
         , m_RootSignature()
         , m_NameToBindingInfo()

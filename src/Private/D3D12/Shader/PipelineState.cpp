@@ -4,8 +4,9 @@
 
 namespace stf
 {
-    PipelineState::PipelineState(CreationParams InParams) noexcept
-        : m_Raw(std::move(InParams.Raw))
+    PipelineState::PipelineState(ObjectToken InToken, CreationParams InParams) noexcept
+        : Object(InToken)
+        , m_Raw(std::move(InParams.Raw))
     {
     }
 

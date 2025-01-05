@@ -10,7 +10,8 @@
 
 namespace stf
 {
-    class DescriptorHeap : Object
+    class DescriptorHeap 
+        : public Object
     {
     public:
 
@@ -28,8 +29,7 @@ namespace stf
         template<typename T>
         using Expected = Expected<T, EErrorType>;
 
-        DescriptorHeap() = default;
-        DescriptorHeap(Desc InParams) noexcept;
+        DescriptorHeap(ObjectToken, Desc InParams) noexcept;
 
         Expected<DescriptorRange> CreateDescriptorRange(const u32 InBeginIndex, const u32 InNum) const;
         Expected<DescriptorHandle> CreateDescriptorHandle(const u32 InIndex) const;

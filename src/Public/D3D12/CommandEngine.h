@@ -64,7 +64,8 @@ namespace stf
         CommandList* m_List = nullptr;
     };
 
-    class CommandEngine : Object
+    class CommandEngine 
+        : public Object
     {
     public:
 
@@ -73,7 +74,7 @@ namespace stf
             SharedPtr<GPUDevice> Device;
         };
 
-        CommandEngine(CreationParams InParams);
+        CommandEngine(ObjectToken, CreationParams InParams);
 
         template<CommandEngineFuncType InLambdaType>
         void Execute(const InLambdaType& InFunc)

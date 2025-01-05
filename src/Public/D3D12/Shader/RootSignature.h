@@ -1,16 +1,13 @@
 #pragma once
-
-#include "Platform.h"
 #include "Utility/Object.h"
 #include "Utility/Pointer.h"
-
-#include <unordered_map>
 
 #include <d3d12.h>
 
 namespace stf
 {
-    class RootSignature : Object
+    class RootSignature 
+        : public Object
     {
     public:
 
@@ -21,8 +18,7 @@ namespace stf
             ComPtr<ID3DBlob> Blob;
         };
 
-        RootSignature() = default;
-        RootSignature(CreationParams InParams);
+        RootSignature(ObjectToken, CreationParams InParams);
 
         const D3D12_VERSIONED_ROOT_SIGNATURE_DESC* GetDesc() const;
         ID3D12RootSignature* GetRaw() const;

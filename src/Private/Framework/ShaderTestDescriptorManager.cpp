@@ -5,8 +5,9 @@
 
 namespace stf
 {
-    ShaderTestDescriptorManager::ShaderTestDescriptorManager(CreationParams InParams)
-        : m_Device(InParams.Device)
+    ShaderTestDescriptorManager::ShaderTestDescriptorManager(ObjectToken InToken, CreationParams InParams)
+        : Object(InToken)
+        , m_Device(InParams.Device)
         , m_GPUHeap(InParams.Device->CreateDescriptorHeap(
             D3D12_DESCRIPTOR_HEAP_DESC
             {

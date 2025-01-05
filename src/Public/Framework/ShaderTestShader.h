@@ -21,7 +21,8 @@
 
 namespace stf
 {
-    class ShaderTestShader : Object
+    class ShaderTestShader 
+        : public Object
     {
     public:
         struct CreationParams
@@ -30,7 +31,7 @@ namespace stf
             SharedPtr<GPUDevice> Device;
         };
 
-        ShaderTestShader(CreationParams InParams);
+        ShaderTestShader(ObjectToken, CreationParams InParams);
 
         Expected<void, ErrorTypeAndDescription> Init();
         Expected<void, ErrorTypeAndDescription> BindConstantBufferData(const std::span<const ShaderBinding> InBindings);

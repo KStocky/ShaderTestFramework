@@ -2,8 +2,9 @@
 
 namespace stf
 {
-    Fence::Fence(CreationParams InParams)
-        : m_Fence(std::move(InParams.Fence))
+    Fence::Fence(ObjectToken InToken, CreationParams InParams)
+        : Object(InToken)
+        , m_Fence(std::move(InParams.Fence))
         , m_NextValue(InParams.InitialValue + 1)
     {
     }

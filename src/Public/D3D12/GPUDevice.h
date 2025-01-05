@@ -108,7 +108,8 @@ namespace stf
         std::is_same_v<T, D3D12_COMPUTE_PIPELINE_STATE_DESC> ||
         std::is_same_v<T, D3DX12_MESH_SHADER_PIPELINE_STATE_DESC>;
 
-    class GPUDevice : Object
+    class GPUDevice 
+        : public Object
     {
     public:
 
@@ -132,8 +133,7 @@ namespace stf
             bool EnableGPUCapture = false;
         };
 
-        GPUDevice() = default;
-        GPUDevice(const CreationParams InDesc);
+        GPUDevice(ObjectToken, const CreationParams InDesc);
         ~GPUDevice();
 
         bool IsValid() const;
@@ -168,7 +168,7 @@ namespace stf
             };
             ComPtr<ID3D12PipelineState> raw = nullptr;
             ThrowIfFailed(m_Device->CreatePipelineState(&desc, IID_PPV_ARGS(raw.GetAddressOf())));
-            return MakeShared<PipelineState>(PipelineState::CreationParams{ std::move(raw) });
+            return Object::New<PipelineState>(PipelineState::CreationParams{ std::move(raw) });
         }
 
         SharedPtr<RootSignature> CreateRootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC& InDesc) const;

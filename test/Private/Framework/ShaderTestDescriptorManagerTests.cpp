@@ -14,7 +14,7 @@ namespace DescriptorManagerTestPrivate
     public:
 
         Fixture()
-            : device(stf::MakeShared<stf::GPUDevice>(
+            : device(stf::Object::New<stf::GPUDevice>(
                 stf::GPUDevice::CreationParams
                 {
                 }))
@@ -53,7 +53,7 @@ TEST_CASE_PERSISTENT_FIXTURE(DescriptorManagerTestPrivate::Fixture, "Descriptor 
     using namespace stf;
     GIVEN("An initial size of 1")
     {
-        auto manager = MakeShared<ShaderTestDescriptorManager>(
+        auto manager = Object::New<ShaderTestDescriptorManager>(
             ShaderTestDescriptorManager::CreationParams{
                 .Device = device,
                 .InitialSize = 1
@@ -154,7 +154,7 @@ TEST_CASE_PERSISTENT_FIXTURE(DescriptorManagerTestPrivate::Fixture, "Descriptor 
 
     GIVEN("A full descriptor manager")
     {
-        auto manager = MakeShared<ShaderTestDescriptorManager>(
+        auto manager = Object::New<ShaderTestDescriptorManager>(
             ShaderTestDescriptorManager::CreationParams{
                 .Device = device,
                 .InitialSize = 4

@@ -45,7 +45,8 @@ namespace stf
         std::span<const std::byte> m_MappedData;
     };
 
-    class GPUResource : Object
+    class GPUResource 
+        : public Object
     {
     public:
 
@@ -56,8 +57,7 @@ namespace stf
             GPUEnhancedBarrier InitialBarrier{};
         };
 
-        GPUResource() = default;
-        GPUResource(CreationParams InParams) noexcept;
+        GPUResource(ObjectToken, CreationParams InParams) noexcept;
 
         ID3D12Resource2* GetRaw() const noexcept;
         operator ID3D12Resource2* () const noexcept;

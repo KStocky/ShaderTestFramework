@@ -7,7 +7,8 @@
 
 namespace stf
 {
-    class PipelineState : Object
+    class PipelineState 
+        : public Object
     {
     public:
 
@@ -16,8 +17,7 @@ namespace stf
             ComPtr<ID3D12PipelineState> Raw = nullptr;
         };
 
-        PipelineState() = default;
-        PipelineState(CreationParams InParams) noexcept;
+        PipelineState(ObjectToken, CreationParams InParams) noexcept;
 
         ID3D12PipelineState* GetRaw() const
         {
