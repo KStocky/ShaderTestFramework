@@ -16,7 +16,7 @@ namespace stf
         T Stat;
     };
 
-    using TimedStat = NamedStat<Duration>;
+    using TimedStat = NamedStat<Nanoseconds<i64>>;
 
     class StatSystem
     {
@@ -50,10 +50,9 @@ namespace stf
                 return m_Gen;
             }
 
-            template<typename ThisType>
-            operator bool(this ThisType&& InThis)
+            operator bool() const
             {
-                return InThis.m_IsValid != 0;
+                return m_IsValid != 0;
             }
 
             friend auto operator<=>(Handle, Handle) = default;

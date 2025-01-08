@@ -30,6 +30,9 @@ namespace stf
     concept DefaultConstructibleType = std::is_default_constructible_v<T>;
 
     template<typename T>
+    concept ArithmeticType = std::is_arithmetic_v<T>;
+
+    template<typename T>
     concept MoveAssignableType = std::is_move_assignable_v<T>;
 
     template<typename T>

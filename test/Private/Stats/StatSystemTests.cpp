@@ -59,7 +59,7 @@ SCENARIO("StatSystemTests")
                 THEN("Flushed stat has expected info")
                 {
                     REQUIRE(stats[0].Name == expectedName);
-                    REQUIRE(stats[0].Stat.Count<std::chrono::nanoseconds>() > 0);
+                    REQUIRE(stats[0].Stat.count() > 0);
                 }
 
                 AND_WHEN("Stats flushed again without another scoped stat")
@@ -88,7 +88,7 @@ SCENARIO("StatSystemTests")
                     THEN("Flushed stat has expected info")
                     {
                         REQUIRE(newStats[0].Name == expectedSecondStat);
-                        REQUIRE(newStats[0].Stat.Count<std::chrono::nanoseconds>() > 0);
+                        REQUIRE(newStats[0].Stat.count() > 0);
                     }
                 }
             }
@@ -109,9 +109,9 @@ SCENARIO("StatSystemTests")
                 THEN("Flushed stats have expected info")
                 {
                     REQUIRE(newStats[0].Name == expectedName);
-                    REQUIRE(newStats[0].Stat.Count<std::chrono::nanoseconds>() > 0);
+                    REQUIRE(newStats[0].Stat.count() > 0);
                     REQUIRE(newStats[1].Name == expectedSecondStat);
-                    REQUIRE(newStats[1].Stat.Count<std::chrono::nanoseconds>() > 0);
+                    REQUIRE(newStats[1].Stat.count() > 0);
                 }
             }
         }
