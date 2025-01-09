@@ -28,19 +28,29 @@ namespace stf
         return m_Fence->Signal(*m_Queue.Get());
     }
 
-    void CommandQueue::WaitOnFence(const Fence::FencePoint& InFencePoint)
+    Fence::FencePoint CommandQueue::NextSignal()
     {
-        m_Fence->WaitCPU(InFencePoint);
+        return m_Fence->NextSignal();
+    }
+
+    Fence::Expected<Fence::ECPUWaitResult> CommandQueue::WaitOnFenceCPU(const Fence::FencePoint& InFencePoint)
+    {
+        return m_Fence->WaitCPU(InFencePoint);
+    }
+
+    void CommandQueue::WaitOnFenceGPU(const Fence::FencePoint& InFencePoint)
+    {
+        m_Fence->WaitOnQueue(*m_Queue.Get(), InFencePoint);
     }
 
     void CommandQueue::SyncWithQueue(CommandQueue& InQueue)
     {
-        InQueue.GetFence().WaitOnQueue(*m_Queue.Get(), Signal());
+        WaitOnFenceGPU(InQueue.Signal());
     }
 
     void CommandQueue::FlushQueue()
     {
-        WaitOnFence(Signal());
+        WaitOnFenceCPU(Signal());
     }
 
     void CommandQueue::ExecuteCommandList(CommandList& InList)

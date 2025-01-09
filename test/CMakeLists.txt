@@ -139,6 +139,7 @@ set(SOURCES
     Private/D3D12/BindlessFreeListAllocatorTests.cpp
     Private/D3D12/CommandEngineTests.cpp
     Private/D3D12/CommandListTests.cpp
+    Private/D3D12/CommandQueueTests.cpp
     Private/D3D12/DescriptorFreeListAllocatorTests.cpp
     Private/D3D12/DescriptorHeapTests.cpp
     Private/D3D12/DescriptorRingAllocatorTests.cpp

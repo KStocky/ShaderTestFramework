@@ -21,13 +21,14 @@ namespace stf
             SharedPtr<Fence> Fence{};
         };
 
-        CommandQueue() = default;
         CommandQueue(ObjectToken, CreationParams InParams);
         ~CommandQueue();
 
         bool HasFencePointBeenReached(const Fence::FencePoint& InFencePoint) const;
-        Fence::FencePoint Signal();
-        void WaitOnFence(const Fence::FencePoint& InFencePoint);
+        [[nodiscard]] Fence::FencePoint Signal();
+        [[nodiscard]] Fence::FencePoint NextSignal();
+        Fence::Expected<Fence::ECPUWaitResult> WaitOnFenceCPU(const Fence::FencePoint& InFencePoint);
+        void WaitOnFenceGPU(const Fence::FencePoint& InFencePoint);
         void SyncWithQueue(CommandQueue& InQueue);
         void FlushQueue();
 
