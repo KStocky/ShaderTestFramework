@@ -1,4 +1,5 @@
 #include "D3D12/Fence.h"
+#include "Utility/Exception.h"
 
 namespace stf
 {
@@ -9,43 +10,41 @@ namespace stf
     {
     }
 
-    Fence::FencePoint Fence::Signal(ID3D12CommandQueue* InQueue)
+    Fence::FencePoint Fence::Signal(ID3D12CommandQueue& InQueue)
     {
-        InQueue->Signal(m_Fence.Get(), m_NextValue);
+        InQueue.Signal(m_Fence.Get(), m_NextValue);
         return { m_Fence.Get(), m_NextValue++ };
     }
 
-    bool Fence::WaitCPU(const FencePoint& InFencePoint) const
+    Fence::FencePoint Fence::NextSignal()
     {
-        if (!Validate(InFencePoint))
-        {
-            return false;
-        }
-        const u64 currentValue = m_Fence->GetCompletedValue();
-
-        if (currentValue < InFencePoint.SignalledValue)
-        {
-            HANDLE event = CreateEventEx(nullptr, nullptr, false, EVENT_ALL_ACCESS);
-
-            m_Fence->SetEventOnCompletion(InFencePoint.SignalledValue, event);
-            WaitForSingleObject(event, INFINITE);
-        }
-
-        return true;
+        return FencePoint{ m_Fence.Get(), m_NextValue };
     }
 
-    void Fence::WaitOnQueue(ID3D12CommandQueue* InQueue) const
+    Fence::Expected<Fence::ECPUWaitResult> Fence::WaitCPU(const FencePoint& InFencePoint) const
     {
-        InQueue->Wait(m_Fence.Get(), m_NextValue - 1ull);
+        return WaitForFencePoint(InFencePoint, INFINITE);
     }
 
-    Expected<bool, bool> Fence::HasCompleted(const FencePoint& InFencePoint) const
+    Fence::Expected<Fence::ECPUWaitResult> Fence::WaitCPU(const FencePoint& InFencePoint, const Milliseconds<u32> InTimeOut) const
     {
-        if (!Validate(InFencePoint))
-        {
-            return Unexpected{ false };
-        }
-        return m_Fence->GetCompletedValue() >= InFencePoint.SignalledValue;
+        return WaitForFencePoint(InFencePoint, InTimeOut.count());
+    }
+
+    void Fence::WaitOnQueue(ID3D12CommandQueue& InQueue, const FencePoint& InFencePoint) const
+    {
+        ThrowIfFailed(InQueue.Wait(InFencePoint.Fence, InFencePoint.SignalledValue));
+    }
+
+    Fence::Expected<bool> Fence::HasCompleted(const FencePoint& InFencePoint) const
+    {
+        return Validate(InFencePoint)
+            .transform(
+                [&, this]()
+                {
+                    return m_Fence->GetCompletedValue() >= InFencePoint.SignalledValue;
+                }
+            );
     }
 
     ID3D12Fence* Fence::GetRaw() const
@@ -58,8 +57,56 @@ namespace stf
         return GetRaw();
     }
 
-    bool Fence::Validate(const FencePoint& InFencePoint) const
+    Fence::Expected<void> Fence::Validate(const FencePoint& InFencePoint) const
     {
-        return m_Fence.Get() == InFencePoint.Fence;
+        if (m_Fence.Get() != InFencePoint.Fence)
+        {
+            return Unexpected{ EErrorType::FencePointIsFromAnotherFence };
+        }
+
+        return {};
+    }
+
+    Fence::Expected<Fence::ECPUWaitResult> Fence::WaitForFencePoint(const FencePoint& InFencePoint, const DWORD InTimeout) const
+    {
+        
+        return Validate(InFencePoint)
+            .and_then(
+                [&, this]() -> Expected<ECPUWaitResult>
+                {
+                    if (m_Fence->GetCompletedValue() > InFencePoint.SignalledValue)
+                    {
+                        return ECPUWaitResult::FenceAlreadyReached;
+                    }
+
+                    HANDLE event = CreateEventEx(nullptr, nullptr, false, EVENT_ALL_ACCESS);
+                    if (!event)
+                    {
+                        return Unexpected{ EErrorType::FencePointIsFromAnotherFence };
+                    }
+
+                    m_Fence->SetEventOnCompletion(InFencePoint.SignalledValue, event);
+                    const auto waitResult = WaitForSingleObject(event, InTimeout);
+
+                    CloseHandle(event);
+
+                    switch (waitResult)
+                    {
+                        case WAIT_OBJECT_0:
+                        {
+                            return ECPUWaitResult::WaitFenceReached;
+                        }
+
+                        case WAIT_TIMEOUT:
+                        {
+                            return ECPUWaitResult::WaitTimedOut;
+                        }
+
+                        default:
+                        {
+                            return Unexpected{ EErrorType::WaitFailed };
+                        }
+                    }
+                });
     }
 }

@@ -25,7 +25,7 @@ namespace stf
 
     Fence::FencePoint CommandQueue::Signal()
     {
-        return m_Fence->Signal(m_Queue.Get());
+        return m_Fence->Signal(*m_Queue.Get());
     }
 
     void CommandQueue::WaitOnFence(const Fence::FencePoint& InFencePoint)
@@ -35,7 +35,7 @@ namespace stf
 
     void CommandQueue::SyncWithQueue(CommandQueue& InQueue)
     {
-        InQueue.GetFence().WaitOnQueue(m_Queue.Get());
+        InQueue.GetFence().WaitOnQueue(*m_Queue.Get(), Signal());
     }
 
     void CommandQueue::FlushQueue()
