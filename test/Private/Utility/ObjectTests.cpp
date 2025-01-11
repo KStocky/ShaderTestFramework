@@ -45,3 +45,21 @@ namespace stf::ObjectTests::ObjectTypeConstructionTests
     static_assert(!TestConstructibleWithObjectNew<PrivateInherit>, "Expected Private inheritance to not be constructible using Object::New");
     static_assert(TestConstructibleWithObjectNew<PublicInherit>, "Expected Public inheritance to be constructible using Object::New");
 }
+
+namespace stf::ObjectTests::SharedFromThisTests
+{
+    struct TestObject : Object
+    {
+        TestObject(ObjectToken InToken) : Object(InToken) {}
+
+        template<typename ThisType>
+        decltype(auto) Get(this ThisType&& InThis)
+        {
+            return std::forward<ThisType>(InThis).SharedFromThis();
+        }
+    };
+
+    static_assert(std::same_as<decltype(std::declval<TestObject>().Get()), SharedPtr<TestObject>>);
+    static_assert(std::same_as<decltype(std::declval<const TestObject>().Get()), SharedPtr<const TestObject>>);
+    static_assert(std::same_as<decltype(std::move(std::declval<TestObject>()).Get()), SharedPtr<TestObject>>);
+}

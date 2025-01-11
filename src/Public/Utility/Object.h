@@ -30,13 +30,21 @@ namespace stf
         Object& operator=(const Object&) = delete;
         Object& operator=(Object&&) = delete;
 
-        virtual ~Object() noexcept {}
+        virtual ~Object() {}
 
         template<typename T, typename... ParamTypes>
             requires ObjectType<T, ParamTypes...>
         static SharedPtr<T> New(ParamTypes&&... InArgs)
         {
             return MakeShared<T>(ObjectToken{}, std::forward<ParamTypes>(InArgs)...);
+        }
+
+    protected:
+
+        template<typename ThisType>
+        auto SharedFromThis(this ThisType&& InThis)
+        {
+            return std::static_pointer_cast<std::remove_reference_t<ThisType>>(std::forward<ThisType>(InThis).shared_from_this());
         }
     };
 }
