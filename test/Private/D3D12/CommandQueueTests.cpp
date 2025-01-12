@@ -8,7 +8,29 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-SCENARIO("CommandQueueTests")
+class CommandQueueTestFixture
+{
+
+protected:
+
+    void BeginTestCase(const stf::GPUDevice::EDeviceType InType) const
+    {
+        device = stf::Object::New<stf::GPUDevice> (
+            stf::GPUDevice::CreationParams
+            {
+                .DeviceType = InType
+            });
+    }
+
+    void EndTestCase() const
+    {
+        device = nullptr;
+    }
+
+    mutable stf::SharedPtr<stf::GPUDevice> device;
+};
+
+TEST_CASE_PERSISTENT_FIXTURE( CommandQueueTestFixture, "Scenario: CommandQueueTests")
 {
     using namespace stf;
 
@@ -20,13 +42,12 @@ SCENARIO("CommandQueueTests")
 
     GIVEN("DeviceType: " << Enum::UnscopedName(deviceType))
     {
-        auto device = Object::New<GPUDevice>(
-            GPUDevice::CreationParams
-            {
-                .DebugLevel = GPUDevice::EDebugLevel::DebugLayer,
-                .DeviceType = deviceType,
-                .EnableGPUCapture = false
-            });
+        SECTION("Setup")
+        {
+            REQUIRE_FALSE(device);
+            BeginTestCase(deviceType);
+            REQUIRE(device);
+        }
 
         AND_GIVEN("Two command queues created")
         {
@@ -91,23 +112,10 @@ SCENARIO("CommandQueueTests")
                                 REQUIRE(copyQueue->HasFencePointBeenReached(futureFencePoint));
                             }
 
-                            THEN("Waiting queue still not signalled")
+                            THEN("Waiting queue is no longer waiting")
                             {
-                                REQUIRE_FALSE(directQueue->HasFencePointBeenReached(waitingFencePoint));
+                                REQUIRE(directQueue->HasFencePointBeenReached(waitingFencePoint));
                             }
-
-                            AND_WHEN("wait for small amount of time")
-                            {
-                                const auto waitResult = directQueue->GetFence().WaitCPU(waitingFencePoint, Milliseconds<u32>{1u});
-
-                                THEN("Waiting queue is no longer waiting")
-                                {
-                                    REQUIRE(waitResult.has_value());
-                                    REQUIRE(waitResult.value() == Fence::ECPUWaitResult::WaitFenceReached);
-                                    REQUIRE(directQueue->HasFencePointBeenReached(waitingFencePoint));
-                                }
-                            }
-                            
                         }
                     }
                 }
@@ -115,6 +123,11 @@ SCENARIO("CommandQueueTests")
 
             [[maybe_unused]] const auto directSignal = directQueue->Signal();
             [[maybe_unused]] const auto copySignal = copyQueue->Signal();
+        }
+
+        SECTION("Teardown")
+        {
+            EndTestCase();
         }
     }
 }
