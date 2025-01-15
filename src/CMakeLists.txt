@@ -34,6 +34,7 @@ set(SOURCES
     Public/D3D12/DescriptorHeap.h
     Public/D3D12/DescriptorRingAllocator.h
     Public/D3D12/Fence.h
+    Public/D3D12/FencedResourcePool.h
     Public/D3D12/GPUDevice.h
     Public/D3D12/GPUResource.h
     Public/D3D12/Shader/CompiledShaderData.h

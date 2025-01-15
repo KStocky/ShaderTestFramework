@@ -106,6 +106,7 @@ TEST_CASE_PERSISTENT_FIXTURE( CommandQueueTestFixture, "Scenario: CommandQueueTe
                         AND_WHEN("The future fence point is eventually signalled")
                         {
                             const auto actualFencePoint = copyQueue->Signal();
+                            const auto waitResult = directQueue->WaitOnFenceCPU(waitingFencePoint, Milliseconds<u32>{ 1u });
 
                             THEN("Future fence point has been reached")
                             {
@@ -114,6 +115,8 @@ TEST_CASE_PERSISTENT_FIXTURE( CommandQueueTestFixture, "Scenario: CommandQueueTe
 
                             THEN("Waiting queue is no longer waiting")
                             {
+                                REQUIRE(waitResult.has_value());
+                                REQUIRE((waitResult.value() == Fence::ECPUWaitResult::FenceAlreadyReached || waitResult.value() == Fence::ECPUWaitResult::WaitFenceReached));
                                 REQUIRE(directQueue->HasFencePointBeenReached(waitingFencePoint));
                             }
                         }

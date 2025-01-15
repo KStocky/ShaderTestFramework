@@ -38,6 +38,11 @@ namespace stf
         return m_Fence->WaitCPU(InFencePoint);
     }
 
+    Fence::Expected<Fence::ECPUWaitResult> CommandQueue::WaitOnFenceCPU(const Fence::FencePoint& InFencePoint, const Milliseconds<u32> InTimeout)
+    {
+        return m_Fence->WaitCPU(InFencePoint, InTimeout);
+    }
+
     void CommandQueue::WaitOnFenceGPU(const Fence::FencePoint& InFencePoint)
     {
         m_Fence->WaitOnQueue(*m_Queue.Get(), InFencePoint);

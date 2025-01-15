@@ -144,6 +144,7 @@ set(SOURCES
     Private/D3D12/DescriptorHeapTests.cpp
     Private/D3D12/DescriptorRingAllocatorTests.cpp
     Private/D3D12/DescriptorTests.cpp
+    Private/D3D12/FencedResourcePoolTests.cpp
     Private/D3D12/Shader/HLSLTests.cpp
     Private/D3D12/Shader/ReflectionTests.cpp
     Private/D3D12/Shader/ShaderBindingTests.cpp

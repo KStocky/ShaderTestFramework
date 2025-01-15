@@ -3,6 +3,7 @@
 #include "D3D12/Fence.h"
 #include "Utility/Object.h"
 #include "Utility/Pointer.h"
+#include "Utility/Time.h"
 
 #include <d3d12.h>
 
@@ -28,6 +29,7 @@ namespace stf
         [[nodiscard]] Fence::FencePoint Signal();
         [[nodiscard]] Fence::FencePoint NextSignal();
         Fence::Expected<Fence::ECPUWaitResult> WaitOnFenceCPU(const Fence::FencePoint& InFencePoint);
+        Fence::Expected<Fence::ECPUWaitResult> WaitOnFenceCPU(const Fence::FencePoint& InFencePoint, const Milliseconds<u32> InTimeout);
         void WaitOnFenceGPU(const Fence::FencePoint& InFencePoint);
         void SyncWithQueue(CommandQueue& InQueue);
         void FlushQueue();
