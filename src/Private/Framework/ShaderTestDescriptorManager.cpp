@@ -95,9 +95,30 @@ namespace stf
 
         stf::tie(m_CPUDescriptors, m_CPUHeap) = copyDescriptorsToNewHeap(m_CPUDescriptors, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
         stf::tie(m_GPUDescriptors, m_GPUHeap) = copyDescriptorsToNewHeap(m_CPUDescriptors, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
-        m_Allocator.Resize(InNewSize);
+        return m_Allocator.Resize(InNewSize)
+            .transform(
+                [oldGPUHeap]()
+                {
+                    return oldGPUHeap;
+                }
+            ).transform_error(
+                [](const BindlessFreeListAllocator::EErrorType InError)
+                {
+                    using enum BindlessFreeListAllocator::EErrorType;
 
-        return oldGPUHeap;
+                    switch (InError)
+                    {
+                        case ShrinkAttempted:
+                        {
+                            return EErrorType::AttemptedShrink;
+                        }
+                        default:
+                        {
+                            return EErrorType::Unknown;
+                        }
+                    }
+                }
+            );
     }
 
     u32 ShaderTestDescriptorManager::GetSize() const

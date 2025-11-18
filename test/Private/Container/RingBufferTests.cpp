@@ -245,8 +245,16 @@ SCENARIO("RingBufferTests")
 
 		WHEN("both items popped")
 		{
-			buffer.pop_front();
-			const auto actual = buffer.pop_front();
+            const auto actual = buffer.pop_front()
+                .and_then(
+                    [&buffer](auto&&)
+                    {
+                        return buffer.pop_front();
+                    }
+                );
+
+            REQUIRE(actual.has_value());
+
 
 			THEN("second element is as expected")
 			{

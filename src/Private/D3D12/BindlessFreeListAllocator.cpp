@@ -74,13 +74,32 @@ namespace stf
 
         const u32 numAdded = InNewSize - m_NumDescriptors;
 
-        m_FreeList.resize(InNewSize);
-        m_FreeSet.reserve(InNewSize);
-        std::ranges::generate_n(std::back_inserter(m_FreeList), numAdded, [index = m_NumDescriptors]() mutable { return index++; });
-        std::ranges::generate_n(std::back_inserter(m_FreeSet), numAdded, []() { return true; });
-        m_NumDescriptors = InNewSize;
-
-        return {};
+        return m_FreeList.resize(InNewSize)
+            .transform(
+                [this, numAdded, InNewSize]()
+                {
+                    m_FreeSet.reserve(InNewSize);
+                    std::ranges::generate_n(std::back_inserter(m_FreeList), numAdded, [index = m_NumDescriptors]() mutable { return index++; });
+                    std::ranges::generate_n(std::back_inserter(m_FreeSet), numAdded, []() { return true; });
+                    m_NumDescriptors = InNewSize;
+                }
+            ).transform_error(
+                [](const stf::RingBuffer<stf::u32>::EErrorType InError)
+                {
+                    using enum stf::RingBuffer<stf::u32>::EErrorType;
+                    switch (InError)
+                    {
+                        case AttemptedShrink:
+                        {
+                            return EErrorType::ShrinkAttempted;
+                        }
+                        default:
+                        {
+                            return EErrorType::UnknownError;
+                        }
+                    }
+                }
+            );
     }
 
     u32 BindlessFreeListAllocator::GetSize() const

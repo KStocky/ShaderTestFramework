@@ -57,6 +57,7 @@ namespace stf
     enum class ETestRunErrorType
     {
         Unknown,
+        DescriptorManagement,
         ShaderCompilation,
         Binding,
         RootSignatureGeneration
