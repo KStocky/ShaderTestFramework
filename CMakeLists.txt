@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.26)
 
+message(STATUS "CMAKE version: ${CMAKE_VERSION}")
+
 project(
     ShaderTestingFramework 
     VERSION 0.1.0 
