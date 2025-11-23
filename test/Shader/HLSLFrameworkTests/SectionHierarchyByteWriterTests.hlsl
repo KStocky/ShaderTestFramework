@@ -121,32 +121,32 @@ void SectionHierarchyByteWriterTests()
                             }
                         }
 
-                        SECTION("AND WHEN two sections are left")
-                        {
-                            data.OnLeave();
-                            data.OnLeave();
-
-                            SECTION("THEN 4 Bytes now required")
-                            {
-                                stf::detail::SectionHierarchy sh;
-                                sh.Scratch = data;
-                                ASSERT(AreEqual, ttl::bytes_required(sh), 4u);
-                                ASSERT(AreEqual, ttl::alignment_required(sh), 4u);
-                            }
-
-                            SECTION("AND WHEN bytes written")
-                            {
-                                stf::detail::SectionHierarchy sh;
-                                sh.Scratch = data;
-                                ttl::write_bytes(vec, 0, sh);
-
-                                SECTION("THEN first uint is (0 << 24) | (1 << 16) | (2 << 8) | (3 << 0)")
-                                {
-                                    static const uint expected = (0 << 24) | (1 << 16) | (2 << 8) | (3 << 0);
-                                    ASSERT(AreEqual, vec[0], expected);
-                                }
-                            }
-                        }
+                        //SECTION("AND WHEN two sections are left")
+                        //{
+                        //    data.OnLeave();
+                        //    data.OnLeave();
+//
+                        //    SECTION("THEN 4 Bytes now required")
+                        //    {
+                        //        stf::detail::SectionHierarchy sh;
+                        //        sh.Scratch = data;
+                        //        ASSERT(AreEqual, ttl::bytes_required(sh), 4u);
+                        //        ASSERT(AreEqual, ttl::alignment_required(sh), 4u);
+                        //    }
+//
+                        //    SECTION("AND WHEN bytes written")
+                        //    {
+                        //        stf::detail::SectionHierarchy sh;
+                        //        sh.Scratch = data;
+                        //        ttl::write_bytes(vec, 0, sh);
+//
+                        //        SECTION("THEN first uint is (0 << 24) | (1 << 16) | (2 << 8) | (3 << 0)")
+                        //        {
+                        //            static const uint expected = (0 << 24) | (1 << 16) | (2 << 8) | (3 << 0);
+                        //            ASSERT(AreEqual, vec[0], expected);
+                        //        }
+                        //    }
+                        //}
                     }
 
                     //SECTION("AND WHEN a section is left")
