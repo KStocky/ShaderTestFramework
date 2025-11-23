@@ -29,6 +29,41 @@ namespace DescriptorHeapTestPrivate
 
 TEST_CASE_PERSISTENT_FIXTURE(DescriptorHeapTestPrivate::Fixture, "Descriptor Heap Tests")
 {
+    SECTION("Incompatible Type and Flags")
+    {
+        const auto [type, flags] = GENERATE(
+            table<D3D12_DESCRIPTOR_HEAP_TYPE, D3D12_DESCRIPTOR_HEAP_FLAGS>(
+                {
+                    std::tuple{ D3D12_DESCRIPTOR_HEAP_TYPE_RTV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE },
+                    std::tuple{ D3D12_DESCRIPTOR_HEAP_TYPE_DSV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE }
+                }
+            )
+        );
+
+        GIVEN("Type: " << stf::Enum::UnscopedName(type))
+        {
+            AND_GIVEN("Flag: " << stf::Enum::UnscopedName(flags))
+            {
+                WHEN("Created")
+                {
+                    THEN("Throws")
+                    {
+                        REQUIRE_THROWS(
+                            device->CreateDescriptorHeap(
+                                {
+                                    .Type = type,
+                                    .NumDescriptors = 1,
+                                    .Flags = flags,
+                                    .NodeMask = 0
+                                }
+                            )
+                        );
+                    }
+                }
+            }
+        }
+    }
+
     SECTION("Valid non-empty Descriptor Heap parameters")
     {
         const auto [type, flags] = GENERATE(
