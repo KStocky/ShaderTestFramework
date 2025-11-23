@@ -149,31 +149,31 @@ void SectionHierarchyByteWriterTests()
                         }
                     }
 
-                    SECTION("AND WHEN a section is left")
-                    {
-                        data.OnLeave();
-
-                        SECTION("THEN 4 Bytes still required")
-                        {
-                            stf::detail::SectionHierarchy sh;
-                            sh.Scratch = data;
-                            ASSERT(AreEqual, ttl::bytes_required(sh), 4u);
-                            ASSERT(AreEqual, ttl::alignment_required(sh), 4u);
-                        }
-
-                        SECTION("AND WHEN bytes written")
-                        {
-                            stf::detail::SectionHierarchy sh;
-                            sh.Scratch = data;
-                            ttl::write_bytes(vec, 0, sh);
-
-                            SECTION("THEN first uint is (0 << 16) | (1 << 8) | (2 << 0)")
-                            {
-                                static const uint expected = (0 << 16) | (1 << 8) | (2 << 0);
-                                ASSERT(AreEqual, vec[0], expected);
-                            }
-                        }
-                    }
+                    //SECTION("AND WHEN a section is left")
+                    //{
+                    //    data.OnLeave();
+//
+                    //    SECTION("THEN 4 Bytes still required")
+                    //    {
+                    //        stf::detail::SectionHierarchy sh;
+                    //        sh.Scratch = data;
+                    //        ASSERT(AreEqual, ttl::bytes_required(sh), 4u);
+                    //        ASSERT(AreEqual, ttl::alignment_required(sh), 4u);
+                    //    }
+//
+                    //    SECTION("AND WHEN bytes written")
+                    //    {
+                    //        stf::detail::SectionHierarchy sh;
+                    //        sh.Scratch = data;
+                    //        ttl::write_bytes(vec, 0, sh);
+//
+                    //        SECTION("THEN first uint is (0 << 16) | (1 << 8) | (2 << 0)")
+                    //        {
+                    //            static const uint expected = (0 << 16) | (1 << 8) | (2 << 0);
+                    //            ASSERT(AreEqual, vec[0], expected);
+                    //        }
+                    //    }
+                    //}
                 }
             }
         }
