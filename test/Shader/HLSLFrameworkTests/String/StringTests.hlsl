@@ -110,8 +110,12 @@ void GIVEN_TwoNonEmptyStringCreator_WHEN_Executed_THEN_BothStringsAreAsExpected(
 [numthreads(1,1,1)]
 void GIVEN_FullString_WHEN_AppendCalled_THEN_AppendFails()
 {
-    CREATE_STRING(fullString, "FullString");
-
+    ttl::string<5> fullString = ttl::zero<ttl::string<5> >();
+    fullString.append('H');
+    fullString.append('e');
+    fullString.append('l');
+    fullString.append('l');
+    fullString.append('o');
     ASSERT(AreEqual, fullString.Size, fullString.MaxNumChars);
 
     fullString.append('!');

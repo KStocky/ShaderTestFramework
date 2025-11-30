@@ -46,7 +46,7 @@ namespace ttl
         template<typename U>
         static void write(inout container_wrapper<U> InContainer, const uint InIndex, const string<N> In)
         {
-            const uint size = bytes_required(In) / ttl::size_of<uint>::value;
+            const uint size = bytes_required(In) / sizeof(uint);
             static const bool isByteAddress = ttl::container_traits<U>::is_byte_address;
             static const uint storeIndexModifier = isByteAddress ? 4 : 1;
             for (uint i = 0; i < size; ++i)
@@ -168,11 +168,8 @@ namespace ttl_detail
     #undef CHAR_CHECK
 }
 
-#define TTL_CHAR_STAMP(i, InLength, InStr, OutStr) if (i >= InLength) break; OutStr.append(ttl_detail::char_to_uint(InStr[i]));
-#define TTL_CHAR_STAMPER(InStamper, InN, InLength, InStr, OutStr) InStamper(0, TTL_CHAR_STAMP, InLength, InStr, OutStr)
-
 #ifndef TTL_STRING_MAX_LENGTH
-#define TTL_STRING_MAX_LENGTH 64
+#define TTL_STRING_MAX_LENGTH 70
 #endif
 
 #ifndef TTL_ENABLE_STRINGS
@@ -180,19 +177,27 @@ namespace ttl_detail
 #endif
 
 #if TTL_ENABLE_STRINGS
-#define CREATE_STRING(OutStr, InStrLiteral)                                                                                          \
-_Static_assert((__decltype(ttl::array_len(InStrLiteral))::value <= TTL_STRING_MAX_LENGTH), "Strings with greater than " TTL_STRINGIFY(TTL_STRING_MAX_LENGTH) " characters are not supported"); \
-ttl::string<__decltype(ttl::array_len(InStrLiteral))::value> OutStr;                                                                 \
-ttl::zero(OutStr);                                                                                                                   \
-do {                                                                                                                                 \
-    using LengthType = __decltype(ttl::array_len(InStrLiteral));                                                                     \
-    TTL_STAMP(TTL_STRING_MAX_LENGTH, TTL_CHAR_STAMPER, LengthType::value, InStrLiteral, OutStr)                                      \
+#define CREATE_STRING(OutStr, InStrLiteral)                                 \
+ttl::string<TTL_STRING_MAX_LENGTH> OutStr;                                  \
+ttl::zero(OutStr);                                                          \
+do                                                                          \
+{                                                                           \
+    [unroll]                                                                \
+    for(uint i = 0; i < TTL_STRING_MAX_LENGTH; ++i)                         \
+    {                                                                       \
+        const uint val = ttl_detail::char_to_uint(InStrLiteral[i]);         \
+        OutStr.append(val);                                                 \
+        if (val == 0)                                                       \
+        {                                                                   \
+            break;                                                          \
+        }                                                                   \
+    }                                                                       \
 } while(false)
 
 #else
 
-#define CREATE_STRING(OutStr, InStrLiteral)                                                                                          \
-ttl::string<__decltype(ttl::array_len(InStrLiteral))::value> OutStr;                                                                 \
+#define CREATE_STRING(OutStr, InStrLiteral)                                 \
+ttl::string<TTL_STRING_MAX_LENGTH> OutStr;                                  \
 ttl::zero(OutStr);                                                                                                                   
 
 #endif

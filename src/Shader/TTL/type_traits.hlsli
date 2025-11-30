@@ -228,40 +228,6 @@ namespace ttl
     template<typename T, uint InDim0, uint InDim1> struct fundamental_type_traits<matrix<T, InDim0, InDim1> > : fundamental_type_traits_base<T, InDim0, InDim1>{};
 }
 
-namespace ttl
-{
-    // Depends on https://github.com/microsoft/DirectXShaderCompiler/issues/5553
-    template<typename T, typename = void>
-    struct is_or_has_enum : true_type{};
-
-    template<typename T>
-    struct is_or_has_enum<T, enable_if_t<sizeof(T) != 0> > : false_type{};
-
-    template<typename T>
-    static const bool is_or_has_enum_v = is_or_has_enum<T>::value;
-}
-
-namespace ttl_detail
-{
-    template<typename T>
-    struct wrapper
-    {
-        T dummy;
-    };
-
-    template<typename T>
-    struct size_of_helper : wrapper<T>{};
-}
-
-namespace ttl
-{
-    template<typename T, typename = void>
-    struct size_of : integral_constant<uint, sizeof(ttl_detail::size_of_helper<T>)>{};
-
-    template<typename T>
-    static const uint size_of_v = size_of<T>::value;
-}
-
 namespace ttl_detail
 {
     template<typename T>
@@ -275,7 +241,7 @@ namespace ttl_detail
 namespace ttl
 {
     template<typename T>
-    struct align_of : integral_constant<uint, size_of<ttl_detail::offset_lowest_align_wrapper<T> >::value - size_of<T>::value>{};
+    struct align_of : integral_constant<uint, sizeof(ttl_detail::offset_lowest_align_wrapper<T>) - sizeof(T)>{};
 
     template<typename T>
     static const uint align_of_v = align_of<T>::value;

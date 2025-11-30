@@ -9,6 +9,10 @@ set(SHADER_SOURCES
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/ArrayTemplateSpecialization.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CallOperator.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CleanupAttribute.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CompileTimeGlobalStringSize.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CompileTimeGlobalStringSizeDebug.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CompileTimeLocalStringSize.hlsl
+    Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CompileTimeLocalStringSizeDebug.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/CounterMacro.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/DeducingPackingOrder.hlsl
     Shader/D3D12/Shader/ShaderCompilerTests/HLSLTests/DeferSFINAE.hlsl

@@ -50,7 +50,7 @@
     {
       "name": "Ninja",
       "configurePreset": "Ninja",
-      "configuration": "Release"
+      "configuration": "Debug"
     },
     {
       "name": "NinjaNonUnity",
@@ -67,7 +67,7 @@
     {
       "name": "Ninja",
       "configurePreset": "Ninja",
-      "configuration": "Release",
+      "configuration": "Debug",
       "output": {
         "outputOnFailure": true
       }

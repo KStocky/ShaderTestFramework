@@ -142,6 +142,11 @@ namespace stf
         if (InDesc.DebugLevel != EDebugLevel::Off)
         {
             SetupDebugInfoQueue();
+
+            if (InDesc.DebugLevel == EDebugLevel::DebugLayerWithValidation)
+            {
+                SetDebugDeviceSettings();
+            }
         }
 
         m_CBVDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -333,6 +338,25 @@ namespace stf
         infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, TRUE);
         infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, TRUE);
         infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, TRUE);
+    }
+
+    void GPUDevice::SetDebugDeviceSettings()
+    {
+        ComPtr<ID3D12DebugDevice2> debugDevice = nullptr;
+        ThrowIfFailed(m_Device->QueryInterface(debugDevice.GetAddressOf()));
+
+        D3D12_DEBUG_DEVICE_GPU_BASED_VALIDATION_SETTINGS gpuValidationSettings = {
+            .MaxMessagesPerCommandList = 256,
+            // TODO: It would be great to make this unguarded or guarded valdiation again BUT at the minute
+            // that makes tests that use sections and strings much too slow.
+            // Guarded and Unguarded performance scales with the number of accesses to resources
+            // Sections and strings add a decent amount of extra accesses per use.
+            // Until this is made faster, or when we reduce the number of required memory accesses for sections and strings
+            // we will keep this at state tracking only.
+            .DefaultShaderPatchMode = D3D12_GPU_BASED_VALIDATION_SHADER_PATCH_MODE_STATE_TRACKING_ONLY,
+            .PipelineStateCreateFlags = D3D12_GPU_BASED_VALIDATION_PIPELINE_STATE_CREATE_FLAG_NONE
+        };
+        debugDevice->SetDebugParameter(D3D12_DEBUG_DEVICE_PARAMETER_GPU_BASED_VALIDATION_SETTINGS, &gpuValidationSettings, sizeof(D3D12_DEBUG_DEVICE_GPU_BASED_VALIDATION_SETTINGS));
     }
 
     void GPUDevice::CacheHardwareInfo(ID3D12Device12* InDevice, IDXGIAdapter4* InAdapter)

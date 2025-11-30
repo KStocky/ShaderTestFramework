@@ -53,7 +53,7 @@ namespace stf
         using Traits = ttl::fundamental_type_traits<T>;
 
         template<typename U>
-        struct NumBitsToVal : detail::NumBitsToValBase<ttl::size_of_v<U> >{};
+        struct NumBitsToVal : detail::NumBitsToValBase<sizeof(U)>{};
         
         static const uint16_t TypeVal = detail::TypeToVal<typename Traits::base_type>::value & 3;
         static const uint16_t NumBitsVal = NumBitsToVal<typename Traits::base_type>::value & 3;

@@ -32,7 +32,7 @@ struct align_of
 
 ```c++
 template<typename T>
-static const uint align_of_v = size_of<T>::value;
+static const uint align_of_v = sizeof(T);
 ```
 
 ## Template Parameters
