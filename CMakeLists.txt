@@ -30,6 +30,10 @@ option(STF_INCLUDE_EXAMPLES "Include and build examples")
 option(STF_DISABLE_UNITY_STF "Disable Unity build for STF Targets")
 option(STF_STRICT_COMPILATION "Turn Warning Level Up and Warnings as Errors")
 
+include(Configuration)
+
+addDynamicDebuggingConfig()
+
 if (${STF_STRICT_COMPILATION})
     set(CMAKE_CXX_EXTENSIONS OFF)
     set(CMAKE_COMPILE_WARNING_AS_ERROR ON)

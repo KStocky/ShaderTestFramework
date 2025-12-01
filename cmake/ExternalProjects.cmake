@@ -29,8 +29,8 @@ endfunction()
 function(add_tuplet IN_TARGET)
     FetchContent_Declare(
         Tuplet
-        GIT_REPOSITORY https://github.com/codeinred/tuplet.git
-        GIT_TAG v2.1.1
+        GIT_REPOSITORY https://github.com/kstocky/tuplet.git
+        GIT_TAG MyMain
     )
 
     FetchContent_MakeAvailable(Tuplet)

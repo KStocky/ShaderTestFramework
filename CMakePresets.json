@@ -58,6 +58,11 @@
       "configuration": "Debug"
     },
     {
+      "name": "NinjaDynamicDeopt",
+      "configurePreset": "Ninja",
+      "configuration": "DynDeopt"
+    },
+    {
       "name": "VS2022",
       "configurePreset": "VS2022",
       "configuration": "Debug"
@@ -68,6 +73,14 @@
       "name": "Ninja",
       "configurePreset": "Ninja",
       "configuration": "Debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "NinjaDynamicDeopt",
+      "configurePreset": "Ninja",
+      "configuration": "DynDeopt",
       "output": {
         "outputOnFailure": true
       }
@@ -91,6 +104,19 @@
         },
         {
           "name": "Ninja",
+          "type": "build"
+        }
+      ]
+    },
+    {
+      "name": "NinjaBuildDynamicDeopt",
+      "steps": [
+        {
+          "name": "Ninja",
+          "type": "configure"
+        },
+        {
+          "name": "NinjaDynamicDeopt",
           "type": "build"
         }
       ]
@@ -134,6 +160,23 @@
         },
         {
           "name": "Ninja",
+          "type": "test"
+        }
+      ]
+    },
+    {
+      "name": "NinjaBuildAndTestDynamicDeopt",
+      "steps": [
+        {
+          "name": "Ninja",
+          "type": "configure"
+        },
+        {
+          "name": "NinjaDynamicDeopt",
+          "type": "build"
+        },
+        {
+          "name": "NinjaDynamicDeopt",
           "type": "test"
         }
       ]
