@@ -24,7 +24,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1.13.0
 
       - name: Build everything and run all Tests"
-        run: cmake --workflow --preset NinjaBuildAndTest
+        run: cmake --workflow --preset NinjaBuildAndTestDynamicDeopt
       
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action/windows@v2
