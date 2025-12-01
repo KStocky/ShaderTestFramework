@@ -5,7 +5,7 @@ function(add_catch2 IN_TARGET)
     FetchContent_Declare(
         catch2
         GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-        GIT_TAG f7cd0ba0511b61592e70f07533d7ea30a8a5395d
+        GIT_TAG v3.11.0
     )
 
     FetchContent_MakeAvailable(Catch2)
