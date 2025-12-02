@@ -16,6 +16,14 @@
         "STF_ENABLE_TESTING": true,
         "STF_INCLUDE_EXAMPLES": true,
         "STF_STRICT_COMPILATION": true
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "toolset": {
+        "strategy": "external",
+        "value": "version=14.44"
       }
     },
     {
