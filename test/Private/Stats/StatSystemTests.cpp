@@ -47,6 +47,7 @@ SCENARIO("StatSystemTests")
             const std::string expectedName{ "Test" };
             {
                 TestScopedStat stat(expectedName);
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
             }
 
             AND_WHEN("Stats flushed")
