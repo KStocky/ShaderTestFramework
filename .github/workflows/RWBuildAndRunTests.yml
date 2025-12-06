@@ -13,6 +13,17 @@ jobs:
       pull-requests: write
 
     runs-on: windows-latest
+
+    strategy:
+      matrix:
+        configuration:
+         - config: Debug
+           workflow: NinjaBuildAndTest
+         - config: Release
+           workflow: NinjaBuildAndTestRelease
+         - config: DynDeopt
+           workflow: NinjaBuildAndTestDynamicDeopt
+
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v4
@@ -24,18 +35,18 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1.13.0
 
       - name: Build everything and run all Tests"
-        run: cmake --workflow --preset NinjaBuildAndTestDynamicDeopt
+        run: cmake --workflow --preset ${{ matrix.configuration.workflow }}
       
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action/windows@v2
         if: always()
         with:
           files: |
-            build\test\Debug\Reports\*.xml
+            build\test\${{ matrix.configuration.config }}\Reports\*.xml
       
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v4.3.1
         if: always()
         with:
-          report_paths: build\test\Debug\Reports\*.xml
+          report_paths: build\test\${{ matrix.configuration.config }}\Reports\*.xml
           detailed_summary: true
