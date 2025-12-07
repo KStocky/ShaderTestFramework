@@ -9,6 +9,15 @@
 #include <unordered_map>
 #include <utility>
 
+#if defined(__clang__) && __clang_major__ <= 19
+#  pragma clang diagnostic push
+// The following two disabled diagnostics are to support clang versions of 19 or lower
+// IsEnumCastValid is broken in Clang 19 and before without these being disabled.
+// https://godbolt.org/z/ef11jqT1b
+#  pragma clang diagnostic ignored "-Wunknown-warning-option"
+#  pragma clang diagnostic ignored "-Wenum-constexpr-conversion"
+#endif
+
 namespace stf
 {
     namespace Private
@@ -623,3 +632,7 @@ namespace stf
         }
     }
 }
+
+#if defined(__clang__) && __clang_major__ <= 19
+#pragma clang diagnostic pop
+#endif
