@@ -23,6 +23,10 @@ jobs:
            workflow: NinjaBuildAndTestRelease
          - config: DynDeopt
            workflow: NinjaBuildAndTestDynamicDeopt
+         - config: Debug
+           workflow: ClangBuildAndTest
+         - config: Release
+           workflow: ClangBuildAndTestRelease
 
     steps:
       - name: Checkout the repo

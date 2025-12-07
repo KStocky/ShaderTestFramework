@@ -13,7 +13,7 @@
 
 namespace stf
 {
-    class IncludeHandler : public IDxcIncludeHandler
+    class IncludeHandler final : public IDxcIncludeHandler
     {
     public:
 

@@ -111,7 +111,7 @@ SCENARIO("RingBufferTests")
 		WHEN("iterated on")
 		{
 			u32 actual = 0;
-			for (const auto element : buffer)
+			for ([[maybe_unused]] const auto& element : buffer)
 			{
 				++actual;
 			}
@@ -271,7 +271,7 @@ SCENARIO("RingBufferTests")
 		WHEN("iterated on")
 		{
 			u32 actual = 0;
-			for (const auto element : buffer)
+			for ([[maybe_unused]] const auto& element : buffer)
 			{
 				++actual;
 			}
@@ -322,7 +322,7 @@ SCENARIO("RingBufferTests")
             AND_WHEN("iterated on")
             {
                 u32 actual = 0;
-                for (const auto element : buffer)
+                for ([[maybe_unused]] const auto& element : buffer)
                 {
                     ++actual;
                 }

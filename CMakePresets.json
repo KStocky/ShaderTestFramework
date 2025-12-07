@@ -42,6 +42,26 @@
       }
     },
     {
+      "name": "Clang",
+      "inherits": "NinjaBase",
+      "cacheVariables": {
+        "STF_DISABLE_UNITY_STF": false,
+        "CMAKE_CXX_COMPILER": "clang-cl"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "intelliSenseMode": "windows-clangcl-x64"
+        }
+      }
+    },
+    {
+      "name": "ClangNonUnity",
+      "inherits": "Clang",
+      "cacheVariables": {
+        "STF_DISABLE_UNITY_STF": true
+      }
+    },
+    {
       "name": "VS2022",
       "binaryDir": "build",
       "generator": "Visual Studio 17 2022",
@@ -76,6 +96,21 @@
       "configuration": "DynDeopt"
     },
     {
+      "name": "Clang",
+      "configurePreset": "Clang",
+      "configuration": "Debug"
+    },
+    {
+      "name": "ClangRelease",
+      "configurePreset": "Clang",
+      "configuration": "Release"
+    },
+    {
+      "name": "ClangNonUnity",
+      "configurePreset": "ClangNonUnity",
+      "configuration": "Debug"
+    },
+    {
       "name": "VS2022",
       "configurePreset": "VS2022",
       "configuration": "Debug"
@@ -102,6 +137,22 @@
       "name": "NinjaDynamicDeopt",
       "configurePreset": "Ninja",
       "configuration": "DynDeopt",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "Clang",
+      "configurePreset": "Clang",
+      "configuration": "Debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "ClangRelease",
+      "configurePreset": "Clang",
+      "configuration": "Release",
       "output": {
         "outputOnFailure": true
       }
@@ -138,6 +189,45 @@
         },
         {
           "name": "NinjaRelease",
+          "type": "build"
+        }
+      ]
+    },
+    {
+      "name": "ClangBuild",
+      "steps": [
+        {
+          "name": "Clang",
+          "type": "configure"
+        },
+        {
+          "name": "Clang",
+          "type": "build"
+        }
+      ]
+    },
+    {
+      "name": "ClangBuildRelease",
+      "steps": [
+        {
+          "name": "Clang",
+          "type": "configure"
+        },
+        {
+          "name": "ClangRelease",
+          "type": "build"
+        }
+      ]
+    },
+    {
+      "name": "ClangNonUnityBuild",
+      "steps": [
+        {
+          "name": "ClangNonUnity",
+          "type": "configure"
+        },
+        {
+          "name": "ClangNonUnity",
           "type": "build"
         }
       ]
@@ -228,6 +318,40 @@
         },
         {
           "name": "NinjaDynamicDeopt",
+          "type": "test"
+        }
+      ]
+    },
+    {
+      "name": "ClangBuildAndTest",
+      "steps": [
+        {
+          "name": "Clang",
+          "type": "configure"
+        },
+        {
+          "name": "Clang",
+          "type": "build"
+        },
+        {
+          "name": "Clang",
+          "type": "test"
+        }
+      ]
+    },
+    {
+      "name": "ClangBuildAndTestRelease",
+      "steps": [
+        {
+          "name": "Clang",
+          "type": "configure"
+        },
+        {
+          "name": "ClangRelease",
+          "type": "build"
+        },
+        {
+          "name": "ClangRelease",
           "type": "test"
         }
       ]

@@ -54,8 +54,8 @@ namespace stf
         struct CompilationEnvDesc
         {
             ShaderCodeSource Source;
-            std::vector<std::wstring> CompilationFlags;
-            std::vector<ShaderMacro> Defines;
+            std::vector<std::wstring> CompilationFlags {};
+            std::vector<ShaderMacro> Defines {};
             D3D_SHADER_MODEL ShaderModel = D3D_SHADER_MODEL_6_6;
             EHLSLVersion HLSLVersion = EHLSLVersion::v202x;
         };
@@ -64,7 +64,7 @@ namespace stf
         {
             CompilationEnvDesc CompilationEnv;
             std::string_view TestName;
-            std::vector<ShaderBinding> Bindings;
+            std::vector<ShaderBinding> Bindings {};
             uint3 ThreadGroupCount{};
             TestDataBufferLayoutDesc TestDataLayout
             {

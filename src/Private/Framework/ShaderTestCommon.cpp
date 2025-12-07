@@ -115,12 +115,12 @@ namespace stf
                     InOs << InToWrite;
                 };
 
-            if (error.Info.SectionId != -1 && error.Info.SectionId < In.Sections.size())
+            if (error.Info.SectionId != -1 && error.Info.SectionId < static_cast<i32>(In.Sections.size()))
             {
                 auto sectionPrinter =
                     [&indentLevel, &validTree, &tabbedWriter, &In](this auto&& InSelf, const i32 InSectionId)
                     {
-                        if (InSectionId < -1 || InSectionId >= In.Sections.size())
+                        if (InSectionId < -1 || InSectionId >= static_cast<i32>(In.Sections.size()))
                         {
                             indentLevel = 0;
                             validTree = false;
@@ -130,7 +130,7 @@ namespace stf
 
                         const bool isSection = In.Sections[InSectionId].ParentId >= 0;
                         const i32 stringId = In.Sections[InSectionId].StringId;
-                        const bool hasString = stringId >= 0 && stringId < In.Strings.size();
+                        const bool hasString = stringId >= 0 && stringId < static_cast<i32>(In.Strings.size());
 
                         if (isSection)
                         {

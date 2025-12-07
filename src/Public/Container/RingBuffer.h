@@ -33,8 +33,8 @@ namespace stf
             AttemptedShrink
         };
 
-        template<typename T>
-        using Expected = Expected<T, EErrorType>;
+        template<typename ExpectedType>
+        using Expected = Expected<ExpectedType, EErrorType>;
 
         template<Qualifier Qual, Direction Dir>
         class Iterator

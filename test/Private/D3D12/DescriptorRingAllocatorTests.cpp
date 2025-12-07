@@ -97,7 +97,7 @@ SCENARIO("DescriptorRingAllocatorTests")
 		AND_GIVEN("Allocation of half the capacity already made")
 		{
 			static constexpr uint32_t allocationSize = capacity / 2;
-			const auto allocatedRange = allocator.Allocate(allocationSize);
+            [[maybe_unused]] const auto allocatedRange = allocator.Allocate(allocationSize);
 
 			AND_GIVEN("release is not larger than allocation")
 			{
@@ -145,7 +145,7 @@ SCENARIO("DescriptorRingAllocatorTests")
 			static constexpr u32 initialAllocationSize = capacity - 1;
 			static constexpr u32 releaseSize = initialAllocationSize;
 
-			const auto allocation = allocator.Allocate(initialAllocationSize);
+            [[maybe_unused]] const auto allocation = allocator.Allocate(initialAllocationSize);
 			const auto releaseResult = allocator.Release(releaseSize);
 
 			REQUIRE(releaseResult);
@@ -184,7 +184,7 @@ SCENARIO("DescriptorRingAllocatorTests")
 			static constexpr u32 releaseSize = 1;
 			static constexpr u32 initialAllocationSize = capacity - 5 + releaseSize;
 
-			const auto allocation = allocator.Allocate(initialAllocationSize);
+            [[maybe_unused]] const auto allocation = allocator.Allocate(initialAllocationSize);
 			const auto releaseResult = allocator.Release(releaseSize);
 
 			REQUIRE(releaseResult);

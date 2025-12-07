@@ -51,10 +51,10 @@ namespace FuncTraitsTests
 	{
 		using Traits = TFuncTraits<TestType, InExtraArgs...>;
 		static constexpr bool Passed =
-			std::is_same_v<ExpectedRetType, Traits::ReturnType>&&
-			std::is_same_v<ExpectedParamType, Traits::ParamTypes>&&
-			std::is_same_v<ExpectedCallSig, Traits::CallSignature>&&
-			std::is_same_v<ExpectedObjType, Traits::ObjType>&&
+			std::is_same_v<ExpectedRetType, typename Traits::ReturnType>&&
+			std::is_same_v<ExpectedParamType, typename Traits::ParamTypes>&&
+			std::is_same_v<ExpectedCallSig, typename Traits::CallSignature>&&
+			std::is_same_v<ExpectedObjType, typename Traits::ObjType>&&
 			ExpectedIsConst == Traits::IsConst;
 	};
 

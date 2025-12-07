@@ -63,9 +63,11 @@ namespace stf
                                 ThrowIfUnexpected(m_DescriptorManager->Resize(m_DescriptorManager->GetCapacity() * 2)));
                             return m_DescriptorManager->CreateUAV(InResource, InDesc);
                         }
+                        default:
+                        {
+                            return Unexpected{ InErrorType };
+                        }
                     }
-
-                    return Unexpected{ InErrorType };
                 }
             ));
     }

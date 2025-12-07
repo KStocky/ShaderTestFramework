@@ -16,7 +16,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
     {
         float A{ 4.0f };
         i32 B{ 42 };
-        int2 Padding1;
+        int2 Padding1 {};
         float4 C{ 1.0f, 2.0f, 3.0f, 4.0f };
     };
 
@@ -104,8 +104,8 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                     "MultipleConstantBuffers",
                     std::vector<ShaderBinding>
                     {
-                        {"FirstParam", GlobalBindingsStruct{.A{2.0f}, .B{24}, .C{5.0f, 6.0f, 7.0f, 8.0f}}},
-                        {"SecondParam", GlobalBindingsStruct{.A{102.5f}, .B{4195}, .C{5.0f, 10.0f, 15.0f, 28.5f}}}
+                        {"FirstParam", GlobalBindingsStruct{.A = 2.0f, .B = 24, .C{5.0f, 6.0f, 7.0f, 8.0f}}},
+                        {"SecondParam", GlobalBindingsStruct{.A = 102.5f, .B = 4195, .C{5.0f, 10.0f, 15.0f, 28.5f}}}
                     },
                     true
                 },
@@ -115,8 +115,8 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                     "MultipleConstantBuffers",
                     std::vector<ShaderBinding>
                     {
-                        {"FirstParam", GlobalBindingsStruct{.A{4.0f}, .B{24}, .C{5.0f, 6.0f, 7.0f, 8.0f}}},
-                        {"SecondParam", GlobalBindingsStruct{.A{102.5f}, .B{4195}, .C{5.0f, 10.0f, 15.0f, 28.5f}}}
+                        {"FirstParam", GlobalBindingsStruct{.A = 4.0f, .B = 24, .C{5.0f, 6.0f, 7.0f, 8.0f}}},
+                        {"SecondParam", GlobalBindingsStruct{.A = 102.5f, .B = 4195, .C{5.0f, 10.0f, 15.0f, 28.5f}}}
                     },
                     false
                 }

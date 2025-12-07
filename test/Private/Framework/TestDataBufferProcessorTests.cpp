@@ -98,15 +98,6 @@ namespace TestDataBufferProcessorTests
             return ret;
         }
 
-        u32 CalculateNumBytes(const std::span<std::string> InStrings)
-        {
-            return std::reduce(InStrings.cbegin(), InStrings.cend(), 0u,
-                [](const u32 InVal, const std::string& InStr)
-                {
-                    return InVal + static_cast<u32>(InStr.size());
-                });
-        }
-
         u32 NumStringsFitInBuffer(const std::span<std::string> InStrings, const u32 InBufferSize)
         {
             u32 running = 0;
@@ -635,7 +626,7 @@ namespace TestDataBufferProcessorTests
                     std::stringstream stream;
                     stream << results;
 
-                    for (const auto expectedString : expectedSubstrings)
+                    for (const auto& expectedString : expectedSubstrings)
                     {
                         REQUIRE_THAT(stream.str(), ContainsSubstring(expectedString, Catch::CaseSensitive::No));
                     }
