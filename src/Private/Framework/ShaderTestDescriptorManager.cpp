@@ -88,7 +88,7 @@ namespace stf
                 const auto destRange = newHeap->GetHeapRange();
                 m_Device->CopyDescriptors(destRange, InSrc, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-                return Tuple{ destRange, std::move(newHeap) };
+                return Tuple<DescriptorRange, SharedPtr<DescriptorHeap>>{ destRange, std::move(newHeap) };
             };
 
         const auto oldGPUHeap = m_GPUHeap;
