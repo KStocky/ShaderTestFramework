@@ -53,7 +53,23 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
 
             buff << "\"";
             return buff.str();
-        };
+        }();
+
+    const auto expectedString =
+        [maxStringLength, actualStringLength]()
+        {
+            std::stringstream buff;
+            buff << "\"";
+
+            const auto lengthToUse = std::min(actualStringLength, maxStringLength);
+            for (u32 iter = 1; iter < lengthToUse; ++iter)
+            {
+                buff << "a";
+            }
+
+            buff << "\"";
+            return buff.str();
+        }();
 
     GIVEN("StringMode: " << Enum::UnscopedName(stringMode))
     {
@@ -61,44 +77,39 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
         {
             WHEN("String is " << actualStringLength << " characters")
             {
-                const auto results = fixture.RunCompileTimeTest(
-                    ShaderTestFixture::CompileTestDesc
+                const auto results = fixture.RunTest(
+                    ShaderTestFixture::RuntimeTestDesc
                     {
                         .CompilationEnv
                         {
                             .Source = fs::path("/Tests/String/StringDefineTests.hlsl"),
                             .Defines
                             {
-                                ShaderMacro{"TTL_ENABLE_STRINGS", stringMode == ShaderTestFixture::EStringMode::On ? "1" : "0"},
-                                ShaderMacro{"TTL_STRING_MAX_LENGTH", std::to_string(maxStringLength)},
-                                ShaderMacro{"TEST_STRING", testString()}
+                                ShaderMacro{"TEST_STRING", testString},
+                                ShaderMacro{"EXPECTED_STRING", expectedString}
                             }
                         },
-                        .TestName = "String Define Test"
+                        .TestName = "Test",
+                        .ThreadGroupCount = {1, 1, 1},
+                        .StringMaxLength = static_cast<ShaderTestFixture::EStringMaxLength>(maxStringLength),
+                        .StringMode = stringMode
                     }
                 );
 
                 if (shouldSucceed)
                 {
-                    THEN("Shader should compile")
+                    THEN("The actual string is of the expected length")
                     {
                         REQUIRE(results);
                     }
                 }
                 else
                 {
-                    THEN("Shader should fail compilation with expected error")
+                    THEN("The actual string should be a different length to the expected string")
                     {
                         CAPTURE(results);
                         const auto actual = results.GetTestRunError();
-                        REQUIRE(actual);
-
-                        std::stringstream stream;
-                        stream << *actual;
-
-                        const auto expectedString = std::format("Strings with greater than {} characters are not supported", maxStringLength);
-
-                        REQUIRE_THAT(stream.str(), ContainsSubstring(expectedString, Catch::CaseSensitive::No));
+                        REQUIRE_FALSE(actual);
                     }
                 }
             }

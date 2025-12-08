@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.26)
 
+message(STATUS "CMAKE version: ${CMAKE_VERSION}")
+
 project(
     ShaderTestingFramework 
     VERSION 0.1.0 
@@ -28,13 +30,26 @@ option(STF_INCLUDE_EXAMPLES "Include and build examples")
 option(STF_DISABLE_UNITY_STF "Disable Unity build for STF Targets")
 option(STF_STRICT_COMPILATION "Turn Warning Level Up and Warnings as Errors")
 
+include(Configuration)
+
+addDynamicDebuggingConfig()
+
 if (${STF_STRICT_COMPILATION})
     set(CMAKE_CXX_EXTENSIONS OFF)
     set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
 
-    set(GLOBAL_COMPILE_FLAGS 
-        $<$<CXX_COMPILER_ID:MSVC>:/W4 /MP> 
-        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic> )
+    set(GLOBAL_COMPILE_FLAGS /W4)
+
+    list(APPEND GLOBAL_COMPILE_FLAGS
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:
+        # We need to disable this because of a known issue in Clang https://github.com/llvm/llvm-project/issues/51619
+        # This warning basically makes it impossible to use tuplet as it is implemented as an aggregate.
+        -Wno-missing-braces
+        
+        ## We need to disable this because of an issue in PixEvents.
+        ## We can remove this when https://github.com/microsoft/PixEvents/pull/11 is resolved
+        -Wno-unused-but-set-variable
+        >)
 
 endif()
 

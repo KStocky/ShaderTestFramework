@@ -27,7 +27,7 @@ namespace stf
     {
         u16 TypeId = 0;
         u16 ReaderId = 0;
-        DynamicSectionDataInfo DynamicDataInfo;
+        DynamicSectionDataInfo DynamicDataInfo {};
         u32 Padding0 = 0;
         friend auto operator<=>(const HLSLAssertMetaData&, const HLSLAssertMetaData&) = default;
     };

@@ -27,7 +27,7 @@ namespace stf
 
             uint SizeInBytesOfMeta()
             {
-                return ttl::size_of<MetaDataType>::value * NumMeta;
+                return sizeof(MetaDataType) * NumMeta;
             }
 
             uint BeginData()

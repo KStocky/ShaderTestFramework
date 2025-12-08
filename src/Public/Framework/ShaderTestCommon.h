@@ -32,9 +32,9 @@ namespace stf
 
     struct FailedAssert
     {
-        std::vector<std::byte> Data;
-        MultiTypeByteReader ByteReader;
-        AssertMetaData Info;
+        std::vector<std::byte> Data{};
+        MultiTypeByteReader ByteReader{};
+        AssertMetaData Info{};
         u16 TypeId = 0;
 
         friend bool operator==(const FailedAssert&, const FailedAssert&);
@@ -43,20 +43,21 @@ namespace stf
 
     struct TestRunResults
     {
-        std::vector<FailedAssert> FailedAsserts;
-        std::vector<std::string> Strings;
-        std::vector<SectionInfoMetaData> Sections;
+        std::vector<FailedAssert> FailedAsserts{};
+        std::vector<std::string> Strings{};
+        std::vector<SectionInfoMetaData> Sections{};
         u32 NumSucceeded = 0;
         u32 NumFailed = 0;
-        uint3 DispatchDimensions;
+        uint3 DispatchDimensions{};
 
-        friend auto operator<=>(const TestRunResults&, const TestRunResults&) = default;
+        friend bool operator==(const TestRunResults&, const TestRunResults&) = default;
         friend std::ostream& operator<<(std::ostream& InOs, const TestRunResults& In);
     };
 
     enum class ETestRunErrorType
     {
         Unknown,
+        DescriptorManagement,
         ShaderCompilation,
         Binding,
         RootSignatureGeneration
@@ -64,9 +65,9 @@ namespace stf
 
     struct ErrorTypeAndDescription
     {
-        ETestRunErrorType Type;
-        std::string Error;
-        friend auto operator<=>(const ErrorTypeAndDescription&, const ErrorTypeAndDescription&) = default;
+        ETestRunErrorType Type = ETestRunErrorType::Unknown;
+        std::string Error {};
+        friend bool operator==(const ErrorTypeAndDescription&, const ErrorTypeAndDescription&) = default;
         friend std::ostream& operator<<(std::ostream& InOs, const ErrorTypeAndDescription& In);
     };
 

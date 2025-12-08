@@ -9,6 +9,11 @@ jobs:
     name: Build
 
     runs-on: windows-latest
+
+    strategy:
+      matrix:
+        workflow: [NinjaNonUnityBuild, ClangNonUnityBuild]
+
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v4
@@ -20,4 +25,4 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1.13.0
 
       - name: Build non-unity"
-        run: cmake --workflow --preset NinjaNonUnityBuild
+        run: cmake --workflow --preset ${{ matrix.workflow }}

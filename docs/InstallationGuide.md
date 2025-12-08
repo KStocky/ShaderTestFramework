@@ -7,6 +7,8 @@
 2. [Installing from git repository](#installing-shader-test-framework-from-git-repository)<br>
 3. [Building with Ninja](#building-with-ninja)<br>
 a. [Building with Ninja from the Command Line](#building-with-ninja-from-the-command-line)<br>
+4. [Dynamic Debugging](#dynamic-debugging)
+5. [Building with Clang](#building-with-clang)
 
 Because we use CMake to build Shader Test Framework, we also provide a couple of
 integration points for our users.
@@ -59,7 +61,7 @@ From here you can link ShaderTestFramework to your project and add `ShaderTestFr
 
 ## Building with Ninja
 
-In the previous section we mentioned that you can use `$ cmake --workflow --preset VS2022Build` to create a Visual Studion 2022 solution to build the project. However, STF can also be built using Ninja. The main benefit to using Ninja as opposed to Visual Studio 2022 to bulid is speed. Full project compilations are 10x faster with Ninja in comparison to VS2022. There are two ways to build with Ninja rather than with a VS sln.
+In the previous section we mentioned that you can use `$ cmake --workflow --preset VS2022Build` to create a Visual Studio 2022 solution to build the project. However, STF can also be built using Ninja. The main benefit to using Ninja as opposed to Visual Studio 2022 to build is speed. Full project compilations are 10x faster with Ninja in comparison to VS2022. There are two ways to build with Ninja rather than with a VS sln.
 
 1. You can make use of Visual Studio's CMake integration by simply opening the root folder in Visual Studio 2022. [CMake Projects in Visual Studio](https://learn.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio?view=msvc-170)
 
@@ -69,3 +71,17 @@ In the previous section we mentioned that you can use `$ cmake --workflow --pres
 
 It is not enough to just run `cmake --workflow --preset NinjaBuild` from the command line unfortunately. Prior to running this command, you must set up the developer environment in your command prompt. To do this open the `x64 Native Tools Command Prompt for VS 2022`. A simple search in the windows search bar should find it. Then navigate `cd` to the project root. At this point running `cmake --workflow --preset NinjaBuild` will create a Ninja project and build.
 
+## Dynamic Debugging
+
+Shader Test Framework supports [Dynamic Debugging](https://devblogs.microsoft.com/cppblog/cpp-dynamic-debugging-full-debuggability-for-optimized-builds/).
+
+Simply build the project using the `NinjaDynamicDeopt` build preset found in [CMakePresets.json](../CMakePresets.json).
+
+![](./images/DynamicDeopt.png)
+
+## Building with Clang
+
+STF now supports building with clang. There are presets for Debug (`Clang`) and Release (`ClangRelease`) in [CMakePresets.json](../CMakePresets.json)
+
+> [!NOTE]
+> The project is known to compile with Clang 19, and Clang 20. The project is not likely to compile with Clang 18 or older.

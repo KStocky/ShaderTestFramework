@@ -7,6 +7,7 @@ void StampTests()
 {
     SCENARIO("STAMP Tests")
     {
+#if ENABLE_1
         SECTION("GIVEN: Stamper that does nothing, succeeds")
         {
             #define NOTHING(InN)
@@ -23,7 +24,8 @@ void StampTests()
             #undef NOTHING
             #undef DO_NOTHING
         }
-        
+#endif
+#if ENABLE_2
         SECTION("GIVEN: A stamper that adds 1 to a value")
         {
             #define ADD_TO_VALUE(InN) value += 1;
@@ -64,7 +66,8 @@ void StampTests()
             #undef ADD_TO_VALUE
             #undef STAMP_ADD
         }
-
+#endif
+#if ENABLE_3
         SECTION("GIVEN: A stamper that adds 1 to a value passed as an Argument")
         {
             #define ADD_TO_VALUE(InN, InValue) InValue += 1;
@@ -105,5 +108,6 @@ void StampTests()
             #undef ADD_TO_VALUE
             #undef STAMP_ADD
         }
+#endif
     }
 }

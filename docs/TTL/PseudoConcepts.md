@@ -2,7 +2,7 @@
 
 # Pseudo Concepts
 
-Although HLSL does not have a feature like [C++20 Concepts](https://en.cppreference.com/w/cpp/language/constraints), the TTL provides a mechanism for emulating it. This is possible due to the DXC intrinsic `__decltype` which functions in the same way that [`decltype`](https://en.cppreference.com/w/cpp/language/decltype) in C++ functions. That is, it will return the type of the provided expression. Pseudo Concepts help to provide some of the utility of C++ Concepts for defining constaints on template arguments.
+Although HLSL does not have a feature like [C++20 Concepts](https://en.cppreference.com/w/cpp/language/constraints), the TTL provides a mechanism for emulating it. This is possible due to the DXC intrinsic `__decltype` which functions in the same way that [`decltype`](https://en.cppreference.com/w/cpp/language/decltype) in C++ functions. That is, it will return the type of the provided expression. Pseudo Concepts help to provide some of the utility of C++ Concepts for defining constraints on template arguments.
 
 **Contents**
 1. [Writing a Pseudo Concept](#writing-a-pseudo-concept)
@@ -101,7 +101,7 @@ struct FourByteType
 {
     template<typename T>
     __decltype(
-        ttl::models_if<ttl::size_of<T>::value == 4>()
+        ttl::models_if<sizeof(T) == 4>()
     ) requires();
 };
 

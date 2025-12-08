@@ -224,7 +224,7 @@ SCENARIO("HLSLTests")
                     std::tuple
                     {
                         "SizeofEnumType",
-                        [](const EHLSLVersion) { return false; },
+                        [](const EHLSLVersion InVer) { return InVer >= EHLSLVersion::v2017; },
                         std::vector<std::wstring>{}
                     },
                     std::tuple
@@ -248,7 +248,7 @@ SCENARIO("HLSLTests")
                     std::tuple
                     {
                         "PrinterWithOptimizations",
-                        [](const EHLSLVersion InVer) { return InVer >= EHLSLVersion::v2021; },
+                        [](const EHLSLVersion) { return false; },
                         std::vector<std::wstring>{}
                     },
                     std::tuple
@@ -262,6 +262,30 @@ SCENARIO("HLSLTests")
                         "ImmediatelyInvokableFunctionExpression",
                         [](const EHLSLVersion) { return false; },
                         std::vector<std::wstring>{}
+                    },
+                    std::tuple
+                    {
+                        "CompileTimeGlobalStringSize",
+                        [](const EHLSLVersion InVer) { return InVer >= EHLSLVersion::v2021; },
+                        std::vector<std::wstring>{}
+                    },
+                    std::tuple
+                    {
+                        "CompileTimeGlobalStringSizeDebug",
+                        [](const EHLSLVersion InVer) { return InVer >= EHLSLVersion::v2021; },
+                        std::vector<std::wstring>{L"-Od", L"-D", L"OPTIMIZATIONS_ENABLED=0"}
+                    },
+                    std::tuple
+                    {
+                        "CompileTimeLocalStringSize",
+                        [](const EHLSLVersion) { return false; },
+                        std::vector<std::wstring>{}
+                    },
+                    std::tuple
+                    {
+                        "CompileTimeLocalStringSizeDebug",
+                        [](const EHLSLVersion) { return false; },
+                        std::vector<std::wstring>{L"-Od", L"-D", L"OPTIMIZATIONS_ENABLED=0"}
                     }
                 }
             )

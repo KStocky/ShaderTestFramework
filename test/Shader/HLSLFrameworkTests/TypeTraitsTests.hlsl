@@ -557,41 +557,6 @@ namespace FundamentalTypeTraitsTests
     }
 }
 
-namespace IsOrHasEnumTests
-{
-    enum A
-    {
-        One
-    };
-
-    enum class B
-    {
-        One
-    };
-
-    struct C
-    {
-        int D;
-    };
-                                                                                           
-    struct D
-    {
-        B data;
-    };
-                                                                                             
-    _Static_assert(ttl::is_or_has_enum<A>::value);
-    _Static_assert(ttl::is_or_has_enum<B>::value);
-    _Static_assert(!ttl::is_or_has_enum<C>::value);
-    _Static_assert(!ttl::is_or_has_enum<uint>::value);
-    _Static_assert(ttl::is_or_has_enum<D>::value);
-
-    _Static_assert(ttl::is_or_has_enum_v<A>);
-    _Static_assert(ttl::is_or_has_enum_v<B>);
-    _Static_assert(!ttl::is_or_has_enum_v<C>);
-    _Static_assert(!ttl::is_or_has_enum_v<uint>);
-    _Static_assert(ttl::is_or_has_enum_v<D>);
-}
-
 namespace IsFunctionTests
 {
     struct ParamType{};
@@ -768,29 +733,17 @@ namespace SizeOfTests
         float4 data3;
     };
 
-    _Static_assert(4u == ttl::size_of<A>::value);
-    _Static_assert(4u == ttl::size_of<B>::value);
-    _Static_assert(4u == ttl::size_of<C>::value);
-    _Static_assert(4u == ttl::size_of<uint>::value);
-    _Static_assert(8u == ttl::size_of<uint64_t>::value);
-    _Static_assert(2u == ttl::size_of<uint16_t>::value);
-    _Static_assert(24u == ttl::size_of<uint64_t3>::value);
-    _Static_assert(8u == ttl::size_of<uint16_t4>::value);
+    _Static_assert(4u == sizeof(A));
+    _Static_assert(4u == sizeof(B));
+    _Static_assert(4u == sizeof(C));
+    _Static_assert(4u == sizeof(uint));
+    _Static_assert(8u == sizeof(uint64_t));
+    _Static_assert(2u == sizeof(uint16_t));
+    _Static_assert(24u == sizeof(uint64_t3));
+    _Static_assert(8u == sizeof(uint16_t4));
 
-    _Static_assert(4u == ttl::size_of<D>::value);
-    _Static_assert(24u == ttl::size_of<E>::value);
-
-    _Static_assert(4u == ttl::size_of_v<A>);
-    _Static_assert(4u == ttl::size_of_v<B>);
-    _Static_assert(4u == ttl::size_of_v<C>);
-    _Static_assert(4u == ttl::size_of_v<uint>);
-    _Static_assert(8u == ttl::size_of_v<uint64_t>);
-    _Static_assert(2u == ttl::size_of_v<uint16_t>);
-    _Static_assert(24u == ttl::size_of_v<uint64_t3>);
-    _Static_assert(8u == ttl::size_of_v<uint16_t4>);
-
-    _Static_assert(4u == ttl::size_of_v<D>);
-    _Static_assert(24u == ttl::size_of_v<E>);
+    _Static_assert(4u == sizeof(D));
+    _Static_assert(24u == sizeof(E));
 }
 
 namespace EnableIfTests

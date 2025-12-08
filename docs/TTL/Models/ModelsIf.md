@@ -49,7 +49,7 @@ struct IsFourBytes
 {
     template<typename T>
     __decltype(
-        ttl::models_if<ttl::size_of<T>::value == 4>()
+        ttl::models_if<sizeof(T) == 4>()
     ) requires();
 };
 

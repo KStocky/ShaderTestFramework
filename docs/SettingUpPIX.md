@@ -16,6 +16,6 @@ FetchContent_Declare(
 
 and the version of WARP that STF uses is `1.0.8` then the path will be `build\_deps\stf-src\src\ShaderTestFramework\nuget\Microsoft.Direct3D.WARP\1.0.8\build\native\amd64`. If you just clones the repository then after running cmake to build the project, the path will be `src\ShaderTestFramework\nuget\Microsoft.Direct3D.WARP\1.0.8\build\native\amd64`.
 
-2) Copy the dll that was found in step 1, into your PIX installation. The default installation will be something like `C:\Program Files\Microsoft PIX\2312.08`. You will need admininistrator rights to successfully do this.
+2) Copy the dll that was found in step 1, into your PIX installation. The default installation will be something like `C:\Program Files\Microsoft PIX\2312.08`. You will need administrator rights to successfully do this.
 
 Once the above steps have been completed you will be able to analyze PIX captures taken using the WARP driver. This process is NOT required if you explicitly tell the framework to use your GPU to run the tests.

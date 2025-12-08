@@ -1,161 +1,5 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
 
-template<typename T, uint N>
-uint ArrayLen(T In[N])
-{
-    return N;
-}
-
-template<typename T>
-struct RemoveConst
-{
-    using Type = T;
-};
-
-template<typename T>
-struct RemoveConst<const T>
-{
-    using Type = T;
-};
-
-_Static_assert(ttl::is_same<RemoveConst<const uint>::Type, uint>::value);
-
-template<typename T, uint N>
-struct MyString;
-
-template<typename T, uint N>
-struct MyString<const T, N>
-{
-    T Data[N];
-
-    void Copy(inout MyString Dest)
-    {
-        for (int i = 0; i < N; ++i)
-        {
-            Dest.Data[i] = Data[i];
-        }
-    }
-
-    bool operator==(MyString In)
-    {
-        for (int i = 0; i < N - 1; ++i)
-        {
-            if (Data[1] != In.Data[1])
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-};
-
-template<typename T, uint N>
-MyString<T, N> Create(T In[N])
-{
-    MyString<T, N> ret;
-    ret.Data = In;
-    return ret;
-}
-
-template<typename T>
-bool IsE(T InChar)
-{
-    return InChar == 'e';
-}
-
-template<typename T, uint N>
-void DoThings(T In[N])
-{
-    bool isEqual = IsE(In[1]);
-
-    ASSERT(IsTrue, isEqual);
-}
-
-template<typename T>
-uint CastToInt(T In)
-{
-    return (uint)In;
-}
-
-#define DO_THINGS(In)               \
-{                                   \
-    bool isEqual = IsE(In[1]);      \
-    ASSERT(IsTrue, isEqual);        \
-}                                   \
-
-#define DO_THINGS1(In)              \
-{                                   \
-    uint val = CastToInt(In[1]);    \
-    ASSERT(AreEqual, val, 90u);     \
-} 
-
-//#define CHARS "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890 ,./?;:'@#~[]{}-_=+!£$%^&*()\0\n\t\\"
-
-#define CHARS_1 "QWERTYUIOPASDFGHJKLZXCVBNM"
-#define CHARS_2 "qwertyuiopasdfghjklzxcvbnm"
-#define CHARS_3 "1234567890 ,."
-#define CHARS_4 "/?;:'@#~[]{}-_=+!£$%^&*()\n\t\\"
-
-template<typename T>
-uint CharToUintDivided(T InChar)
-{
-    const uint chars1Length = ArrayLen(CHARS_1);
-    const uint chars2Length = ArrayLen(CHARS_2);
-    const uint chars3Length = ArrayLen(CHARS_3);
-    const uint chars4Length = ArrayLen(CHARS_4);
-    const uint numPossibleCharacters = chars1Length + chars2Length + chars3Length + chars4Length;
-
-    for (uint i = 0; i < chars1Length; ++i)
-    {
-        if (InChar == CHARS_1[i])
-        {
-            return i;
-        }
-    }
-
-    for (uint i = 0; i < chars2Length; ++i)
-    {
-        if (InChar == CHARS_2[i])
-        {
-            return i + chars1Length;
-        }
-    }
-
-    for (uint i = 0; i < chars3Length; ++i)
-    {
-        if (InChar == CHARS_3[i])
-        {
-            return i + chars1Length + chars2Length;
-        }
-    }
-
-    for (uint i = 0; i < chars4Length; ++i)
-    {
-        if (InChar == CHARS_4[i])
-        {
-            return i + chars1Length + chars2Length + chars3Length;
-        }
-    }
-
-    return numPossibleCharacters;
-}
-
-//template<typename T>
-//uint CharToUint(T InChar)
-//{
-//    const uint numPossibleCharacters = ArrayLen(CHARS);
-//
-//    for (uint i = 0; i < numPossibleCharacters; ++i)
-//    {
-//        if (InChar == CHARS[i])
-//        {
-//            return i;
-//        }
-//    }
-//
-//    return numPossibleCharacters;
-//}
-
 #define CHAR_CHECK(InCharA, InCharB, Ret) if (InCharA == InCharB) return Ret
 
 template<typename T>
@@ -291,67 +135,27 @@ struct StringBuffer
     }
 };
 
-namespace ttl
-{
-    template<>
-    struct caster<bool, StringBuffer>
-    {
-        static bool cast(StringBuffer In)
-        {
-            return false;
-        }
-    };
-}
-
-#define TO_STRING_BUFFER(InBuffer, InStr)               \
-{                                                       \
-    const uint numChars = ArrayLen(InStr);              \
-    InBuffer = (StringBuffer)0;                         \
-    for (uint i = 0; i < numChars; ++i)                 \
-    {                                                   \
-        InBuffer.AppendChar(CharToUint(InStr[i]));      \
-    }                                                   \
-}                                                       \
-
-#define TO_STRING_BUFFER_2(InBuffer, InStr)             \
-do{                                                       \
-    const uint numChars = ArrayLen(InStr);              \
-    InBuffer = (StringBuffer)0;                         \
-    for (uint i = 0; i < numChars; ++i)                 \
-    {                                                   \
-        InBuffer.AppendChar(CharToUintDivided(InStr[i]));      \
-    }                                                   \
-}while(false)
-
-#define TO_STRING_BUFFER_3(InBuffer, InStr)             \
-do{                                                       \
-    const uint numChars = ArrayLen(InStr);              \
-    InBuffer.Init();                                     \
-    for (uint i = 0; i < numChars; ++i)                 \
-    {                                                   \
-        InBuffer.AppendChar(CharToUintASCII(InStr[i]));      \
-    }                                                   \
+#define TO_STRING_BUFFER(InBuffer, InStr)                   \
+do{                                                         \
+    InBuffer = (StringBuffer)0;                             \
+    for (uint i = 0; i < StringBuffer::MaxNumChars; ++i)    \
+    {                                                       \
+        const uint charBytes = CharToUintASCII(InStr[i]);   \
+        if (charBytes != 0)                                 \
+        {                                                   \
+            InBuffer.AppendChar(charBytes);                 \
+        }                                                   \
+        else                                                \
+        {                                                   \
+            break;                                          \
+        }                                                   \
+    }                                                       \
 }while(false)
 
 [numthreads(1,1,1)]
 void StringsAndTemplates()
 {
-    StringBuffer actual;
-    TO_STRING_BUFFER_3(actual, "Hello There! I really hope that this works\n And that there are ");
-
-    ASSERT(AreEqual, actual.Size, 64u);
-    //ASSERT(IsTrue, actual);
-
-    ASSERT(AreEqual, 72u, actual.Data[0]);
-    ASSERT(AreEqual, 101u, actual.Data[1]);
-    //ASSERT(AreEqual, 108u, actual.Data[2]);
-    //ASSERT(AreEqual, 108u, actual.Data[3]);
-    //ASSERT(AreEqual, 111u, actual.Data[4]);
-    //ASSERT(AreEqual, 32u, actual.Data[5]);
-    //ASSERT(AreEqual, 84u, actual.Data[6]);
-    //ASSERT(AreEqual, 104u, actual.Data[7]);
-    //ASSERT(AreEqual, 101u, actual.Data[8]);
-    //ASSERT(AreEqual, 114u, actual.Data[9]);
-    //ASSERT(AreEqual, 101u, actual.Data[10]);
-    //ASSERT(AreEqual, 0u, actual.Data[11]);
+    StringBuffer buf;
+    TO_STRING_BUFFER(buf, "Hello, World!");
+    ASSERT(AreEqual, 13u, buf.Size);
 }

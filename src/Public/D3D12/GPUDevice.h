@@ -185,6 +185,7 @@ namespace stf
 
         ExpectedHRes<void> SetupDebugLayer(const EDebugLevel InDebugLevel);
         void SetupDebugInfoQueue();
+        void SetDebugDeviceSettings();
         void CacheHardwareInfo(ID3D12Device12* InDevice, IDXGIAdapter4* InAdapter);
         u32 GetDescriptorSize(const D3D12_DESCRIPTOR_HEAP_TYPE InType) const;
 

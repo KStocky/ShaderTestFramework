@@ -64,14 +64,16 @@ namespace stf
                                 ThrowIfUnexpected(m_DescriptorManager->Resize(m_DescriptorManager->GetCapacity() * 2)));
                             return m_DescriptorManager->CreateUAV(InResource, InDesc);
                         }
+                        default:
+                        {
+                            return Unexpected{ InErrorType };
+                        }
                     }
-
-                    return Unexpected{ InErrorType };
                 }
             ));
     }
 
-    TypeReaderIndex ShaderTestDriver::RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader)
+    TypeReaderIndex ShaderTestDriver::RegisterByteReader(std::string, MultiTypeByteReader InByteReader)
     {
         const u32 typeId = static_cast<u32>(m_ByteReaderMap.size());
         m_ByteReaderMap.push_back(std::move(InByteReader));
@@ -113,7 +115,7 @@ namespace stf
             });
 
         return InTestDesc.Shader.BindConstantBufferData(InTestDesc.Bindings)
-            .transform(
+            .and_then(
                 [&, this]()
                 {
                     m_CommandEngine->Execute(InTestDesc.TestName,
@@ -160,10 +162,45 @@ namespace stf
                     m_CommandEngine->Flush();
                     m_DeferredDeletedDescriptorHeaps.clear();
 
-                    m_DescriptorManager->ReleaseUAV(assertUAV);
-                    m_DescriptorManager->ReleaseUAV(allocationUAV);
+                    return m_DescriptorManager->ReleaseUAV(assertUAV)
+                        .and_then(
+                            [this, &allocationUAV]()
+                            {
+                                return m_DescriptorManager->ReleaseUAV(allocationUAV);
+                            }
+                        )
+                        .transform(
+                            [this, &readBackAllocationBuffer, &readBackBuffer, &InTestDesc]()
+                            {
+                                return ReadbackResults(*readBackAllocationBuffer, *readBackBuffer, InTestDesc.Shader.GetThreadGroupSize() * InTestDesc.DispatchConfig, InTestDesc.TestBufferLayout);
+                            }
+                        )
+                        .transform_error(
+                            [](const ShaderTestDescriptorManager::EErrorType InErrorType)
+                            {
+                                using enum ShaderTestDescriptorManager::EErrorType;
 
-                    return ReadbackResults(*readBackAllocationBuffer, *readBackBuffer, InTestDesc.Shader.GetThreadGroupSize() * InTestDesc.DispatchConfig, InTestDesc.TestBufferLayout);
+                                switch (InErrorType)
+                                {
+                                    case DescriptorAlreadyFree:
+                                    {
+                                        return ErrorTypeAndDescription
+                                        {
+                                            .Type = ETestRunErrorType::DescriptorManagement,
+                                            .Error = "Attempted to free an already freed descriptor."
+                                        };
+                                    }
+                                    default:
+                                    {
+                                        return ErrorTypeAndDescription
+                                        {
+                                            .Type = ETestRunErrorType::Unknown,
+                                            .Error = "Unknown descriptor management error."
+                                        };
+                                    }
+                                }
+                            }
+                        );
                 }
             );
     }

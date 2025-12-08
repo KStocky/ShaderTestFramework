@@ -49,7 +49,7 @@ SCENARIO("DescriptorFreeListAllocatorTests")
 
 		WHEN("Allocate")
 		{
-			const auto handle = allocator.Allocate();
+			[[maybe_unused]]const auto handle = allocator.Allocate();
 
 			THEN("allocation succeeds")
 			{
@@ -70,12 +70,12 @@ SCENARIO("DescriptorFreeListAllocatorTests")
 
 		for ([[maybe_unused]] const auto allocations : std::ranges::iota_view(0u, numAllocationsBefore))
 		{
-			const auto handle = allocator.Allocate();
+            [[maybe_unused]] const auto handle = allocator.Allocate();
 		}
 
 		WHEN("Allocate")
 		{
-			const auto handle = allocator.Allocate();
+            [[maybe_unused]] const auto handle = allocator.Allocate();
 
 			THEN("allocation succeeds")
 			{
@@ -96,7 +96,7 @@ SCENARIO("DescriptorFreeListAllocatorTests")
 
 		for ([[maybe_unused]] const auto allocations : std::ranges::iota_view(0u, numAllocationsBefore))
 		{
-			const auto handle = allocator.Allocate();
+            [[maybe_unused]] const auto handle = allocator.Allocate();
 		}
 
 		WHEN("Allocate")

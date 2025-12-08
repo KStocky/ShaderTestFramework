@@ -9,6 +9,15 @@
 #include <unordered_map>
 #include <utility>
 
+#if defined(__clang__) && __clang_major__ <= 19
+#  pragma clang diagnostic push
+// The following two disabled diagnostics are to support clang versions of 19 or lower
+// IsEnumCastValid is broken in Clang 19 and before without these being disabled.
+// https://godbolt.org/z/ef11jqT1b
+#  pragma clang diagnostic ignored "-Wunknown-warning-option"
+#  pragma clang diagnostic ignored "-Wenum-constexpr-conversion"
+#endif
+
 namespace stf
 {
     namespace Private
@@ -38,22 +47,55 @@ namespace stf
         concept AllSameEnum = AllSame<T...> && (... && EnumType<T>);
 
         template<typename T, typename... U>
-        using FirstType = T;
+        struct FirstTypeHelper
+        {
+            using Type = T;
+        };
+
+        template<typename... T>
+        using FirstType = typename FirstTypeHelper<T...>::Type;
+
+        constexpr char EnumBeginToken =
+#ifdef __clang__
+            '=';
+#else
+            ',';
+#endif
+
+        constexpr char EnumEndToken =
+#ifdef __clang__
+            ']';
+#else
+            '>';
+#endif
+
+        // CWG1766: Values outside the range of the values of an enumeration
+        // https://reviews.llvm.org/D130058, https://reviews.llvm.org/D131307
+#if defined(__clang__) && __clang_major__ >= 16
+        template <typename E, auto V, typename = void>
+        inline constexpr bool IsEnumCastValid = false;
+        template <typename E, auto V>
+        inline constexpr bool IsEnumCastValid<E, V, std::void_t<std::integral_constant<E, static_cast<E>(V)>>> = true;
+#else
+        template <typename, auto>
+        inline constexpr bool IsEnumCastValid = true;
+#endif
 
         template<EnumType T, T Val>
         consteval std::string_view EnumValueToString() noexcept
         {
-            constexpr std::string_view funcSig = __FUNCSIG__;
-            constexpr std::size_t end = funcSig.find_last_of('>');
+            const std::string_view funcSig = __FUNCSIG__;
+            const std::size_t end = funcSig.find_last_of(EnumEndToken);
 
-            constexpr bool NotFromTemplateFunction = end == std::string_view::npos;
+            const bool NotFromTemplateFunction = end == std::string_view::npos;
 
             if (NotFromTemplateFunction)
             {
                 return {};
             }
 
-            constexpr std::size_t begin = [funcSig, end]()
+            const std::size_t begin = 
+                [funcSig, end]()
                 {
                     for (size_t i = end; i > 0; --i)
                     {
@@ -63,7 +105,7 @@ namespace stf
                             return std::string_view::npos;
                         }
 
-                        if (funcSig[charIndex] == ',')
+                        if (funcSig[charIndex] == EnumBeginToken)
                         {
                             return funcSig.find_first_not_of(' ', charIndex + 1);
                         }
@@ -72,7 +114,7 @@ namespace stf
                     return std::string_view::npos;
                 }();
 
-            if constexpr (begin == std::string_view::npos)
+            if (begin == std::string_view::npos)
             {
                 return {};
             }
@@ -81,22 +123,37 @@ namespace stf
         }
 
         template<EnumType T, int32_t InMin>
-        consteval T EnumUnderlyingValueToValue(const int32_t InUnderlyingValue) noexcept
+        consteval int32_t EnumUnderlyingValueToValue(const int32_t InUnderlyingValue) noexcept
         {
-            return static_cast<T>(InUnderlyingValue + InMin);
+            return InUnderlyingValue + InMin;
         }
 
-        template<EnumType T, T Val>
+        template<EnumType T, int32_t Val>
         consteval bool IsValidEnumValue() noexcept
         {
-            return !EnumValueToString<T, Val>().empty();
+            if constexpr (IsEnumCastValid<T, Val>)
+            {
+                return !EnumValueToString<T, static_cast<T>(Val)>().empty();
+            }
+            else
+            {
+                return false;
+            }
         }
 
-        template<EnumType T, T Val, typename PredType>
+        template<EnumType T, int32_t Val, typename PredType>
         consteval bool IsValidEnumValue(const PredType InPred) noexcept
         {
-            constexpr auto enumString = EnumValueToString<T, Val>();
-            return !enumString.empty() && InPred(enumString);
+            if constexpr (IsEnumCastValid<T, Val>)
+            {
+                constexpr auto enumString = EnumValueToString<T, static_cast<T>(Val)>();
+                return !enumString.empty() && InPred(enumString);
+            }
+            else
+            {
+                return false;
+            }
+            
         }
 
         template<EnumType T, int32_t InDefaultMin, int32_t InMax, std::size_t... I>
@@ -283,13 +340,16 @@ namespace stf
         template<EnumType... T> requires AllSame<T...>
         constexpr auto FirstEnumVal(T&&... InVals) noexcept
         {
-            return Min(static_cast<std::underlying_type_t>(InVals)...);
+            using RetType = FirstType<T...>;
+
+            return Min(static_cast<std::underlying_type_t<RetType>>(InVals)...);
         }
 
         template<EnumType... T> requires AllSame<T...>
         constexpr auto LastEnumVal(T&&... InVals) noexcept
         {
-            return Max(static_cast<std::underlying_type_t>(InVals)...);
+            using RetType = FirstType<T...>;
+            return Max(static_cast<std::underlying_type_t<RetType>>(InVals)...);
         }
 
         template<std::integral T>
@@ -499,7 +559,6 @@ namespace stf
             }
 
             const auto fullName = FullNameFromList<T, InList...>(InVal);
-            constexpr size_t maxNumColons = 2;
 
             const size_t firstColonPos = fullName.find_last_of(':');
             const size_t thirdColonPos = fullName.find_last_of(':', firstColonPos - 2);
@@ -573,3 +632,7 @@ namespace stf
         }
     }
 }
+
+#if defined(__clang__) && __clang_major__ <= 19
+#pragma clang diagnostic pop
+#endif
