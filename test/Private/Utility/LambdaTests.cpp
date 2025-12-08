@@ -58,9 +58,13 @@ namespace LambdaTypeTests
 
 	void PackingCaptureCallTests()
 	{
-		static constexpr Lambda CaptureReorder([](const double& InFirstDouble, const bool& InFirstBool, const double& InSecondDouble, const bool& InSecondBool) { return Tuple{InFirstDouble, InFirstBool, InSecondDouble, InSecondBool}; }, 4.0, false, 2.0, true);
+		constexpr Lambda CaptureReorder(
+            [](const double& InFirstDouble, const bool& InFirstBool, const double& InSecondDouble, const bool& InSecondBool) 
+            { 
+                return Tuple<double, bool, double, bool>{InFirstDouble, InFirstBool, InSecondDouble, InSecondBool}; 
+            }, 4.0, false, 2.0, true);
 
-		static constexpr auto Ret = CaptureReorder();
+		constexpr auto Ret = CaptureReorder();
 
 		static_assert(get<0>(Ret) == 4.0);
 		static_assert(get<1>(Ret) == false);

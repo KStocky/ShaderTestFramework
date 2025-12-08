@@ -27,11 +27,10 @@ namespace FuncTraitsTests
 		}
 	};
 
-	static auto LambdaFunc = [](float) {return 42; };
+    using LambdaFunc = decltype([](float) {return 42; });
+    using LambdaFuncWithCapture = decltype([ret = 42](float) {return ret; });
 
 	using MutableLambdaFunc = decltype([]() mutable {});
-
-	static auto LambdaFuncWithCapture = [ret = 42](float) {return ret; };
 
 	int PureFunction(float) { return 42; }
 
@@ -87,11 +86,11 @@ namespace FuncTraitsTests
 
 	static_assert(
 		FuncSigTest<
-		decltype(LambdaFunc),
+		LambdaFunc,
 		int,
 		TypeList<float>,
 		int(float),
-		decltype(LambdaFunc),
+		LambdaFunc,
 		true>::Passed);
 
 	static_assert(

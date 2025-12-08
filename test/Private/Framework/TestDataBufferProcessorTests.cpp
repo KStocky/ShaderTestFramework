@@ -997,7 +997,7 @@ namespace TestDataBufferProcessorTests
                             {
                                 FailedAssert
                                 {
-                                    .Data = EncodeAssertData(std::vector{Tuple{1234, 5678}}),
+                                    .Data = EncodeAssertData(std::vector{Tuple<i32, i32>{1234, 5678}}),
                                     .ByteReader = CreateByteReader("Expected Byte Reader"),
                                     .Info = AssertMetaData
                                     {

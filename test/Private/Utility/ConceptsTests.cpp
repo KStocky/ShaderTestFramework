@@ -6,9 +6,9 @@
 namespace CallableTypeTests
 {
     using namespace stf;
-	static auto LambdaFunc = [](float) {return 42; };
+	using LambdaFunc = decltype([](float) {return 42; });
 
-	static auto LambdaFuncWithCapture = [ret = 42](float) {return ret; };
+	using LambdaFuncWithCapture = decltype([ret = 42](float) {return ret; });
 
 	struct EmptyCallable
 	{
@@ -56,8 +56,8 @@ namespace CallableTypeTests
 	using AutoLambdaNoExtraParams = decltype([](auto) {});
 	using AutoLambdaExtraParams = decltype([](auto, float) {});
 
-	static_assert(CallableType<decltype(LambdaFunc)>);
-	static_assert(CallableType<decltype(LambdaFuncWithCapture)>);
+	static_assert(CallableType<LambdaFunc>);
+	static_assert(CallableType<LambdaFuncWithCapture>);
 	static_assert(CallableType<EmptyCallable>);
 	static_assert(CallableType<EmptyCallableWithUnaryPlus>);
 	static_assert(!CallableType<decltype(Function)>);
@@ -75,9 +75,9 @@ namespace CallableTypeTests
 namespace TemplatedCallableTypeTests
 {
     using namespace stf;
-	static auto LambdaFunc = [](float) {return 42; };
 
-	static auto LambdaFuncWithCapture = [ret = 42](float) {return ret; };
+    using LambdaFunc = decltype([](float) {return 42; });
+    using LambdaFuncWithCapture = decltype([ret = 42](float) {return ret; });
 
 	struct EmptyCallable
 	{
@@ -125,8 +125,8 @@ namespace TemplatedCallableTypeTests
 	using AutoLambdaNoExtraParams = decltype([](auto) {});
 	using AutoLambdaExtraParams = decltype([](auto, float) {});
 
-	static_assert(!TemplatedCallableType<decltype(LambdaFunc)>);
-	static_assert(!TemplatedCallableType<decltype(LambdaFuncWithCapture)>);
+	static_assert(!TemplatedCallableType<LambdaFunc>);
+	static_assert(!TemplatedCallableType<LambdaFuncWithCapture>);
 	static_assert(!TemplatedCallableType<EmptyCallable>);
 	static_assert(!TemplatedCallableType<EmptyCallableWithUnaryPlus>);
 	static_assert(!TemplatedCallableType<decltype(Function)>);
@@ -144,9 +144,9 @@ namespace TemplatedCallableTypeTests
 namespace NonTemplatedCallableTypeTests
 {
     using namespace stf;
-	static auto LambdaFunc = [](float) {return 42; };
-
-	static auto LambdaFuncWithCapture = [ret = 42](float) {return ret; };
+	
+    using LambdaFunc = decltype([](float) {return 42; });
+    using LambdaFuncWithCapture = decltype([ret = 42](float) {return ret; });
 
 	struct EmptyCallable
 	{
@@ -194,8 +194,8 @@ namespace NonTemplatedCallableTypeTests
 	using AutoLambdaNoExtraParams = decltype([](auto) {});
 	using AutoLambdaExtraParams = decltype([](auto, float) {});
 
-	static_assert(NonTemplatedCallableType<decltype(LambdaFunc)>);
-	static_assert(NonTemplatedCallableType<decltype(LambdaFuncWithCapture)>);
+	static_assert(NonTemplatedCallableType<LambdaFunc>);
+	static_assert(NonTemplatedCallableType<LambdaFuncWithCapture>);
 	static_assert(NonTemplatedCallableType<EmptyCallable>);
 	static_assert(NonTemplatedCallableType<EmptyCallableWithUnaryPlus>);
 	static_assert(!NonTemplatedCallableType<decltype(Function)>);
@@ -213,9 +213,8 @@ namespace NonTemplatedCallableTypeTests
 namespace PureFunctionTests
 {
     using namespace stf;
-	static auto LambdaFunc = [](float) {return 42; };
-
-	static auto LambdaFuncWithCapture = [ret = 42](float) {return ret; };
+	using LambdaFunc = decltype([](float) {return 42; });
+    using LambdaFuncWithCapture = decltype([ret = 42](float) {return ret; });
 
 	struct EmptyCallable
 	{
@@ -236,8 +235,8 @@ namespace PureFunctionTests
 		{}
 	};
 
-	static_assert(!PureFunctionType<decltype(LambdaFunc)>);
-	static_assert(!PureFunctionType<decltype(LambdaFuncWithCapture)>);
+	static_assert(!PureFunctionType<LambdaFunc>);
+	static_assert(!PureFunctionType<LambdaFuncWithCapture>);
 	static_assert(!PureFunctionType<EmptyCallable>);
 	static_assert(!PureFunctionType<EmptyCallableWithUnaryPlus>);
 	static_assert(PureFunctionType<decltype(Function)>);
@@ -247,9 +246,8 @@ namespace PureFunctionTests
 namespace CapturelessLambdaTests
 {
     using namespace stf;
-	static auto LambdaFunc = [](float) {return 42; };
-
-	static auto LambdaFuncWithCapture = [ret = 42](float) {return ret; };
+	using LambdaFunc = decltype([](float) {return 42; });
+    using LambdaFuncWithCapture = decltype([ret = 42](float) {return ret; });
 
 	struct EmptyCallable
 	{
@@ -270,8 +268,8 @@ namespace CapturelessLambdaTests
 		{}
 	};
 
-	static_assert(CapturelessLambdaType<decltype(LambdaFunc)>);
-	static_assert(!CapturelessLambdaType<decltype(LambdaFuncWithCapture)>);
+	static_assert(CapturelessLambdaType<LambdaFunc>);
+	static_assert(!CapturelessLambdaType<LambdaFuncWithCapture>);
 	static_assert(!CapturelessLambdaType<EmptyCallable>);
 	static_assert(!CapturelessLambdaType<EmptyCallableWithUnaryPlus>);
 	static_assert(!CapturelessLambdaType<decltype(Function)>);
