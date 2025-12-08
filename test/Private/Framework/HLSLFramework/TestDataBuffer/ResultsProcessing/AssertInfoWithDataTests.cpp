@@ -239,7 +239,7 @@ TEST_CASE_PERSISTENT_FIXTURE(AssertInfoWithDataTestsFixture, "HLSLFrameworkTests
                 std::tuple
                 {
                     "GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment2_THEN_HasExpectedResults",
-                    TestRunResults{ {FailedAssert{serialize(24u), {}, AssertMetaData{42, 0, 0}, 2}}, {}, {}, 0, 1, uint3(1,1,1)},
+                    TestRunResults{ {FailedAssert{serialize(static_cast<u16>(24u)), {}, AssertMetaData{42, 0, 0}, 2}}, {}, {}, 0, 1, uint3(1,1,1)},
                     10, 100
                 },
                 std::tuple
