@@ -60,14 +60,20 @@ TEST_CASE_PERSISTENT_FIXTURE(FencedResourcePoolTestFixture, "Scenario: FencedRes
             auto directQueue = device->CreateCommandQueue(
                 D3D12_COMMAND_QUEUE_DESC
                 {
-                    .Type = D3D12_COMMAND_LIST_TYPE_DIRECT
+                    .Type = D3D12_COMMAND_LIST_TYPE_DIRECT,
+                    .Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL,
+                    .Flags = D3D12_COMMAND_QUEUE_FLAG_NONE,
+                    .NodeMask = 0
                 }
             );
 
             auto copyQueue = device->CreateCommandQueue(
                 D3D12_COMMAND_QUEUE_DESC
                 {
-                    .Type = D3D12_COMMAND_LIST_TYPE_COPY
+                    .Type = D3D12_COMMAND_LIST_TYPE_COPY,
+                    .Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL,
+                    .Flags = D3D12_COMMAND_QUEUE_FLAG_NONE,
+                    .NodeMask = 0
                 }
             );
 
@@ -157,7 +163,7 @@ TEST_CASE_PERSISTENT_FIXTURE(FencedResourcePoolTestFixture, "Scenario: FencedRes
 
                         AND_WHEN("GPU work has finished")
                         {
-                            const auto finishedCopyFence = copyQueue->Signal();
+                            [[maybe_unused]] const auto finishedCopyFence = copyQueue->Signal();
                             const auto nextDirectFence = directQueue->Signal();
                             const auto waitResult = directQueue->WaitOnFenceCPU(nextDirectFence, Milliseconds<u32>{ 1u });
 
@@ -219,7 +225,7 @@ TEST_CASE_PERSISTENT_FIXTURE(FencedResourcePoolTestFixture, "Scenario: FencedRes
 
                         AND_WHEN("queue finishes executing work")
                         {
-                            const auto firstActualFence = copyQueue->Signal();
+                            [[maybe_unused]] const auto firstActualFence = copyQueue->Signal();
                             const auto nextDirectFence = directQueue->Signal();
                             const auto waitResult = directQueue->WaitOnFenceCPU(nextDirectFence, Milliseconds<u32>{ 1u });
 

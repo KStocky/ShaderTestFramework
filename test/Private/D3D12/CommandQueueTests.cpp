@@ -54,14 +54,20 @@ TEST_CASE_PERSISTENT_FIXTURE( CommandQueueTestFixture, "Scenario: CommandQueueTe
             auto directQueue = device->CreateCommandQueue(
                 D3D12_COMMAND_QUEUE_DESC
                 {
-                    .Type = D3D12_COMMAND_LIST_TYPE_DIRECT
+                    .Type = D3D12_COMMAND_LIST_TYPE_DIRECT,
+                    .Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL,
+                    .Flags = D3D12_COMMAND_QUEUE_FLAG_NONE,
+                    .NodeMask = 0
                 }
             );
 
             auto copyQueue = device->CreateCommandQueue(
                 D3D12_COMMAND_QUEUE_DESC
                 {
-                    .Type = D3D12_COMMAND_LIST_TYPE_COPY
+                    .Type = D3D12_COMMAND_LIST_TYPE_COPY,
+                    .Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL,
+                    .Flags = D3D12_COMMAND_QUEUE_FLAG_NONE,
+                    .NodeMask = 0
                 }
             );
 
@@ -105,7 +111,7 @@ TEST_CASE_PERSISTENT_FIXTURE( CommandQueueTestFixture, "Scenario: CommandQueueTe
 
                         AND_WHEN("The future fence point is eventually signalled")
                         {
-                            const auto actualFencePoint = copyQueue->Signal();
+                            [[maybe_unused]] const auto actualFencePoint = copyQueue->Signal();
                             const auto waitResult = directQueue->WaitOnFenceCPU(waitingFencePoint, Milliseconds<u32>{ 1u });
 
                             THEN("Future fence point has been reached")
