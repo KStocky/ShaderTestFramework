@@ -3,6 +3,8 @@ name: Example Repo
 run-name: "${{github.actor}}: Run Example repo tests after push to main: ${{github.event.head_commit.message}}"
 
 on:
+    workflow_dispatch:
+
     push:
         branches:
             - "main"
