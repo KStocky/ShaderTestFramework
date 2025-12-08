@@ -55,7 +55,7 @@ namespace stf
 
     void CommandQueue::FlushQueue()
     {
-        WaitOnFenceCPU(Signal());
+        ThrowIfUnexpected(WaitOnFenceCPU(Signal()));
     }
 
     void CommandQueue::ExecuteCommandList(CommandList& InList)

@@ -208,7 +208,7 @@ namespace stf
         ComPtr<ID3D12CommandQueue> raw = nullptr;
         ThrowIfFailed(m_Device->CreateCommandQueue(&InDesc, IID_PPV_ARGS(raw.GetAddressOf())));
         SetName(raw.Get(), InName);
-        return MakeShared<CommandQueue>(CommandQueue::CreationParams{ std::move(raw), CreateFence(0ull) });
+        return Object::New<CommandQueue>(CommandQueue::CreationParams{ std::move(raw), CreateFence(0ull) });
     }
 
     SharedPtr<GPUResource> GPUDevice::CreateCommittedResource(const D3D12_HEAP_PROPERTIES& InHeapProps, const D3D12_HEAP_FLAGS InFlags, const D3D12_RESOURCE_DESC1& InResourceDesc, const D3D12_BARRIER_LAYOUT InInitialLayout, const D3D12_CLEAR_VALUE* InClearValue, const std::span<DXGI_FORMAT> InCastableFormats, const std::string_view InName) const
