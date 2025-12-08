@@ -14,7 +14,9 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
         "GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported",
         "GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned",
         "StringsAndTemplates",
-        "MatesPrinter",
+        // This no longer compiles because you can't get the length of a string at compile time in local scope anymore
+        // Leaving it here just for reference
+        //"MatesPrinter",
         "VariadicMacroOverloading"
     );
 

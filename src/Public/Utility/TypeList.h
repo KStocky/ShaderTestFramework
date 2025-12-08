@@ -1,6 +1,7 @@
 #pragma once
 #include "Platform.h"
 #include "Utility/FixedString.h"
+#include "Utility/Type.h"
 #include "Utility/TypeTraits.h"
 
 #include <algorithm>
@@ -60,6 +61,7 @@ namespace stf
         public:
 
             static void DeclElem(IndexIdentity<0>);
+            static void DeclElemSecond(IndexIdentity<0>);
         };
 
         template<auto InTypeToKeyLambda, auto InKeyCompareLambda>
@@ -345,7 +347,7 @@ namespace stf
 
         template<typename... InOtherTypes>
             requires (sizeof...(InTypes) != sizeof...(InOtherTypes))
-        static consteval auto AllOf(auto InFunc, TypeList<InOtherTypes...>)
+        static consteval auto AllOf(auto, TypeList<InOtherTypes...>)
         {
             return false;
         }
@@ -364,7 +366,7 @@ namespace stf
 
         template<typename... InOtherTypes>
             requires (sizeof...(InTypes) != sizeof...(InOtherTypes))
-        static consteval auto AnyOf(auto InFunc, TypeList<InOtherTypes...>)
+        static consteval auto AnyOf(auto, TypeList<InOtherTypes...>)
         {
             return false;
         }

@@ -71,7 +71,7 @@ namespace stf
         {
             return firstResult;
         }
-        else if (auto testRunError = firstResult.GetTestRunError())
+        else if (firstResult.GetTestRunError())
         {
             // There is no point in retrying the test if the test setup or shader compilation failed.
             return firstResult;

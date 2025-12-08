@@ -2,6 +2,8 @@
 #include "Utility/Concepts.h"
 #include <catch2/catch_test_macros.hpp>
 
+#include <thread>
+
 namespace ScopedCPUDurationStatCompileTests
 {
     using namespace stf;
@@ -45,6 +47,7 @@ SCENARIO("StatSystemTests")
             const std::string expectedName{ "Test" };
             {
                 TestScopedStat stat(expectedName);
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
             }
 
             AND_WHEN("Stats flushed")
@@ -77,6 +80,7 @@ SCENARIO("StatSystemTests")
                     const std::string expectedSecondStat = "Test2";
                     {
                         TestScopedStat stat(expectedSecondStat);
+                        std::this_thread::sleep_for(std::chrono::milliseconds(1));
                     }
                     auto newStats = system.FlushTimedStats();
 
@@ -98,6 +102,7 @@ SCENARIO("StatSystemTests")
                 const std::string expectedSecondStat = "Test2";
                 {
                     TestScopedStat stat(expectedSecondStat);
+                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
                 }
                 auto newStats = system.FlushTimedStats();
 

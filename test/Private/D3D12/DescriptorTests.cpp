@@ -84,7 +84,6 @@ SCENARIO("DescriptorRangeTests")
 	{
 		static constexpr u32 increment = 10;
 		static constexpr u32 num = 20;
-		static constexpr u32 expectedSize = increment * num;
 		static constexpr u64 startAddress = 42;
         static constexpr u32 startHeapIndex = 4;
 		
@@ -148,7 +147,6 @@ SCENARIO("DescriptorRangeTests")
 		{
 			static constexpr u32 expectedIndex = num + 1;
 			static constexpr u64 address = startAddress + increment * expectedIndex;
-            static constexpr u32 heapIndex = startHeapIndex + expectedIndex;
 
 			const auto maybeIndex = range.GetIndex(DescriptorHandle{ {address}, {address}, expectedIndex });
 

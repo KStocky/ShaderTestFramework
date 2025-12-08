@@ -8,7 +8,7 @@ Provides fundamental type property information on a type `T`. A fundamental type
 - uint16_t, uint32_t, uint64_t
 - float16_t, float32_t, float64_t
 
-NOTE: This applied to any alias of these types. e.g. The following types are equivilent:
+NOTE: This applied to any alias of these types. e.g. The following types are equivalent:
 - `float4x4`
 - `float32_t4x4`
 - `matrix<float, 4, 4>`

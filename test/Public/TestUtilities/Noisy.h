@@ -2,8 +2,6 @@
 #pragma once
 
 #include <Platform.h>
-
-#include <compare>
 #include <ostream>
 #include <unordered_map>
 
@@ -21,7 +19,7 @@ concept NoisyLoggable = requires(stf::i32 EventId)
 
 struct DefaultLogData
 {
-    std::unordered_map<stf::i32, stf::u64> NumEvents;
+    std::unordered_map<stf::i32, stf::u64> NumEvents {};
     stf::u64 NumConstructions = 0;
     stf::u64 NumCopyConstructions = 0;
     stf::u64 NumCopyAssignments = 0;
@@ -29,7 +27,7 @@ struct DefaultLogData
     stf::u64 NumMoveAssignments = 0;
     stf::u64 NumDestructions = 0;
 
-    friend auto operator<=>(const DefaultLogData&, const DefaultLogData&) = default;
+    friend bool operator==(const DefaultLogData&, const DefaultLogData&) = default;
 };
 
 std::ostream& operator<<(std::ostream& InStream, const DefaultLogData& InData);

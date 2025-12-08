@@ -60,7 +60,7 @@ function(nuget_pkg_get IN_TARGET IN_PKG_NAME IN_VERSION OUT_SUCCEEDED OUT_PKG_PA
         endif()
     endif()
 
-    message(INFO "Downloading ${IN_PKG_NAME} nuget package...")
+    message(STATUS "Downloading ${IN_PKG_NAME} nuget package...")
 
     set(SCRATCH_DIR "${CMAKE_CURRENT_BINARY_DIR}")
     set(SCRATCH_PKG "${SCRATCH_DIR}/${IN_PKG_NAME}${VERSION}.nupkg")

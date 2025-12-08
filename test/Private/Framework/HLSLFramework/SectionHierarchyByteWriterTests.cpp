@@ -11,7 +11,7 @@ SCENARIO("HLSLFrameworkTests - SectionHierarchy - ByteWriter")
             .Mappings{GetTestVirtualDirectoryMapping()}
         }
     );
-
+    
     REQUIRE(fixture.RunTest(
         ShaderTestFixture::RuntimeTestDesc
         {

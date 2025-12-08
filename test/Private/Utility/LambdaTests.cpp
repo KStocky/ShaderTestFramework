@@ -17,15 +17,15 @@ namespace LambdaTypeTests
 		static_assert(sizeof(BadlyPacked) == 24);
 		static_assert(sizeof(WellPacked) == 24);
 
-		using BadLanguage = decltype([d1 = 21.0, b1 = false, d2 = 42.0, b2 = true]() {});
-		using GoodLanguage = decltype([d1 = 21.0, d2 = 42.0, b1 = false, b2 = true]() {});
+        using BadLanguage = decltype([d1 = 21.0, b1 = false, d2 = 42.0, b2 = true]() { (void)d1; (void)b1; (void)d2; (void)b2; });
+		using GoodLanguage = decltype([d1 = 21.0, d2 = 42.0, b1 = false, b2 = true]() { (void)d1; (void)b1; (void)d2; (void)b2; });
 
 		static_assert(sizeof(BadLanguage) == 32);
 		static_assert(sizeof(GoodLanguage) == 24);
 
 		static_assert(sizeof(BadlyPacked) < sizeof(BadLanguage));
 
-		using ShortLanguage = decltype([s = short{ 42 }]() {});
+        using ShortLanguage = decltype([s = short{ 42 }]() { (void)s; });
 		static_assert(sizeof(ShortLanguage) == 2);
 	}
 	
@@ -58,9 +58,13 @@ namespace LambdaTypeTests
 
 	void PackingCaptureCallTests()
 	{
-		static constexpr Lambda CaptureReorder([](const double& InFirstDouble, const bool& InFirstBool, const double& InSecondDouble, const bool& InSecondBool) { return Tuple{InFirstDouble, InFirstBool, InSecondDouble, InSecondBool}; }, 4.0, false, 2.0, true);
+		constexpr Lambda CaptureReorder(
+            [](const double& InFirstDouble, const bool& InFirstBool, const double& InSecondDouble, const bool& InSecondBool) 
+            { 
+                return Tuple<double, bool, double, bool>{InFirstDouble, InFirstBool, InSecondDouble, InSecondBool}; 
+            }, 4.0, false, 2.0, true);
 
-		static constexpr auto Ret = CaptureReorder();
+		constexpr auto Ret = CaptureReorder();
 
 		static_assert(get<0>(Ret) == 4.0);
 		static_assert(get<1>(Ret) == false);
@@ -75,6 +79,8 @@ namespace LambdaTypeTests
 		static_assert(std::is_same_v<typename WithShortCapture::CaptureTypes::template Type<0>, const short>);
 
 		using ModifyingCaptureByValue = decltype(Lambda([](auto& In) mutable { ++In; return In; }, 0));
+
+        static_assert(sizeof(ModifyingCaptureByValue) > 0, "Expected ModifyingCaptureByValue to be a valid type");
 	}
 
 	template<auto InFunc, typename... InCaptureTypes>

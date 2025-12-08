@@ -40,7 +40,7 @@ namespace ttl
 
         static uint bytes_required(MyIntsSpan In)
         {
-            return (In.End - In.Start) * ttl::size_of<int>::value;
+            return (In.End - In.Start) * sizeof(int);
         }
 
         static uint alignment_required(MyIntsSpan In)

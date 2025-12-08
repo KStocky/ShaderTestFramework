@@ -107,22 +107,22 @@ namespace stf
 
         template<typename InFuncType, typename... InOtherCaptureTypes>
         constexpr Lambda(InFuncType, InOtherCaptureTypes&&... InCaptures)
-            : m_Captures{ CaptureSorter::template SwizzleVariadic<InCaptureIndices>(CaptureSorter::SortIndices(), std::forward<InOtherCaptureTypes>(InCaptures)...)... }
+            : m_Captures{ CaptureSorter::template SwizzleVariadic<InCaptureIndices>(typename CaptureSorter::SortIndices(), std::forward<InOtherCaptureTypes>(InCaptures)...)... }
         {
             static_assert(StaticAssertConditions::CaptureVarsArePassedByRef, "The parameters that you are using to pass your captured variables to the function are not all references. Please ensure that you are passing your captures as either a const reference or a reference");
             static_assert(StaticAssertConditions::CaptureByValVarsArePassedByConstRefForConstCall, "You are passing a capture by value arg by non-const reference when the function call is const. Either pass by const reference, or mark the function as mutable ");
         }
 
         template<typename... InOtherCallParamTypes>
-        constexpr RetType operator()(InOtherCallParamTypes&&... InParams) noexcept(noexcept(Apply(CaptureSorter::UnsortIndices(), *this, std::forward<InOtherCallParamTypes>(InParams)...))) requires (!IsConstCall)
+        constexpr RetType operator()(InOtherCallParamTypes&&... InParams) noexcept(noexcept(Apply(typename CaptureSorter::UnsortIndices(), *this, std::forward<InOtherCallParamTypes>(InParams)...))) requires (!IsConstCall)
         {
-            return Apply(CaptureSorter::UnsortIndices(), *this, std::forward<InOtherCallParamTypes>(InParams)...);
+            return Apply(typename CaptureSorter::UnsortIndices(), *this, std::forward<InOtherCallParamTypes>(InParams)...);
         }
 
         template<typename... InOtherCallParamTypes>
-        constexpr RetType operator()(InOtherCallParamTypes&&... InParams) const noexcept(noexcept(Apply(CaptureSorter::UnsortIndices(), *this, std::forward<InOtherCallParamTypes>(InParams)...))) requires (IsConstCall)
+        constexpr RetType operator()(InOtherCallParamTypes&&... InParams) const noexcept(noexcept(Apply(typename CaptureSorter::UnsortIndices(), *this, std::forward<InOtherCallParamTypes>(InParams)...))) requires (IsConstCall)
         {
-            return Apply(CaptureSorter::UnsortIndices(), *this, std::forward<InOtherCallParamTypes>(InParams)...);
+            return Apply(typename CaptureSorter::UnsortIndices(), *this, std::forward<InOtherCallParamTypes>(InParams)...);
         }
 
     private:
@@ -131,7 +131,7 @@ namespace stf
         static constexpr bool DerefReq = std::is_pointer_v<std::remove_reference_t<T>>;
 
         template<typename T>
-            requires !DerefReq<T>
+            requires (!DerefReq<T>)
         static constexpr decltype(auto) Deref(T&& In) noexcept
         {
             return In;

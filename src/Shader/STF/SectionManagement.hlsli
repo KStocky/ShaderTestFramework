@@ -206,7 +206,7 @@ namespace ttl
         template<typename U>
         static void write(inout container_wrapper<U> InContainer, const uint InIndex, const SectionHierarchy In)
         {
-            const uint numUints = bytes_required(In) / ttl::size_of_v<uint>;
+            const uint numUints = bytes_required(In) / sizeof(uint);
             static const bool isByteAddress = ttl::container_traits<U>::is_byte_address;
             static const uint storeIndexModifier = isByteAddress ? 4 : 1;
 

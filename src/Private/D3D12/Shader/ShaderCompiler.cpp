@@ -103,9 +103,11 @@ namespace stf
                                 {
                                     return "Empty path provided. Please provide either a virtual path that can be mapped by this manager, or an absolute/relative path";
                                 }
+                                default:
+                                {
+                                    return "Unknown error encountered while mapping the shader path.";
+                                }
                             }
-
-                            return "Unknown error encountered while mapping the shader path.";
                         })
                     .and_then(
                         [&InPath](const fs::path& InAbsolutePath) -> ToStringResult

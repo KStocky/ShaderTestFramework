@@ -27,11 +27,10 @@ namespace FuncTraitsTests
 		}
 	};
 
-	static auto LambdaFunc = [](float) {return 42; };
+    using LambdaFunc = decltype([](float) {return 42; });
+    using LambdaFuncWithCapture = decltype([ret = 42](float) {return ret; });
 
 	using MutableLambdaFunc = decltype([]() mutable {});
-
-	static auto LambdaFuncWithCapture = [ret = 42](float) {return ret; };
 
 	int PureFunction(float) { return 42; }
 
@@ -51,10 +50,10 @@ namespace FuncTraitsTests
 	{
 		using Traits = TFuncTraits<TestType, InExtraArgs...>;
 		static constexpr bool Passed =
-			std::is_same_v<ExpectedRetType, Traits::ReturnType>&&
-			std::is_same_v<ExpectedParamType, Traits::ParamTypes>&&
-			std::is_same_v<ExpectedCallSig, Traits::CallSignature>&&
-			std::is_same_v<ExpectedObjType, Traits::ObjType>&&
+			std::is_same_v<ExpectedRetType, typename Traits::ReturnType>&&
+			std::is_same_v<ExpectedParamType, typename Traits::ParamTypes>&&
+			std::is_same_v<ExpectedCallSig, typename Traits::CallSignature>&&
+			std::is_same_v<ExpectedObjType, typename Traits::ObjType>&&
 			ExpectedIsConst == Traits::IsConst;
 	};
 
@@ -87,11 +86,11 @@ namespace FuncTraitsTests
 
 	static_assert(
 		FuncSigTest<
-		decltype(LambdaFunc),
+		LambdaFunc,
 		int,
 		TypeList<float>,
 		int(float),
-		decltype(LambdaFunc),
+		LambdaFunc,
 		true>::Passed);
 
 	static_assert(

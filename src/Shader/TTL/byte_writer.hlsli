@@ -21,7 +21,7 @@ namespace ttl
     template<typename T>
     typename enable_if<!byte_writer<T>::has_writer, uint>::type bytes_required(T)
     {
-        return size_of<T>::value;
+        return sizeof(T);
     }
 
     template<typename T>

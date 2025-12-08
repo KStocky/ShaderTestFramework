@@ -21,7 +21,7 @@ The TTL (Test Template Library) provides a number of [Pseudo-concepts](../Pseudo
 
 | | |
 |-|-|
-|[`invocable_functor`<br>`invocable`](Invocable.md) | Specifies that callables can be invoked wiht a given set of argument types |
+|[`invocable_functor`<br>`invocable`](Invocable.md) | Specifies that callables can be invoked with a given set of argument types |
 
 
 

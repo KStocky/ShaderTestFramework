@@ -55,7 +55,7 @@ struct Optional
 };
 ```
 
-It is essentially a very basic implementation of an optional type such as [std::optional](https://en.cppreference.com/w/cpp/utility/optional) but in HLSL. We might use this to return a value from a function that might not be valid. The main thing about this basic class is that it is complex enough to write a somewhat substantial test suite for, which should help to demonstrate the usefullness of Scenarios and Sections. You can find the implementation of this class in [Optional.hlsli](../../examples/Ex3_ScenariosAndSections/ShaderCode/Optional.hlsli)
+It is essentially a very basic implementation of an optional type such as [std::optional](https://en.cppreference.com/w/cpp/utility/optional) but in HLSL. We might use this to return a value from a function that might not be valid. The main thing about this basic class is that it is complex enough to write a somewhat substantial test suite for, which should help to demonstrate the usefulness of Scenarios and Sections. You can find the implementation of this class in [Optional.hlsli](../../examples/Ex3_ScenariosAndSections/ShaderCode/Optional.hlsli)
 
 ## Testing Optional\<T> without Scenarios And Sections
 
@@ -188,7 +188,7 @@ It is this problem that Scenarios and Sections can help with.
 
 ## Testing Optional\<T> with Scenarios And Sections
 
-As we saw in [Testing Optional\<T> without Scenarios And Sections](#testing-optionalt-without-scenarios-and-sections) trying to write test code that does not involve repeating ourselves can lead to tests that are hard to read and scattered in terms of their placement in test files. Shader Test Framework provides Scenarios and Sections as an alternative way of structuring tests, with an aim of improving readability and reducing code repitition. Below is how we might write the tests shown in the previous section except with using scenarios and sections.
+As we saw in [Testing Optional\<T> without Scenarios And Sections](#testing-optionalt-without-scenarios-and-sections) trying to write test code that does not involve repeating ourselves can lead to tests that are hard to read and scattered in terms of their placement in test files. Shader Test Framework provides Scenarios and Sections as an alternative way of structuring tests, with an aim of improving readability and reducing code repetition. Below is how we might write the tests shown in the previous section except with using scenarios and sections.
 
 ```c++
 [numthreads(1, 1, 1)]
@@ -254,7 +254,7 @@ For each `SECTION`, the `SCENARIO` is executed from the start. This means that t
 
 This results in a series of tests where common setup is shared and tests can be read from top to bottom. This solves both annoyances that were introduced in the previous section.
 
-1. Code repitition is kept to a minimum (or as it is in this example, completely removed)
+1. Code repetition is kept to a minimum (or as it is in this example, completely removed)
 2. Multiple test cases can be written in one shader entry function 
 
 It also ensures that all code is kept together and is structured in a way, that is easy to reason about. This was the problem that became apparent towards the end of the last section when we were trying to structure our tests without Scenarios and Sections.
@@ -337,7 +337,7 @@ test cases: 3 | 2 passed | 1 failed
 assertions: 3 | 2 passed | 1 failed
 ```
 
-This error states that there were 127 successful asserts and 1 failed one. Trying to track down this in a real test could be a nightmare. Obviously in this case it is very easy to see which thread produced the assert. It is very clearly the thread with threadid (16,0,0). But let's assume that we don't know that for the sake of this example. Shader Test Framework makes tracking down issues like this where an assert only fails on one thread out of many quite easy. STF provides a function that can be called at the start of a test called `stf::RegisterThreadID`. Passing the thread id to this function will provide the framework with ability to tag each failed assert with its associated thread id. So we can change the start of our test to the following:
+This error states that there were 127 successful asserts and 1 failed one. Trying to track down this in a real test could be a nightmare. Obviously in this case it is very easy to see which thread produced the assert. It is very clearly the thread with thread id (16,0,0). But let's assume that we don't know that for the sake of this example. Shader Test Framework makes tracking down issues like this where an assert only fails on one thread out of many quite easy. STF provides a function that can be called at the start of a test called `stf::RegisterThreadID`. Passing the thread id to this function will provide the framework with ability to tag each failed assert with its associated thread id. So we can change the start of our test to the following:
 
 ```c++
 [numthreads(32, 1, 1)]

@@ -83,7 +83,7 @@ int myOtherValue = 0;
 
 TTL_STAMP(64, STAMP_ADD_NUM_TO_VAR, myOtherValue, 4)
 
-// At this point myOtherVlaue is 256.
+// At this point myOtherValue is 256.
 
 ```
 ---

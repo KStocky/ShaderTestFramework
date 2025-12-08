@@ -16,7 +16,7 @@ The Test Template Library (TTL) is analogous to the [C++ standard library](https
 
 | | |
 |-|-|
-| [`caster.hlsli`](./Caster.md) | specializable utility to define conversions between arbitrary types |
+| [`caster.hlsli`](./Caster.md) | specialize-able utility to define conversions between arbitrary types |
 | [`concepts.hlsli`](./Concepts/ConceptsHeader.md) | Library of [pseudo-concepts](./PseudoConcepts.md) |
 | [`container_wrapper.hlsli`](./ContainerWrapper.md) | class template for providing a unified interface around resource buffers and arrays |
 | [`macro.hlsli`](./Macro/MacroHeader.md) | library of utility function-like macros |

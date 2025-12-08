@@ -217,7 +217,7 @@ namespace stf
 
             if (sectionIndex < Sections.Num())
             {
-                const uint bufferAddress = Sections.BeginMeta() + sectionIndex * ttl::size_of_v<SectionInfoMetaData>;
+                const uint bufferAddress = Sections.BeginMeta() + sectionIndex * sizeof(SectionInfoMetaData);
                 GetTestDataBuffer().Store(bufferAddress, InSectionInfo);
             }
         }
@@ -341,8 +341,8 @@ while(stf::detail::Scratch.TryLoopScenario(TTL_JOIN(onFirstEntry, InScenarioId))
 CREATE_STRING(TTL_JOIN(sectionNameString, InID), InName);                                              \
 static int TTL_JOIN(sectionNameId, InID) = stf::detail::Scratch.NextStringID++; \
 stf::detail::AddGlobalString(TTL_JOIN(sectionNameId, InID), TTL_JOIN(sectionNameString, InID)); \
-stf::detail::OnFirstEntryOfSectionFunctor TTL_JOIN(onFirstEntry, InID);                                   \
-TTL_JOIN(onFirstEntry, InID).StringId = TTL_JOIN(sectionNameId, InID);                                          \
+stf::detail::OnFirstEntryOfSectionFunctor TTL_JOIN(onFirstEntry, InID);                                  \
+TTL_JOIN(onFirstEntry, InID).StringId = TTL_JOIN(sectionNameId, InID);                                        \
 while (stf::detail::Scratch.TryEnterSection(TTL_JOIN(onFirstEntry, InID), STF_GET_SECTION_VAR_NAME(InID)))
 
 #define SECTION(InName) STF_SECTION_IMPL(InName, __LINE__)

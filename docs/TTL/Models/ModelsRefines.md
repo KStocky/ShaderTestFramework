@@ -41,7 +41,7 @@ None
 
 ## Return value
 
-Cannot be called and thus never returns a value. The return type is of type `void` if the supplied argument types satisfy the psuedo concept. Otherwise, the return type is not defined.
+Cannot be called and thus never returns a value. The return type is of type `void` if the supplied argument types satisfy the pseudo concept. Otherwise, the return type is not defined.
 
 
 ## Example

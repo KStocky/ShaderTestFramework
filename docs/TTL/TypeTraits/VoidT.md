@@ -2,7 +2,7 @@
 
 # ttl::void_t
 
-Utility metafunction that maps a sequence of up to 10 types to the type `void`. This metafunction is a convenient way to leverage SFINAE, in particular for conditionally removing functions from the candidate set based on whether an expression is valid in the unevaluated context (such as operand to `__decltype` expression), allowing to exist separate function overloads or specializations based on supported operations.
+Utility meta function that maps a sequence of up to 10 types to the type `void`. This meta function is a convenient way to leverage SFINAE, in particular for conditionally removing functions from the candidate set based on whether an expression is valid in the unevaluated context (such as operand to `__decltype` expression), allowing to exist separate function overloads or specializations based on supported operations.
 
 **Contents**
 1. [Header](#header)
