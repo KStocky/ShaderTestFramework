@@ -44,7 +44,7 @@ we can bind data to the following parameters in this shader:
 2. `CBuffer`
 3. `MyNamespace::GlobalParam`
 
-However, we can not bind just `GlobalBinding.Vec3`, because that is a subobject of a global parameter. We must bind the entire global.
+However, we can not bind just `GlobalBinding.Vec3`, because that is a sub-object of a global parameter. We must bind the entire global.
 
 On the C++ side of things we can define the following struct:
 
@@ -74,7 +74,7 @@ fixture.RunTest(
         })
 ```
 
-Notice how `StructUsedInHLSL` has an extra member when compared to the HLSL equivilent `MyStruct`. We need to add 4 bytes of padding in between the `float3` and `int2` on the C++ side due to how constant buffer data is packed. The rules on how constant buffers are packed can be read [here](https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/dx-graphics-hlsl-packing-rules).
+Notice how `StructUsedInHLSL` has an extra member when compared to the HLSL equivalent `MyStruct`. We need to add 4 bytes of padding in between the `float3` and `int2` on the C++ side due to how constant buffer data is packed. The rules on how constant buffers are packed can be read [here](https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/dx-graphics-hlsl-packing-rules).
 
 Then when we set data on `GlobalBinding` we simply provide an instantiation of `StructUsedInHLSL`. [Designated Initializers](https://en.cppreference.com/w/cpp/language/aggregate_initialization#Designated_initializers) work well for this because you can specify just the members you care about initializing and ignore any members that you don't care about (e.g. we don't care what data is in the padding bytes)
 

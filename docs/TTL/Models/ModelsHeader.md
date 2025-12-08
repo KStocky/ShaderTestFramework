@@ -15,7 +15,7 @@ The TTL provides [`ttl::models`](./Models.md) as well as other utility meta-func
 
 | | |
 |-|-|
-| [`models_if`](./ModelsIf.md) | meta-function for satisfying a constrait in a pseudo-concept if the provided `bool` evaluates to `true`, fails otherwise |
-| [`models_if_pred`](./ModelsIfPred.md) | meta-function for satisfying a constrait in a pseudo-concept if the provided template template argument evaluates to `true` when the supplied type is provided, fails otherwise |
+| [`models_if`](./ModelsIf.md) | meta-function for satisfying a constraint in a pseudo-concept if the provided `bool` evaluates to `true`, fails otherwise |
+| [`models_if_pred`](./ModelsIfPred.md) | meta-function for satisfying a constraint in a pseudo-concept if the provided template template argument evaluates to `true` when the supplied type is provided, fails otherwise |
 | [`models_if_same`](./ModelsIfSame.md) | meta-function for satisfying a constraint in a pseudo-concept if the types, `T` and `U` are the same, fails otherwise |
 | [`models_refines`](./ModelsRefines.md) | meta-function for composing one pseudo-concept with another |

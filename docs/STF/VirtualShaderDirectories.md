@@ -19,10 +19,10 @@ Shader Test Framework provides a very similar system for handling a test suite's
 
 ## Dealing with Shader Directories using CMake
 
-The following sections will be refering to ([Ex2_VirtualShaderDirectories](../../examples/Ex2_VirtualShaderPaths/CMakeLists.txt)). This CMakeLists.txt has comments which document what each line is doing but the following sections will be going into more explanation of them.
+The following sections will be referring to ([Ex2_VirtualShaderDirectories](../../examples/Ex2_VirtualShaderPaths/CMakeLists.txt)). This CMakeLists.txt has comments which document what each line is doing but the following sections will be going into more explanation of them.
 
 ### Asset Dependency Management Library
-Shader files are essentially asset files. They are files that do not take part in the build of the final executable, but are still part of the project. Therefore, for STF to use them, STF must be able to find them on disk and load them. To give test writers the flexiblity of defining where a test suite's shaders are, STF provides a CMake library, called AssetDependencyManagement, that aids in the handling of asset files. This library has 3 main functions:
+Shader files are essentially asset files. They are files that do not take part in the build of the final executable, but are still part of the project. Therefore, for STF to use them, STF must be able to find them on disk and load them. To give test writers the flexibility of defining where a test suite's shaders are, STF provides a CMake library, called AssetDependencyManagement, that aids in the handling of asset files. This library has 3 main functions:
 
 1) `asset_dependency_init` - This function will initialize the library for a specified target. This function takes a single parameter which is the name of the target that you will be using this library for.
 2) `target_add_asset_directory` - This function will set up an asset mapping for a particular directory. This functions 3 parameters. The first is the target that this asset mapping is to be applied to. The second is the ABSOLUTE path of the directory that is to be mapped. The third is the RELATIVE path from the target's executable that the source directory will be mapped to.

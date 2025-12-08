@@ -2,7 +2,7 @@
 
 # Static Assert
 
-The constant boolean expression is evaluated at compile time. If it evalulates to `false`, a compile-time error occurs and if a display message is provided by the `_Static_assert` it is displayed as part of the compilation error.
+The constant boolean expression is evaluated at compile time. If it evaluates to `false`, a compile-time error occurs and if a display message is provided by the `_Static_assert` it is displayed as part of the compilation error.
 Otherwise, if expression evaluates to `true`, nothing happens; no code is emitted.  This can be useful for writing tests for code that is known at compile time e.g. template meta programming.
 
 **Contents**

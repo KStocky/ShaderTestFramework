@@ -4,7 +4,7 @@
 
 If `InCond` is `true`, `ttl::enable_if` has a public member typedef `type`, equal to `T`; otherwise, there is no member typedef.
 
-This metafunction is a convenient way to leverage SFINAE, in particular for conditionally removing functions from the candidate set based on type traits, allowing separate function overloads or specializations based on those different type traits.
+This meta function is a convenient way to leverage SFINAE, in particular for conditionally removing functions from the candidate set based on type traits, allowing separate function overloads or specializations based on those different type traits.
 
 `ttl::enable_if` can be used in many forms, including:
 

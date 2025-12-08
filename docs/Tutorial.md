@@ -270,7 +270,7 @@ If we keep stepping into the code we will find that due to this we end up adding
 
 ![Assert Failed](images/PowTestAssertFailed.png)
 
-This is what we would expect. Now we know how to fix the problem. From here we can use "Edit And Continue". Edit And Continue is a feature in PIX which allows you to make shader changes from withint a capture, recompile the shader, and then rerun the PIX capture as if the original capture had those shader changes. So within PIX we can make the following change to the `MyPow` function:
+This is what we would expect. Now we know how to fix the problem. From here we can use "Edit And Continue". Edit And Continue is a feature in PIX which allows you to make shader changes from within a capture, recompile the shader, and then rerun the PIX capture as if the original capture had those shader changes. So within PIX we can make the following change to the `MyPow` function:
 
 ```c++
 int MyPow(int num, int power)
@@ -314,7 +314,7 @@ Up until now, we have been writing HLSL code directly in our C++ in strings. How
 
 ## SCENARIOs and SECTIONs
 
-Shader Test Framework provides a mechanism to help test writers, write tests that both minimise code repetition and also ensure that their tests are easy to reason about and follow. They are very similar to [Catch2](https://github.com/catchorg/Catch2/)s `TEST_CASE`s and `SECTION`s, and look like the following:
+Shader Test Framework provides a mechanism to help test writers, write tests that both minimize code repetition and also ensure that their tests are easy to reason about and follow. They are very similar to [Catch2](https://github.com/catchorg/Catch2/)s `TEST_CASE`s and `SECTION`s, and look like the following:
 ```c++
 [numthreads(1, 1, 1)]
 void OptionalTestsWithScenariosAndSections()
@@ -367,7 +367,7 @@ Test writers can set constant buffer data for tests so that algorithms written i
 
 ## Compile Time Tests
 
-With HLSL2021, we might find ourselves writing template metafunctions that we want to test. Since templates are evaluated at compile time, then it would be a waste to write run-time tests for these functions. Instead, we can use `_Static_assert` to write Compile Time Tests. The following docs should help to better understand how to write these types of tests:
+With HLSL2021, we might find ourselves writing template meta functions that we want to test. Since templates are evaluated at compile time, then it would be a waste to write run-time tests for these functions. Instead, we can use `_Static_assert` to write Compile Time Tests. The following docs should help to better understand how to write these types of tests:
 1. [Compile Time Tests](./STF/CompileTimeTests.md)
 2. [`_Static_assert`](./TTL/StaticAssert.md)
 
