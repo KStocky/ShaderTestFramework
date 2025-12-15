@@ -35,6 +35,15 @@ namespace stf
             return m_HeapIndex;
         }
 
+        friend bool operator==(const DescriptorHandle& InA, const DescriptorHandle& InB)
+        {
+            return InA.m_CPUAddress.ptr == InB.m_CPUAddress.ptr &&
+                InA.m_GPUAddress.ptr == InB.m_GPUAddress.ptr &&
+                InA.m_HeapIndex == InB.m_HeapIndex;
+        }
+
+        friend bool operator!=(const DescriptorHandle&, const DescriptorHandle&) = default;
+
     private:
 
         D3D12_CPU_DESCRIPTOR_HANDLE m_CPUAddress{ 0 };

@@ -3,9 +3,76 @@
 #include <D3D12/Descriptor.h>
 
 #include <functional>
+#include <string_view>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
+
+SCENARIO("DescriptorHandleTests")
+{
+    using namespace stf;
+    const auto [given, left, right, expected] = GENERATE(
+        table<std::string_view, DescriptorHandle, DescriptorHandle, bool>
+        (
+            {
+                std::tuple
+                {
+                    "Left and Right are equal",
+                    DescriptorHandle{ D3D12_CPU_DESCRIPTOR_HANDLE{ 42 }, D3D12_GPU_DESCRIPTOR_HANDLE{144}, 2},
+                    DescriptorHandle{ D3D12_CPU_DESCRIPTOR_HANDLE{ 42 }, D3D12_GPU_DESCRIPTOR_HANDLE{144}, 2},
+                    true
+                },
+                std::tuple
+                {
+                    "CPU addresses differ",
+                    DescriptorHandle{ D3D12_CPU_DESCRIPTOR_HANDLE{ 24 }, D3D12_GPU_DESCRIPTOR_HANDLE{144}, 2},
+                    DescriptorHandle{ D3D12_CPU_DESCRIPTOR_HANDLE{ 42 }, D3D12_GPU_DESCRIPTOR_HANDLE{144}, 2},
+                    false
+                },
+                std::tuple
+                {
+                    "GPU addresses differ",
+                    DescriptorHandle{ D3D12_CPU_DESCRIPTOR_HANDLE{ 42 }, D3D12_GPU_DESCRIPTOR_HANDLE{144}, 2},
+                    DescriptorHandle{ D3D12_CPU_DESCRIPTOR_HANDLE{ 42 }, D3D12_GPU_DESCRIPTOR_HANDLE{34}, 2},
+                    false
+                },
+                std::tuple
+                {
+                    "Heap indexes differ",
+                    DescriptorHandle{ D3D12_CPU_DESCRIPTOR_HANDLE{ 42 }, D3D12_GPU_DESCRIPTOR_HANDLE{144}, 2},
+                    DescriptorHandle{ D3D12_CPU_DESCRIPTOR_HANDLE{ 42 }, D3D12_GPU_DESCRIPTOR_HANDLE{34}, 12},
+                    false
+                }
+            }
+        )
+    );
+
+    GIVEN(given)
+    {
+        WHEN("compared for equality")
+        {
+            const bool equals = left == right;
+            const bool notEquals = left != right;
+
+            if (expected)
+            {
+                THEN("is equal")
+                {
+                    REQUIRE(equals);
+                    REQUIRE_FALSE(notEquals);
+                }
+            }
+            else
+            {
+                THEN("is not equal")
+                {
+                    REQUIRE_FALSE(equals);
+                    REQUIRE(notEquals);
+                }
+            }
+        }
+    }
+}
 
 SCENARIO("DescriptorRangeTests")
 {
