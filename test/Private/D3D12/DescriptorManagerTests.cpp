@@ -132,16 +132,12 @@ TEST_CASE_PERSISTENT_FIXTURE(DescriptorManagerTestPrivate::Fixture, "Descriptor 
                 .Device = device,
                 .InitialSize = initialSize
             });
-        using ResultType = decltype(manager->Acquire());
 
-        const auto [descriptors, resolvedDescriptors] = 
-            [&, this](const u32 InNum)
+        const auto descriptors =
+            [&](const u32 InNum)
             {
                 std::vector<DescriptorManager::Descriptor> descriptors;
                 descriptors.reserve(InNum);
-
-                std::vector<DescriptorHandle> resolvedDescriptors;
-                resolvedDescriptors.reserve(InNum);
 
                 for (u32 i = 0; i < InNum; ++i)
                 {
@@ -149,25 +145,37 @@ TEST_CASE_PERSISTENT_FIXTURE(DescriptorManagerTestPrivate::Fixture, "Descriptor 
                     REQUIRE(maybeDescriptor.has_value());
                     auto descriptor = maybeDescriptor.value();
 
-                    auto maybeResolved = descriptor.Resolve();
-                    REQUIRE(maybeResolved.has_value());
-
-                    const auto resolvedDescriptor = maybeResolved.value();
-                    resolvedDescriptors.push_back(resolvedDescriptor);
                     descriptors.push_back(descriptor);
                 }
 
-                return Tuple{ std::move(descriptors), std::move(resolvedDescriptors) };
+                return descriptors;
             }(initialSize);
+
+        const auto resolvedDescriptors =
+            [&]()
+            {
+                std::vector<DescriptorHandle> resolvedDescriptors;
+                resolvedDescriptors.reserve(descriptors.size());
+
+                for (const auto& descriptor : descriptors)
+                {
+                    auto maybeResolved = descriptor.Resolve();
+                    REQUIRE(maybeResolved.has_value());
+
+                    resolvedDescriptors.push_back(maybeResolved.value());
+                }
+
+                return resolvedDescriptors;
+            }();
 
         REQUIRE(initialSize == manager->GetCapacity());
         REQUIRE(initialSize == manager->GetSize());
 
         THEN("All descriptors are unique")
         {
-            for (i32 i = 0; i < (initialSize -1); ++i)
+            for (u32 i = 0; i < (initialSize -1u); ++i)
             {
-                for (i32 j = i + 1; j < initialSize; ++j)
+                for (u32 j = i + 1; j < initialSize; ++j)
                 {
                     REQUIRE(resolvedDescriptors[i] != resolvedDescriptors[j]);
                 }
