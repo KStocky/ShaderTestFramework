@@ -58,6 +58,8 @@ namespace stf
         u32 GetSize() const;
         u32 GetCapacity() const;
 
+        Expected<bool> IsAllocated(const BindlessIndex InIndex) const;
+
     private:
 
         using EBufferError = RingBuffer<u32>::EErrorType;

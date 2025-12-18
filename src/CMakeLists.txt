@@ -32,6 +32,7 @@ set(SOURCES
     Public/D3D12/Descriptor.h
     Public/D3D12/DescriptorFreeListAllocator.h
     Public/D3D12/DescriptorHeap.h
+    Public/D3D12/DescriptorManager.h
     Public/D3D12/DescriptorRingAllocator.h
     Public/D3D12/Fence.h
     Public/D3D12/FencedResourcePool.h
@@ -88,6 +89,7 @@ set(SOURCES
     Private/D3D12/CommandQueue.cpp
     Private/D3D12/DescriptorFreeListAllocator.cpp
     Private/D3D12/DescriptorHeap.cpp
+    Private/D3D12/DescriptorManager.cpp
     Private/D3D12/DescriptorRingAllocator.cpp
     Private/D3D12/Fence.cpp
     Private/D3D12/GPUDevice.cpp

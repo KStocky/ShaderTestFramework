@@ -126,4 +126,15 @@ namespace stf
     {
         return m_Index;
     }
+
+    BindlessFreeListAllocator::Expected<bool> BindlessFreeListAllocator::IsAllocated(const BindlessIndex InIndex) const
+    {
+        const u32 index = InIndex;
+        if (index >= m_NumDescriptors)
+        {
+            return Unexpected(EErrorType::InvalidIndex);
+        }
+
+        return !m_FreeSet[InIndex];
+    }
 }

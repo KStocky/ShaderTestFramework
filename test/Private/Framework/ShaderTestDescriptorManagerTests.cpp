@@ -7,7 +7,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-namespace DescriptorManagerTestPrivate
+namespace ShaderTestDescriptorManagerTestPrivate
 {
     class Fixture
     {
@@ -48,7 +48,7 @@ namespace DescriptorManagerTestPrivate
     };
 }
 
-TEST_CASE_PERSISTENT_FIXTURE(DescriptorManagerTestPrivate::Fixture, "Descriptor Manager Tests")
+TEST_CASE_PERSISTENT_FIXTURE(ShaderTestDescriptorManagerTestPrivate::Fixture, "Shader Test Descriptor Manager Tests")
 {
     using namespace stf;
     GIVEN("An initial size of 1")
