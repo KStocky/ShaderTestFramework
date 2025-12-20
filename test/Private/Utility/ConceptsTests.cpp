@@ -434,6 +434,7 @@ namespace ValidBitFieldTests
     static_assert(!CValidBitField<u8, 7>);
     static_assert(!CValidBitField<u8, 4, 5>);
     static_assert(!CValidBitField<u8, 22, 2, 2, 2>);
+    static_assert(!CValidBitField<u8, 0, 4, 4>);
 
     static_assert(!CValidBitField<NonIntegral, sizeof(NonIntegral) * 8>);
     static_assert(!CValidBitField<i32, 32>);
