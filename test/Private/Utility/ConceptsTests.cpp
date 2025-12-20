@@ -2,6 +2,8 @@
 
 #include <array>
 #include <cstddef>
+#include <format>
+#include <Platform.h>
 
 namespace CallableTypeTests
 {
@@ -415,4 +417,23 @@ namespace NewableTests
 
     static_assert(Newable<NewableStruct>);
     static_assert(!Newable<NotNewableStruct>);
+}
+
+namespace ValidBitFieldTests
+{
+    using namespace stf;
+
+    struct NonIntegral
+    {
+    };
+
+    static_assert(CValidBitField<u8, 8>);
+    static_assert(CValidBitField<u8, 4, 4>);
+    static_assert(CValidBitField<u8, 2, 2, 2, 2>);
+
+    static_assert(!CValidBitField<u8, 7>);
+    static_assert(!CValidBitField<u8, 4, 5>);
+    static_assert(!CValidBitField<u8, 22, 2, 2, 2>);
+
+    static_assert(!CValidBitField<NonIntegral, sizeof(NonIntegral) * 8>);
 }
