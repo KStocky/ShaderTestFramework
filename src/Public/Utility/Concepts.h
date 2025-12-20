@@ -145,7 +145,7 @@ namespace stf
 
     template<typename BackingType, u32... Bits>
     concept CValidBitField =
-        std::integral<BackingType> &&
+        std::unsigned_integral<BackingType> &&
         (sizeof(BackingType) * 8) == (Bits + ...);
 
 }
