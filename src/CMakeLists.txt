@@ -82,6 +82,7 @@ set(SOURCES
     Public/Utility/Type.h
     Public/Utility/TypeList.h
     Public/Utility/TypeTraits.h
+    Public/Utility/VersionedIndex.h
     Private/D3D12/BindlessFreeListAllocator.cpp
     Private/D3D12/CommandAllocator.cpp
     Private/D3D12/CommandEngine.cpp
