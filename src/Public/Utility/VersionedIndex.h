@@ -29,7 +29,7 @@ namespace stf
 
         VersionedIndex Next() const
         {
-            return VersionedIndex{ m_Index, m_Version + 1 };
+            return VersionedIndex{ m_Index, m_Version + 1u };
         }
 
         BackingType GetIndex() const
