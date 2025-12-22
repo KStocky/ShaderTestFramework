@@ -57,4 +57,6 @@ namespace stf
         BackingType m_Index : NumIndexBits{};
         BackingType m_Version : NumVersionBits{};
     };
+    
+    using u32VersionedIndex = VersionedIndex<u32, 24>;
 }

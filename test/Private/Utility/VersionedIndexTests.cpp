@@ -65,7 +65,7 @@ SCENARIO("VersionedIndexTests - Valid Constructions")
                             [&]()
                             {
                                 auto ret = handle;
-                                for (i32 i = 0; i <= u32Handle::MaxVersion; ++i)
+                                for (u32 i = 0; i <= u32Handle::MaxVersion; ++i)
                                 {
                                     ret = ret.Next();
                                 }
