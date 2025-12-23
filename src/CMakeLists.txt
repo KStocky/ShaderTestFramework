@@ -77,6 +77,7 @@ set(SOURCES
     Public/Utility/Object.h
     Public/Utility/OverloadSet.h
     Public/Utility/Pointer.h
+    Public/Utility/StringLiteral.h
     Public/Utility/Time.h
     Public/Utility/Tuple.h
     Public/Utility/Type.h
