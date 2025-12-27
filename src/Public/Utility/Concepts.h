@@ -39,6 +39,9 @@ namespace stf
     concept MoveConstructibleType = std::is_move_constructible_v<T>;
 
     template<typename T>
+    concept TriviallyCopyableType = std::is_trivially_copyable_v<T>;
+
+    template<typename T>
     concept PureFunctionType = std::is_function_v<std::remove_pointer_t<std::remove_reference_t<T>>>;
 
     template<typename T>
