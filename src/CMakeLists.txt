@@ -66,6 +66,7 @@ set(SOURCES
     Public/Utility/Algorithm.h
     Public/Utility/Concepts.h
     Public/Utility/EnumReflection.h
+    Public/Utility/Error.h
     Public/Utility/Exception.h
     Public/Utility/Expected.h
     Public/Utility/FixedString.h
