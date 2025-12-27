@@ -24,8 +24,8 @@ namespace stf
             return m_View;
         }
 
-        friend bool operator==(const StringLiteral&, const StringLiteral&) = default;
-        friend bool operator!=(const StringLiteral&, const StringLiteral&) = default;
+        constexpr friend bool operator==(const StringLiteral&, const StringLiteral&) = default;
+        constexpr friend bool operator!=(const StringLiteral&, const StringLiteral&) = default;
 
     private:
         std::string_view m_View{};
