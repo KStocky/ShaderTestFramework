@@ -4,6 +4,7 @@
 #include "Platform.h"
 
 #include "Utility/Concepts.h"
+#include "Utility/Expected.h"
 #include "Utility/FixedString.h"
 #include "Utility/StringLiteral.h"
 
@@ -44,7 +45,7 @@ namespace stf
         }
 
         template<FixedString InFormat, typename... ArgTypes>
-            requires (std::formattable<ArgTypes, char> && ...)
+            requires (Formattable<ArgTypes, char> && ...)
         static ErrorFragment Make(ArgTypes&&... InArgs)
         {
             return ErrorFragment{
@@ -135,6 +136,9 @@ namespace stf
 
         std::vector<ErrorFragment> m_Fragments{};
     };
+
+    template<typename T>
+    using ExpectedError = Expected<T, Error>;
 }
 
 template<>
