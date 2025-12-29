@@ -35,7 +35,6 @@ namespace stf
 
         struct CreationParams
         {
-            std::function<SharedPtr<T>()> CreateFunc;
             SharedPtr<CommandQueue> Queue;
         };
 
@@ -62,25 +61,31 @@ namespace stf
         };
 
         FencedResourceFreeList(const CreationParams& InParams)
-            : m_CreateFunc(InParams.CreateFunc)
-            , m_Queue(InParams.Queue)
+            : m_Queue(InParams.Queue)
         {
         }
 
-        [[nodiscard]] Handle Acquire()
+        [[nodiscard]] Handle Manage(T&& InResource)
         {
             TickDeferredReleases();
-            if (m_FreeList.empty())
-            {
-                const u32VersionedIndex resourceIndex{ static_cast<u32>(m_Resources.size()) };
-                
-                m_Resources.emplace_back(m_CreateFunc(), resourceIndex.GetVersion());
-                m_DeferredResources.emplace_back(false);
 
-                return Handle{ FencedResourceFreeListToken<T> {}, resourceIndex };
-            }
+            const auto resourceIndex = 
+                [&]()
+                {
+                    if (m_FreeList.empty())
+                    {
+                        return u32VersionedIndex{ static_cast<u32>(m_Resources.size()) };
+                    }
+                    else
+                    {
+                        return ThrowIfUnexpected(m_FreeList.pop_front());
+                    }
+                }();
 
-            return Handle{ FencedResourceFreeListToken<T>{}, ThrowIfUnexpected(m_FreeList.pop_front()) };
+            m_Resources.emplace_back(std::move(InResource), resourceIndex.GetVersion());
+            m_DeferredResources.emplace_back(false);
+
+            return Handle{ FencedResourceFreeListToken<T>{}, resourceIndex };
         }
 
         ExpectedError<void> Release(const Handle InHandle)
@@ -109,15 +114,15 @@ namespace stf
             return InternalValidateHandle(InHandle).transform([](const auto&) {});
         }
 
-        ExpectedError<std::reference_wrapper<T>> Get(const Handle InHandle) const
+        ExpectedError<T> Get(const Handle InHandle) const
         {
             return InternalValidateHandle(InHandle)
                 .and_then(
-                    [this](const u32VersionedIndex InVersionedIndex) -> ExpectedError<std::reference_wrapper<T>>
+                    [this](const u32VersionedIndex InVersionedIndex) -> ExpectedError<T>
                     {
                         const auto index = InVersionedIndex.GetIndex();
 
-                        return *m_Resources[index].Resource.get();
+                        return m_Resources[index].Resource;
                     }
                 );
         }
@@ -170,7 +175,7 @@ namespace stf
 
         struct VersionedResource
         {
-            SharedPtr<T> Resource;
+            T Resource;
             u32 Version{};
         };
 
@@ -179,8 +184,6 @@ namespace stf
         RingBuffer<FencedResource> m_DeferredReleasedHandles;
         RingBuffer<u32VersionedIndex> m_FreeList;
 
-
-        std::function<SharedPtr<T>()> m_CreateFunc;
         SharedPtr<CommandQueue> m_Queue;
     };
 }

@@ -49,11 +49,17 @@ TEST_CASE_PERSISTENT_FIXTURE(FencedResourceFreeListTestFixture, "Scenario: Fence
     );
 
     auto getResource =
-        [](FreeListType& InFreeList, const FreeListType::Handle InHandle)
+        [](const FreeListType& InFreeList, const FreeListType::Handle InHandle)
         {
             const auto ret = InFreeList.Get(InHandle);
             REQUIRE(ret);
-            return ret.value().get();
+            return ret.value();
+        };
+
+    auto resourceGenerator = 
+        [id = 0]() mutable
+        {
+            return id++;
         };
 
     GIVEN("DeviceType: " << Enum::UnscopedName(deviceType))
@@ -94,16 +100,12 @@ TEST_CASE_PERSISTENT_FIXTURE(FencedResourceFreeListTestFixture, "Scenario: Fence
             FreeListType freeList{
                 FreeListType::CreationParams
                 {
-                    .CreateFunc = [id = 0]() mutable
-                    {
-                        return MakeShared<i32>(id++);
-                    },
                     .Queue = directQueue
                 } };
 
             WHEN("Resource requested")
             {
-                const auto firstHandle = freeList.Acquire();
+                const auto firstHandle = freeList.Manage(resourceGenerator());
 
                 REQUIRE(freeList.ValidateHandle(firstHandle));
                 const auto firstResource = getResource(freeList, firstHandle);
@@ -121,7 +123,7 @@ TEST_CASE_PERSISTENT_FIXTURE(FencedResourceFreeListTestFixture, "Scenario: Fence
 
                     AND_WHEN("resource is acquired again")
                     {
-                        const auto secondHandle = freeList.Acquire();
+                        const auto secondHandle = freeList.Manage(resourceGenerator());
                         REQUIRE(freeList.ValidateHandle(secondHandle));
                         const auto secondResource = getResource(freeList, secondHandle);
 
@@ -146,7 +148,7 @@ TEST_CASE_PERSISTENT_FIXTURE(FencedResourceFreeListTestFixture, "Scenario: Fence
 
                         AND_WHEN("resource is requested again")
                         {
-                            const auto secondHandle = freeList.Acquire();
+                            const auto secondHandle = freeList.Manage(resourceGenerator());
                             REQUIRE(freeList.ValidateHandle(secondHandle));
                             const auto secondResource = getResource(freeList, secondHandle);
 
@@ -157,7 +159,7 @@ TEST_CASE_PERSISTENT_FIXTURE(FencedResourceFreeListTestFixture, "Scenario: Fence
 
                             AND_WHEN("yet another resource requested")
                             {
-                                const auto thirdHandle = freeList.Acquire();
+                                const auto thirdHandle = freeList.Manage(resourceGenerator());
                                 REQUIRE(freeList.ValidateHandle(thirdHandle));
                                 const auto thirdResource = getResource(freeList, thirdHandle);
 
@@ -180,7 +182,7 @@ TEST_CASE_PERSISTENT_FIXTURE(FencedResourceFreeListTestFixture, "Scenario: Fence
 
                             AND_WHEN("resource is requested again")
                             {
-                                const auto secondHandle = freeList.Acquire();
+                                const auto secondHandle = freeList.Manage(resourceGenerator());
                                 REQUIRE(freeList.ValidateHandle(secondHandle));
                                 const auto secondResource = getResource(freeList, secondHandle);
 
