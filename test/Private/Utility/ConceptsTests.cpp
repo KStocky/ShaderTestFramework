@@ -439,3 +439,20 @@ namespace ValidBitFieldTests
     static_assert(!CValidBitField<NonIntegral, sizeof(NonIntegral) * 8>);
     static_assert(!CValidBitField<i32, 32>);
 }
+
+namespace OStreamableTests
+{
+    using namespace stf;
+    struct TestOStreamable
+    {
+        friend std::ostream& operator<<(std::ostream& InStream, const TestOStreamable&)
+        {
+            return InStream;
+        }
+    };
+
+    struct TestNotOStreamable {};
+
+    static_assert(OStreamable<TestOStreamable>);
+    static_assert(!OStreamable<TestNotOStreamable>);
+}

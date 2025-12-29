@@ -152,4 +152,10 @@ namespace stf
         (sizeof(BackingType) * 8) == (Bits + ...) &&
         ((Bits != 0) && ...);
 
+    template<typename T>
+    concept OStreamable = requires(std::ostream& InOutStream, const T & In)
+    {
+        { InOutStream << In } -> std::same_as<std::ostream&>;
+    };
+
 }
