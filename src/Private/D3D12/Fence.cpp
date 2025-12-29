@@ -42,7 +42,8 @@ namespace stf
             .transform(
                 [&, this]()
                 {
-                    return m_Fence->GetCompletedValue() >= InFencePoint.SignalledValue;
+                    const auto fenceValue = m_Fence->GetCompletedValue();
+                    return fenceValue >= InFencePoint.SignalledValue;
                 }
             );
     }
