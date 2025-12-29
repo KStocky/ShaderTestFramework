@@ -7,6 +7,7 @@
 #include <catch2/generators/catch_generators.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 #include <format>
+#include <sstream>
 #include <string_view>
 #include <utility>
 
@@ -206,7 +207,17 @@ SCENARIO("Error Tests")
             {
                 REQUIRE(error.HasFragmentWithFormat(errorFrag1.Format()));
 
-                REQUIRE_THAT(std::format("{}", error), ContainsSubstring(std::format("{}", errorFrag1.Error())));
+                const auto formattedError = std::format("{}", error);
+                const auto streamError = [&]()
+                    { 
+                        std::stringstream stringBuffer;
+                        stringBuffer << error;
+                        return stringBuffer.str();
+                    }();
+                
+                REQUIRE(formattedError == streamError);
+
+                REQUIRE_THAT(formattedError, ContainsSubstring(std::format("{}", errorFrag1.Error())));
             }
 
             AND_WHEN("Appended to again")
@@ -221,6 +232,16 @@ SCENARIO("Error Tests")
                     REQUIRE(error.HasFragmentWithFormat(errorFrag2.Format()));
 
                     const auto errorMessage = std::format("{}", error);
+
+                    const auto streamError = [&]()
+                        {
+                            std::stringstream stringBuffer;
+                            stringBuffer << error;
+                            return stringBuffer.str();
+                        }();
+                    
+                    REQUIRE(errorMessage == streamError);
+
                     const auto error1Range = std::ranges::search(errorMessage, errorFrag1.Error());
                     const auto error2Range = std::ranges::search(errorMessage, errorFrag2.Error());
 

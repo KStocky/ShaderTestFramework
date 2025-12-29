@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <format>
 #include <iterator>
+#include <ostream>
 #include <ranges>
 #include <vector>
 
@@ -89,6 +90,11 @@ namespace stf
 
         Error() = default;
 
+        explicit Error(ErrorFragment&& InFragment)
+        {
+            Append(std::move(InFragment));
+        }
+
         void Append(ErrorFragment&& InFragment)
         {
             m_Fragments.push_back(std::move(InFragment));
@@ -132,6 +138,8 @@ namespace stf
             return *this;
         }
 
+        friend std::ostream& operator<<(std::ostream& InOutStream, const Error& InError);
+
     private:
 
         std::vector<ErrorFragment> m_Fragments{};
@@ -154,3 +162,12 @@ struct std::formatter<stf::Error> : std::formatter<string_view> {
         return In.FormatTo(ctx.out());
     }
 };
+
+namespace stf
+{
+    inline std::ostream& operator<<(std::ostream& InOutStream, const Error& InError)
+    {
+        std::print(InOutStream, "{}", InError);
+        return InOutStream;
+    }
+}
