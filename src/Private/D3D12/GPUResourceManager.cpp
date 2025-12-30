@@ -107,6 +107,10 @@ namespace stf
         return ConstantBufferViewHandle{ Private{}, InBufferHandle.GetHandle(), managedHandle};
     }
 
+    void GPUResourceManager::UploadData(const std::span<const std::byte>, const ConstantBufferHandle)
+    {
+    }
+
     void GPUResourceManager::Release(const ConstantBufferHandle InHandle)
     {
         ThrowIfUnexpected(m_Resources.Release(InHandle.GetHandle()));

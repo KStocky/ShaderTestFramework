@@ -80,7 +80,7 @@ namespace stf
         template<TriviallyCopyableType T>
         void UploadData(const T& InData, const ConstantBufferHandle InBufferHandle)
         {
-            UploadData(std::as_bytes(std::span<const T, 1>{ &InData }));
+            UploadData(std::as_bytes(std::span<const T, 1>{ &InData }), InBufferHandle);
         }
 
         void UploadData(const std::span<const std::byte> InBytes, const ConstantBufferHandle InBufferHandle);
