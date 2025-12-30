@@ -39,6 +39,7 @@ set(SOURCES
     Public/D3D12/FencedResourcePool.h
     Public/D3D12/GPUDevice.h
     Public/D3D12/GPUResource.h
+    Public/D3D12/GPUResourceManager.h
     Public/D3D12/Shader/CompiledShaderData.h
     Public/D3D12/Shader/IncludeHandler.h
     Public/D3D12/Shader/PipelineState.h
@@ -98,6 +99,7 @@ set(SOURCES
     Private/D3D12/Fence.cpp
     Private/D3D12/GPUDevice.cpp
     Private/D3D12/GPUResource.cpp
+    Private/D3D12/GPUResourceManager.cpp
     Private/D3D12/Shader/CompiledShaderData.cpp
     Private/D3D12/Shader/IncludeHandler.cpp
     Private/D3D12/Shader/PipelineState.cpp
