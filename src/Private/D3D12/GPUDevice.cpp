@@ -8,6 +8,8 @@
 #include <span>
 #include <vector>
 
+#include <d3dx12/d3dx12.h>
+
 #include <dxgidebug.h>
 
 #include <WinPixEventRuntime/pix3.h>
@@ -287,6 +289,15 @@ namespace stf
             ThrowIfUnexpected(InDestination.First()).GetCPUHandle(),
             ThrowIfUnexpected(InSource.First()).GetCPUHandle(),
             InType);
+    }
+
+    void GPUDevice::CreateConstantBufferView(const GPUResource& InResource, const DescriptorHandle InHandle) const
+    {
+        D3D12_CONSTANT_BUFFER_VIEW_DESC viewDesc{};
+        viewDesc.BufferLocation = InResource.GetGPUAddress();
+        viewDesc.SizeInBytes = static_cast<u32>(InResource.GetDesc().Width);
+
+        m_Device->CreateConstantBufferView(&viewDesc, InHandle.GetCPUHandle());
     }
 
     void GPUDevice::CreateShaderResourceView(const GPUResource& InResource, const DescriptorHandle InHandle) const

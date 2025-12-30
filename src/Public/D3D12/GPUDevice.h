@@ -215,6 +215,7 @@ namespace stf
 
 
         void CopyDescriptors(const DescriptorRange& InDestination, const DescriptorRange& InSource, const D3D12_DESCRIPTOR_HEAP_TYPE InType) const;
+        void CreateConstantBufferView(const GPUResource& InResource, const DescriptorHandle InHandle) const;
         void CreateShaderResourceView(const GPUResource& InResource, const DescriptorHandle InHandle) const;
         void CreateUnorderedAccessView(const GPUResource& InResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc, const DescriptorHandle InHandle) const;
 
