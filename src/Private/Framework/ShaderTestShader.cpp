@@ -63,11 +63,11 @@ namespace stf
                 });
     }
 
-    void ShaderTestShader::SetConstantBufferData(CommandList& InList) const
+    void ShaderTestShader::SetConstantBufferData(ScopedCommandContext& InCommandContext) const
     {
         for (const auto& [paramIndex, buffer] : m_RootParamBuffers)
         {
-            InList.SetComputeRoot32BitConstants(paramIndex, std::span{ buffer }, 0);
+            InCommandContext->SetComputeRoot32BitConstants(paramIndex, std::span{ buffer }, 0);
         }
     }
 

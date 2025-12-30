@@ -4,6 +4,7 @@
 #include "D3D12/CommandAllocator.h"
 #include "D3D12/CommandQueue.h"
 #include "D3D12/GPUDevice.h"
+#include "D3D12/GPUResourceManager.h"
 
 #include "Utility/FunctionTraits.h"
 #include "Utility/Lambda.h"
@@ -17,9 +18,11 @@ namespace stf
     class CommandEngineToken
     {
         friend class CommandEngine;
+        friend class ScopedCommandContext;
         CommandEngineToken() = default;
     };
 
+    class CommandEngine;
     class ScopedCommandContext;
 
     template<typename T>
@@ -35,22 +38,70 @@ namespace stf
         TFuncTraits<T>::ParamTypes::Size == 1 &&
         std::is_same_v<typename TFuncTraits<T>::ParamTypes::template Type<0>, ScopedCommandContext&>;
 
+
+    class ScopedGPUResourceManager
+    {
+    public:
+    
+        ScopedGPUResourceManager(const SharedPtr<GPUResourceManager>& InResourceManager)
+            : m_ResourceManager(InResourceManager)
+        {
+        }
+    
+        ~ScopedGPUResourceManager() noexcept 
+        {
+            for (const auto& cb : m_ConstantBuffers)
+            {
+                m_ResourceManager->Release(cb);
+            }
+
+            for (const auto& cbv : m_CBVs)
+            {
+                m_ResourceManager->Release(cbv);
+            }
+        }
+    
+        [[nodiscard]] GPUResourceManager::ConstantBufferViewHandle CreateCBV(const std::span<const std::byte> InData)
+        {
+            const auto buffer = m_ResourceManager->Acquire(GPUResourceManager::ConstantBufferDesc{ .RequestedSize = static_cast<u32>(InData.size_bytes()) });
+            const auto cbv = m_ResourceManager->CreateCBV(buffer);
+    
+            m_ResourceManager->UploadData(InData, buffer);
+    
+            m_ConstantBuffers.push_back(buffer);
+            m_CBVs.push_back(cbv);
+    
+            return cbv;
+        }
+    
+    private:
+    
+        SharedPtr<GPUResourceManager> m_ResourceManager;
+        std::vector<GPUResourceManager::ConstantBufferHandle> m_ConstantBuffers;
+        std::vector<GPUResourceManager::ConstantBufferViewHandle> m_CBVs;
+    };
+
     class ScopedCommandContext
     {
     public:
 
-        ScopedCommandContext(CommandEngineToken, CommandList* InList)
+        ScopedCommandContext(CommandEngineToken, 
+            const SharedPtr<CommandList>& InList,
+            const SharedPtr<GPUResourceManager>& InResourceManager
+        )
             : m_List(InList)
-        {}
+            , m_ResourceManager(MakeUnique<ScopedGPUResourceManager>(InResourceManager))
+        {
+        }
 
         CommandList* operator->() const
         {
-            return m_List;
+            return GetList();
         }
 
         CommandList& operator*() const
         {
-            return *m_List;
+            return *GetList();
         }
 
         template<ExecuteLambdaType InLambdaType>
@@ -60,11 +111,24 @@ namespace stf
             InFunc(*this);
         }
 
+        CommandList* GetList() const
+        {
+            return m_List.get();
+        }
+
+
+        [[nodiscard]] GPUResourceManager::ConstantBufferViewHandle CreateCBV(const std::span<const std::byte> InData)
+        {
+            return m_ResourceManager->CreateCBV(InData);
+        }
+
     private:
-        CommandList* m_List = nullptr;
+
+        SharedPtr<CommandList> m_List = nullptr;
+        UniquePtr<ScopedGPUResourceManager> m_ResourceManager = nullptr;
     };
 
-    class CommandEngine 
+    class CommandEngine
         : public Object
     {
     public:
@@ -74,7 +138,7 @@ namespace stf
             SharedPtr<GPUDevice> Device;
         };
 
-        CommandEngine(ObjectToken, CreationParams InParams);
+        CommandEngine(ObjectToken, const CreationParams& InParams);
 
         template<CommandEngineFuncType InLambdaType>
         void Execute(const InLambdaType& InFunc)
@@ -94,7 +158,9 @@ namespace stf
                 }();
 
             m_List->Reset(allocator);
-            ScopedCommandContext context(CommandEngineToken{}, m_List.get());
+            ScopedCommandContext context(CommandEngineToken{}, m_List
+                , m_ResourceManager
+            );
             InFunc(context);
 
             m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue->Signal() });
@@ -119,7 +185,9 @@ namespace stf
                 }();
 
             m_List->Reset(*allocator);
-            ScopedCommandContext context(CommandEngineToken{}, m_List.get());
+            ScopedCommandContext context(CommandEngineToken{}, m_List
+                , m_ResourceManager
+            );
             InFunc(context);
 
             m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue->Signal() });
@@ -146,6 +214,7 @@ namespace stf
         SharedPtr<GPUDevice> m_Device;
         SharedPtr<CommandQueue> m_Queue;
         SharedPtr<CommandList> m_List;
+        SharedPtr<GPUResourceManager> m_ResourceManager;
         RingBuffer<FencedAllocator> m_Allocators;
     };
 }

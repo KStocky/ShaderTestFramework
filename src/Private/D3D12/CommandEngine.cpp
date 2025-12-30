@@ -2,7 +2,7 @@
 
 namespace stf
 {
-    CommandEngine::CommandEngine(ObjectToken InToken, CreationParams InParams)
+    CommandEngine::CommandEngine(ObjectToken InToken, const CreationParams& InParams)
         : Object(InToken)
         , m_Device(InParams.Device)
         , m_Queue(InParams.Device->CreateCommandQueue(
@@ -17,6 +17,15 @@ namespace stf
             D3D12_COMMAND_LIST_TYPE_DIRECT,
             "Command Engine Direct List"
         ))
+        //, m_ResourceManager(
+        //    Object::New<GPUResourceManager>(
+        //        GPUResourceManager::CreationParams
+        //        {
+        //            .Device = InParams.Device,
+        //            .Queue = m_Queue
+        //        }
+        //    )
+        //)
         , m_Allocators()
     {
     }

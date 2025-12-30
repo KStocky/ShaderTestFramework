@@ -3,6 +3,7 @@
 
 #include "Platform.h"
 
+#include "D3D12/CommandEngine.h"
 #include "D3D12/CommandList.h"
 #include "D3D12/GPUDevice.h"
 #include "D3D12/Shader/CompiledShaderData.h"
@@ -35,7 +36,7 @@ namespace stf
 
         Expected<void, ErrorTypeAndDescription> Init();
         Expected<void, ErrorTypeAndDescription> BindConstantBufferData(const std::span<const ShaderBinding> InBindings);
-        void SetConstantBufferData(CommandList& InList) const;
+        void SetConstantBufferData(ScopedCommandContext& InList) const;
 
         uint3 GetThreadGroupSize() const;
 

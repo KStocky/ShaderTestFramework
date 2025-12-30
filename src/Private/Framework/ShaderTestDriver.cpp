@@ -141,7 +141,7 @@ namespace stf
                                     InContext->SetBufferUAV(*assertBuffer);
                                     InContext->SetBufferUAV(*allocationBuffer);
 
-                                    InTestDesc.Shader.SetConstantBufferData(*InContext);
+                                    InTestDesc.Shader.SetConstantBufferData(InContext);
                                 }
                             );
 
