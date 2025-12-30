@@ -133,6 +133,51 @@ namespace stf
             bool EnableGPUCapture = false;
         };
 
+        struct CommittedResourceDesc
+        {
+            D3D12_HEAP_PROPERTIES HeapProps =
+            {
+                .Type = D3D12_HEAP_TYPE_DEFAULT,
+                .CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN,
+                .MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN,
+                .CreationNodeMask = 0u,
+                .VisibleNodeMask = 0u
+            };
+
+            D3D12_HEAP_FLAGS HeapFlags = D3D12_HEAP_FLAG_NONE;
+            D3D12_RESOURCE_DESC1 ResourceDesc =
+            {
+                .Dimension = D3D12_RESOURCE_DIMENSION_UNKNOWN,
+                .Alignment = 0u,
+                .Width = 0u,
+                .Height = 0u,
+                .DepthOrArraySize = 0u,
+                .MipLevels = 0u,
+                .Format = DXGI_FORMAT_UNKNOWN,
+                .SampleDesc
+                {
+                    .Count = 0,
+                    .Quality = 0
+                },
+                .Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN,
+                .Flags = D3D12_RESOURCE_FLAG_NONE,
+                .SamplerFeedbackMipRegion =
+                {
+                    .Width = 0u,
+                    .Height = 0u,
+                    .Depth = 0u
+                }
+            };
+
+            D3D12_BARRIER_LAYOUT BarrierLayout = D3D12_BARRIER_LAYOUT_UNDEFINED;
+
+            std::optional<D3D12_CLEAR_VALUE> ClearValue = std::nullopt;
+
+            std::span<DXGI_FORMAT> CastableFormats = {};
+
+            std::string_view Name = "DefaultResource";
+        };
+
         GPUDevice(ObjectToken, const CreationParams InDesc);
         ~GPUDevice();
 
@@ -144,13 +189,7 @@ namespace stf
         SharedPtr<CommandQueue> CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName = "DefaultCommandQueue") const;
 
         SharedPtr<GPUResource> CreateCommittedResource(
-            const D3D12_HEAP_PROPERTIES& InHeapProps,
-            const D3D12_HEAP_FLAGS InFlags,
-            const D3D12_RESOURCE_DESC1& InResourceDesc,
-            const D3D12_BARRIER_LAYOUT InInitialLayout,
-            const D3D12_CLEAR_VALUE* InClearValue = nullptr,
-            const std::span<DXGI_FORMAT> InCastableFormats = {},
-            const std::string_view InName = "DefaultResource"
+            const CommittedResourceDesc& InDesc
         ) const;
 
         SharedPtr<DescriptorHeap> CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName = "DefaultDescriptorHeap") const;

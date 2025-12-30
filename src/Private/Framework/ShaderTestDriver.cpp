@@ -47,7 +47,12 @@ namespace stf
     {
         const auto heapProps = CD3DX12_HEAP_PROPERTIES(InType);
 
-        return m_Device->CreateCommittedResource(heapProps, D3D12_HEAP_FLAG_NONE, InDesc, D3D12_BARRIER_LAYOUT_UNDEFINED);
+        return m_Device->CreateCommittedResource(
+            GPUDevice::CommittedResourceDesc
+            {
+                .HeapProps = CD3DX12_HEAP_PROPERTIES(InType),
+                .ResourceDesc = InDesc
+            });
     }
 
     ShaderTestUAV ShaderTestDriver::CreateUAV(SharedPtr<GPUResource> InResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc)
@@ -138,7 +143,7 @@ namespace stf
                                     InContext->SetBufferUAV(*assertBuffer);
                                     InContext->SetBufferUAV(*allocationBuffer);
 
-                                    InTestDesc.Shader.SetConstantBufferData(*InContext);
+                                    InTestDesc.Shader.SetConstantBufferData(InContext);
                                 }
                             );
 

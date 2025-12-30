@@ -19,10 +19,11 @@ namespace ShaderTestDescriptorManagerTestPrivate
                 {
                 }))
             , resource(device->CreateCommittedResource(
-                CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-                D3D12_HEAP_FLAG_NONE,
-                CD3DX12_RESOURCE_DESC1::Buffer(1024, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS),
-                D3D12_BARRIER_LAYOUT_UNDEFINED))
+                stf::GPUDevice::CommittedResourceDesc
+                {
+                    .HeapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+                    .ResourceDesc = CD3DX12_RESOURCE_DESC1::Buffer(1024, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)
+                }))
             , uavDesc(
                 D3D12_UNORDERED_ACCESS_VIEW_DESC
                 {

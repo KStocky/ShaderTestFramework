@@ -211,24 +211,24 @@ namespace stf
         return Object::New<CommandQueue>(CommandQueue::CreationParams{ std::move(raw), CreateFence(0ull) });
     }
 
-    SharedPtr<GPUResource> GPUDevice::CreateCommittedResource(const D3D12_HEAP_PROPERTIES& InHeapProps, const D3D12_HEAP_FLAGS InFlags, const D3D12_RESOURCE_DESC1& InResourceDesc, const D3D12_BARRIER_LAYOUT InInitialLayout, const D3D12_CLEAR_VALUE* InClearValue, const std::span<DXGI_FORMAT> InCastableFormats, const std::string_view InName) const
+    SharedPtr<GPUResource> GPUDevice::CreateCommittedResource(const CommittedResourceDesc& InDesc) const
     {
         ComPtr<ID3D12Resource2> raw{ nullptr };
 
         ThrowIfFailed(
             m_Device->CreateCommittedResource3(
-                &InHeapProps,
-                InFlags,
-                &InResourceDesc,
-                InInitialLayout,
-                InClearValue,
+                &InDesc.HeapProps,
+                InDesc.HeapFlags,
+                &InDesc.ResourceDesc,
+                InDesc.BarrierLayout,
+                InDesc.ClearValue.has_value() ? &InDesc.ClearValue.value() : nullptr,
                 nullptr,
-                static_cast<u32>(InCastableFormats.size()),
-                InCastableFormats.data(),
+                static_cast<u32>(InDesc.CastableFormats.size()),
+                InDesc.CastableFormats.data(),
                 IID_PPV_ARGS(raw.GetAddressOf()))
         );
-        SetName(raw.Get(), InName);
-        return Object::New<GPUResource>(GPUResource::CreationParams{ std::move(raw), InClearValue ? std::optional{*InClearValue} : std::nullopt, {D3D12_BARRIER_SYNC_NONE, D3D12_BARRIER_ACCESS_NO_ACCESS, InInitialLayout} });
+        SetName(raw.Get(), InDesc.Name);
+        return Object::New<GPUResource>(GPUResource::CreationParams{ std::move(raw), InDesc.ClearValue, {D3D12_BARRIER_SYNC_NONE, D3D12_BARRIER_ACCESS_NO_ACCESS, InDesc.BarrierLayout} });
     }
 
     SharedPtr<DescriptorHeap> GPUDevice::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName) const
