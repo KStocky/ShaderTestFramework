@@ -45,8 +45,6 @@ namespace stf
 
     SharedPtr<GPUResource> ShaderTestDriver::CreateBuffer(const D3D12_HEAP_TYPE InType, const D3D12_RESOURCE_DESC1& InDesc)
     {
-        const auto heapProps = CD3DX12_HEAP_PROPERTIES(InType);
-
         return m_Device->CreateCommittedResource(
             GPUDevice::CommittedResourceDesc
             {
