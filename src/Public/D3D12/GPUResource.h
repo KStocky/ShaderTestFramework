@@ -29,12 +29,12 @@ namespace stf
     {
     public:
 
-        MappedResource(GPUResourceToken, ComPtr<ID3D12Resource2> InResource);
+        MappedResource(GPUResourceToken, const ComPtr<ID3D12Resource2>& InResource);
         MappedResource(const MappedResource&) = delete;
         MappedResource& operator=(const MappedResource&) = delete;
         ~MappedResource();
 
-        std::span<const std::byte> Get() const
+        std::span<std::byte> Get() const
         {
             return m_MappedData;
         }
@@ -42,7 +42,7 @@ namespace stf
     private:
 
         ComPtr<ID3D12Resource2> m_Resource;
-        std::span<const std::byte> m_MappedData;
+        std::span<std::byte> m_MappedData;
     };
 
     class GPUResource 
