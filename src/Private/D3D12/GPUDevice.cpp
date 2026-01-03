@@ -127,10 +127,6 @@ namespace stf
         : Object(InToken)
         , m_Device(nullptr)
         , m_PixHandle(ConditionalLoadPIX(InDesc.EnableGPUCapture))
-        , m_CBVDescriptorSize(0)
-        , m_RTVDescriptorSize(0)
-        , m_DSVDescriptorSize(0)
-        , m_SamplerDescriptorSize(0)
     {
         ThrowIfUnexpected(SetupDebugLayer(InDesc.DebugLevel));
         const u32 factoryCreateFlags = InDesc.DebugLevel != EDebugLevel::Off ? DXGI_CREATE_FACTORY_DEBUG : 0;
@@ -151,11 +147,6 @@ namespace stf
                 SetDebugDeviceSettings();
             }
         }
-
-        m_CBVDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-        m_RTVDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-        m_DSVDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-        m_SamplerDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
 
         CacheHardwareInfo(m_Device.Get(), adapterInfo.Adapter.Get());
     }
@@ -386,8 +377,8 @@ namespace stf
         featureLevels.pFeatureLevelsRequested = levels.data();
         ThrowIfFailed(InDevice->CheckFeatureSupport(D3D12_FEATURE_FEATURE_LEVELS, &featureLevels, static_cast<uint32_t>(sizeof(featureLevels))));
 
-        GPUVirtualAddressInfo virtualAddressInfo{};
-        ThrowIfFailed(InDevice->CheckFeatureSupport(D3D12_FEATURE_GPU_VIRTUAL_ADDRESS_SUPPORT, &virtualAddressInfo, static_cast<uint32_t>(sizeof(virtualAddressInfo))));
+        D3D12_FEATURE_DATA_GPU_VIRTUAL_ADDRESS_SUPPORT virtualAddressSupport{};
+        ThrowIfFailed(InDevice->CheckFeatureSupport(D3D12_FEATURE_GPU_VIRTUAL_ADDRESS_SUPPORT, &virtualAddressSupport, static_cast<u32>(sizeof(virtualAddressSupport))));
 
         D3D12_FEATURE_DATA_SHADER_MODEL maxShaderModel{ .HighestShaderModel = D3D_HIGHEST_SHADER_MODEL };
         ThrowIfFailed(InDevice->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &maxShaderModel, static_cast<uint32_t>(sizeof(maxShaderModel))));
@@ -418,92 +409,112 @@ namespace stf
         D3D12_FEATURE_DATA_D3D12_OPTIONS12 options12{};
         ThrowIfFailed(InDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS12, &options12, static_cast<uint32_t>(sizeof(options12))));
 
-        m_Info = MakeShared<GPUHardwareInfo>
+        D3D12_FEATURE_DATA_D3D12_OPTIONS19 options19{};
+        ThrowIfFailed(InDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS19, &options19, static_cast<uint32_t>(sizeof(options19))));
+
+        m_Info = MakeUnique<GPUHardwareInfo>
             (
-                GPUAdapterInfo
-                {
-                    .Name = adapterDesc.Description,
-                    .DedicatedVRAM = adapterDesc.DedicatedVideoMemory,
-                    .SystemRAM = adapterDesc.DedicatedSystemMemory,
-                    .VendorId = adapterDesc.VendorId,
-                    .DeviceId = adapterDesc.DeviceId,
-                    .SubSysId = adapterDesc.SubSysId,
-                    .Revision = adapterDesc.Revision
-                },
-                D3D12FeatureInfo
-                {
-                    .ShaderCacheSupportFlags = shaderCacheInfo.SupportFlags,
-                    .TiledResourceTier = options1.TiledResourcesTier,
-                    .ResourceBindingTier = options1.ResourceBindingTier,
-                    .ConservativeRasterizationTier = options1.ConservativeRasterizationTier,
-                    .ResourceHeapTier = options1.ResourceHeapTier,
-                    .RenderPassTier = options5.RenderPassesTier,
-                    .RayTracingTier = options5.RaytracingTier,
-                    .MaxFeatureLevel = featureLevels.MaxSupportedFeatureLevel,
-                    .MaxShaderModel = maxShaderModel.HighestShaderModel,
-                    .RootSignatureVersion = rootSigInfo.HighestVersion,
-                    .MeshShaderTier = options7.MeshShaderTier,
-                    .SamplerFeedbackTier = options7.SamplerFeedbackTier,
-                    .ProgrammableSamplePositionsTier = options2.ProgrammableSamplePositionsTier,
-                    .DoublePrecisionSupport = !!options1.DoublePrecisionFloatShaderOps,
-                    .Float10Support = Enum::EnumHasMask(options1.MinPrecisionSupport, D3D12_SHADER_MIN_PRECISION_SUPPORT_10_BIT),
-                    .Float16Support = Enum::EnumHasMask(options1.MinPrecisionSupport, D3D12_SHADER_MIN_PRECISION_SUPPORT_16_BIT),
-                    .DepthBoundsTestSupport = !!options2.DepthBoundsTestSupported,
-                    .EnhancedBarriersSupport = !!options12.EnhancedBarriersSupported
-                },
-                GPUWaveOperationInfo
-                {
-                    .MinWaveLaneCount = waveOpInfo.WaveLaneCountMin,
-                    .MaxWaveLaneCount = waveOpInfo.WaveLaneCountMax,
-                    .TotalLaneCount = waveOpInfo.TotalLaneCount,
-                    .IsSupported = !!waveOpInfo.WaveOps
-                },
-                virtualAddressInfo,
-                GPUArchitectureInfo
-                {
-                    .GPUIndex = architectureInfo.NodeIndex,
-                    .SupportsTileBasedRendering = !!architectureInfo.TileBasedRenderer,
-                    .UMA = !!architectureInfo.UMA,
-                    .CacheCoherentUMA = !!architectureInfo.CacheCoherentUMA,
-                    .IsolatedMMU = !!architectureInfo.IsolatedMMU
-                },
-                VariableRateShadingInfo
-                {
-                    .ImageTileSize = options6.ShadingRateImageTileSize,
-                    .AdditionalShadingRates = !!options6.AdditionalShadingRatesSupported,
-                    .PerPrimitiveShadingRateSupportedWithViewportIndexing = !!options6.PerPrimitiveShadingRateSupportedWithViewportIndexing,
-                    .BackgroundProcessingSupported = !!options6.BackgroundProcessingSupported,
-                    .Tier = options6.VariableShadingRateTier
+                GPUHardwareInfo{
+                    .AdapterInfo = GPUAdapterInfo
+                    {
+                        .Name = adapterDesc.Description,
+                        .DedicatedVRAM = adapterDesc.DedicatedVideoMemory,
+                        .SystemRAM = adapterDesc.DedicatedSystemMemory,
+                        .VendorId = adapterDesc.VendorId,
+                        .DeviceId = adapterDesc.DeviceId,
+                        .SubSysId = adapterDesc.SubSysId,
+                        .Revision = adapterDesc.Revision
+                    },
+                    .FeatureInfo = D3D12FeatureInfo
+                    {
+                        .ShaderCacheSupportFlags = shaderCacheInfo.SupportFlags,
+                        .TiledResourceTier = options1.TiledResourcesTier,
+                        .ResourceBindingTier = options1.ResourceBindingTier,
+                        .ConservativeRasterizationTier = options1.ConservativeRasterizationTier,
+                        .ResourceHeapTier = options1.ResourceHeapTier,
+                        .RenderPassTier = options5.RenderPassesTier,
+                        .RayTracingTier = options5.RaytracingTier,
+                        .MaxFeatureLevel = featureLevels.MaxSupportedFeatureLevel,
+                        .MaxShaderModel = maxShaderModel.HighestShaderModel,
+                        .RootSignatureVersion = rootSigInfo.HighestVersion,
+                        .MeshShaderTier = options7.MeshShaderTier,
+                        .SamplerFeedbackTier = options7.SamplerFeedbackTier,
+                        .ProgrammableSamplePositionsTier = options2.ProgrammableSamplePositionsTier,
+                        .DoublePrecisionSupport = !!options1.DoublePrecisionFloatShaderOps,
+                        .Float10Support = Enum::EnumHasMask(options1.MinPrecisionSupport, D3D12_SHADER_MIN_PRECISION_SUPPORT_10_BIT),
+                        .Float16Support = Enum::EnumHasMask(options1.MinPrecisionSupport, D3D12_SHADER_MIN_PRECISION_SUPPORT_16_BIT),
+                        .DepthBoundsTestSupport = !!options2.DepthBoundsTestSupported,
+                        .EnhancedBarriersSupport = !!options12.EnhancedBarriersSupported
+                    },
+                    .WaveOperationInfo = GPUWaveOperationInfo
+                    {
+                        .MinWaveLaneCount = waveOpInfo.WaveLaneCountMin,
+                        .MaxWaveLaneCount = waveOpInfo.WaveLaneCountMax,
+                        .TotalLaneCount = waveOpInfo.TotalLaneCount,
+                        .IsSupported = !!waveOpInfo.WaveOps
+                    },
+                    .VirtualAddressInfo = GPUVirtualAddressInfo
+                    {
+                        .MaxBitsPerResource = virtualAddressSupport.MaxGPUVirtualAddressBitsPerResource,
+                        .MaxBitsPerProcess = virtualAddressSupport.MaxGPUVirtualAddressBitsPerProcess
+                    },
+                    .ArchitectureInfo = GPUArchitectureInfo
+                    {
+                        .GPUIndex = architectureInfo.NodeIndex,
+                        .SupportsTileBasedRendering = !!architectureInfo.TileBasedRenderer,
+                        .UMA = !!architectureInfo.UMA,
+                        .CacheCoherentUMA = !!architectureInfo.CacheCoherentUMA,
+                        .IsolatedMMU = !!architectureInfo.IsolatedMMU
+                    },
+                    .VRSInfo = VariableRateShadingInfo
+                    {
+                        .ImageTileSize = options6.ShadingRateImageTileSize,
+                        .AdditionalShadingRates = !!options6.AdditionalShadingRatesSupported,
+                        .PerPrimitiveShadingRateSupportedWithViewportIndexing = !!options6.PerPrimitiveShadingRateSupportedWithViewportIndexing,
+                        .BackgroundProcessingSupported = !!options6.BackgroundProcessingSupported,
+                        .Tier = options6.VariableShadingRateTier
+                    },
+                    .DescriptorHeapInfo = DescriptorHeapProperties
+                    {
+                        .MaxSamplers = options19.MaxSamplerDescriptorHeapSize,
+                        .MaxStaticSamplers = options19.MaxSamplerDescriptorHeapSizeWithStaticSamplers,
+                        .MaxViews = options19.MaxViewDescriptorHeapSize,
+                        .ViewDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
+                        .RTVDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV),
+                        .DSVDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV),
+                        .SamplerDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER),
+                    }
                 }
             );
     }
 
     u32 GPUDevice::GetDescriptorSize(const D3D12_DESCRIPTOR_HEAP_TYPE InType) const
     {
+        const auto& hardwareInfo = GetHardwareInfo();
         switch (InType)
         {
-        case D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV:
-        {
-            return m_CBVDescriptorSize;
-        }
-        case D3D12_DESCRIPTOR_HEAP_TYPE_DSV:
-        {
-            return m_DSVDescriptorSize;
-        }
-        case D3D12_DESCRIPTOR_HEAP_TYPE_RTV:
-        {
-            return m_RTVDescriptorSize;
-        }
-        case D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER:
-        {
-            return m_SamplerDescriptorSize;
-        }
-        case D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES:
-        default:
-        {
-            ThrowIfFalse(false, "Unknown Descriptor heap type");
+            case D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV:
+            {
+                return hardwareInfo.DescriptorHeapInfo.ViewDescriptorSize;
+            }
+            case D3D12_DESCRIPTOR_HEAP_TYPE_DSV:
+            {
+                return hardwareInfo.DescriptorHeapInfo.DSVDescriptorSize;
+            }
+            case D3D12_DESCRIPTOR_HEAP_TYPE_RTV:
+            {
+                return hardwareInfo.DescriptorHeapInfo.RTVDescriptorSize;
+            }
+            case D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER:
+            {
+                return hardwareInfo.DescriptorHeapInfo.SamplerDescriptorSize;
+            }
+            case D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES:
+            default:
+            {
+                ThrowIfFalse(false, "Unknown Descriptor heap type");
 
-        }
+            }
         }
 
         return 0;

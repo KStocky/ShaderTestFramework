@@ -30,12 +30,12 @@ namespace stf
     struct GPUAdapterInfo
     {
         std::wstring Name;
-        uint64_t DedicatedVRAM = 0;
-        uint64_t SystemRAM = 0;
-        uint32_t VendorId = 0;
-        uint32_t DeviceId = 0;
-        uint32_t SubSysId = 0;
-        uint32_t Revision = 0;
+        u64 DedicatedVRAM = 0;
+        u64 SystemRAM = 0;
+        u32 VendorId = 0;
+        u32 DeviceId = 0;
+        u32 SubSysId = 0;
+        u32 Revision = 0;
     };
 
     struct D3D12FeatureInfo
@@ -62,21 +62,21 @@ namespace stf
 
     struct GPUVirtualAddressInfo
     {
-        uint32_t MaxBitsPerResource = 0;
-        uint32_t MaxBitsPerProcess = 0;
+        u32 MaxBitsPerResource = 0;
+        u32 MaxBitsPerProcess = 0;
     };
 
     struct GPUWaveOperationInfo
     {
-        uint32_t MinWaveLaneCount = 0;
-        uint32_t MaxWaveLaneCount = 0;
-        uint32_t TotalLaneCount = 0;
+        u32 MinWaveLaneCount = 0;
+        u32 MaxWaveLaneCount = 0;
+        u32 TotalLaneCount = 0;
         bool IsSupported = false;
     };
 
     struct GPUArchitectureInfo
     {
-        uint32_t GPUIndex = 0;
+        u32 GPUIndex = 0;
         bool SupportsTileBasedRendering = false;
         bool UMA = false;
         bool CacheCoherentUMA = false;
@@ -85,11 +85,22 @@ namespace stf
 
     struct VariableRateShadingInfo
     {
-        uint32_t ImageTileSize = 0;
+        u32 ImageTileSize = 0;
         bool AdditionalShadingRates = false;
         bool PerPrimitiveShadingRateSupportedWithViewportIndexing = false;
         bool BackgroundProcessingSupported = false;
         D3D12_VARIABLE_SHADING_RATE_TIER Tier = D3D12_VARIABLE_SHADING_RATE_TIER_NOT_SUPPORTED;
+    };
+
+    struct DescriptorHeapProperties
+    {
+        u32 MaxSamplers = 0;
+        u32 MaxStaticSamplers = 0;
+        u32 MaxViews = 0;
+        u32 ViewDescriptorSize = 0;
+        u32 RTVDescriptorSize = 0;
+        u32 DSVDescriptorSize = 0;
+        u32 SamplerDescriptorSize = 0;
     };
 
     struct GPUHardwareInfo
@@ -100,6 +111,7 @@ namespace stf
         GPUVirtualAddressInfo VirtualAddressInfo;
         GPUArchitectureInfo ArchitectureInfo;
         VariableRateShadingInfo VRSInfo;
+        DescriptorHeapProperties DescriptorHeapInfo;
     };
 
     template<typename T>
@@ -231,13 +243,8 @@ namespace stf
 
         ComPtr<ID3D12Device12> m_Device = nullptr;
 
-        SharedPtr<GPUHardwareInfo> m_Info = nullptr;
+        UniquePtr<GPUHardwareInfo> m_Info = nullptr;
 
         HMODULE m_PixHandle = nullptr;
-
-        u32 m_CBVDescriptorSize = 0;
-        u32 m_RTVDescriptorSize = 0;
-        u32 m_DSVDescriptorSize = 0;
-        u32 m_SamplerDescriptorSize = 0;
     };
 }
