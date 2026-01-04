@@ -5,13 +5,13 @@
 
 #include "D3D12/Shader/PipelineState.h"
 #include "D3D12/Shader/RootSignature.h"
-#include "Framework/HLSLTypes.h"
 #include "Framework/ShaderTestDescriptorManager.h"
 #include "Framework/ShaderTestShader.h"
 #include "Framework/TestDataBufferLayout.h"
 #include "Framework/TypeByteReader.h"
 
 #include "Utility/Expected.h"
+#include "Utility/HLSLTypes.h"
 #include "Utility/Object.h"
 #include "Utility/Pointer.h"
 

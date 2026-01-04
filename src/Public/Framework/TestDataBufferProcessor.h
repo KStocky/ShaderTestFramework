@@ -2,10 +2,10 @@
 
 #include "Platform.h"
 
-#include "Framework/HLSLTypes.h"
 #include "Framework/ShaderTestCommon.h"
 #include "Framework/TestDataBufferLayout.h"
 #include "Framework/TypeByteReader.h"
+#include "Utility/HLSLTypes.h"
 
 #include <span>
 #include <string>

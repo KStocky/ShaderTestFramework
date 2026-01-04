@@ -10,9 +10,9 @@
 #include "D3D12/Shader/RootSignature.h"
 #include "D3D12/Shader/ShaderBinding.h"
 
-#include "Framework/HLSLTypes.h"
 #include "Framework/ShaderTestCommon.h"
 #include "Utility/Expected.h"
+#include "Utility/HLSLTypes.h"
 #include "Utility/Object.h"
 #include "Utility/TransparentStringHash.h"
 

@@ -1,9 +1,9 @@
 
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
 
-#include <Framework/HLSLTypes.h>
 #include <Framework/ShaderTestFixture.h>
 #include <Utility/Expected.h>
+#include <Utility/HLSLTypes.h>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>

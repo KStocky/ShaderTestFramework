@@ -198,7 +198,6 @@ set(SOURCES
     Private/Framework/HLSLFramework/ThreadDimensionsTests.cpp
     Private/Framework/HLSLFramework/ThreadIdRegistrationTests.cpp
     Private/Framework/HLSLFramework/TTLTypeTraitsTests.cpp
-    Private/Framework/HLSLTypesTests.cpp
     Private/Framework/SectionsInHLSLProofOfConceptTests.cpp
     Private/Framework/ShaderTestDescriptorManagerTests.cpp
     Private/Framework/ShaderTestFixtureTests.cpp
@@ -214,6 +213,7 @@ set(SOURCES
     Private/Utility/ErrorTests.cpp
     Private/Utility/ExpectedTests.cpp
     Private/Utility/FunctionTraitsTests.cpp
+    Private/Utility/HLSLTypesTests.cpp
     Private/Utility/LambdaTests.cpp
     Private/Utility/ObjectTests.cpp
     Private/Utility/PointerTests.cpp

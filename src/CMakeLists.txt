@@ -51,7 +51,6 @@ set(SOURCES
     Public/D3D12/Shader/ShaderReflectionUtils.h
     Public/D3D12/Shader/VirtualShaderDirectoryMapping.h
     Public/D3D12/Shader/VirtualShaderDirectoryMappingManager.h
-    Public/Framework/HLSLTypes.h
     Public/Framework/PIXCapturer.h
     Public/Framework/ShaderTestCommon.h
     Public/Framework/ShaderTestDescriptorManager.h
@@ -74,6 +73,7 @@ set(SOURCES
     Public/Utility/FixedString.h
     Public/Utility/Float.h
     Public/Utility/FunctionTraits.h
+    Public/Utility/HLSLTypes.h
     Public/Utility/Lambda.h
     Public/Utility/Math.h
     Public/Utility/MoveOnly.h

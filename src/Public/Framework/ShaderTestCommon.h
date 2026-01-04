@@ -2,9 +2,10 @@
 
 #include "Platform.h"
 
-#include "Framework/HLSLTypes.h"
 #include "Framework/TypeByteReader.h"
 #include "Framework/TestDataBufferLayout.h"
+
+#include "Utility/HLSLTypes.h"
 
 #include <compare>
 #include <string>

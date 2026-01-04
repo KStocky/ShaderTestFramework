@@ -3,12 +3,12 @@
 #include "D3D12/GPUDevice.h"
 #include "D3D12/Shader/ShaderBinding.h"
 #include "D3D12/Shader/ShaderCompiler.h"
-#include "Framework/HLSLTypes.h"
 #include "Framework/ShaderTestDriver.h"
 #include "Framework/ShaderTestShader.h"
 #include "Framework/TestDataBufferLayout.h"
 #include "Stats/StatSystem.h"
 #include "Utility/Expected.h"
+#include "Utility/HLSLTypes.h"
 #include "Utility/Pointer.h"
 #include "Utility/TransparentStringHash.h"
 #include <vector>
