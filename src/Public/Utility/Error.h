@@ -95,6 +95,19 @@ namespace stf
             Append(std::move(InFragment));
         }
 
+        template<FixedString InFormat>
+        static Error FromFragment()
+        {
+            return Error{ ErrorFragment::Make<InFormat>() };
+        }
+
+        template<FixedString InFormat, typename... ArgTypes>
+            requires (Formattable<ArgTypes, char> && ...)
+        static Error FromFragment(ArgTypes&&... InArgs)
+        {
+            return Error{ ErrorFragment::Make<InFormat>(std::forward<ArgTypes>(InArgs)...) };
+        }
+
         void Append(ErrorFragment&& InFragment)
         {
             m_Fragments.push_back(std::move(InFragment));
@@ -139,6 +152,9 @@ namespace stf
         }
 
         friend std::ostream& operator<<(std::ostream& InOutStream, const Error& InError);
+
+        friend bool operator==(const Error&, const Error&) = default;
+        friend bool operator!=(const Error&, const Error&) = default;
 
     private:
 

@@ -4,6 +4,7 @@
 #include <Utility/StringLiteral.h>
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 #include <format>
 #include <sstream>
@@ -248,6 +249,100 @@ SCENARIO("Error Tests")
                     REQUIRE(error2Range);
 
                     REQUIRE(error2Range.cend() < error1Range.cbegin());
+                }
+            }
+        }
+    }
+
+    GIVEN("Constructed from a fragment")
+    {
+        static constexpr FixedString expectedFormat{ "Error 1" };
+        const auto error = Error::FromFragment<expectedFormat>();
+
+        THEN("contains expected fragment")
+        {
+            REQUIRE(error.HasFragmentWithFormat(expectedFormat.Literal()));
+        }
+    }
+
+    const auto [given, left, right, expected] = GENERATE(
+        table<std::string, Error, Error, bool>
+        (
+            {
+                std::tuple
+                {
+                    "Errors with same format and no args",
+                    Error::FromFragment<"Error">(),
+                    Error::FromFragment<"Error">(),
+                    true
+                },
+                std::tuple
+                {
+                    "Errors with different formats and no args",
+                    Error::FromFragment<"Error">(),
+                    Error::FromFragment<"OtherError">(),
+                    false
+                },
+                std::tuple
+                {
+                    "Errors with same format and args",
+                    Error::FromFragment<"Error {}">(42),
+                    Error::FromFragment<"Error {}">(42),
+                    true
+                },
+                std::tuple
+                {
+                    "Errors with same format and different args",
+                    Error::FromFragment<"Error {}">(42),
+                    Error::FromFragment<"Error {}">(24),
+                    false
+                },
+                std::tuple
+                {
+                    "Errors with different format and same args",
+                    Error::FromFragment<"Error 1{}">(42),
+                    Error::FromFragment<"Error 2{}">(42),
+                    false
+                },
+                std::tuple
+                {
+                    "Errors with different format and different args",
+                    Error::FromFragment<"Error 1{}">(42),
+                    Error::FromFragment<"Error 2{}">(24),
+                    false
+                },
+                std::tuple
+                {
+                    "Errors with differing number of fragments",
+                    Error::FromFragment<"Error 1">(),
+                    Error::FromFragment<"Error 1">() += ErrorFragment::Make<"Error 2">(),
+                    false
+                }
+            }
+        )
+    );
+
+    GIVEN(given)
+    {
+        WHEN("compared")
+        {
+            const auto equalResult = left == right;
+            const auto notEqualResult = left != right;
+
+            if (expected)
+            {
+                THEN("compares as equal")
+                {
+                    REQUIRE(equalResult);
+                    REQUIRE_FALSE(notEqualResult);
+                }
+            }
+            else
+            {
+                THEN("compares as not equal")
+                {
+                    REQUIRE_FALSE(equalResult);
+                    REQUIRE(notEqualResult);
                 }
             }
         }
