@@ -5,6 +5,7 @@
 #include "Framework/TypeByteReader.h"
 #include "Framework/TestDataBufferLayout.h"
 
+#include "Utility/Error.h"
 #include "Utility/HLSLTypes.h"
 
 #include <compare>
@@ -64,30 +65,22 @@ namespace stf
         RootSignatureGeneration
     };
 
-    struct ErrorTypeAndDescription
-    {
-        ETestRunErrorType Type = ETestRunErrorType::Unknown;
-        std::string Error {};
-        friend bool operator==(const ErrorTypeAndDescription&, const ErrorTypeAndDescription&) = default;
-        friend std::ostream& operator<<(std::ostream& InOs, const ErrorTypeAndDescription& In);
-    };
-
     class Results
     {
     public:
 
         Results() = default;
-        Results(ErrorTypeAndDescription InError);
+        Results(Error InError);
         Results(TestRunResults InResults);
 
         operator bool() const;
 
         const TestRunResults* GetTestResults() const;
-        const ErrorTypeAndDescription* GetTestRunError() const;
+        const Error* GetTestRunError() const;
 
         friend std::ostream& operator<<(std::ostream& InOs, const Results& In);
 
     private:
-        std::variant<std::monostate, TestRunResults, ErrorTypeAndDescription> m_Result;
+        std::variant<std::monostate, TestRunResults, Error> m_Result;
     };
 }

@@ -119,7 +119,7 @@ SCENARIO("ShaderModelTests")
             {
                 THEN("Compilation Succeeds")
                 {
-                    const auto error = errors.has_value() ? "" : errors.error();
+                    const auto error = errors.has_value() ? "" : std::format("{}", errors.error());
                     CAPTURE(error);
                     REQUIRE(errors.has_value());
                 }

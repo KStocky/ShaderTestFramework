@@ -94,9 +94,9 @@ namespace stf
         );
     }
 
-    Expected<Results, ErrorTypeAndDescription> ShaderTestDriver::RunShaderTest(TestDesc InTestDesc)
+    ExpectedError<Results> ShaderTestDriver::RunShaderTest(TestDesc&& InTestDesc)
     {
-        auto pipelineState = CreatePipelineState(*InTestDesc.Shader.GetRootSig(), InTestDesc.Shader.GetCompiledShader());
+        auto pipelineState = CreatePipelineState(InTestDesc.Shader.GetRootSig(), InTestDesc.Shader.GetCompiledShader());
         const u32 bufferSizeInBytes = std::max(InTestDesc.TestBufferLayout.GetSizeOfTestData(), 4u);
         static constexpr u32 allocationBufferSizeInBytes = sizeof(AllocationBufferData);
         auto assertBuffer = CreateBuffer(D3D12_HEAP_TYPE_DEFAULT, CD3DX12_RESOURCE_DESC1::Buffer(bufferSizeInBytes, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS));
@@ -107,17 +107,16 @@ namespace stf
         const auto assertUAV = CreateUAV(assertBuffer, CreateRawUAVDesc(bufferSizeInBytes));
         const auto allocationUAV = CreateUAV(allocationBuffer, CreateRawUAVDesc(allocationBufferSizeInBytes));
 
-        InTestDesc.Bindings.append_range( std::array
-            {
-                ShaderBinding{ "stf::detail::DispatchDimensions", InTestDesc.DispatchConfig * InTestDesc.Shader.GetThreadGroupSize()},
-                ShaderBinding{ "stf::detail::AllocationBufferIndex", allocationUAV.Handle.GetIndex() },
-                ShaderBinding{ "stf::detail::TestDataBufferIndex", assertUAV.Handle.GetIndex() },
-                ShaderBinding{ "stf::detail::Asserts", InTestDesc.TestBufferLayout.GetAssertSection() },
-                ShaderBinding{ "stf::detail::Strings", InTestDesc.TestBufferLayout.GetStringSection() },
-                ShaderBinding{ "stf::detail::Sections", InTestDesc.TestBufferLayout.GetSectionInfoSection() }
-            });
-
-        return InTestDesc.Shader.BindConstantBufferData(InTestDesc.Bindings)
+        return InTestDesc.Shader.StageConstantBufferData(
+                ShaderTestShader::TestBindings
+                {
+                    .DispatchConfig = InTestDesc.DispatchConfig,
+                    .AllocationBufferIndex = allocationUAV.Handle.GetIndex(),
+                    .TestDataBufferIndex = assertUAV.Handle.GetIndex(),
+                    .TestDataLayout = InTestDesc.TestBufferLayout
+                },
+                InTestDesc.Bindings
+            )
             .and_then(
                 [&, this]()
                 {
@@ -137,11 +136,11 @@ namespace stf
                                 {
                                     InContext->SetPipelineState(*pipelineState);
                                     m_DescriptorManager->SetDescriptorHeap(*InContext);
-                                    InContext->SetComputeRootSignature(*InTestDesc.Shader.GetRootSig());
+                                    InContext->SetComputeRootSignature(InTestDesc.Shader.GetRootSig());
                                     InContext->SetBufferUAV(*assertBuffer);
                                     InContext->SetBufferUAV(*allocationBuffer);
 
-                                    InTestDesc.Shader.SetConstantBufferData(InContext);
+                                    InTestDesc.Shader.CommitBindings(InContext);
                                 }
                             );
 
@@ -187,19 +186,11 @@ namespace stf
                                 {
                                     case DescriptorAlreadyFree:
                                     {
-                                        return ErrorTypeAndDescription
-                                        {
-                                            .Type = ETestRunErrorType::DescriptorManagement,
-                                            .Error = "Attempted to free an already freed descriptor."
-                                        };
+                                        return Error::FromFragment<"Attempted to free an already freed descriptor.">();
                                     }
                                     default:
                                     {
-                                        return ErrorTypeAndDescription
-                                        {
-                                            .Type = ETestRunErrorType::Unknown,
-                                            .Error = "Unknown descriptor management error."
-                                        };
+                                        return Error::FromFragment<"Unknown descriptor management error.">();
                                     }
                                 }
                             }

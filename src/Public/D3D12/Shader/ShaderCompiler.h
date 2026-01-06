@@ -3,7 +3,7 @@
 #include "D3D12/Shader/CompiledShaderData.h"
 #include "D3D12/Shader/ShaderEnums.h"
 #include "D3D12/Shader/VirtualShaderDirectoryMappingManager.h"
-#include "Utility/Expected.h"
+#include "Utility/Error.h"
 
 #include <filesystem>
 #include <ostream>
@@ -18,21 +18,24 @@ namespace stf
 {
     namespace fs = std::filesystem;
 
-    using CompilationResult = Expected<CompiledShaderData, std::string>;
-
-    std::ostream& operator<<(std::ostream& InStream, const CompilationResult& InResult);
+    namespace Errors
+    {
+        Error EmptyShaderCodeSource();
+        Error EmptyVirtualPath();
+        Error UnknownVirtualShaderMappingError();
+        Error ResolvedPathIsInvalid(const std::string_view InAbsolutePath, const std::string_view InPath);
+        Error ReportShaderCompilationError(const std::string_view InError);
+    }
 
     class ShaderCodeSource
     {
     public:
 
-        using ToStringResult = Expected<std::string, std::string>;
-
         ShaderCodeSource() = default;
         ShaderCodeSource(std::string InSourceCode);
         ShaderCodeSource(fs::path InSourcePath);
 
-        ToStringResult ToString(const VirtualShaderDirectoryMappingManager& InManager) const;
+        ExpectedError<std::string> ToString(const VirtualShaderDirectoryMappingManager& InManager) const;
 
     private:
         std::variant<std::monostate, std::string, fs::path> m_Source;
@@ -63,7 +66,7 @@ namespace stf
 
         ShaderCompiler();
         ShaderCompiler(std::vector<VirtualShaderDirectoryMapping> InMappings);
-        CompilationResult CompileShader(const ShaderCompilationJobDesc& InJob) const;
+        ExpectedError<CompiledShaderData> CompileShader(const ShaderCompilationJobDesc& InJob) const;
 
     private:
 

@@ -39,7 +39,7 @@ namespace stf
         return "";
     }
 
-    Results::Results(ErrorTypeAndDescription InError)
+    Results::Results(Error InError)
         : m_Result(std::move(InError))
     {
     }
@@ -60,7 +60,7 @@ namespace stf
         {
             return InTestResults.NumFailed == 0;
         },
-        [](const ErrorTypeAndDescription&)
+        [](const Error&)
         {
             return false;
         } }, m_Result);
@@ -71,9 +71,9 @@ namespace stf
         return std::get_if<TestRunResults>(&m_Result);
     }
 
-    const ErrorTypeAndDescription* Results::GetTestRunError() const
+    const Error* Results::GetTestRunError() const
     {
-        return std::get_if<ErrorTypeAndDescription>(&m_Result);
+        return std::get_if<Error>(&m_Result);
     }
 
     bool operator==(const FailedAssert& InA, const FailedAssert& InB)
@@ -172,12 +172,6 @@ namespace stf
         return InOs;
     }
 
-    std::ostream& operator<<(std::ostream& InOs, const ErrorTypeAndDescription& In)
-    {
-        InOs << "Type: " << Enum::ScopedName(In.Type) << "\n Description: " << In.Error;
-        return InOs;
-    }
-
     std::ostream& operator<<(std::ostream& InOs, const Results& In)
     {
         std::visit(
@@ -191,7 +185,7 @@ namespace stf
                 {
                     InOs << InTestResults;
                 },
-                [&InOs](const ErrorTypeAndDescription& InCompilationError)
+                [&InOs](const Error& InCompilationError)
                 {
                     InOs << InCompilationError;
                 }

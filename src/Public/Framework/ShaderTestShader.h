@@ -8,7 +8,7 @@
 #include "D3D12/GPUDevice.h"
 #include "D3D12/Shader/CompiledShaderData.h"
 #include "D3D12/Shader/RootSignature.h"
-#include "D3D12/Shader/ShaderBinding.h"
+#include "D3D12/Shader/Shader.h"
 
 #include "Framework/ShaderTestCommon.h"
 #include "Utility/Expected.h"
@@ -28,36 +28,30 @@ namespace stf
     public:
         struct CreationParams
         {
-            CompiledShaderData ShaderData;
-            SharedPtr<GPUDevice> Device;
+            SharedPtr<Shader> Shader;
         };
 
-        ShaderTestShader(ObjectToken, CreationParams InParams);
+        struct TestBindings
+        {
+            uint3 DispatchConfig{0};
+            u32 AllocationBufferIndex = 0;
+            u32 TestDataBufferIndex = 0;
+            TestDataBufferLayout TestDataLayout{};
+        };
 
-        Expected<void, ErrorTypeAndDescription> Init();
-        Expected<void, ErrorTypeAndDescription> BindConstantBufferData(const std::span<const ShaderBinding> InBindings);
-        void SetConstantBufferData(ScopedCommandContext& InList) const;
+        ShaderTestShader(ObjectToken, const CreationParams& InParams);
+
+        ExpectedError<void> StageConstantBufferData(const TestBindings& InTestBindings, const std::span<const ShaderBinding> InBindings);
+        void CommitBindings(ScopedCommandContext& InList) const;
 
         uint3 GetThreadGroupSize() const;
 
-        RootSignature* GetRootSig() const;
+        const RootSignature& GetRootSig() const;
 
         IDxcBlob* GetCompiledShader() const;
 
     private:
 
-        struct BindingInfo
-        {
-            u32 RootParamIndex = 0;
-            u32 OffsetIntoBuffer = 0;
-            u32 BindingSize = 0;
-        };
-
-        CompiledShaderData m_ShaderData;
-        SharedPtr<GPUDevice> m_Device;
-        SharedPtr<RootSignature> m_RootSignature;
-
-        std::unordered_map<std::string, BindingInfo, TransparentStringHash, std::equal_to<>> m_NameToBindingInfo;
-        std::unordered_map<u32, std::vector<u32>> m_RootParamBuffers;
+        SharedPtr<Shader> m_Shader;
     };
 }

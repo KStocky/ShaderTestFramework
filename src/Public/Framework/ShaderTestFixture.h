@@ -7,7 +7,7 @@
 #include "Framework/ShaderTestShader.h"
 #include "Framework/TestDataBufferLayout.h"
 #include "Stats/StatSystem.h"
-#include "Utility/Expected.h"
+#include "Utility/Error.h"
 #include "Utility/HLSLTypes.h"
 #include "Utility/Pointer.h"
 #include "Utility/TransparentStringHash.h"
@@ -118,7 +118,8 @@ namespace stf
 
         Results RunTestImpl(RuntimeTestDesc InTestDesc, const bool InIsFailureRetry);
 
-        Expected<SharedPtr<ShaderTestShader>, ErrorTypeAndDescription> CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const;
+        ExpectedError<CompiledShaderData> CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const;
+        ExpectedError<SharedPtr<ShaderTestShader>> CreateTestShader(const CompiledShaderData& InCompiledShaderData) const;
         void PopulateDefaultByteReaders();
 
         bool ShouldTakeCapture(const EGPUCaptureMode InCaptureMode, const bool InIsFailureRetry) const;

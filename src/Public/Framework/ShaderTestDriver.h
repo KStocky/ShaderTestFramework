@@ -48,7 +48,7 @@ namespace stf
         TypeReaderIndex RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader);
         TypeReaderIndex RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader);
 
-        Expected<Results, ErrorTypeAndDescription> RunShaderTest(TestDesc InTestDesc);
+        ExpectedError<Results> RunShaderTest(TestDesc&& InTestDesc);
 
     private:
 

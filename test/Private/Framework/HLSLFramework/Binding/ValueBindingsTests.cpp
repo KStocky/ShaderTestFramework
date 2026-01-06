@@ -1,6 +1,7 @@
 
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
 
+#include <D3D12/Shader/ShaderBindingMap.h>
 #include <Framework/ShaderTestFixture.h>
 #include <Utility/Expected.h>
 #include <Utility/HLSLTypes.h>
@@ -22,7 +23,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
 
     auto [testName, testFile, bindings, expectedResult] = GENERATE
     (
-        table<std::string, std::string, std::vector<ShaderBinding>, Expected<bool, ErrorTypeAndDescription>>
+        table<std::string, std::string, std::vector<ShaderBinding>, ExpectedError<bool>>
         (
             {
                 std::tuple
@@ -59,7 +60,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                         { "D", float3{5.0f, 6.0f, 7.0f}},
                         { "E", int3{123, 456, 789}}
                     },
-                    Unexpected{ ErrorTypeAndDescription {.Type = ETestRunErrorType::Binding } }
+                    Unexpected{ Errors::BindingIsSmallerThanBindingData("D", sizeof(float2), sizeof(float3))}
                 },
                 std::tuple
                 {
@@ -72,7 +73,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                         { "E", int3{123, 456, 789}},
                         { "F", i32{ 234 }}
                     },
-                    Unexpected{ ErrorTypeAndDescription { .Type = ETestRunErrorType::Binding } }
+                    Unexpected{ Errors::BindingDoesNotExist("F") }
                 },
                 std::tuple
                 {
@@ -87,7 +88,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                         { "G", std::array<i32, 16>{}},
                         { "H", std::array<i32, 16>{}}
                     },
-                    Unexpected{ ErrorTypeAndDescription {.Type = ETestRunErrorType::RootSignatureGeneration } }
+                    Unexpected{ Errors::RootSignatureDWORDLimitReached() }
                 },
                 std::tuple
                 {
@@ -96,7 +97,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                     std::vector<ShaderBinding>
                     {
                     },
-                    Unexpected{ ErrorTypeAndDescription {.Type = ETestRunErrorType::RootSignatureGeneration } }
+                    Unexpected{ Errors::ConstantBufferCantBeInRootConstants("$Globals")}
                 },
                 std::tuple
                 {
@@ -153,7 +154,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
         {
             const auto results = actual.GetTestRunError();
             REQUIRE(results);
-            REQUIRE(results->Type == expectedResult.error().Type);
+            REQUIRE(*results == expectedResult.error());
         }
     }
 }

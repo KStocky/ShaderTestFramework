@@ -21,7 +21,7 @@ SCENARIO("ShaderIncludeHandlerTests")
 
             THEN("Success")
             {
-                const auto error = result.has_value() ? "" : result.error();
+                const auto error = result.has_value() ? "" : std::format("{}", result.error());
                 CAPTURE(error);
                 REQUIRE(result.has_value());
             }

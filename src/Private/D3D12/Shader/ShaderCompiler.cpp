@@ -41,43 +41,58 @@ namespace stf
 
             return ret;
         }
-
-
     }
 
-    std::ostream& operator<<(std::ostream& InStream, const CompilationResult& InResult)
+    namespace Errors
     {
-        if (InResult.has_value())
+        Error EmptyShaderCodeSource()
         {
-            InStream << "Successful shader compilation";
+            return Error::FromFragment<"Empty shader code source. Please specify either a path or give raw HLSL code as a string">();
         }
-        else
+
+        Error EmptyVirtualPath()
         {
-            InStream << InResult.error();
+            return Error::FromFragment<"Empty path provided. Please provide either a virtual path that can be mapped by this manager, or an absolute/relative path">();
         }
-        return InStream;
+
+        Error UnknownVirtualShaderMappingError()
+        {
+            return Error::FromFragment<"Unknown error encountered while mapping the shader path.">();
+        }
+
+        Error ResolvedPathIsInvalid(const std::string_view InAbsolutePath, const std::string_view InPath)
+        {
+            return Error::FromFragment<"Could not open file with fully resolved path of {0} and a potentially virtual path of {1}">(InAbsolutePath, InPath);
+        }
+
+        Error ReportShaderCompilationError(const std::string_view InError)
+        {
+            return Error::FromFragment<"DXC shader compilation error\n------------------------\n{}">(InError);
+        }
     }
 
     ShaderCodeSource::ShaderCodeSource(std::string InSourceCode)
         : m_Source(std::move(InSourceCode))
-    {}
+    {
+    }
 
     ShaderCodeSource::ShaderCodeSource(fs::path InSourcePath)
         : m_Source(std::move(InSourcePath))
-    {}
+    {
+    }
 
-    ShaderCodeSource::ToStringResult ShaderCodeSource::ToString(const VirtualShaderDirectoryMappingManager& InManager) const
+    ExpectedError<std::string> ShaderCodeSource::ToString(const VirtualShaderDirectoryMappingManager& InManager) const
     {
         return std::visit(OverloadSet{
-            [](std::monostate) -> ToStringResult
+            [](std::monostate) ->  ExpectedError<std::string>
             {
-                return Unexpected<std::string>{"Empty shader code source. Please specify either a path or give raw HLSL code as a string"};
+                return Unexpected{Errors::EmptyShaderCodeSource()};
             },
-            [](const std::string& InSource) -> ToStringResult
+            [](const std::string& InSource) ->  ExpectedError<std::string>
             {
                 return InSource;
             },
-            [&InManager](const fs::path& InPath) -> ToStringResult
+            [&InManager](const fs::path& InPath) ->  ExpectedError<std::string>
             {
                 using EErrorType = VirtualShaderDirectoryMappingManager::EErrorType;
 
@@ -95,22 +110,22 @@ namespace stf
                         }
                     )
                     .transform_error(
-                        [](const EErrorType InError) -> std::string
+                        [](const EErrorType InError) -> Error
                         {
                             switch (InError)
                             {
                                 case EErrorType::VirtualPathEmpty:
                                 {
-                                    return "Empty path provided. Please provide either a virtual path that can be mapped by this manager, or an absolute/relative path";
+                                    return Errors::EmptyVirtualPath();
                                 }
                                 default:
                                 {
-                                    return "Unknown error encountered while mapping the shader path.";
+                                    return Errors::UnknownVirtualShaderMappingError();
                                 }
                             }
                         })
                     .and_then(
-                        [&InPath](const fs::path& InAbsolutePath) -> ToStringResult
+                        [&InPath](const fs::path& InAbsolutePath) ->  ExpectedError<std::string>
                         {
                             std::ifstream file(InAbsolutePath);
 
@@ -122,7 +137,7 @@ namespace stf
                             }
                             else
                             {
-                                return Unexpected{ std::format("Could not open file with fully resolved path of {0} and a potentially virtual path of {1}", InAbsolutePath.string(), InPath.string())};
+                                return Unexpected{Errors::ResolvedPathIsInvalid(InAbsolutePath.string(), InPath.string())};
                             }
                         });
 
@@ -148,11 +163,11 @@ namespace stf
         Init();
     }
 
-    CompilationResult ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& InJob) const
+    ExpectedError<CompiledShaderData> ShaderCompiler::CompileShader(const ShaderCompilationJobDesc& InJob) const
     {
         return InJob.Source.ToString(m_DirectoryManager)
             .and_then(
-                [this, &InJob](const std::string InSource) -> CompilationResult
+                [this, &InJob](const std::string InSource) -> ExpectedError<CompiledShaderData>
                 {
                     DxcBuffer sourceBuffer;
                     sourceBuffer.Encoding = DXC_CP_ACP;
@@ -279,7 +294,7 @@ namespace stf
 
                         if (errorBuffer && errorBuffer->GetStringLength() > 0)
                         {
-                            return Unexpected{ std::string{errorBuffer->GetStringPointer()} };
+                            return Unexpected{ Errors::ReportShaderCompilationError(errorBuffer->GetStringPointer())};
                         }
                     }
 
