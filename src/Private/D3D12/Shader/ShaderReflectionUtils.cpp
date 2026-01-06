@@ -1,6 +1,8 @@
 
+#include "Platform.h"
 #include "D3D12/Shader/ShaderReflectionUtils.h"
 #include "Utility/Exception.h"
+
 
 namespace stf
 {
