@@ -45,6 +45,7 @@ set(SOURCES
     Public/D3D12/Shader/PipelineState.h
     Public/D3D12/Shader/RootSignature.h
     Public/D3D12/Shader/ShaderBinding.h
+    Public/D3D12/Shader/ShaderBindingMap.h
     Public/D3D12/Shader/ShaderCompiler.h
     Public/D3D12/Shader/ShaderEnums.h
     Public/D3D12/Shader/ShaderHash.h
@@ -105,6 +106,7 @@ set(SOURCES
     Private/D3D12/Shader/PipelineState.cpp
     Private/D3D12/Shader/RootSignature.cpp
     Private/D3D12/Shader/ShaderBinding.cpp
+    Private/D3D12/Shader/ShaderBindingMap.cpp
     Private/D3D12/Shader/ShaderCompiler.cpp
     Private/D3D12/Shader/ShaderReflectionUtils.cpp
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManager.cpp
