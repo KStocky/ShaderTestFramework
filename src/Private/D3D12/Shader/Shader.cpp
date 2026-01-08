@@ -11,7 +11,7 @@ namespace stf
         }
     }
 
-    Shader::Shader(ObjectToken InToken, ShaderToken, const CreationParams& InParams)
+    Shader::Shader(ObjectToken InToken, const CreationParams& InParams)
         : Object(InToken)
         , m_ShaderData(InParams.ShaderData)
         , m_BindingMap(InParams.BindingMap)
@@ -29,18 +29,18 @@ namespace stf
 
         return ShaderBindingMap::Make(*reflection, InDevice)
             .and_then(
-                [&](const ShaderBindingMap& InShaderBindingMap) -> ExpectedError<Shader::CreationParams>
+                [&](ShaderBindingMap&& InShaderBindingMap) -> ExpectedError<Shader::CreationParams>
                 {
                     return Shader::CreationParams
                     {
                         .ShaderData = InShaderData,
-                        .BindingMap = InShaderBindingMap
+                        .BindingMap = std::move(InShaderBindingMap)
                     };
                 })
             .and_then(
                 [](const Shader::CreationParams& InCreationParams) -> ExpectedError<SharedPtr<Shader>>
                 {
-                    return Object::New<Shader>(ShaderToken{}, InCreationParams);
+                    return Object::New<Shader>(InCreationParams);
                 });
     }
 

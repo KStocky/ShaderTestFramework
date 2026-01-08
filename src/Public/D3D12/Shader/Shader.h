@@ -28,13 +28,13 @@ namespace stf
         : public Object
     {
     public:
-        struct CreationParams
+        struct CreationParams : ShaderToken
         {
             CompiledShaderData ShaderData;
             ShaderBindingMap BindingMap;
         };
 
-        Shader(ObjectToken, ShaderToken, const CreationParams& InParams);
+        Shader(ObjectToken, const CreationParams& InParams);
 
         static ExpectedError<SharedPtr<Shader>> Make(const CompiledShaderData& InShaderData, GPUDevice& InDevice);
 
