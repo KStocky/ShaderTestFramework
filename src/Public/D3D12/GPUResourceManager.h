@@ -78,17 +78,17 @@ namespace stf
         [[nodiscard]] ConstantBufferViewHandle CreateCBV(const ConstantBufferHandle InHandle);
         
         template<TriviallyCopyableType T>
-        void UploadData(const T& InData, const ConstantBufferHandle InBufferHandle)
+        ExpectedError<void> UploadData(const T& InData, const ConstantBufferHandle InBufferHandle)
         {
-            UploadData(std::as_bytes(std::span<const T, 1>{ &InData }), InBufferHandle);
+            return UploadData(std::as_bytes(std::span<const T, 1>{ &InData }), InBufferHandle);
         }
 
-        void UploadData(const std::span<const std::byte> InBytes, const ConstantBufferHandle InBufferHandle);
+        ExpectedError<void> UploadData(const std::span<const std::byte> InBytes, const ConstantBufferHandle InBufferHandle);
 
-        void Release(ConstantBufferHandle InHandle);
-        void Release(ConstantBufferViewHandle InHandle);
+        ExpectedError<void> Release(const ConstantBufferHandle InHandle);
+        ExpectedError<void> Release(const ConstantBufferViewHandle InHandle);
 
-        void SetCBV(CommandList& InCommandList, const u32 InRootParamIndex, const ConstantBufferViewHandle InCBV);
+        ExpectedError<void> SetRootDescriptor(CommandList& InCommandList, const u32 InRootParamIndex, const ConstantBufferViewHandle InCBV);
 
     private:
 

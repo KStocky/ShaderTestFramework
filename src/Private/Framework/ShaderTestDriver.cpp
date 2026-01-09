@@ -147,7 +147,7 @@ namespace stf
                             InContext.Section("Test Dispatch",
                                 [&](ScopedCommandContext& InContext)
                                 {
-                                    InContext->Dispatch(InTestDesc.DispatchConfig.x, InTestDesc.DispatchConfig.y, InTestDesc.DispatchConfig.z);
+                                    InContext.Dispatch(InTestDesc.DispatchConfig);
                                 }
                             );
 

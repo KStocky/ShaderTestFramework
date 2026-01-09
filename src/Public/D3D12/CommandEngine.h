@@ -7,6 +7,7 @@
 #include "D3D12/GPUResourceManager.h"
 
 #include "Utility/FunctionTraits.h"
+#include "Utility/HLSLTypes.h"
 #include "Utility/Lambda.h"
 #include "Utility/Object.h"
 #include "Utility/Pointer.h"
@@ -52,12 +53,12 @@ namespace stf
         {
             for (const auto& cb : m_ConstantBuffers)
             {
-                m_ResourceManager->Release(cb);
+                ThrowIfUnexpected(m_ResourceManager->Release(cb));
             }
 
             for (const auto& cbv : m_CBVs)
             {
-                m_ResourceManager->Release(cbv);
+                ThrowIfUnexpected(m_ResourceManager->Release(cbv));
             }
         }
     
@@ -66,12 +67,17 @@ namespace stf
             const auto buffer = m_ResourceManager->Acquire(GPUResourceManager::ConstantBufferDesc{ .RequestedSize = static_cast<u32>(InData.size_bytes()) });
             const auto cbv = m_ResourceManager->CreateCBV(buffer);
     
-            m_ResourceManager->UploadData(InData, buffer);
+            ThrowIfUnexpected(m_ResourceManager->UploadData(InData, buffer));
     
             m_ConstantBuffers.push_back(buffer);
             m_CBVs.push_back(cbv);
     
             return cbv;
+        }
+
+        void SetRootDescriptor(CommandList& InList, const u32 InRootParamIndex, const GPUResourceManager::ConstantBufferViewHandle InHandle)
+        {
+            ThrowIfUnexpected(m_ResourceManager->SetRootDescriptor(InList, InRootParamIndex, InHandle));
         }
     
     private:
@@ -120,6 +126,16 @@ namespace stf
         [[nodiscard]] GPUResourceManager::ConstantBufferViewHandle CreateCBV(const std::span<const std::byte> InData)
         {
             return m_ResourceManager->CreateCBV(InData);
+        }
+
+        void SetRootDescriptor(const u32 InRootParamIndex, const GPUResourceManager::ConstantBufferViewHandle InHandle)
+        {
+            m_ResourceManager->SetRootDescriptor(*m_List, InRootParamIndex, InHandle);
+        }
+
+        void Dispatch(const uint3 InDispatchConfig)
+        {
+            m_List->Dispatch(InDispatchConfig.x, InDispatchConfig.y, InDispatchConfig.z);
         }
 
     private:

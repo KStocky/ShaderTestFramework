@@ -22,6 +22,8 @@ namespace stf
         Error ConstantBufferCantBeInRootConstants(const std::string_view InBufferName);
         Error RootSignatureDWORDLimitReached();
 
+        Error ConstantBufferMustBeBoundToDecriptorTable(const std::string_view InBufferName);
+
         Error BindingIsSmallerThanBindingData(const std::string_view InBindingName, const u32 InConstantBufferSize, const u64 InBindingDataSize);
         Error BindingDoesNotExist(const std::string_view InBindingName);
     }
@@ -39,15 +41,29 @@ namespace stf
 
     private:
 
+        enum class EBindType
+        {
+            RootConstants,
+            RootDescriptor,
+            DescriptorTable
+        };
+
         struct BindingInfo
         {
             u32 RootParamIndex = 0;
             u32 OffsetIntoBuffer = 0;
             u32 BindingSize = 0;
+            EBindType Type = EBindType::RootConstants;
+        };
+
+        struct StagingInfo
+        {
+            std::vector<std::byte> Buffer;
+            EBindType Type = EBindType::RootConstants;
         };
 
         using BindingMapType = std::unordered_map<std::string, BindingInfo, TransparentStringHash, std::equal_to<>>;
-        using StagingBufferMap = std::unordered_map<u32, std::vector<u32>>;
+        using StagingBufferMap = std::unordered_map<u32, StagingInfo>;
 
         ShaderBindingMap(
             SharedPtr<RootSignature>&& InRootSignature,

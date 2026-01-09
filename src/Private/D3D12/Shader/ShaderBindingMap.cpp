@@ -21,6 +21,11 @@ namespace stf
             return Error::FromFragment<"Limit of 64 uints reached">();
         }
 
+        Error ConstantBufferMustBeBoundToDecriptorTable(const std::string_view InBufferName)
+        {
+            return Error::FromFragment<"Constant Buffer: {} must be bound in a descriptor table, which is currently unsupported">(InBufferName);
+        }
+
         Error BindingIsSmallerThanBindingData(const std::string_view InBindingName, const u32 InConstantBufferSize, const u64 InBindingDataSize)
         {
             return Error::FromFragment<"Binding is smaller in size than provided data. Binding name: {}, Binding size: {}, Provided binding data size: {}">
@@ -63,17 +68,31 @@ namespace stf
             D3D12_SHADER_BUFFER_DESC bufferDesc{};
             ThrowIfFailed(constantBuffer->GetDesc(&bufferDesc));
 
-            if (!ConstantBufferCanBeBoundToRootConstants(*constantBuffer))
-            {
-                return Unexpected{ Errors::ConstantBufferCantBeInRootConstants(bufferDesc.Name) };
-            }
+            const EBindType bindingType =
+                [&]()
+                {
+                    if (ConstantBufferCanBeBoundToRootConstants(*constantBuffer))
+                    {
+                        const u32 numValues = bufferDesc.Size / sizeof(u32);
+                        totalNumValues += numValues;
 
-            const u32 numValues = bufferDesc.Size / sizeof(u32);
-            totalNumValues += numValues;
+                        if (totalNumValues <= 64)
+                        {
+                            return EBindType::RootConstants;
+                        }
+                    }
 
-            if (totalNumValues > 64)
+                    if (ConstantBufferCanBeBoundToRootDescriptor(*constantBuffer))
+                    {
+                        return EBindType::RootDescriptor;
+                    }
+
+                    return EBindType::DescriptorTable;
+                }();
+
+            if (bindingType == EBindType::DescriptorTable)
             {
-                return Unexpected(Errors::RootSignatureDWORDLimitReached());
+                return Unexpected{ Errors::ConstantBufferMustBeBoundToDecriptorTable(bufferDesc.Name) };
             }
 
             if (bufferDesc.Name != nullptr && std::string_view{ bufferDesc.Name } == std::string_view{ "$Globals" })
@@ -89,7 +108,8 @@ namespace stf
                         BindingInfo{
                             .RootParamIndex = static_cast<u32>(parameters.size()),
                             .OffsetIntoBuffer = varDesc.StartOffset,
-                            .BindingSize = varDesc.Size
+                            .BindingSize = varDesc.Size,
+                            .Type = bindingType
                         });
                 }
             }
@@ -100,14 +120,35 @@ namespace stf
                     BindingInfo{
                         .RootParamIndex = static_cast<u32>(parameters.size()),
                         .OffsetIntoBuffer = 0,
-                        .BindingSize = bufferDesc.Size
+                        .BindingSize = bufferDesc.Size,
+                        .Type = bindingType
                     });
             }
 
-            stagingBuffers[static_cast<u32>(parameters.size())].resize(bufferDesc.Size / sizeof(u32));
+            auto& stagingBuffer = stagingBuffers[static_cast<u32>(parameters.size())];
+            stagingBuffer.Buffer.resize(bufferDesc.Size);
+            stagingBuffer.Type = bindingType;
 
             auto& parameter = parameters.emplace_back();
-            parameter.InitAsConstants(numValues, bindDesc.BindPoint, bindDesc.Space);
+
+            switch (bindingType)
+            {
+                case EBindType::RootConstants:
+                {
+                    const u32 numValues = bufferDesc.Size / sizeof(u32);
+                    parameter.InitAsConstants(numValues, bindDesc.BindPoint, bindDesc.Space);
+                    break;
+                }
+                case EBindType::RootDescriptor:
+                {
+                    parameter.InitAsConstantBufferView(bindDesc.BindPoint, bindDesc.Space);
+                    break;
+                }
+                default:
+                {
+                    std::unreachable();
+                }
+            }
         }
 
         CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSigDesc{};
@@ -150,10 +191,10 @@ namespace stf
 
             auto& bindingBuffer = m_RootParamBuffers[bindingIter->second.RootParamIndex];
 
-            ThrowIfFalse(bindingBuffer.size() > 0, "Shader binding buffer has a size of zero. It should have been created and initialized when processing the reflection data");
+            ThrowIfFalse(bindingBuffer.Buffer.size() > 0, "Shader binding buffer has a size of zero. It should have been created and initialized when processing the reflection data");
 
-            const u32 uintIndex = bindingIter->second.OffsetIntoBuffer / sizeof(u32);
-            std::memcpy(bindingBuffer.data() + uintIndex, bindingData.data(), bindingData.size_bytes());
+            const u32 offset = bindingIter->second.OffsetIntoBuffer;
+            std::memcpy(bindingBuffer.Buffer.data() + offset, bindingData.data(), bindingData.size_bytes());
         }
         else
         {
@@ -165,9 +206,26 @@ namespace stf
 
     void ShaderBindingMap::CommitBindings(ScopedCommandContext& InContext) const
     {
-        for (const auto& [paramIndex, buffer] : m_RootParamBuffers)
+        for (const auto& [rootParamIndex, buffer] : m_RootParamBuffers)
         {
-            InContext->SetComputeRoot32BitConstants(paramIndex, std::span{ buffer }, 0);
+            switch (buffer.Type)
+            {
+                case EBindType::RootConstants:
+                {
+                    InContext->SetComputeRoot32BitConstants(rootParamIndex, std::span{ buffer.Buffer }, 0);
+                    break;
+                }
+                case EBindType::RootDescriptor:
+                {
+                    const auto cbv = InContext.CreateCBV(std::as_bytes( std::span{buffer.Buffer} ));
+                    InContext.SetRootDescriptor(rootParamIndex, cbv);
+                    break;
+                }
+                default:
+                {
+                    std::unreachable();
+                }
+            }
         }
     }
 

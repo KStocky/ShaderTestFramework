@@ -107,17 +107,54 @@ namespace stf
         return ConstantBufferViewHandle{ Private{}, InBufferHandle.GetHandle(), managedHandle};
     }
 
-    void GPUResourceManager::UploadData(const std::span<const std::byte>, const ConstantBufferHandle)
+    ExpectedError<void> GPUResourceManager::UploadData(const std::span<const std::byte> InData, const ConstantBufferHandle InHandle)
     {
+        return m_Resources.Get(InHandle.GetHandle())
+            .and_then
+            (
+                [&](const SharedPtr<GPUResource>& InResource) -> ExpectedError<void>
+                {
+                    const auto mappedResource = InResource->Map();
+                    const auto mappedData = mappedResource.Get();
+
+                    if (InData.size_bytes() > mappedData.size_bytes())
+                    {
+                        return Unexpected{
+                            Error
+                            {
+                                ErrorFragment::Make<"Provided data is too large for resource. Provided data: {} bytes, Resource Size {} bytes">(
+                                    InData.size_bytes(),
+                                    mappedData.size_bytes())
+                            }
+                        };
+                    }
+
+                    std::memcpy(mappedData.data(), InData.data(), InData.size_bytes());
+                    return {};
+                }
+            );
     }
 
-    void GPUResourceManager::Release(const ConstantBufferHandle InHandle)
+    ExpectedError<void> GPUResourceManager::Release(const ConstantBufferHandle InHandle)
     {
-        ThrowIfUnexpected(m_Resources.Release(InHandle.GetHandle()));
+        return m_Resources.Release(InHandle.GetHandle());
     }
 
-    void GPUResourceManager::Release(const ConstantBufferViewHandle InHandle)
+    ExpectedError<void> GPUResourceManager::Release(const ConstantBufferViewHandle InHandle)
     {
-        ThrowIfUnexpected(m_Descriptors.Release(InHandle.GetCBVHandle()));
+        return m_Descriptors.Release(InHandle.GetCBVHandle());
+    }
+
+    ExpectedError<void> GPUResourceManager::SetRootDescriptor(CommandList& InList, const u32 InRootParamIndex, const ConstantBufferViewHandle InHandle)
+    {
+        return m_Resources.Get(InHandle.GetBufferHandle())
+            .and_then
+            (
+                [&](const SharedPtr<GPUResource>& InResource) -> ExpectedError<void>
+                {
+                    InList.SetComputeRootConstantBufferView(InRootParamIndex, *InResource);
+                    return {};
+                }
+            );
     }
 }

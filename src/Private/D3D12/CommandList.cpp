@@ -82,6 +82,37 @@ namespace stf
         m_List->SetDescriptorHeaps(1, &rawHeap);
     }
 
+    void CommandList::SetComputeRootConstantBufferView(const u32 InRootParamIndex, GPUResource& InConstantBuffer)
+    {
+        const auto prevBarrier = InConstantBuffer.GetBarrier();
+        GPUEnhancedBarrier newBarrier
+        {
+            .Sync = D3D12_BARRIER_SYNC_COMPUTE_SHADING,
+            .Access = D3D12_BARRIER_ACCESS_CONSTANT_BUFFER,
+            .Layout = D3D12_BARRIER_LAYOUT_DIRECT_QUEUE_GENERIC_READ
+        };
+
+        InConstantBuffer.SetBarrier(newBarrier);
+        D3D12_BUFFER_BARRIER bufferBarriers[] =
+        {
+            CD3DX12_BUFFER_BARRIER(
+                prevBarrier.Sync,
+                newBarrier.Sync,
+                prevBarrier.Access,
+                newBarrier.Access,
+                InConstantBuffer
+            )
+        };
+
+        D3D12_BARRIER_GROUP BufBarrierGroups[] =
+        {
+            CD3DX12_BARRIER_GROUP(1, bufferBarriers)
+        };
+
+        m_List->Barrier(1, BufBarrierGroups);
+        m_List->SetComputeRootConstantBufferView(InRootParamIndex, InConstantBuffer.GetGPUAddress());
+    }
+
     void CommandList::SetGraphicsRootSignature(const RootSignature& InRootSig)
     {
         m_List->SetGraphicsRootSignature(InRootSig);

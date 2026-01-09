@@ -17,15 +17,15 @@ namespace stf
             D3D12_COMMAND_LIST_TYPE_DIRECT,
             "Command Engine Direct List"
         ))
-        //, m_ResourceManager(
-        //    Object::New<GPUResourceManager>(
-        //        GPUResourceManager::CreationParams
-        //        {
-        //            .Device = InParams.Device,
-        //            .Queue = m_Queue
-        //        }
-        //    )
-        //)
+        , m_ResourceManager(
+            Object::New<GPUResourceManager>(
+                GPUResourceManager::CreationParams
+                {
+                    .Device = InParams.Device,
+                    .Queue = m_Queue
+                }
+            )
+        )
         , m_Allocators()
     {
     }

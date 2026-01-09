@@ -81,6 +81,8 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/Asserts/IsFalse.hlsl
     Shader/HLSLFrameworkTests/Asserts/IsTrue.hlsl
     Shader/HLSLFrameworkTests/Asserts/NotEqual.hlsl
+    Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/BindingsHave2ByteAlignment.hlsl
+    Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/ConstantBufferArray.hlsl
     Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/GlobalBindings.hlsl
     Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/GlobalBindingsTooLarge.hlsl
     Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/MultipleConstantBuffers.hlsl

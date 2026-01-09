@@ -6,6 +6,14 @@
 
 namespace stf
 {
+    bool IsArray(ID3D12ShaderReflectionType& InType)
+    {
+        D3D12_SHADER_TYPE_DESC typeDesc{};
+        InType.GetDesc(&typeDesc);
+
+        return typeDesc.Elements > 0u;
+    }
+
     bool IsOrContainsArray(ID3D12ShaderReflectionType& InType)
     {
         D3D12_SHADER_TYPE_DESC typeDesc{};
@@ -47,6 +55,31 @@ namespace stf
             ThrowIfFailed(varParam->GetDesc(&varDesc));
             
             if (IsOrContainsArray(*varParam->GetType()))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    bool ConstantBufferCanBeBoundToRootDescriptor(ID3D12ShaderReflectionConstantBuffer& InBuffer)
+    {
+        D3D12_SHADER_BUFFER_DESC bufferDesc;
+        ThrowIfFailed(InBuffer.GetDesc(&bufferDesc));
+
+        if (std::string_view{ bufferDesc.Name } == std::string_view{ "$Globals" })
+        {
+            return true;
+        }
+
+        for (u32 varIndex = 0; varIndex < bufferDesc.Variables; ++varIndex)
+        {
+            const auto varParam = InBuffer.GetVariableByIndex(varIndex);
+            D3D12_SHADER_VARIABLE_DESC varDesc{};
+            ThrowIfFailed(varParam->GetDesc(&varDesc));
+
+            if (IsArray(*varParam->GetType()))
             {
                 return false;
             }
