@@ -49,11 +49,6 @@ namespace stf
         return m_BindingMap.StageBindingData(InBinding);
     }
 
-    void Shader::CommitBindings(ScopedCommandContext& InContext) const
-    {
-        m_BindingMap.CommitBindings(InContext);
-    }
-
     uint3 Shader::GetThreadGroupSize() const
     {
         uint3 ret;

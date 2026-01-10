@@ -1,6 +1,5 @@
 
 #include "Framework/ShaderTestShader.h"
-#include "D3D12/Shader/ShaderReflectionUtils.h"
 
 namespace stf
 {
@@ -32,7 +31,29 @@ namespace stf
 
     void ShaderTestShader::CommitBindings(ScopedCommandContext& InCommandContext) const
     {
-        m_Shader->CommitBindings(InCommandContext);
+        m_Shader->ForEachStagingBuffer(
+            [&](const u32 InRootParamIndex, const ShaderBindingMap::StagingInfo& InStagingInfo)
+            {
+                switch (InStagingInfo.Type)
+                {
+                case ShaderBindingMap::EBindType::RootConstants:
+                {
+                    InCommandContext->SetComputeRoot32BitConstants(InRootParamIndex, std::span{ InStagingInfo.Buffer }, 0);
+                    break;
+                }
+                case ShaderBindingMap::EBindType::RootDescriptor:
+                {
+                    const auto cbv = InCommandContext.CreateCBV(std::as_bytes(std::span{ InStagingInfo.Buffer }));
+                    InCommandContext.SetRootDescriptor(InRootParamIndex, cbv);
+                    break;
+                }
+                default:
+                {
+                    std::unreachable();
+                }
+                }
+            }
+        );
     }
 
     uint3 ShaderTestShader::GetThreadGroupSize() const

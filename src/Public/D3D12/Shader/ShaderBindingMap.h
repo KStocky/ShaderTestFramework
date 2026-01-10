@@ -1,6 +1,4 @@
 #pragma once
-
-#include "D3D12/CommandEngine.h"
 #include "D3D12/GPUDevice.h"
 #include "D3D12/Shader/RootSignature.h"
 #include "D3D12/Shader/ShaderBinding.h"
@@ -32,21 +30,42 @@ namespace stf
     {
     public:
 
-        static ExpectedError<ShaderBindingMap> Make(ID3D12ShaderReflection& InReflection, GPUDevice& InDevice);
-
-        const RootSignature& GetRootSig() const;
-
-        ExpectedError<void> StageBindingData(const ShaderBinding& InBinding);
-        void CommitBindings(ScopedCommandContext& InContext) const;
-
-    private:
-
         enum class EBindType
         {
             RootConstants,
             RootDescriptor,
             DescriptorTable
         };
+
+
+        struct StagingInfo
+        {
+            std::vector<std::byte> Buffer;
+            EBindType Type = EBindType::RootConstants;
+        };
+
+        using StagingBufferMap = std::unordered_map<u32, StagingInfo>;
+
+        static ExpectedError<ShaderBindingMap> Make(ID3D12ShaderReflection& InReflection, GPUDevice& InDevice);
+
+        const RootSignature& GetRootSig() const;
+
+        ExpectedError<void> StageBindingData(const ShaderBinding& InBinding);
+
+        template<typename T>
+            requires requires(T InFunc, u32 InRootParamIndex, StagingInfo InStagingInfo)
+            {
+                { InFunc(InRootParamIndex, InStagingInfo) } -> std::same_as<void>;
+            }
+        void ForEachStagingBuffer(T&& InFunc)
+        {
+            for (const auto& [rootParamIndex, stagingInfo] : m_RootParamBuffers)
+            {
+                InFunc(rootParamIndex, stagingInfo);
+            }
+        }
+
+    private:
 
         struct BindingInfo
         {
@@ -56,14 +75,7 @@ namespace stf
             EBindType Type = EBindType::RootConstants;
         };
 
-        struct StagingInfo
-        {
-            std::vector<std::byte> Buffer;
-            EBindType Type = EBindType::RootConstants;
-        };
-
         using BindingMapType = std::unordered_map<std::string, BindingInfo, TransparentStringHash, std::equal_to<>>;
-        using StagingBufferMap = std::unordered_map<u32, StagingInfo>;
 
         ShaderBindingMap(
             SharedPtr<RootSignature>&& InRootSignature,

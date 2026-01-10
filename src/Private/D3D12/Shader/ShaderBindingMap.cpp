@@ -204,6 +204,7 @@ namespace stf
         return {};
     }
 
+    /*
     void ShaderBindingMap::CommitBindings(ScopedCommandContext& InContext) const
     {
         for (const auto& [rootParamIndex, buffer] : m_RootParamBuffers)
@@ -228,7 +229,7 @@ namespace stf
             }
         }
     }
-
+    */
     ShaderBindingMap::ShaderBindingMap(
         SharedPtr<RootSignature>&& InRootSignature,
         BindingMapType&& InNameToBindingsMap,

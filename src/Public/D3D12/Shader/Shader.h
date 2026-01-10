@@ -1,7 +1,5 @@
 
 #pragma once
-
-#include "D3D12/CommandEngine.h"
 #include "D3D12/GPUDevice.h"
 #include "D3D12/Shader/CompiledShaderData.h"
 #include "D3D12/Shader/RootSignature.h"
@@ -39,7 +37,16 @@ namespace stf
         static ExpectedError<SharedPtr<Shader>> Make(const CompiledShaderData& InShaderData, GPUDevice& InDevice);
 
         ExpectedError<void> StageBindingData(const ShaderBinding& InBindings);
-        void CommitBindings(ScopedCommandContext& InContext) const;
+        
+        template<typename T>
+            requires requires(T InFunc, u32 InRootParamIndex, ShaderBindingMap::StagingInfo InStagingInfo)
+        {
+            { InFunc(InRootParamIndex, InStagingInfo) } -> std::same_as<void>;
+        }
+        void ForEachStagingBuffer(T&& InFunc)
+        {
+            m_BindingMap.ForEachStagingBuffer(std::forward<T>(InFunc));
+        }
 
         uint3 GetThreadGroupSize() const;
 
