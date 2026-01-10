@@ -174,7 +174,7 @@ SCENARIO("BindlessFreeListAllocatorTests")
 
             THEN("State is as expected")
             {
-                for (const auto allocation : allocations)
+                for (const auto& allocation : allocations)
                 {
                     REQUIRE(allocation.has_value());
                 }
@@ -234,14 +234,14 @@ SCENARIO("BindlessFreeListAllocatorTests")
                 using ReleaseType = decltype(allocator.Release(std::declval<AllocationType>().value()));
 
                 std::vector<ReleaseType> releases;
-                for (const auto allocation : allocations)
+                for (const auto& allocation : allocations)
                 {
                     releases.push_back(allocator.Release(allocation.value()));
                 }
 
                 THEN("releases succeeded")
                 {
-                    for (const auto release : releases)
+                    for (const auto& release : releases)
                     {
                         REQUIRE(release.has_value());
                     }
@@ -275,7 +275,7 @@ SCENARIO("BindlessFreeListAllocatorTests")
 
                     THEN("allocation is unique")
                     {
-                        for (const auto oldAllocation : allocations)
+                        for (const auto& oldAllocation : allocations)
                         {
                             REQUIRE(allocation != oldAllocation);
                         }
