@@ -72,9 +72,47 @@ namespace stf
             DescriptorOpaqueHandle m_CBVHandle;
         };
 
+        struct BufferDesc
+        {
+            std::string_view Name = "DefaultConstantBuffer";
+            u32 RequestedSize = 0u;
+            D3D12_RESOURCE_FLAGS Flags = D3D12_RESOURCE_FLAG_NONE;
+        };
+
+        class BufferHandle
+        {
+        public:
+
+            BufferHandle(Private, const ResourceHandle InHandle);
+
+            ResourceHandle GetHandle() const;
+
+        private:
+
+            ResourceHandle m_Handle;
+        };
+
+        class BufferUAVHandle
+        {
+        public:
+
+            BufferUAVHandle(Private, const ResourceHandle InBufferHandle, const DescriptorOpaqueHandle InUAVHandle);
+
+            ResourceHandle GetBufferHandle() const;
+            DescriptorOpaqueHandle GetUAVHandle() const;
+
+        private:
+
+            ResourceHandle m_BufferHandle;
+            DescriptorOpaqueHandle m_UAVHandle;
+        };
+
         GPUResourceManager(ObjectToken InToken, const CreationParams& InParams);
 
-        [[nodiscard]] ConstantBufferHandle Acquire(const ConstantBufferDesc InDesc);
+        [[nodiscard]] BufferHandle Acquire(const BufferDesc& InDesc);
+        [[nodiscard]] ConstantBufferHandle Acquire(const ConstantBufferDesc& InDesc);
+
+        [[nodiscard]] BufferUAVHandle CreateUAV(const BufferHandle InHandle, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc);
         [[nodiscard]] ConstantBufferViewHandle CreateCBV(const ConstantBufferHandle InHandle);
         
         template<TriviallyCopyableType T>
@@ -85,10 +123,16 @@ namespace stf
 
         ExpectedError<void> UploadData(const std::span<const std::byte> InBytes, const ConstantBufferHandle InBufferHandle);
 
+        ExpectedError<void> Release(const BufferHandle InHandle);
         ExpectedError<void> Release(const ConstantBufferHandle InHandle);
+        ExpectedError<void> Release(const BufferUAVHandle InHandle);
         ExpectedError<void> Release(const ConstantBufferViewHandle InHandle);
 
         ExpectedError<void> SetRootDescriptor(CommandList& InCommandList, const u32 InRootParamIndex, const ConstantBufferViewHandle InCBV);
+
+        ExpectedError<void> SetUAV(CommandList& InCommandList, const BufferUAVHandle InHandle);
+
+        void SetDescriptorHeap(CommandList& InCommandList);
 
     private:
 

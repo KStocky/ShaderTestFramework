@@ -118,20 +118,12 @@ namespace stf
                 InTestDesc.Bindings
             )
             .and_then(
-                [&, this]()
+                [&]()
                 {
-                    m_CommandEngine->Execute(InTestDesc.TestName,
-                        [this,
-                        &pipelineState,
-                        &assertBuffer,
-                        &allocationBuffer,
-                        &readBackBuffer,
-                        &readBackAllocationBuffer,
-                        &InTestDesc
-                        ]
-                        (ScopedCommandContext& InContext)
+                    return m_CommandEngine->Execute(InTestDesc.TestName,
+                        [&](ScopedCommandContext& InContext)
                         {
-                            InContext.Section("Test Setup",
+                            return InContext.Section("Test Setup",
                                 [&](ScopedCommandContext& InContext)
                                 {
                                     InContext->SetPipelineState(*pipelineState);
@@ -141,62 +133,74 @@ namespace stf
                                     InContext->SetBufferUAV(*allocationBuffer);
 
                                     InTestDesc.Shader.CommitBindings(InContext);
+                                    return ExpectedError<void>{};
                                 }
-                            );
-
-                            InContext.Section("Test Dispatch",
-                                [&](ScopedCommandContext& InContext)
+                            ).and_then(
+                                [&]()
                                 {
-                                    InContext.Dispatch(InTestDesc.DispatchConfig);
+                                    return InContext.Section("Test Dispatch",
+                                        [&](ScopedCommandContext& InContext)
+                                        {
+                                            InContext.Dispatch(InTestDesc.DispatchConfig);
+                                            return ExpectedError<void>{};
+                                        }
+                                    );
                                 }
-                            );
-
-                            InContext.Section("Results readback",
-                                [&](ScopedCommandContext& InContext)
+                            ).and_then(
+                                [&]()
                                 {
-                                    InContext->CopyBufferResource(*readBackBuffer, *assertBuffer);
-                                    InContext->CopyBufferResource(*readBackAllocationBuffer, *allocationBuffer);
+                                    return InContext.Section("Results readback",
+                                        [&](ScopedCommandContext& InContext)
+                                        {
+                                            InContext->CopyBufferResource(*readBackBuffer, *assertBuffer);
+                                            InContext->CopyBufferResource(*readBackAllocationBuffer, *allocationBuffer);
+                                            return ExpectedError<void>{};
+                                        }
+                                    );
                                 }
                             );
                         }
                     );
+                })
+            .and_then(
+            [&]()
+            {
+                m_CommandEngine->Flush();
+                m_DeferredDeletedDescriptorHeaps.clear();
 
-                    m_CommandEngine->Flush();
-                    m_DeferredDeletedDescriptorHeaps.clear();
+                return m_DescriptorManager->ReleaseUAV(assertUAV)
+                    .and_then(
+                        [this, &allocationUAV]()
+                        {
+                            return m_DescriptorManager->ReleaseUAV(allocationUAV);
+                        }
+                    )
+                    .transform(
+                        [this, &readBackAllocationBuffer, &readBackBuffer, &InTestDesc]()
+                        {
+                            return ReadbackResults(*readBackAllocationBuffer, *readBackBuffer, InTestDesc.Shader.GetThreadGroupSize() * InTestDesc.DispatchConfig, InTestDesc.TestBufferLayout);
+                        }
+                    )
+                    .transform_error(
+                        [](const ShaderTestDescriptorManager::EErrorType InErrorType) -> Error
+                        {
+                            using enum ShaderTestDescriptorManager::EErrorType;
 
-                    return m_DescriptorManager->ReleaseUAV(assertUAV)
-                        .and_then(
-                            [this, &allocationUAV]()
+                            switch (InErrorType)
                             {
-                                return m_DescriptorManager->ReleaseUAV(allocationUAV);
-                            }
-                        )
-                        .transform(
-                            [this, &readBackAllocationBuffer, &readBackBuffer, &InTestDesc]()
-                            {
-                                return ReadbackResults(*readBackAllocationBuffer, *readBackBuffer, InTestDesc.Shader.GetThreadGroupSize() * InTestDesc.DispatchConfig, InTestDesc.TestBufferLayout);
-                            }
-                        )
-                        .transform_error(
-                            [](const ShaderTestDescriptorManager::EErrorType InErrorType)
-                            {
-                                using enum ShaderTestDescriptorManager::EErrorType;
-
-                                switch (InErrorType)
+                                case DescriptorAlreadyFree:
                                 {
-                                    case DescriptorAlreadyFree:
-                                    {
-                                        return Error::FromFragment<"Attempted to free an already freed descriptor.">();
-                                    }
-                                    default:
-                                    {
-                                        return Error::FromFragment<"Unknown descriptor management error.">();
-                                    }
+                                    return Error::FromFragment<"Attempted to free an already freed descriptor.">();
+                                }
+                                default:
+                                {
+                                    return Error::FromFragment<"Unknown descriptor management error.">();
                                 }
                             }
-                        );
-                }
-            );
+                        }
+                    );
+            }
+        );
     }
 
     SharedPtr<PipelineState> ShaderTestDriver::CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const

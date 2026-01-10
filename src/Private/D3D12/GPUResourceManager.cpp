@@ -53,7 +53,49 @@ namespace stf
         return m_CBVHandle;
     }
 
-    GPUResourceManager::ConstantBufferHandle GPUResourceManager::Acquire(const ConstantBufferDesc InDesc)
+    GPUResourceManager::BufferHandle::BufferHandle(Private, const ResourceHandle InHandle)
+        : m_Handle(InHandle)
+    {
+    }
+
+    GPUResourceManager::ResourceHandle GPUResourceManager::BufferHandle::GetHandle() const
+    {
+        return m_Handle;
+    }
+
+    GPUResourceManager::BufferUAVHandle::BufferUAVHandle(Private, const ResourceHandle InBufferHandle, const DescriptorOpaqueHandle InUAVHandle)
+        : m_BufferHandle(InBufferHandle)
+        , m_UAVHandle(InUAVHandle)
+    {
+    }
+
+    GPUResourceManager::ResourceHandle GPUResourceManager::BufferUAVHandle::GetBufferHandle() const
+    {
+        return m_BufferHandle;
+    }
+
+    GPUResourceManager::DescriptorOpaqueHandle GPUResourceManager::BufferUAVHandle::GetUAVHandle() const
+    {
+        return m_UAVHandle;
+    }
+
+    GPUResourceManager::BufferHandle GPUResourceManager::Acquire(const BufferDesc& InDesc)
+    {
+        const auto bufferHandle = m_Resources.Manage(
+            m_Device->CreateCommittedResource(
+                GPUDevice::CommittedResourceDesc
+                {
+                    .HeapProps = CD3DX12_HEAP_PROPERTIES{ D3D12_HEAP_TYPE_DEFAULT },
+                    .ResourceDesc = CD3DX12_RESOURCE_DESC1::Buffer(InDesc.RequestedSize, InDesc.Flags),
+                    .Name = InDesc.Name
+                }
+            )
+        );
+
+        return BufferHandle{ Private{}, bufferHandle };
+    }
+
+    GPUResourceManager::ConstantBufferHandle GPUResourceManager::Acquire(const ConstantBufferDesc& InDesc)
     {
         const u64 bufferSize = AlignedOffset(InDesc.RequestedSize, 256ull);
         const auto bufferHandle = m_Resources.Manage(
@@ -68,6 +110,43 @@ namespace stf
         );
 
         return ConstantBufferHandle{ Private{}, bufferHandle };
+    }
+
+    GPUResourceManager::BufferUAVHandle GPUResourceManager::CreateUAV(const BufferHandle InHandle, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc)
+    {
+        auto descriptor = ThrowIfUnexpected(m_DescriptorManager->Acquire()
+            .or_else(
+                [&](const DescriptorManager::EErrorType InErrorType) -> DescriptorManager::Expected<DescriptorManager::Descriptor>
+                {
+                    switch (InErrorType)
+                    {
+                        case DescriptorManager::EErrorType::AllocatorFull:
+                        {
+                            auto oldHeap = ThrowIfUnexpected(m_DescriptorManager->Resize(m_DescriptorManager->GetCapacity() * 2));
+                            ThrowIfUnexpected(m_HeapReleaseManager.Release(m_HeapReleaseManager.Manage(std::move(oldHeap))));
+                            return m_DescriptorManager->Acquire();
+                        }
+                        default:
+                        {
+                            return Unexpected{ InErrorType };
+                        }
+                    }
+                }
+            ));
+
+        ThrowIfUnexpected(m_Resources.Get(InHandle.GetHandle())
+            .and_then
+            (
+                [&](const SharedPtr<GPUResource>& InResource) -> ExpectedError<void>
+                {
+                    m_Device->CreateUnorderedAccessView(*InResource, InDesc, ThrowIfUnexpected(descriptor.Resolve()));
+                    return {};
+                }
+            ));
+
+        const auto managedHandle = m_Descriptors.Manage(std::move(descriptor));
+
+        return BufferUAVHandle{ Private{}, InHandle.GetHandle(), managedHandle };
     }
 
     GPUResourceManager::ConstantBufferViewHandle GPUResourceManager::CreateCBV(const ConstantBufferHandle InBufferHandle)
@@ -135,9 +214,19 @@ namespace stf
             );
     }
 
+    ExpectedError<void> GPUResourceManager::Release(const BufferHandle InHandle)
+    {
+        return m_Resources.Release(InHandle.GetHandle());
+    }
+
     ExpectedError<void> GPUResourceManager::Release(const ConstantBufferHandle InHandle)
     {
         return m_Resources.Release(InHandle.GetHandle());
+    }
+
+    ExpectedError<void> GPUResourceManager::Release(const BufferUAVHandle InHandle)
+    {
+        return m_Descriptors.Release(InHandle.GetUAVHandle());
     }
 
     ExpectedError<void> GPUResourceManager::Release(const ConstantBufferViewHandle InHandle)
@@ -156,5 +245,23 @@ namespace stf
                     return {};
                 }
             );
+    }
+
+    ExpectedError<void> GPUResourceManager::SetUAV(CommandList& InCommandList, const BufferUAVHandle InHandle)
+    {
+        return m_Resources.Get(InHandle.GetBufferHandle())
+            .and_then
+            (
+                [&](const SharedPtr<GPUResource>& InResource) -> ExpectedError<void>
+                {
+                    InCommandList.SetBufferUAV(*InResource);
+                    return {};
+                }
+            );
+    }
+
+    void GPUResourceManager::SetDescriptorHeap(CommandList& InCommandList)
+    {
+        m_DescriptorManager->SetDescriptorHeap(InCommandList);
     }
 }
