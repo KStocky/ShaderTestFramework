@@ -32,7 +32,6 @@ namespace stf
 
     ShaderTestDescriptorManager::Expected<ShaderTestUAV> ShaderTestDescriptorManager::CreateUAV(SharedPtr<GPUResource> InResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc)
     {
-        using ErrorType = BindlessFreeListAllocator::EErrorType;
         return m_Allocator.Allocate()
             .transform(
                 [this, resource = std::move(InResource), &InDesc](const BindlessFreeListAllocator::BindlessIndex InHandle) mutable
@@ -46,23 +45,19 @@ namespace stf
                     };
                 })
             .transform_error(
-                [](const ErrorType InError)
+                [](const Error&)
                 {
-                    ThrowIfFalse(InError == ErrorType::EmptyError);
-
                     return EErrorType::AllocatorFull;
                 });
     }
 
     ShaderTestDescriptorManager::Expected<void> ShaderTestDescriptorManager::ReleaseUAV(const ShaderTestUAV& InUAV)
     {
-        using ErrorType = BindlessFreeListAllocator::EErrorType;
         return
             m_Allocator.Release(InUAV.Handle)
             .transform_error(
-                [](const ErrorType InError)
+                [](const Error&)
                 {
-                    ThrowIfFalse(InError == ErrorType::IndexAlreadyReleased);
                     return EErrorType::DescriptorAlreadyFree;
                 }
             );
@@ -103,21 +98,9 @@ namespace stf
                     return oldGPUHeap;
                 }
             ).transform_error(
-                [](const BindlessFreeListAllocator::EErrorType InError)
+                [](const Error&)
                 {
-                    using enum BindlessFreeListAllocator::EErrorType;
-
-                    switch (InError)
-                    {
-                        case ShrinkAttempted:
-                        {
-                            return EErrorType::AttemptedShrink;
-                        }
-                        default:
-                        {
-                            return EErrorType::Unknown;
-                        }
-                    }
+                    return EErrorType::AttemptedShrink;
                 }
             );
     }

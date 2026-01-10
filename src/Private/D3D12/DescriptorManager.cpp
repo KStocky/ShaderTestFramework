@@ -3,13 +3,41 @@
 
 namespace stf
 {
+    namespace Errors
+    {
+        ErrorFragment DescriptorManagerIsFull()
+        {
+            return ErrorFragment::Make<"Descriptor manager is full">();
+        }
+
+        ErrorFragment UnknownDescriptorManagerError()
+        {
+            return ErrorFragment::Make<"Unknown Descriptor manager error">();
+        }
+
+        ErrorFragment InvalidDescriptorManagerDescriptor(const u32 InIndex)
+        {
+            return ErrorFragment::Make<"Descriptor with Index {} is an invalid descriptor">(InIndex);
+        }
+
+        ErrorFragment DescriptorManagerDescriptorNotAllocated(const u32 InIndex)
+        {
+            return ErrorFragment::Make<"Descriptor with Index {} has not been allocated">(InIndex);
+        }
+
+        ErrorFragment ShrinkAttemptedOnDescriptorManager(const u32 InCurrentSize, const u32 InRequestedSize)
+        {
+            return ErrorFragment::Make<"Attempted shrink in Descriptor manager which is unsupported. Current size: {}, Requested size: {}">(InCurrentSize, InRequestedSize);
+        }
+    }
+
     DescriptorManager::Descriptor::Descriptor(DescriptorManager::Token, const SharedPtr<DescriptorManager>& InOwner, BindlessFreeListAllocator::BindlessIndex InIndex)
         : m_Owner(InOwner)
         , m_Index(InIndex)
     {
     }
 
-    DescriptorManager::Expected<DescriptorHandle> DescriptorManager::Descriptor::Resolve() const
+    ExpectedError<DescriptorHandle> DescriptorManager::Descriptor::Resolve() const
     {
         return m_Owner->ResolveDescriptor(m_Index);
     }
@@ -47,7 +75,7 @@ namespace stf
     {
     }
 
-    DescriptorManager::Expected<DescriptorManager::Descriptor> DescriptorManager::Acquire()
+    ExpectedError<DescriptorManager::Descriptor> DescriptorManager::Acquire()
     {
         return m_Allocator.Allocate()
             .transform(
@@ -55,33 +83,23 @@ namespace stf
                 {
                     return Descriptor{ Token{}, SharedFromThis(), InHandle };
                 })
-            .transform_error(
-                [](const BindlessFreeListAllocator::EErrorType InError)
+            .or_else(
+                [](Error&& InError) -> ExpectedError<DescriptorManager::Descriptor>
                 {
-                    ThrowIfFalse(InError == BindlessFreeListAllocator::EErrorType::EmptyError);
-
-                    return EErrorType::AllocatorFull;
+                    return Unexpected{ InError + Errors::DescriptorManagerIsFull() };
                 });
     }
 
-    DescriptorManager::Expected<void> DescriptorManager::Release(const Descriptor& InDescriptor)
+    ExpectedError<void> DescriptorManager::Release(const Descriptor& InDescriptor)
     {
-        return
-            m_Allocator.Release(InDescriptor.GetIndex(Token{}))
-            .transform_error(
-                [](const BindlessFreeListAllocator::EErrorType InError)
-                {
-                    ThrowIfFalse(InError == BindlessFreeListAllocator::EErrorType::IndexAlreadyReleased);
-                    return EErrorType::DescriptorAlreadyFree;
-                }
-            );
+        return m_Allocator.Release(InDescriptor.GetIndex(Token{}));
     }
 
-    DescriptorManager::Expected<SharedPtr<DescriptorHeap>> DescriptorManager::Resize(const u32 InNewSize)
+    ExpectedError<SharedPtr<DescriptorHeap>> DescriptorManager::Resize(const u32 InNewSize)
     {
         if (m_Allocator.GetCapacity() >= InNewSize)
         {
-            return Unexpected(EErrorType::AttemptedShrink);
+            return Unexpected{ Error{ Errors::ShrinkAttemptedOnDescriptorManager(m_Allocator.GetCapacity(), InNewSize) } };
         }
 
         auto copyDescriptorsToNewHeap =
@@ -111,12 +129,6 @@ namespace stf
                 {
                     return std::move(oldHeap);
                 }
-            ).transform_error(
-                [](const BindlessFreeListAllocator::EErrorType InError)
-                {
-                    ThrowIfFalse(InError == BindlessFreeListAllocator::EErrorType::ShrinkAttempted);
-                    return EErrorType::AttemptedShrink;
-                }
             );
     }
 
@@ -136,20 +148,12 @@ namespace stf
         InCommandList.SetDescriptorHeaps(*m_GPUHeap);
     }
 
-    DescriptorManager::Expected<DescriptorHandle> DescriptorManager::ResolveDescriptor(const BindlessFreeListAllocator::BindlessIndex InIndex) const
+    ExpectedError<DescriptorHandle> DescriptorManager::ResolveDescriptor(const BindlessFreeListAllocator::BindlessIndex InIndex) const
     {
         return m_Allocator
             .IsAllocated(InIndex)
-            .transform_error(
-                [](const BindlessFreeListAllocator::EErrorType InError)
-                {
-                    ThrowIfFalse(InError == BindlessFreeListAllocator::EErrorType::InvalidIndex);
-
-                    return EErrorType::DescriptorInvalid;
-                }
-            )
             .and_then(
-                [this, InIndex](const bool InIsAllocated) -> Expected<DescriptorHandle>
+                [this, InIndex](const bool InIsAllocated) -> ExpectedError<DescriptorHandle>
                 {
                     if (InIsAllocated)
                     {
@@ -157,17 +161,15 @@ namespace stf
 
                         return descriptorRange[InIndex.GetIndex()]
                             .transform_error(
-                                [](const DescriptorRange::EErrorType InError)
+                                [&](const DescriptorRange::EErrorType)
                                 {
-                                    ThrowIfFalse(InError == DescriptorRange::EErrorType::InvalidIndex);
-
-                                    return EErrorType::DescriptorInvalid;
+                                    return Error{ Errors::InvalidDescriptorManagerDescriptor(InIndex.GetIndex()) };
                                 }
                             );
                     }
                     else
                     {
-                        return Unexpected{ EErrorType::DescriptorNotAllocated };
+                        return Unexpected{ Error{ Errors::DescriptorManagerDescriptorNotAllocated(InIndex.GetIndex()) } };
                     }
                 }
             );

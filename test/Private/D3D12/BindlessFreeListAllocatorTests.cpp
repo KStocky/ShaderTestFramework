@@ -29,8 +29,8 @@ SCENARIO("BindlessFreeListAllocatorTests")
                 const auto allocation = allocator.Allocate();
                 THEN("return expected error")
                 {
-                    REQUIRE(!allocation);
-                    REQUIRE(allocation.error() == BindlessFreeListAllocator::EErrorType::EmptyError);
+                    REQUIRE_FALSE(allocation);
+                    REQUIRE(allocation.error().HasFragment(Errors::BindlessFreeListAllocatorIsEmpty()));
                 }
             }
         }
@@ -80,7 +80,7 @@ SCENARIO("BindlessFreeListAllocatorTests")
                     THEN("release failed")
                     {
                         REQUIRE_FALSE(releaseResult.has_value());
-                        REQUIRE(releaseResult.error() == BindlessFreeListAllocator::EErrorType::IndexAlreadyReleased);
+                        REQUIRE(releaseResult.error().HasFragment(Errors::BindlessIndexAlreadyReleased(invalidAllocation.value().GetIndex())));
                     }
                 }
             }
@@ -109,7 +109,7 @@ SCENARIO("BindlessFreeListAllocatorTests")
                     THEN("release failed")
                     {
                         REQUIRE_FALSE(finalReleaseOnInitialAllocatorResult.has_value());
-                        REQUIRE(finalReleaseOnInitialAllocatorResult.error() == BindlessFreeListAllocator::EErrorType::InvalidIndex);
+                        REQUIRE(finalReleaseOnInitialAllocatorResult.error().HasFragment(Errors::InvalidBindlessIndex(finalAllocation.value())));
                     }
                 }
 
@@ -155,7 +155,7 @@ SCENARIO("BindlessFreeListAllocatorTests")
                     THEN("Release fails")
                     {
                         REQUIRE_FALSE(secondReleaseResult.has_value());
-                        REQUIRE(secondReleaseResult.error() == BindlessFreeListAllocator::EErrorType::IndexAlreadyReleased);
+                        REQUIRE(secondReleaseResult.error().HasFragment(Errors::BindlessIndexAlreadyReleased(bindlessIndex1.value())));
                         REQUIRE(initialCapacity == allocator.GetCapacity());
                         REQUIRE(0 == allocator.GetSize());
                     }

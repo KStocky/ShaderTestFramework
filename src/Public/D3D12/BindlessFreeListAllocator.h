@@ -3,29 +3,27 @@
 #include "Platform.h"
 
 #include "Container/RingBuffer.h"
-#include "Utility/Expected.h"
+#include "Utility/Error.h"
 
 #include <compare>
 #include <vector>
 
 namespace stf
 {
+    namespace Errors
+    {
+        ErrorFragment BindlessFreeListAllocatorIsEmpty();
+        ErrorFragment UnknownBindlessFreeListAllocatorError();
+
+        ErrorFragment InvalidBindlessIndex(const u32 InIndex);
+        ErrorFragment BindlessIndexAlreadyReleased(const u32 InIndex);
+        ErrorFragment ShrinkAttemptedOnBindlessAllocator(const u32 InCurrentSize, const u32 InRequestedSize);
+    }
+
     class BindlessFreeListAllocator
     {
         struct Private { explicit Private() = default; };
     public:
-
-        enum class EErrorType
-        {
-            UnknownError,
-            EmptyError,
-            InvalidIndex,
-            IndexAlreadyReleased,
-            ShrinkAttempted
-        };
-
-        template<typename T>
-        using Expected = Expected<T, EErrorType>;
 
         class BindlessIndex
         {
@@ -51,14 +49,14 @@ namespace stf
         BindlessFreeListAllocator() = default;
         BindlessFreeListAllocator(CreationParams InParams);
 
-        [[nodiscard]] Expected<BindlessIndex> Allocate();
-        Expected<void> Release(const BindlessIndex InIndex);
-        Expected<void> Resize(const u32 InNewSize);
+        [[nodiscard]] ExpectedError<BindlessIndex> Allocate();
+        ExpectedError<void> Release(const BindlessIndex InIndex);
+        ExpectedError<void> Resize(const u32 InNewSize);
 
         u32 GetSize() const;
         u32 GetCapacity() const;
 
-        Expected<bool> IsAllocated(const BindlessIndex InIndex) const;
+        ExpectedError<bool> IsAllocated(const BindlessIndex InIndex) const;
 
     private:
 

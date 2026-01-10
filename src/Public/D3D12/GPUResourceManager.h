@@ -114,6 +114,8 @@ namespace stf
 
         [[nodiscard]] BufferUAVHandle CreateUAV(const BufferHandle InHandle, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc);
         [[nodiscard]] ConstantBufferViewHandle CreateCBV(const ConstantBufferHandle InHandle);
+
+        [[nodiscard]] ExpectedError<u32> GetDescriptorIndex(const DescriptorOpaqueHandle InHandle) const;
         
         template<TriviallyCopyableType T>
         ExpectedError<void> UploadData(const T& InData, const ConstantBufferHandle InBufferHandle)

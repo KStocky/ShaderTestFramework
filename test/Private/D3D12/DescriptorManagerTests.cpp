@@ -81,7 +81,7 @@ TEST_CASE_PERSISTENT_FIXTURE(DescriptorManagerTestPrivate::Fixture, "Descriptor 
                     THEN("Fails")
                     {
                         REQUIRE_FALSE(secondReleaseResult.has_value());
-                        REQUIRE(secondReleaseResult.error() == DescriptorManager::EErrorType::DescriptorAlreadyFree);
+                        REQUIRE(secondReleaseResult.error().HasFragmentWithFormat(Errors::BindlessIndexAlreadyReleased(0u).Format()));
                         REQUIRE(1 == manager->GetCapacity());
                         REQUIRE(0 == manager->GetSize());
                     }
@@ -95,7 +95,7 @@ TEST_CASE_PERSISTENT_FIXTURE(DescriptorManagerTestPrivate::Fixture, "Descriptor 
                 THEN("Fails")
                 {
                     REQUIRE_FALSE(secondAllocationResult.has_value());
-                    REQUIRE(secondAllocationResult.error() == DescriptorManager::EErrorType::AllocatorFull);
+                    REQUIRE(secondAllocationResult.error().HasFragment(Errors::DescriptorManagerIsFull()));
                     REQUIRE(1 == manager->GetCapacity());
                     REQUIRE(1 == manager->GetSize());
                 }
@@ -189,7 +189,7 @@ TEST_CASE_PERSISTENT_FIXTURE(DescriptorManagerTestPrivate::Fixture, "Descriptor 
             THEN("Fails")
             {
                 REQUIRE_FALSE(allocationResult.has_value());
-                REQUIRE(allocationResult.error() == DescriptorManager::EErrorType::AllocatorFull);
+                REQUIRE(allocationResult.error().HasFragment(Errors::DescriptorManagerIsFull()));
                 REQUIRE(4 == manager->GetCapacity());
                 REQUIRE(4 == manager->GetSize());
             }

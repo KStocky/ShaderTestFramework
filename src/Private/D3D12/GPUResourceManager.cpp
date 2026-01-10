@@ -116,21 +116,16 @@ namespace stf
     {
         auto descriptor = ThrowIfUnexpected(m_DescriptorManager->Acquire()
             .or_else(
-                [&](const DescriptorManager::EErrorType InErrorType) -> DescriptorManager::Expected<DescriptorManager::Descriptor>
+                [&](const Error& InErrorType) -> ExpectedError<DescriptorManager::Descriptor>
                 {
-                    switch (InErrorType)
+                    if (InErrorType.HasFragment(Errors::DescriptorManagerIsFull()))
                     {
-                        case DescriptorManager::EErrorType::AllocatorFull:
-                        {
-                            auto oldHeap = ThrowIfUnexpected(m_DescriptorManager->Resize(m_DescriptorManager->GetCapacity() * 2));
-                            ThrowIfUnexpected(m_HeapReleaseManager.Release(m_HeapReleaseManager.Manage(std::move(oldHeap))));
-                            return m_DescriptorManager->Acquire();
-                        }
-                        default:
-                        {
-                            return Unexpected{ InErrorType };
-                        }
+                        auto oldHeap = ThrowIfUnexpected(m_DescriptorManager->Resize(m_DescriptorManager->GetCapacity() * 2));
+                        ThrowIfUnexpected(m_HeapReleaseManager.Release(m_HeapReleaseManager.Manage(std::move(oldHeap))));
+                        return m_DescriptorManager->Acquire();
                     }
+
+                    return Unexpected{ InErrorType };
                 }
             ));
 
@@ -153,21 +148,16 @@ namespace stf
     {
         auto descriptor = ThrowIfUnexpected(m_DescriptorManager->Acquire()
             .or_else(
-                [&](const DescriptorManager::EErrorType InErrorType) -> DescriptorManager::Expected<DescriptorManager::Descriptor>
+                [&](const Error& InErrorType) -> ExpectedError<DescriptorManager::Descriptor>
                 {
-                    switch (InErrorType)
+                    if (InErrorType.HasFragment(Errors::DescriptorManagerIsFull()))
                     {
-                        case DescriptorManager::EErrorType::AllocatorFull:
-                        {
-                            auto oldHeap = ThrowIfUnexpected(m_DescriptorManager->Resize(m_DescriptorManager->GetCapacity() * 2));
-                            ThrowIfUnexpected(m_HeapReleaseManager.Release(m_HeapReleaseManager.Manage(std::move(oldHeap))));
-                            return m_DescriptorManager->Acquire();
-                        }
-                        default:
-                        {
-                            return Unexpected{ InErrorType };
-                        }
+                        auto oldHeap = ThrowIfUnexpected(m_DescriptorManager->Resize(m_DescriptorManager->GetCapacity() * 2));
+                        ThrowIfUnexpected(m_HeapReleaseManager.Release(m_HeapReleaseManager.Manage(std::move(oldHeap))));
+                        return m_DescriptorManager->Acquire();
                     }
+
+                    return Unexpected{ InErrorType };
                 }
             ));
 
@@ -184,6 +174,23 @@ namespace stf
         const auto managedHandle = m_Descriptors.Manage(std::move(descriptor));
 
         return ConstantBufferViewHandle{ Private{}, InBufferHandle.GetHandle(), managedHandle};
+    }
+
+    ExpectedError<u32> GPUResourceManager::GetDescriptorIndex(const DescriptorOpaqueHandle InHandle) const
+    {
+        return m_Descriptors.Get(InHandle)
+            .and_then(
+                [&](const DescriptorManager::Descriptor& InDescriptor)
+                {
+                    return InDescriptor.Resolve();
+                }
+            )
+            .and_then(
+                [](const DescriptorHandle InHandle) -> ExpectedError<u32>
+                {
+                    return InHandle.GetHeapIndex();
+                }
+            );
     }
 
     ExpectedError<void> GPUResourceManager::UploadData(const std::span<const std::byte> InData, const ConstantBufferHandle InHandle)
