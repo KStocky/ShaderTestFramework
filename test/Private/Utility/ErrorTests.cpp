@@ -209,12 +209,12 @@ SCENARIO("Error Tests")
 
                 const auto formattedError = std::format("{}", error);
                 const auto streamError = [&]()
-                    { 
+                    {
                         std::stringstream stringBuffer;
                         stringBuffer << error;
                         return stringBuffer.str();
                     }();
-                
+
                 REQUIRE(formattedError == streamError);
 
                 REQUIRE_THAT(formattedError, ContainsSubstring(std::format("{}", errorFrag1.Error())));
@@ -239,7 +239,7 @@ SCENARIO("Error Tests")
                             stringBuffer << error;
                             return stringBuffer.str();
                         }();
-                    
+
                     REQUIRE(errorMessage == streamError);
 
                     const auto error1Range = std::ranges::search(errorMessage, errorFrag1.Error());
@@ -265,6 +265,48 @@ SCENARIO("Error Tests")
         }
     }
 
+    GIVEN("Two errors constructed by appending different fragments")
+    {
+
+        const ErrorFragment frag1 = ErrorFragment::Make<"1">();
+        const ErrorFragment frag2 = ErrorFragment::Make<"2">();
+        const ErrorFragment frag3 = ErrorFragment::Make<"3">();
+        const ErrorFragment frag4 = ErrorFragment::Make<"4">();
+
+        const Error error1 = frag1 + frag2;
+        const Error error2 = frag3 + frag4;
+
+        THEN("Errors are as expected")
+        {
+            REQUIRE(error1 != error2);
+            REQUIRE(error1.HasFragmentWithFormat(frag1.Format()));
+            REQUIRE(error1.HasFragmentWithFormat(frag2.Format()));
+            REQUIRE(error2.HasFragmentWithFormat(frag3.Format()));
+            REQUIRE(error2.HasFragmentWithFormat(frag4.Format()));
+            REQUIRE_FALSE(error2.HasFragmentWithFormat(frag1.Format()));
+            REQUIRE_FALSE(error2.HasFragmentWithFormat(frag2.Format()));
+            REQUIRE_FALSE(error1.HasFragmentWithFormat(frag3.Format()));
+            REQUIRE_FALSE(error1.HasFragmentWithFormat(frag4.Format()));
+
+            WHEN("errors are appended")
+            {
+                const Error error3 = error1 + error2;
+
+                THEN("new error contains all fragments")
+                {
+                    REQUIRE(error3.HasFragmentWithFormat(frag1.Format()));
+                    REQUIRE(error3.HasFragmentWithFormat(frag2.Format()));
+                    REQUIRE(error3.HasFragmentWithFormat(frag3.Format()));
+                    REQUIRE(error3.HasFragmentWithFormat(frag4.Format()));
+                }
+            }
+        }
+    }
+}
+
+SCENARIO("Error comparison tests")
+{
+    using namespace stf;
     const auto [given, left, right, expected] = GENERATE(
         table<std::string, Error, Error, bool>
         (

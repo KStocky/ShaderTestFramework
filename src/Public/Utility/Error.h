@@ -13,6 +13,7 @@
 #include <iterator>
 #include <ostream>
 #include <ranges>
+#include <string_view>
 #include <vector>
 
 namespace stf
@@ -128,6 +129,16 @@ namespace stf
                 });
         }
 
+        bool HasFragment(const ErrorFragment& InErrorFragment) const
+        {
+            return std::ranges::any_of(
+                m_Fragments,
+                [&](const ErrorFragment& InFragment)
+                {
+                    return InFragment == InErrorFragment;
+                });
+        }
+
         template<std::output_iterator<const char&> OutType>
         auto FormatTo(OutType InIterator) const
         {
@@ -151,15 +162,60 @@ namespace stf
             return *this;
         }
 
+        Error& operator+=(const Error& InError)
+        {
+            for (const auto& fragment : InError.m_Fragments)
+            {
+                Append(fragment);
+            }
+            return *this;
+        }
+
+        Error& operator+=(Error&& InError)
+        {
+            for (auto&& fragment : InError.m_Fragments)
+            {
+                Append(std::move(fragment));
+            }
+            return *this;
+        }
+
         friend std::ostream& operator<<(std::ostream& InOutStream, const Error& InError);
 
         friend bool operator==(const Error&, const Error&) = default;
         friend bool operator!=(const Error&, const Error&) = default;
 
+        friend Error operator+(const Error& InA, const Error& InB)
+        {
+            Error ret;
+            ret += InA;
+            ret += InB;
+
+            return ret;
+        }
+
     private:
 
         std::vector<ErrorFragment> m_Fragments{};
     };
+
+    inline Error operator+(const ErrorFragment& InA, const ErrorFragment& InB)
+    {
+        Error ret;
+        ret += InA;
+        ret += InB;
+
+        return ret;
+    }
+
+    inline Error operator+(const Error& InA, const ErrorFragment& InB)
+    {
+        Error ret;
+        ret += InA;
+        ret += InB;
+
+        return ret;
+    }
 
     template<typename T>
     using ExpectedError = Expected<T, Error>;
