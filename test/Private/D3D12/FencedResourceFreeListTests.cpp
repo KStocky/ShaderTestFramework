@@ -1,12 +1,14 @@
 
+#include "TestUtilities/ErrorMatchers.h"
+
 #include <Platform.h>
 #include <D3D12/CommandQueue.h>
 #include <D3D12/Descriptor.h>
 #include <D3D12/FencedResourceFreeList.h>
 #include <D3D12/GPUDevice.h>
 
-#include "Utility/EnumReflection.h"
-#include "Utility/Object.h"
+#include <Utility/EnumReflection.h>
+#include <Utility/Object.h>
 
 #include <algorithm>
 #include <functional>
@@ -117,8 +119,10 @@ TEST_CASE_PERSISTENT_FIXTURE(FencedResourceFreeListTestFixture, "Scenario: Fence
 
                     THEN("handle is no longer valid")
                     {
-                        REQUIRE_FALSE(freeList.ValidateHandle(firstHandle));
-                        REQUIRE_FALSE(freeList.Get(firstHandle));
+                        const auto getResult = freeList.Get(firstHandle);
+                        REQUIRE_FALSE(getResult);
+
+                        REQUIRE_THAT(getResult.error(), ErrorContainsFormat(Errors::FencedResourceFreeList::StaleHandle(0, 0).Format()));
                     }
 
                     AND_WHEN("resource is acquired again")
@@ -127,9 +131,17 @@ TEST_CASE_PERSISTENT_FIXTURE(FencedResourceFreeListTestFixture, "Scenario: Fence
                         REQUIRE(freeList.ValidateHandle(secondHandle));
                         const auto secondResource = getResource(freeList, secondHandle);
 
-                        THEN("second handle is to the same resource as the first")
+                        THEN("first and second resource are different")
                         {
-                            REQUIRE(firstResource == secondResource);
+                            REQUIRE(firstResource != secondResource);
+                        }
+
+                        THEN("trying to access first resource fails")
+                        {
+                            const auto getResultForFirst = freeList.Get(firstHandle);
+
+                            REQUIRE_FALSE(getResultForFirst);
+                            REQUIRE_THAT(getResultForFirst.error(), ErrorContainsFormat(Errors::FencedResourceFreeList::StaleHandle(0, 0).Format()));
                         }
                     }
                 }
@@ -186,9 +198,9 @@ TEST_CASE_PERSISTENT_FIXTURE(FencedResourceFreeListTestFixture, "Scenario: Fence
                                 REQUIRE(freeList.ValidateHandle(secondHandle));
                                 const auto secondResource = getResource(freeList, secondHandle);
 
-                                THEN("second handle is to the same resource as the first")
+                                THEN("second handle is to a different resource from the first")
                                 {
-                                    REQUIRE(firstResource == secondResource);
+                                    REQUIRE(firstResource != secondResource);
                                 }
                             }
                         }

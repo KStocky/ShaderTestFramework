@@ -28,6 +28,19 @@ namespace stf
         FencedResourceFreeListToken() {}
     };
 
+    namespace Errors::FencedResourceFreeList
+    {
+        inline ErrorFragment StaleHandle(const u32 InExpectedVersion, const u32 InActualVersion)
+        {
+            return ErrorFragment::Make<"Handle version mismatch (Expected: {}, Actual Handle: {}). Likely a stale resource handle">(InExpectedVersion, InActualVersion);
+        }
+
+        inline ErrorFragment HandleOutOfRange(const u32 InIndex)
+        {
+            return ErrorFragment::Make<"Handle index ({}) out of range. Is this handle from another free list?">(InIndex);
+        }
+    }
+
     template<typename T>
     class FencedResourceFreeList
     {
@@ -69,23 +82,31 @@ namespace stf
         {
             TickDeferredReleases();
 
-            const auto resourceIndex = 
-                [&]()
-                {
-                    if (m_FreeList.empty())
+            return m_FreeList.pop_front()
+                .and_then(
+                    [&](const u32VersionedIndex InVersionedIndex) -> ExpectedError<Handle>
                     {
-                        return u32VersionedIndex{ static_cast<u32>(m_Resources.size()) };
+                        const u32 index = InVersionedIndex.GetIndex();
+                        const u32 version = InVersionedIndex.GetVersion();
+                        auto& resource = m_Resources[index];
+
+                        ThrowIfFalse(version == resource.Version);
+                        resource.Resource = std::move(InResource);
+
+                        return Handle{ FencedResourceFreeListToken<T>{}, InVersionedIndex };
                     }
-                    else
+                )
+                .or_else(
+                    [&](const Error&) -> ExpectedError<Handle>
                     {
-                        return ThrowIfUnexpected(m_FreeList.pop_front());
+                        const u32VersionedIndex versionedIndex{ static_cast<u32>(m_Resources.size()) };
+
+                        m_Resources.emplace_back(std::move(InResource), versionedIndex.GetVersion());
+                        m_DeferredResources.emplace_back(false);
+
+                        return Handle{ FencedResourceFreeListToken<T>{}, versionedIndex };
                     }
-                }();
-
-            m_Resources.emplace_back(std::move(InResource), resourceIndex.GetVersion());
-            m_DeferredResources.emplace_back(false);
-
-            return Handle{ FencedResourceFreeListToken<T>{}, resourceIndex };
+                ).value();
         }
 
         ExpectedError<void> Release(const Handle InHandle)
@@ -94,13 +115,14 @@ namespace stf
                 .and_then(
                     [this](const u32VersionedIndex InVersionedIndex) -> ExpectedError<void>
                     {
-                        const auto index = InVersionedIndex.GetIndex();
-
+                        const auto nextVersion = InVersionedIndex.Next();
+                        const auto index = nextVersion.GetIndex();
+                        m_Resources[index].Version = nextVersion.GetVersion();
                         m_DeferredResources[index] = true;
                         m_DeferredReleasedHandles.push_back(
                             FencedResource
                             {
-                                .VersionedIndex = InVersionedIndex.Next(),
+                                .VersionedIndex = nextVersion,
                                 .FencePoint = m_Queue->Signal()
                             });
 
@@ -137,17 +159,12 @@ namespace stf
 
             if (index >= static_cast<u32>(m_Resources.size()))
             {
-                return Unexpected{ Error{ErrorFragment::Make<"Handle index ({}) out of range">(index) } };
+                return Unexpected{ Error{ Errors::FencedResourceFreeList::HandleOutOfRange(index) } };
             }
 
             if (m_Resources[index].Version != version)
             {
-                return Unexpected{ Error{ErrorFragment::Make<"Handle version mismatch (Expected: {}, Actual Handle: {}). Likely a stale resource handle">(m_Resources[index].Version, version) } };
-            }
-
-            if (m_DeferredResources[index])
-            {
-                return Unexpected{ Error{ErrorFragment::Make<"Handle index ({}) has already been released">(index) } };
+                return Unexpected{ Error{ Errors::FencedResourceFreeList::StaleHandle(m_Resources[index].Version, version) } };
             }
 
             return versionedIndex;
@@ -160,8 +177,7 @@ namespace stf
                 const auto& releasedResource = ThrowIfUnexpected(m_DeferredReleasedHandles.pop_front());
                 const auto versionedIndex = releasedResource.VersionedIndex;
                 const u32 index = versionedIndex.GetIndex();
-        
-                m_Resources[index].Version = versionedIndex.GetVersion();
+
                 m_DeferredResources[index] = false;
                 m_FreeList.push_back(versionedIndex);
             }
