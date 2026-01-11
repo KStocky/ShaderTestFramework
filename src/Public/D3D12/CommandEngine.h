@@ -38,10 +38,13 @@ namespace stf
 
     template<typename T>
     concept ExecuteLambdaType =
-        !CommandEngineFuncType<T> &&
+        !CommandEngineFuncType<T> && 
         TFuncTraits<T>::ParamTypes::Size == 1 &&
         std::is_same_v<typename TFuncTraits<T>::ParamTypes::template Type<0>, ScopedCommandContext&> &&
-        std::is_same_v<typename TFuncTraits<T>::ReturnType, ExpectedError<void>>;
+        requires (T InFunc, ScopedCommandContext& InContext)
+        {
+            { InFunc(InContext) } -> ExpectedErrorType;
+        };
 
     template<typename T>
     concept BindShaderLambdaType = !LambdaType<T> && 
@@ -188,45 +191,6 @@ namespace stf
         };
 
         CommandEngine(ObjectToken, const CreationParams& InParams);
-
-        template<CommandEngineFuncType InLambdaType>
-        ExpectedError<void> Execute(const InLambdaType& InFunc)
-        {
-            auto allocator = [this]()
-                {
-                    if (m_Allocators.size() == 0 || !m_Queue->HasFencePointBeenReached(m_Allocators.front().FencePoint))
-                    {
-                        return m_Device->CreateCommandAllocator
-                        (
-                            D3D12_COMMAND_LIST_TYPE_DIRECT,
-                            "Command Allocator"
-                        );
-                    }
-
-                    return std::move(ThrowIfUnexpected(m_Allocators.pop_front()).Allocator);
-                }();
-
-            m_List->Reset(allocator);
-            ScopedCommandContext context(CommandEngineToken{}, m_List
-                , m_ResourceManager
-            );
-            return InFunc(context)
-                .and_then(
-                    [&]() -> ExpectedError<void>
-                    {
-                        m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue->Signal() });
-                        m_Queue->ExecuteCommandList(*m_List);
-                        return {};
-                    }
-                )
-                .or_else(
-                    [&](Error&& InError) -> ExpectedError<void>
-                    {
-                        m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue->Signal() });
-                        return Unexpected{ InError };
-                    }
-                );
-        }
 
         template<ExecuteLambdaType InLambdaType>
         ExpectedError<void> Execute(InLambdaType&& InFunc)
