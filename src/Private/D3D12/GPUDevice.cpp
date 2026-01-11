@@ -220,8 +220,14 @@ namespace stf
                 InDesc.CastableFormats.data(),
                 IID_PPV_ARGS(raw.GetAddressOf()))
         );
-        SetName(raw.Get(), InDesc.Name);
-        return Object::New<GPUResource>(GPUResource::CreationParams{ std::move(raw), InDesc.ClearValue, {D3D12_BARRIER_SYNC_NONE, D3D12_BARRIER_ACCESS_NO_ACCESS, InDesc.BarrierLayout} });
+        SetName(raw.Get(), std::string_view{ InDesc.Name });
+        return Object::New<GPUResource>(
+            GPUResource::CreationParams{ 
+                .Resource = std::move(raw),
+                .ClearValue = InDesc.ClearValue, 
+                .InitialBarrier = {D3D12_BARRIER_SYNC_NONE, D3D12_BARRIER_ACCESS_NO_ACCESS, InDesc.BarrierLayout}, 
+                .Name = InDesc.Name 
+            });
     }
 
     SharedPtr<DescriptorHeap> GPUDevice::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName) const

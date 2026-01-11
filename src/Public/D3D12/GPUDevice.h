@@ -187,7 +187,7 @@ namespace stf
 
             std::span<DXGI_FORMAT> CastableFormats = {};
 
-            std::string_view Name = "DefaultResource";
+            std::string Name = "DefaultResource";
         };
 
         GPUDevice(ObjectToken, const CreationParams InDesc);

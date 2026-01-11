@@ -4,9 +4,10 @@
 
 namespace stf
 {
-    GPUResource::GPUResource(ObjectToken InToken, CreationParams InParams) noexcept
+    GPUResource::GPUResource(ObjectToken InToken, const CreationParams& InParams) noexcept
         : Object(InToken)
-        , m_Resource(std::move(InParams.Resource))
+        , m_Name{InParams.Name}
+        , m_Resource(InParams.Resource)
         , m_ClearValue(InParams.ClearValue)
         , m_CurrentBarrier(InParams.InitialBarrier)
     {
@@ -40,6 +41,11 @@ namespace stf
     std::optional<D3D12_CLEAR_VALUE> GPUResource::GetClearValue() const noexcept
     {
         return m_ClearValue;
+    }
+
+    std::string GPUResource::GetName() const
+    {
+        return m_Name;
     }
 
     u64 GPUResource::GetGPUAddress() const noexcept

@@ -7,6 +7,14 @@
 
 namespace stf
 {
+    namespace Errors::GPUResourceManager
+    {
+        ErrorFragment ReadbackHasNotBeenCompleted(const std::string_view InSourceName)
+        {
+            return ErrorFragment::Make<"Readback of {} has not completed yet.">(InSourceName);
+        }
+    }
+
     GPUResourceManager::GPUResourceManager(ObjectToken InToken, const CreationParams& InParams)
         : Object(InToken)
         , m_Device(InParams.Device)
@@ -95,12 +103,12 @@ namespace stf
         return m_SourceHandle;
     }
 
-    GPUResourceManager::ReadbackResultHandle::ReadbackResultHandle(Private, const ReadbackBufferHandle InHandle)
+    GPUResourceManager::ReadbackResultHandle::ReadbackResultHandle(Private, const InFlightReadbackHandle InHandle)
         : m_Handle(InHandle)
     {
     }
 
-    GPUResourceManager::ReadbackBufferHandle GPUResourceManager::ReadbackResultHandle::GetReadbackHandle() const
+    GPUResourceManager::InFlightReadbackHandle GPUResourceManager::ReadbackResultHandle::GetReadbackHandle() const
     {
         return m_Handle;
     }
@@ -150,7 +158,7 @@ namespace stf
                             {
                                 .HeapProps = CD3DX12_HEAP_PROPERTIES{ D3D12_HEAP_TYPE_READBACK },
                                 .ResourceDesc = CD3DX12_RESOURCE_DESC1::Buffer(InSourceBuffer->GetDesc().Width),
-                                .Name = InDesc.Name
+                                .Name = std::format("Readback buffer for -> {}", InSourceBuffer->GetName())
                             }
                         )
                     );
@@ -301,7 +309,16 @@ namespace stf
                             {
                                 InCommandList.CopyBufferResource(*InReadback, *InSource);
 
-                                return ReadbackResultHandle{ Private{}, InHandle };
+                                const auto handle = m_Readbacks.Manage(
+                                    InFlightReadback
+                                    {
+                                        .Handle = InHandle,
+                                        .FencePoint = m_Queue->Signal(),
+                                        .SourceBufferName = InSource->GetName()
+                                    }
+                                );
+
+                                return ReadbackResultHandle{ Private{}, handle };
                             }
                         );
                 }

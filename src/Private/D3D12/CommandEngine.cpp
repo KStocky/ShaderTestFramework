@@ -31,7 +31,7 @@ namespace stf
         }
     }
 
-    [[nodiscard]] GPUResourceManager::ConstantBufferViewHandle ScopedGPUResourceManager::CreateCBV(const std::span<const std::byte> InData)
+    GPUResourceManager::ConstantBufferViewHandle ScopedGPUResourceManager::CreateCBV(const std::span<const std::byte> InData)
     {
         const auto buffer = m_ResourceManager->Acquire(GPUResourceManager::ConstantBufferDesc{ .RequestedSize = static_cast<u32>(InData.size_bytes()) });
         const auto cbv = m_ResourceManager->CreateCBV(buffer);
@@ -44,14 +44,33 @@ namespace stf
         return cbv;
     }
 
-    [[nodiscard]] GPUResourceManager::BufferHandle ScopedGPUResourceManager::CreateBuffer(const GPUResourceManager::BufferDesc& InBufferDesc)
+    GPUResourceManager::BufferHandle ScopedGPUResourceManager::CreateBuffer(const GPUResourceManager::BufferDesc& InBufferDesc)
     {
-        return m_ResourceManager->Acquire(InBufferDesc);
+        const auto handle = m_ResourceManager->Acquire(InBufferDesc);
+        m_Buffers.push_back(handle);
+        return handle;
     }
 
-    [[nodiscard]] GPUResourceManager::BufferUAVHandle ScopedGPUResourceManager::CreateUAV(const GPUResourceManager::BufferHandle& InBufferHandle, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc)
+    GPUResourceManager::BufferUAVHandle ScopedGPUResourceManager::CreateUAV(const GPUResourceManager::BufferHandle& InBufferHandle, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc)
     {
-        return m_ResourceManager->CreateUAV(InBufferHandle, InDesc);
+        const auto handle = m_ResourceManager->CreateUAV(InBufferHandle, InDesc);
+        m_BufferUAVs.push_back(handle);
+        return handle;
+    }
+
+    ExpectedError<GPUResourceManager::ReadbackResultHandle> ScopedGPUResourceManager::QueueReadback(CommandList& InList, const GPUResourceManager::BufferHandle InBufferHandle)
+    {
+        return m_ResourceManager->Acquire(
+            GPUResourceManager::ReadbackBufferDesc
+            {
+                .Source = InBufferHandle
+            })
+            .and_then(
+                [&](const GPUResourceManager::ReadbackBufferHandle InReadbackHandle)
+                {
+                    return m_ResourceManager->QueueReadback(InList, InReadbackHandle);
+                }
+            );
     }
 
     void ScopedGPUResourceManager::SetUAV(CommandList& InList, const GPUResourceManager::BufferUAVHandle InHandle)
@@ -113,14 +132,19 @@ namespace stf
         return m_List.get();
     }
 
-    [[nodiscard]] GPUResourceManager::BufferHandle ScopedCommandContext::CreateBuffer(const GPUResourceManager::BufferDesc& InDesc)
+    GPUResourceManager::BufferHandle ScopedCommandContext::CreateBuffer(const GPUResourceManager::BufferDesc& InDesc)
     {
         return m_ResourceManager->CreateBuffer(InDesc);
     }
 
-    [[nodiscard]] GPUResourceManager::BufferUAVHandle ScopedCommandContext::CreateUAV(const GPUResourceManager::BufferHandle& InBufferHandle, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc)
+    GPUResourceManager::BufferUAVHandle ScopedCommandContext::CreateUAV(const GPUResourceManager::BufferHandle& InBufferHandle, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc)
     {
         return m_ResourceManager->CreateUAV(InBufferHandle, InDesc);
+    }
+
+    ExpectedError<GPUResourceManager::ReadbackResultHandle> ScopedCommandContext::QueueReadback(const GPUResourceManager::BufferHandle InBufferHandle)
+    {
+        return m_ResourceManager->QueueReadback(*m_List, InBufferHandle);
     }
 
     void ScopedCommandContext::SetUAV(const GPUResourceManager::BufferUAVHandle InHandle)
@@ -128,7 +152,7 @@ namespace stf
         m_ResourceManager->SetUAV(*m_List, InHandle);
     }
 
-    [[nodiscard]] GPUResourceManager::ConstantBufferViewHandle ScopedCommandContext::CreateCBV(const std::span<const std::byte> InData)
+    GPUResourceManager::ConstantBufferViewHandle ScopedCommandContext::CreateCBV(const std::span<const std::byte> InData)
     {
         return m_ResourceManager->CreateCBV(InData);
     }

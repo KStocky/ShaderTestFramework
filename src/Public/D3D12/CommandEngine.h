@@ -64,6 +64,8 @@ namespace stf
 
         [[nodiscard]] GPUResourceManager::BufferUAVHandle CreateUAV(const GPUResourceManager::BufferHandle& InBufferHandle, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc);
 
+        ExpectedError<GPUResourceManager::ReadbackResultHandle> QueueReadback(CommandList& InList, const GPUResourceManager::BufferHandle InBufferHandle);
+
         void SetUAV(CommandList& InList, const GPUResourceManager::BufferUAVHandle InHandle);
 
         void SetRootDescriptor(CommandList& InList, const u32 InRootParamIndex, const GPUResourceManager::ConstantBufferViewHandle InHandle);
@@ -140,6 +142,8 @@ namespace stf
         void SetUAV(const GPUResourceManager::BufferUAVHandle InHandle);
 
         [[nodiscard]] GPUResourceManager::ConstantBufferViewHandle CreateCBV(const std::span<const std::byte> InData);
+
+        ExpectedError<GPUResourceManager::ReadbackResultHandle> QueueReadback(const GPUResourceManager::BufferHandle InBufferHandle);
 
         void SetRootDescriptor(const u32 InRootParamIndex, const GPUResourceManager::ConstantBufferViewHandle InHandle);
 
@@ -269,6 +273,13 @@ namespace stf
         {
             PIXScopedEvent(m_Queue->GetRaw(), 0ull, "%s", InName.data());
             return Execute(std::forward<InLambdaType>(InFunc));
+        }
+
+        template<ExecuteReadbackType InFuncType>
+        ExpectedError<void> ExecuteReadback(const std::string_view InName, const GPUResourceManager::ReadbackResultHandle InReadbackHandle, InFuncType&& InFunc)
+        {
+            PIXScopedEvent(m_Queue->GetRaw(), 0ull, "%s", InName.data());
+            return m_ResourceManager->ExecuteReadback(InReadbackHandle, std::forward<InFuncType>(InFunc));
         }
 
         void Flush();

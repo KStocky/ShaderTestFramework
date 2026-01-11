@@ -1,22 +1,35 @@
 
 #pragma once
 
+#include "Container/FreeList.h"
 #include "D3D12/CommandQueue.h"
 #include "D3D12/DescriptorManager.h"
 #include "D3D12/FencedResourceFreeList.h"
 #include "D3D12/GPUDevice.h"
 #include "D3D12/GPUResource.h"
+#include "Utility/Concepts.h"
+#include "Utility/FunctionTraits.h"
 #include "Utility/Object.h"
 #include "Utility/Pointer.h"
 #include "Utility/VersionedIndex.h"
 
 #include <optional>
-#include <vector>
+#include <string>
 
 namespace stf
 {
+    template<typename T>
+    concept ExecuteReadbackType =
+        TFuncTraits<T>::ParamTypes::Size == 1 &&
+        std::is_same_v<typename TFuncTraits<T>::ParamTypes::template Type<0>, const MappedResource&> &&
+        std::is_same_v<typename TFuncTraits<T>::ReturnType, ExpectedError<void>>;
 
     class CommandList;
+
+    namespace Errors::GPUResourceManager
+    {
+        ErrorFragment ReadbackHasNotBeenCompleted(const std::string_view InSourceName);
+    }
 
     class GPUResourceManager
         : public Object
@@ -39,7 +52,7 @@ namespace stf
 
         struct ConstantBufferDesc
         {
-            std::string_view Name = "DefaultConstantBuffer";
+            std::string Name = "DefaultConstantBuffer";
             u32 RequestedSize = 0u;
         };
 
@@ -73,7 +86,7 @@ namespace stf
 
         struct BufferDesc
         {
-            std::string_view Name = "DefaultBuffer";
+            std::string Name = "DefaultBuffer";
             u32 RequestedSize = 0u;
             D3D12_RESOURCE_FLAGS Flags = D3D12_RESOURCE_FLAG_NONE;
         };
@@ -108,7 +121,6 @@ namespace stf
 
         struct ReadbackBufferDesc
         {
-            std::string_view Name = "DefaultReadbackBuffer";
             BufferHandle Source;
         };
 
@@ -127,16 +139,30 @@ namespace stf
             ResourceHandle m_SourceHandle;
         };
 
+    private:
+
+        struct InFlightReadback
+        {
+            ReadbackBufferHandle Handle;
+            Fence::FencePoint FencePoint;
+            std::string SourceBufferName;
+        };
+
+    public:
+
+        using InFlightReadbackList = FreeList<InFlightReadback>;
+        using InFlightReadbackHandle = InFlightReadbackList::Handle;
+
         class ReadbackResultHandle
         {
         public:
 
-            ReadbackResultHandle(Private, const ReadbackBufferHandle InHandle);
+            ReadbackResultHandle(Private, const InFlightReadbackHandle InHandle);
 
-            ReadbackBufferHandle GetReadbackHandle() const;
+            InFlightReadbackHandle GetReadbackHandle() const;
 
         private:
-            ReadbackBufferHandle m_Handle;
+            InFlightReadbackHandle m_Handle;
         };
 
         GPUResourceManager(ObjectToken InToken, const CreationParams& InParams);
@@ -165,6 +191,37 @@ namespace stf
 
         ExpectedError<ReadbackResultHandle> QueueReadback(CommandList& InCommandList, const ReadbackBufferHandle InHandle);
 
+        template<ExecuteReadbackType FuncType>
+        ExpectedError<void> ExecuteReadback(const ReadbackResultHandle InHandle, FuncType&& InFunc)
+        {
+            return m_Readbacks.Get(InHandle.GetReadbackHandle())
+                .and_then(
+                    [&](const InFlightReadback& InReadback)
+                    {
+                        if (!m_Queue->HasFencePointBeenReached(InReadback.FencePoint))
+                        {
+                            return Unexpected{ Errors::GPUResourceManager::ReadbackHasNotBeenCompleted(InReadback.SourceBufferName) };
+                        }
+
+                        return m_Resources.Get(InReadback.Handle.GetReadbackHandle())
+                            .and_then(
+                                [&](const SharedPtr<GPUResource>& InReadbackBuffer)
+                                {
+                                    return InFunc(InReadbackBuffer->Map());
+                                })
+                            .and_then(
+                                [&]() -> ExpectedError<void>
+                                {
+                                    ThrowIfUnexpected(m_Resources.Release(InReadback.Handle.GetReadbackHandle()));
+                                    ThrowIfUnexpected(m_Readbacks.Release(InHandle.GetReadbackHandle()));
+
+                                    return {};
+                                }
+                            );
+                    }
+                );
+        }
+
         ExpectedError<void> SetRootDescriptor(CommandList& InCommandList, const u32 InRootParamIndex, const ConstantBufferViewHandle InCBV);
 
         ExpectedError<void> SetUAV(CommandList& InCommandList, const BufferUAVHandle InHandle);
@@ -180,5 +237,7 @@ namespace stf
         ResourceManager m_Resources;
         DescriptorFreeList m_Descriptors;
         DescriptorHeapReleaseManager m_HeapReleaseManager;
+
+        InFlightReadbackList m_Readbacks;
     };
 }
