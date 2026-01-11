@@ -5,29 +5,24 @@
 
 namespace stf
 {
-    namespace Errors
+    namespace Errors::BindlessFreeListAllocator
     {
-        ErrorFragment BindlessFreeListAllocatorIsEmpty()
+        ErrorFragment Empty()
         {
             return ErrorFragment::Make<"Bindless allocator is empty">();
         }
 
-        ErrorFragment UnknownBindlessFreeListAllocatorError()
-        {
-            return ErrorFragment::Make<"Unknown bindless allocator error">();
-        }
-
-        ErrorFragment InvalidBindlessIndex(const u32 InIndex)
+        ErrorFragment InvalidIndex(const u32 InIndex)
         {
             return ErrorFragment::Make<"Bindless index {} is invalid">(InIndex);
         }
 
-        ErrorFragment BindlessIndexAlreadyReleased(const u32 InIndex)
+        ErrorFragment IndexAlreadyReleased(const u32 InIndex)
         {
             return ErrorFragment::Make<"Bindless index {} has already been released">(InIndex);
         }
 
-        ErrorFragment ShrinkAttemptedOnBindlessAllocator(const u32 InCurrentSize, const u32 InRequestedSize)
+        ErrorFragment ShrinkAttempted(const u32 InCurrentSize, const u32 InRequestedSize)
         {
             return ErrorFragment::Make<"Attempted shrink which is unsupported. Current size: {}, Requested size: {}">(InCurrentSize, InRequestedSize);
         }
@@ -51,20 +46,9 @@ namespace stf
                     return BindlessIndex{ Private{}, InIndex };
                 })
             .transform_error(
-                [](const EBufferError InError) -> Error
+                [](const Error& InError) -> Error
                 {
-                    switch (InError)
-                    {
-                        case EBufferError::EmptyBuffer:
-                        {
-                            return Error{ Errors::BindlessFreeListAllocatorIsEmpty() };
-                        }
-
-                        default:
-                        {
-                            return Error{ Errors::UnknownBindlessFreeListAllocatorError() };
-                        }
-                    }
+                    return InError + Errors::BindlessFreeListAllocator::Empty();
                 }
             );
     }
@@ -74,12 +58,12 @@ namespace stf
         const u32 index = InIndex;
         if (index >= m_NumDescriptors)
         {
-            return Unexpected{ Error{Errors::InvalidBindlessIndex(index) } };
+            return Unexpected{ Error{Errors::BindlessFreeListAllocator::InvalidIndex(index) } };
         }
 
         if (m_FreeSet[index])
         {
-            return Unexpected{ Error{ Errors::BindlessIndexAlreadyReleased(index) } };
+            return Unexpected{ Error{ Errors::BindlessFreeListAllocator::IndexAlreadyReleased(index) } };
         }
 
         m_FreeList.push_back(index);
@@ -92,7 +76,7 @@ namespace stf
     {
         if (InNewSize < m_NumDescriptors)
         {
-            return Unexpected{ Error{ Errors::ShrinkAttemptedOnBindlessAllocator(m_NumDescriptors, InNewSize) } };
+            return Unexpected{ Error{ Errors::BindlessFreeListAllocator::ShrinkAttempted(m_NumDescriptors, InNewSize) } };
         }
 
         if (InNewSize == m_NumDescriptors)
@@ -110,11 +94,6 @@ namespace stf
                     std::ranges::generate_n(std::back_inserter(m_FreeList), numAdded, [index = m_NumDescriptors]() mutable { return index++; });
                     std::ranges::generate_n(std::back_inserter(m_FreeSet), numAdded, []() { return true; });
                     m_NumDescriptors = InNewSize;
-                }
-            ).transform_error(
-                [](const stf::RingBuffer<stf::u32>::EErrorType)
-                {
-                    return Error{ Errors::UnknownBindlessFreeListAllocatorError() };
                 }
             );
     }
@@ -149,7 +128,7 @@ namespace stf
         const u32 index = InIndex;
         if (index >= m_NumDescriptors)
         {
-            return Unexpected{ Error{ Errors::InvalidBindlessIndex(InIndex) } };
+            return Unexpected{ Error{ Errors::BindlessFreeListAllocator::InvalidIndex(InIndex) } };
         }
 
         return !m_FreeSet[InIndex];

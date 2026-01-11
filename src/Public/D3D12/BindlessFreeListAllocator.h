@@ -10,14 +10,12 @@
 
 namespace stf
 {
-    namespace Errors
+    namespace Errors::BindlessFreeListAllocator
     {
-        ErrorFragment BindlessFreeListAllocatorIsEmpty();
-        ErrorFragment UnknownBindlessFreeListAllocatorError();
-
-        ErrorFragment InvalidBindlessIndex(const u32 InIndex);
-        ErrorFragment BindlessIndexAlreadyReleased(const u32 InIndex);
-        ErrorFragment ShrinkAttemptedOnBindlessAllocator(const u32 InCurrentSize, const u32 InRequestedSize);
+        ErrorFragment Empty();
+        ErrorFragment InvalidIndex(const u32 InIndex);
+        ErrorFragment IndexAlreadyReleased(const u32 InIndex);
+        ErrorFragment ShrinkAttempted(const u32 InCurrentSize, const u32 InRequestedSize);
     }
 
     class BindlessFreeListAllocator
@@ -59,8 +57,6 @@ namespace stf
         ExpectedError<bool> IsAllocated(const BindlessIndex InIndex) const;
 
     private:
-
-        using EBufferError = RingBuffer<u32>::EErrorType;
 
         RingBuffer<u32> m_FreeList;
         std::vector<bool> m_FreeSet;

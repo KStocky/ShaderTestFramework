@@ -1,4 +1,5 @@
 
+#include "TestUtilities/ErrorMatchers.h"
 #include <D3D12/GPUDevice.h>
 #include <D3D12/DescriptorManager.h>
 #include <Utility/Pointer.h>
@@ -81,7 +82,7 @@ TEST_CASE_PERSISTENT_FIXTURE(DescriptorManagerTestPrivate::Fixture, "Descriptor 
                     THEN("Fails")
                     {
                         REQUIRE_FALSE(secondReleaseResult.has_value());
-                        REQUIRE(secondReleaseResult.error().HasFragmentWithFormat(Errors::BindlessIndexAlreadyReleased(0u).Format()));
+                        REQUIRE_THAT(secondReleaseResult.error(), ErrorContainsFormat(Errors::BindlessFreeListAllocator::IndexAlreadyReleased(0u).Format()));
                         REQUIRE(1 == manager->GetCapacity());
                         REQUIRE(0 == manager->GetSize());
                     }

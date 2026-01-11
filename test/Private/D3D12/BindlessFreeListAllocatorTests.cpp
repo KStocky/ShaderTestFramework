@@ -1,4 +1,5 @@
 
+#include "TestUtilities/ErrorMatchers.h"
 #include <D3D12/BindlessFreeListAllocator.h>
 
 #include <catch2/catch_test_macros.hpp>
@@ -30,7 +31,7 @@ SCENARIO("BindlessFreeListAllocatorTests")
                 THEN("return expected error")
                 {
                     REQUIRE_FALSE(allocation);
-                    REQUIRE(allocation.error().HasFragment(Errors::BindlessFreeListAllocatorIsEmpty()));
+                    REQUIRE_THAT(allocation.error(), ErrorContains(Errors::BindlessFreeListAllocator::Empty()));
                 }
             }
         }
@@ -80,7 +81,7 @@ SCENARIO("BindlessFreeListAllocatorTests")
                     THEN("release failed")
                     {
                         REQUIRE_FALSE(releaseResult.has_value());
-                        REQUIRE(releaseResult.error().HasFragment(Errors::BindlessIndexAlreadyReleased(invalidAllocation.value().GetIndex())));
+                        REQUIRE_THAT(releaseResult.error(), ErrorContains(Errors::BindlessFreeListAllocator::IndexAlreadyReleased(invalidAllocation.value().GetIndex())));
                     }
                 }
             }
@@ -109,7 +110,7 @@ SCENARIO("BindlessFreeListAllocatorTests")
                     THEN("release failed")
                     {
                         REQUIRE_FALSE(finalReleaseOnInitialAllocatorResult.has_value());
-                        REQUIRE(finalReleaseOnInitialAllocatorResult.error().HasFragment(Errors::InvalidBindlessIndex(finalAllocation.value())));
+                        REQUIRE_THAT(finalReleaseOnInitialAllocatorResult.error(), ErrorContains(Errors::BindlessFreeListAllocator::InvalidIndex(finalAllocation.value())));
                     }
                 }
 
@@ -155,7 +156,7 @@ SCENARIO("BindlessFreeListAllocatorTests")
                     THEN("Release fails")
                     {
                         REQUIRE_FALSE(secondReleaseResult.has_value());
-                        REQUIRE(secondReleaseResult.error().HasFragment(Errors::BindlessIndexAlreadyReleased(bindlessIndex1.value())));
+                        REQUIRE_THAT(secondReleaseResult.error(), ErrorContains(Errors::BindlessFreeListAllocator::IndexAlreadyReleased(bindlessIndex1.value())));
                         REQUIRE(initialCapacity == allocator.GetCapacity());
                         REQUIRE(0 == allocator.GetSize());
                     }
