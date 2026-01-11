@@ -141,8 +141,7 @@ namespace stf
                                     return InContext.Section("Test Dispatch",
                                         [&](ScopedCommandContext& InContext)
                                         {
-                                            InContext.Dispatch(InTestDesc.DispatchConfig);
-                                            return ExpectedError<void>{};
+                                            return InContext.Dispatch(InTestDesc.DispatchConfig);
                                         }
                                     );
                                 }

@@ -29,7 +29,6 @@ namespace stf
         using DescriptorFreeList = FencedResourceFreeList<DescriptorManager::Descriptor>;
         using ResourceHandle = typename ResourceManager::Handle;
         using DescriptorOpaqueHandle = typename DescriptorFreeList::Handle;
-
         using DescriptorHeapReleaseManager = FencedResourceFreeList<SharedPtr<DescriptorHeap>>;
 
         struct CreationParams
@@ -74,7 +73,7 @@ namespace stf
 
         struct BufferDesc
         {
-            std::string_view Name = "DefaultConstantBuffer";
+            std::string_view Name = "DefaultBuffer";
             u32 RequestedSize = 0u;
             D3D12_RESOURCE_FLAGS Flags = D3D12_RESOURCE_FLAG_NONE;
         };
@@ -107,10 +106,44 @@ namespace stf
             DescriptorOpaqueHandle m_UAVHandle;
         };
 
+        struct ReadbackBufferDesc
+        {
+            std::string_view Name = "DefaultReadbackBuffer";
+            BufferHandle Source;
+        };
+
+        class ReadbackBufferHandle
+        {
+        public:
+
+            ReadbackBufferHandle(Private, const ResourceHandle InReadbackHandle, const ResourceHandle InSourceHandle);
+
+            ResourceHandle GetReadbackHandle() const;
+            ResourceHandle GetSourceHandle() const;
+
+        private:
+
+            ResourceHandle m_ReadbackHandle;
+            ResourceHandle m_SourceHandle;
+        };
+
+        class ReadbackResultHandle
+        {
+        public:
+
+            ReadbackResultHandle(Private, const ReadbackBufferHandle InHandle);
+
+            ReadbackBufferHandle GetReadbackHandle() const;
+
+        private:
+            ReadbackBufferHandle m_Handle;
+        };
+
         GPUResourceManager(ObjectToken InToken, const CreationParams& InParams);
 
         [[nodiscard]] BufferHandle Acquire(const BufferDesc& InDesc);
         [[nodiscard]] ConstantBufferHandle Acquire(const ConstantBufferDesc& InDesc);
+        ExpectedError<ReadbackBufferHandle> Acquire(const ReadbackBufferDesc& InDesc);
 
         [[nodiscard]] BufferUAVHandle CreateUAV(const BufferHandle InHandle, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc);
         [[nodiscard]] ConstantBufferViewHandle CreateCBV(const ConstantBufferHandle InHandle);
@@ -129,6 +162,8 @@ namespace stf
         ExpectedError<void> Release(const ConstantBufferHandle InHandle);
         ExpectedError<void> Release(const BufferUAVHandle InHandle);
         ExpectedError<void> Release(const ConstantBufferViewHandle InHandle);
+
+        ExpectedError<ReadbackResultHandle> QueueReadback(CommandList& InCommandList, const ReadbackBufferHandle InHandle);
 
         ExpectedError<void> SetRootDescriptor(CommandList& InCommandList, const u32 InRootParamIndex, const ConstantBufferViewHandle InCBV);
 

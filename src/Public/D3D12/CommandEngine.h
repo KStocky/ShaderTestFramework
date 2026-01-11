@@ -5,6 +5,7 @@
 #include "D3D12/CommandQueue.h"
 #include "D3D12/GPUDevice.h"
 #include "D3D12/GPUResourceManager.h"
+#include "D3D12/Shader/Shader.h"
 #include "Utility/Error.h"
 
 #include "Utility/FunctionTraits.h"
@@ -20,12 +21,12 @@ namespace stf
     class CommandEngineToken
     {
         friend class CommandEngine;
-        friend class ScopedCommandContext;
         CommandEngineToken() = default;
     };
 
     class CommandEngine;
     class ScopedCommandContext;
+    class ScopedCommandShader;
 
     template<typename T>
     concept CommandEngineFuncType = LambdaType<T> && requires
@@ -42,76 +43,34 @@ namespace stf
         std::is_same_v<typename TFuncTraits<T>::ParamTypes::template Type<0>, ScopedCommandContext&> &&
         std::is_same_v<typename TFuncTraits<T>::ReturnType, ExpectedError<void>>;
 
+    template<typename T>
+    concept BindShaderLambdaType = !LambdaType<T> && 
+        TFuncTraits<T>::ParamTypes::Size == 2 &&
+        std::is_same_v<typename TFuncTraits<T>::ParamTypes::template Type<0>, ScopedCommandContext&> &&
+        std::is_same_v<typename TFuncTraits<T>::ParamTypes::template Type<1>, ScopedCommandShader&> &&
+        std::is_same_v<typename TFuncTraits<T>::ReturnType, ExpectedError<void>>;
 
     class ScopedGPUResourceManager
     {
     public:
     
-        ScopedGPUResourceManager(const SharedPtr<GPUResourceManager>& InResourceManager)
-            : m_ResourceManager(InResourceManager)
-        {
-        }
+        ScopedGPUResourceManager(const SharedPtr<GPUResourceManager>& InResourceManager);
     
-        ~ScopedGPUResourceManager() noexcept 
-        {
-            for (const auto& cb : m_ConstantBuffers)
-            {
-                ThrowIfUnexpected(m_ResourceManager->Release(cb));
-            }
-
-            for (const auto& cbv : m_CBVs)
-            {
-                ThrowIfUnexpected(m_ResourceManager->Release(cbv));
-            }
-
-            for (const auto& buffer : m_Buffers)
-            {
-                ThrowIfUnexpected(m_ResourceManager->Release(buffer));
-            }
-
-            for (const auto& bufferUAV : m_BufferUAVs)
-            {
-                ThrowIfUnexpected(m_ResourceManager->Release(bufferUAV));
-            }
-        }
+        ~ScopedGPUResourceManager() noexcept;
     
-        [[nodiscard]] GPUResourceManager::ConstantBufferViewHandle CreateCBV(const std::span<const std::byte> InData)
-        {
-            const auto buffer = m_ResourceManager->Acquire(GPUResourceManager::ConstantBufferDesc{ .RequestedSize = static_cast<u32>(InData.size_bytes()) });
-            const auto cbv = m_ResourceManager->CreateCBV(buffer);
-    
-            ThrowIfUnexpected(m_ResourceManager->UploadData(InData, buffer));
-    
-            m_ConstantBuffers.push_back(buffer);
-            m_CBVs.push_back(cbv);
-    
-            return cbv;
-        }
+        [[nodiscard]] GPUResourceManager::ConstantBufferViewHandle CreateCBV(const std::span<const std::byte> InData);
 
-        [[nodiscard]] GPUResourceManager::BufferHandle CreateBuffer(const GPUResourceManager::BufferDesc& InBufferDesc)
-        {
-            return m_ResourceManager->Acquire(InBufferDesc);
-        }
+        [[nodiscard]] GPUResourceManager::BufferHandle CreateBuffer(const GPUResourceManager::BufferDesc& InBufferDesc);
 
-        [[nodiscard]] GPUResourceManager::BufferUAVHandle CreateUAV(const GPUResourceManager::BufferHandle& InBufferHandle, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc)
-        {
-            return m_ResourceManager->CreateUAV(InBufferHandle, InDesc);
-        }
+        [[nodiscard]] GPUResourceManager::BufferUAVHandle CreateUAV(const GPUResourceManager::BufferHandle& InBufferHandle, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc);
 
-        void SetUAV(CommandList& InList, const GPUResourceManager::BufferUAVHandle InHandle)
-        {
-            ThrowIfUnexpected(m_ResourceManager->SetUAV(InList, InHandle));
-        }
+        void SetUAV(CommandList& InList, const GPUResourceManager::BufferUAVHandle InHandle);
 
-        void SetRootDescriptor(CommandList& InList, const u32 InRootParamIndex, const GPUResourceManager::ConstantBufferViewHandle InHandle)
-        {
-            ThrowIfUnexpected(m_ResourceManager->SetRootDescriptor(InList, InRootParamIndex, InHandle));
-        }
+        void SetRootDescriptor(CommandList& InList, const u32 InRootParamIndex, const GPUResourceManager::ConstantBufferViewHandle InHandle);
 
-        void SetDescriptorHeap(CommandList& InList)
-        {
-            m_ResourceManager->SetDescriptorHeap(InList);
-        }
+        void SetDescriptorHeap(CommandList& InList);
+
+        ExpectedError<u32> GetDescriptorIndex(const GPUResourceManager::DescriptorOpaqueHandle InHandle) const;
     
     private:
     
@@ -122,28 +81,48 @@ namespace stf
         std::vector<GPUResourceManager::BufferUAVHandle> m_BufferUAVs;
     };
 
+    class CommandShaderToken
+    {
+        friend class ScopedCommandShader;
+        CommandShaderToken() = default;
+    };
+
+    class ScopedCommandShader
+    {
+    public:
+
+        ScopedCommandShader(const SharedPtr<Shader>& InShader);
+        ScopedCommandShader(const ScopedCommandShader&) = delete;
+        ScopedCommandShader(ScopedCommandShader&&) = delete;
+        ScopedCommandShader& operator=(const ScopedCommandShader&) = delete;
+        ScopedCommandShader& operator=(ScopedCommandShader&&) = delete;
+
+        ExpectedError<void> StageBindingData(const ShaderBinding& InBinding);
+
+        void StageBindlessResource(ScopedCommandContext& InContext, std::string InBindingName, const GPUResourceManager::BufferUAVHandle InHandle);
+
+    private:
+
+        SharedPtr<Shader> m_Shader;
+    };
+
     class ScopedCommandContext
     {
     public:
 
-        ScopedCommandContext(CommandEngineToken, 
+        ScopedCommandContext(CommandEngineToken,
             const SharedPtr<CommandList>& InList,
             const SharedPtr<GPUResourceManager>& InResourceManager
-        )
-            : m_List(InList)
-            , m_ResourceManager(MakeUnique<ScopedGPUResourceManager>(InResourceManager))
-        {
-        }
+        );
 
-        CommandList* operator->() const
-        {
-            return GetList();
-        }
+        ScopedCommandContext(const ScopedCommandContext&) = delete;
+        ScopedCommandContext(ScopedCommandContext&&) = delete;
+        ScopedCommandContext& operator=(const ScopedCommandContext&) = delete;
+        ScopedCommandContext& operator=(ScopedCommandContext&&) = delete;
 
-        CommandList& operator*() const
-        {
-            return *GetList();
-        }
+        CommandList* operator->() const;
+
+        CommandList& operator*() const;
 
         template<ExecuteLambdaType InLambdaType>
         ExpectedError<void> Section(const std::string_view InName, InLambdaType&& InFunc)
@@ -152,45 +131,46 @@ namespace stf
             return InFunc(*this);
         }
 
-        CommandList* GetList() const
+        CommandList* GetList() const;
+
+        [[nodiscard]] GPUResourceManager::BufferHandle CreateBuffer(const GPUResourceManager::BufferDesc& InDesc);
+
+        [[nodiscard]] GPUResourceManager::BufferUAVHandle CreateUAV(const GPUResourceManager::BufferHandle& InBufferHandle, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc);
+
+        void SetUAV(const GPUResourceManager::BufferUAVHandle InHandle);
+
+        [[nodiscard]] GPUResourceManager::ConstantBufferViewHandle CreateCBV(const std::span<const std::byte> InData);
+
+        void SetRootDescriptor(const u32 InRootParamIndex, const GPUResourceManager::ConstantBufferViewHandle InHandle);
+
+        template<BindShaderLambdaType BindFunc>
+        ExpectedError<void> BindComputeShader(const SharedPtr<Shader>& InShader, BindFunc&& InFunc)
         {
-            return m_List.get();
+            m_BoundShader = InShader;
+            m_BindlessResourcesToResolve.clear();
+            ScopedCommandShader shader(m_BoundShader);
+            return InFunc(*this, shader);
         }
 
-        [[nodiscard]] GPUResourceManager::BufferHandle CreateBuffer(const GPUResourceManager::BufferDesc& InDesc)
-        {
-            return m_ResourceManager->CreateBuffer(InDesc);
-        }
+        void StageBindlessResource(CommandShaderToken, std::string InBindingName, const GPUResourceManager::BufferUAVHandle InHandle);
 
-        [[nodiscard]] GPUResourceManager::BufferUAVHandle CreateUAV(const GPUResourceManager::BufferHandle& InBufferHandle, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc)
-        {
-            return m_ResourceManager->CreateUAV(InBufferHandle, InDesc);
-        }
-
-        void SetUAV(const GPUResourceManager::BufferUAVHandle InHandle)
-        {
-            m_ResourceManager->SetUAV(*m_List, InHandle);
-        }
-
-        [[nodiscard]] GPUResourceManager::ConstantBufferViewHandle CreateCBV(const std::span<const std::byte> InData)
-        {
-            return m_ResourceManager->CreateCBV(InData);
-        }
-
-        void SetRootDescriptor(const u32 InRootParamIndex, const GPUResourceManager::ConstantBufferViewHandle InHandle)
-        {
-            m_ResourceManager->SetRootDescriptor(*m_List, InRootParamIndex, InHandle);
-        }
-
-        void Dispatch(const uint3 InDispatchConfig)
-        {
-            m_List->Dispatch(InDispatchConfig.x, InDispatchConfig.y, InDispatchConfig.z);
-        }
+        ExpectedError<void> Dispatch(const uint3 InDispatchConfig);
 
     private:
 
+        struct StagedBindlessResource
+        {
+            std::string Name;
+            GPUResourceManager::DescriptorOpaqueHandle Descriptor;
+        };
+
+        ExpectedError<void> ResolveAndStageBindlessResources();
+
         SharedPtr<CommandList> m_List = nullptr;
+        SharedPtr<Shader> m_BoundShader = nullptr;
         UniquePtr<ScopedGPUResourceManager> m_ResourceManager = nullptr;
+
+        std::vector<StagedBindlessResource> m_BindlessResourcesToResolve;
     };
 
     class CommandEngine

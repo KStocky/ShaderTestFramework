@@ -79,6 +79,32 @@ namespace stf
         return m_UAVHandle;
     }
 
+    GPUResourceManager::ReadbackBufferHandle::ReadbackBufferHandle(Private, const ResourceHandle InReadbackHandle, const ResourceHandle InSourceHandle)
+        : m_ReadbackHandle(InReadbackHandle)
+        , m_SourceHandle(InSourceHandle)
+    {
+    }
+
+    GPUResourceManager::ResourceHandle GPUResourceManager::ReadbackBufferHandle::GetReadbackHandle() const
+    {
+        return m_ReadbackHandle;
+    }
+
+    GPUResourceManager::ResourceHandle GPUResourceManager::ReadbackBufferHandle::GetSourceHandle() const
+    {
+        return m_SourceHandle;
+    }
+
+    GPUResourceManager::ReadbackResultHandle::ReadbackResultHandle(Private, const ReadbackBufferHandle InHandle)
+        : m_Handle(InHandle)
+    {
+    }
+
+    GPUResourceManager::ReadbackBufferHandle GPUResourceManager::ReadbackResultHandle::GetReadbackHandle() const
+    {
+        return m_Handle;
+    }
+
     GPUResourceManager::BufferHandle GPUResourceManager::Acquire(const BufferDesc& InDesc)
     {
         const auto bufferHandle = m_Resources.Manage(
@@ -110,6 +136,28 @@ namespace stf
         );
 
         return ConstantBufferHandle{ Private{}, bufferHandle };
+    }
+
+    ExpectedError<GPUResourceManager::ReadbackBufferHandle> GPUResourceManager::Acquire(const ReadbackBufferDesc& InDesc)
+    {
+        return m_Resources.Get(InDesc.Source.GetHandle())
+            .and_then(
+                [&](const SharedPtr<GPUResource>& InSourceBuffer) -> ExpectedError<GPUResourceManager::ReadbackBufferHandle>
+                {
+                    const auto readbackHandle = m_Resources.Manage(
+                        m_Device->CreateCommittedResource(
+                            GPUDevice::CommittedResourceDesc
+                            {
+                                .HeapProps = CD3DX12_HEAP_PROPERTIES{ D3D12_HEAP_TYPE_READBACK },
+                                .ResourceDesc = CD3DX12_RESOURCE_DESC1::Buffer(InSourceBuffer->GetDesc().Width),
+                                .Name = InDesc.Name
+                            }
+                        )
+                    );
+
+                    return ReadbackBufferHandle{ Private{}, readbackHandle, InDesc.Source.GetHandle()};
+                }
+            );
     }
 
     GPUResourceManager::BufferUAVHandle GPUResourceManager::CreateUAV(const BufferHandle InHandle, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc)
@@ -239,6 +287,25 @@ namespace stf
     ExpectedError<void> GPUResourceManager::Release(const ConstantBufferViewHandle InHandle)
     {
         return m_Descriptors.Release(InHandle.GetCBVHandle());
+    }
+
+    ExpectedError<GPUResourceManager::ReadbackResultHandle> GPUResourceManager::QueueReadback(CommandList& InCommandList, const ReadbackBufferHandle InHandle)
+    {
+        return m_Resources.Get(InHandle.GetReadbackHandle())
+            .and_then(
+                [&](const SharedPtr<GPUResource>& InReadback)
+                {
+                    return m_Resources.Get(InHandle.GetSourceHandle())
+                        .and_then(
+                            [&](const SharedPtr<GPUResource>& InSource) -> ExpectedError<ReadbackResultHandle>
+                            {
+                                InCommandList.CopyBufferResource(*InReadback, *InSource);
+
+                                return ReadbackResultHandle{ Private{}, InHandle };
+                            }
+                        );
+                }
+            );
     }
 
     ExpectedError<void> GPUResourceManager::SetRootDescriptor(CommandList& InList, const u32 InRootParamIndex, const ConstantBufferViewHandle InHandle)
