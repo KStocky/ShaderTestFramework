@@ -225,6 +225,7 @@ set(SOURCES
     Private/Utility/VersionedIndexTests.cpp
     Public/D3D12/Shader/ShaderCompilerTestsCommon.h
     Public/Framework/HLSLFramework/HLSLFrameworkTestsCommon.h
+    Public/TestUtilities/ErrorMatchers.h
     Public/TestUtilities/Noisy.h
 )
 

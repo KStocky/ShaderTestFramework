@@ -1,4 +1,5 @@
 
+#include "TestUtilities/ErrorMatchers.h"
 #include <Utility/Concepts.h>
 #include <Utility/Error.h>
 #include <Utility/StringLiteral.h>
@@ -205,7 +206,8 @@ SCENARIO("Error Tests")
 
             THEN("Error contains error fragment")
             {
-                REQUIRE(error.HasFragmentWithFormat(errorFrag1.Format()));
+                REQUIRE_THAT(error, ErrorContainsFormat(errorFrag1.Format()));
+                REQUIRE_THAT(error, ErrorContains(errorFrag1));
 
                 const auto formattedError = std::format("{}", error);
                 const auto streamError = [&]()
@@ -228,8 +230,8 @@ SCENARIO("Error Tests")
 
                 THEN("Both error fragments exist and the latest fragment is before the first")
                 {
-                    REQUIRE(error.HasFragmentWithFormat(errorFrag1.Format()));
-                    REQUIRE(error.HasFragmentWithFormat(errorFrag2.Format()));
+                    REQUIRE_THAT(error, ErrorContainsFormat(errorFrag1.Format()));
+                    REQUIRE_THAT(error, ErrorContainsFormat(errorFrag2.Format()));
 
                     const auto errorMessage = std::format("{}", error);
 
@@ -261,7 +263,7 @@ SCENARIO("Error Tests")
 
         THEN("contains expected fragment")
         {
-            REQUIRE(error.HasFragmentWithFormat(expectedFormat.Literal()));
+            REQUIRE_THAT(error, ErrorContainsFormat(expectedFormat.Literal()));
         }
     }
 
@@ -288,6 +290,15 @@ SCENARIO("Error Tests")
             REQUIRE_FALSE(error1.HasFragmentWithFormat(frag3.Format()));
             REQUIRE_FALSE(error1.HasFragmentWithFormat(frag4.Format()));
 
+            REQUIRE_THAT(error1, ErrorContainsFormat(frag1.Format()));
+            REQUIRE_THAT(error1, ErrorContainsFormat(frag2.Format()));
+            REQUIRE_THAT(error2, ErrorContainsFormat(frag3.Format()));
+            REQUIRE_THAT(error2, ErrorContainsFormat(frag4.Format()));
+            REQUIRE_THAT(error2, !ErrorContainsFormat(frag1.Format()));
+            REQUIRE_THAT(error2, !ErrorContainsFormat(frag2.Format()));
+            REQUIRE_THAT(error1, !ErrorContainsFormat(frag3.Format()));
+            REQUIRE_THAT(error1, !ErrorContainsFormat(frag4.Format()));
+
             WHEN("errors are appended")
             {
                 const Error error3 = error1 + error2;
@@ -298,6 +309,11 @@ SCENARIO("Error Tests")
                     REQUIRE(error3.HasFragmentWithFormat(frag2.Format()));
                     REQUIRE(error3.HasFragmentWithFormat(frag3.Format()));
                     REQUIRE(error3.HasFragmentWithFormat(frag4.Format()));
+
+                    REQUIRE_THAT(error3, ErrorContainsFormat(frag1.Format()));
+                    REQUIRE_THAT(error3, ErrorContainsFormat(frag2.Format()));
+                    REQUIRE_THAT(error3, ErrorContainsFormat(frag3.Format()));
+                    REQUIRE_THAT(error3, ErrorContainsFormat(frag4.Format()));
                 }
             }
         }
