@@ -22,6 +22,7 @@ set_target_properties(WINPIX PROPERTIES
 asset_dependency_init(ShaderTestFramework)
 
 set(SOURCES
+    Public/Container/FreeList.h
     Public/Container/RingBuffer.h
     Public/D3D12/AgilityDefinitions.h
     Public/D3D12/BindlessFreeListAllocator.h

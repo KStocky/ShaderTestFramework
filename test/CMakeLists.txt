@@ -141,6 +141,7 @@ set(SHADER_SOURCES
 )
 
 set(SOURCES
+    Private/Container/FreeListTests.cpp
     Private/Container/RingBufferTests.cpp
     Private/D3D12/BindlessFreeListAllocatorTests.cpp
     Private/D3D12/CommandEngineTests.cpp
