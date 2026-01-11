@@ -152,34 +152,34 @@ namespace stf
 
     ExpectedError<void> ScopedCommandContext::Dispatch(const uint3 InDispatchConfig)
     {
-        m_ResourceManager->SetDescriptorHeap(*m_List);
+        //m_ResourceManager->SetDescriptorHeap(*m_List);
         return ResolveAndStageBindlessResources()
             .and_then(
                 [&]() -> ExpectedError<void>
                 {
-                    m_BoundShader->ForEachStagingBuffer(
-                        [&](const u32 InRootParamIndex, const ShaderBindingMap::StagingInfo& InStagingInfo)
-                        {
-                            switch (InStagingInfo.Type)
-                            {
-                                case ShaderBindingMap::EBindType::RootConstants:
-                                {
-                                    m_List->SetComputeRoot32BitConstants(InRootParamIndex, std::span{ InStagingInfo.Buffer }, 0);
-                                    break;
-                                }
-                                case ShaderBindingMap::EBindType::RootDescriptor:
-                                {
-                                    const auto cbv = CreateCBV(std::as_bytes(std::span{ InStagingInfo.Buffer }));
-                                    SetRootDescriptor(InRootParamIndex, cbv);
-                                    break;
-                                }
-                                default:
-                                {
-                                    std::unreachable();
-                                }
-                            }
-                        }
-                    );
+                    //m_BoundShader->ForEachStagingBuffer(
+                    //    [&](const u32 InRootParamIndex, const ShaderBindingMap::StagingInfo& InStagingInfo)
+                    //    {
+                    //        switch (InStagingInfo.Type)
+                    //        {
+                    //            case ShaderBindingMap::EBindType::RootConstants:
+                    //            {
+                    //                m_List->SetComputeRoot32BitConstants(InRootParamIndex, std::span{ InStagingInfo.Buffer }, 0);
+                    //                break;
+                    //            }
+                    //            case ShaderBindingMap::EBindType::RootDescriptor:
+                    //            {
+                    //                const auto cbv = CreateCBV(std::as_bytes(std::span{ InStagingInfo.Buffer }));
+                    //                SetRootDescriptor(InRootParamIndex, cbv);
+                    //                break;
+                    //            }
+                    //            default:
+                    //            {
+                    //                std::unreachable();
+                    //            }
+                    //        }
+                    //    }
+                    //);
 
                     m_List->Dispatch(InDispatchConfig.x, InDispatchConfig.y, InDispatchConfig.z);
                     return {};
