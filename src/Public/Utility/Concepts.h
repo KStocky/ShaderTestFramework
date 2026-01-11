@@ -78,7 +78,10 @@ namespace stf
     concept ConstexprDefaultConstructableEmptyCallableType = ConstexprDefaultConstructableType<T> && EmptyCallableType<T, U...>;
 
     template<template<typename...> typename Template, typename... Ts>
-    concept InstantiatableFrom = TIsInstantiationOf<Template, Template<Ts...>>::Value;
+    concept InstantiatableFrom = TIsInstantiationOf<Template<Ts...>, Template>::Value;
+
+    template<typename T, template<typename...> typename Template>
+    concept InstantiationOf = TIsInstantiationOf<T, Template>::Value;
 
     template<typename T, typename... Ts>
     concept Newable = requires(void* InBuff, Ts&&... In)

@@ -405,6 +405,34 @@ namespace InstantiatableFromTests
     static_assert(InstantiatableFrom<NotB, A>);
 }
 
+namespace InstantiatableOfTests
+{
+    using namespace stf;
+    struct A {};
+    struct B {};
+
+    template<typename T>
+    struct OneTypeParam {};
+
+    template<typename T>
+    struct OtherOneTypeParam {};
+
+    template<typename T, typename U>
+    struct TwoTypeParam {};
+
+    template<typename T, typename U>
+    struct OtherTwoTypeParam {};
+
+
+    static_assert(InstantiationOf<OneTypeParam<A>, OneTypeParam>);
+    static_assert(InstantiationOf<OneTypeParam<B>, OneTypeParam>);
+    static_assert(!InstantiationOf<OneTypeParam<A>, OtherOneTypeParam>);
+    static_assert(!InstantiationOf<OneTypeParam<B>, OtherOneTypeParam>);
+
+    static_assert(InstantiationOf<TwoTypeParam<A,B>, TwoTypeParam>);
+    static_assert(!InstantiationOf<TwoTypeParam<A,B>, OtherTwoTypeParam>);
+}
+
 namespace NewableTests
 {
     using namespace stf;
