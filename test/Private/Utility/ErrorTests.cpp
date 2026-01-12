@@ -49,9 +49,25 @@ namespace stf::ErrorFragmentCompileTests::ConstructionTests
     static_assert(!TestConstructError<FormattableType, FormattableType, UnformattableType, FormattableType>, "Expected a single unformattable argument, among formattable arguments to be not be valid");
 }
 
-namespace stf::ErrorCompileTests
+namespace stf::ErrorCompileTests::FormattableTests
 {
     static_assert(Formattable<Error, char>);
+}
+
+namespace stf::ErrorCompileTests::ConceptsTests
+{
+    struct A {};
+    struct B {};
+
+    using AExpectedError = ExpectedError<A>;
+    using AExpected = Expected<A, B>;
+
+    static_assert(ExpectedErrorType<AExpectedError>);
+    static_assert(!ExpectedErrorType<AExpected>);
+    static_assert(!ExpectedErrorType<A>);
+
+    static_assert(ExpectedErrorWithValueType<AExpectedError, A>);
+    static_assert(!ExpectedErrorWithValueType<AExpectedError, B>);
 }
 
 SCENARIO("ErrorFragment Tests")

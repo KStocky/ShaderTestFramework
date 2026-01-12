@@ -226,8 +226,17 @@ namespace stf
     template<typename T>
     struct TIsExpectedError<Expected<T, Error>> : std::integral_constant<bool, true> {};
 
+    template<typename ExpectedErrorType, typename T>
+    struct TExpectedErrorHasValue : std::integral_constant<bool, false> {};
+
+    template<typename T>
+    struct TExpectedErrorHasValue<Expected<T, Error>, T> : std::integral_constant<bool, true> {};
+
     template<typename T>
     concept ExpectedErrorType = TIsExpectedError<T>::value;
+
+    template<typename ExpectedErrorType, typename T>
+    concept ExpectedErrorWithValueType = TExpectedErrorHasValue<ExpectedErrorType, T>::value;
 
 }
 
