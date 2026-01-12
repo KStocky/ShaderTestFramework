@@ -22,7 +22,10 @@ namespace stf
     concept ExecuteReadbackType =
         TFuncTraits<T>::ParamTypes::Size == 1 &&
         std::is_same_v<typename TFuncTraits<T>::ParamTypes::template Type<0>, const MappedResource&> &&
-        std::is_same_v<typename TFuncTraits<T>::ReturnType, ExpectedError<void>>;
+        requires (T InFunc, const MappedResource& InResource)
+        {
+            { InFunc(InResource) } -> ExpectedErrorType;
+        };
 
     class CommandList;
 

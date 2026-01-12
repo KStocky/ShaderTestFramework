@@ -47,6 +47,13 @@ namespace stf
         };
 
     template<typename T>
+    concept VoidExecuteLambdaType = ExecuteLambdaType<T> && 
+        requires (T InFunc, ScopedCommandContext& InContext)
+        {
+            { InFunc(InContext) } -> ExpectedErrorWithValueType<void>;
+        };
+
+    template<typename T>
     concept BindShaderLambdaType = !LambdaType<T> && 
         TFuncTraits<T>::ParamTypes::Size == 2 &&
         std::is_same_v<typename TFuncTraits<T>::ParamTypes::template Type<0>, ScopedCommandContext&> &&
@@ -130,7 +137,7 @@ namespace stf
         CommandList& operator*() const;
 
         template<ExecuteLambdaType InLambdaType>
-        ExpectedError<void> Section(const std::string_view InName, InLambdaType&& InFunc)
+        auto Section(const std::string_view InName, InLambdaType&& InFunc)
         {
             PIXScopedEvent(m_List->GetRaw(), PIX_COLOR(0, 255, 0), "%s", InName.data());
             return InFunc(*this);
@@ -193,7 +200,7 @@ namespace stf
         CommandEngine(ObjectToken, const CreationParams& InParams);
 
         template<ExecuteLambdaType InLambdaType>
-        ExpectedError<void> Execute(InLambdaType&& InFunc)
+        auto Execute(InLambdaType&& InFunc)
         {
             auto allocator = [this]()
                 {
@@ -214,11 +221,34 @@ namespace stf
                 , m_ResourceManager
             );
 
-            return InFunc(context)
+            return ExecuteImpl(context, std::move(allocator), std::forward<InLambdaType>(InFunc));
+        }
+
+        template<ExecuteLambdaType InLambdaType>
+        auto Execute(const std::string_view InName, InLambdaType&& InFunc)
+        {
+            PIXScopedEvent(m_Queue->GetRaw(), 0ull, "%s", InName.data());
+            return Execute(std::forward<InLambdaType>(InFunc));
+        }
+
+        template<ExecuteReadbackType InFuncType>
+        ExpectedError<void> ExecuteReadback(const GPUResourceManager::ReadbackResultHandle InReadbackHandle, InFuncType&& InFunc)
+        {
+            return m_ResourceManager->ExecuteReadback(InReadbackHandle, std::forward<InFuncType>(InFunc));
+        }
+
+        void Flush();
+
+    private:
+
+        template<VoidExecuteLambdaType InLambdaType>
+        ExpectedError<void> ExecuteImpl(ScopedCommandContext& InContext, SharedPtr<CommandAllocator>&& InCommandAllocator, InLambdaType&& InFunc)
+        {
+            return InFunc(InContext)
                 .and_then(
                     [&]() -> ExpectedError<void>
                     {
-                        m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue->Signal() });
+                        m_Allocators.push_back(FencedAllocator{ std::move(InCommandAllocator), m_Queue->Signal() });
                         m_Queue->ExecuteCommandList(*m_List);
                         return {};
                     }
@@ -226,29 +256,33 @@ namespace stf
                 .or_else(
                     [&](Error&& InError) -> ExpectedError<void>
                     {
-                        m_Allocators.push_back(FencedAllocator{ std::move(allocator), m_Queue->Signal() });
+                        m_Allocators.push_back(FencedAllocator{ std::move(InCommandAllocator), m_Queue->Signal() });
                         return Unexpected{ InError };
                     }
                 );
         }
 
         template<ExecuteLambdaType InLambdaType>
-        ExpectedError<void> Execute(const std::string_view InName, InLambdaType&& InFunc)
+            requires (!VoidExecuteLambdaType<InLambdaType>)
+        auto ExecuteImpl(ScopedCommandContext& InContext, SharedPtr<CommandAllocator>&& InCommandAllocator, InLambdaType&& InFunc)
         {
-            PIXScopedEvent(m_Queue->GetRaw(), 0ull, "%s", InName.data());
-            return Execute(std::forward<InLambdaType>(InFunc));
+            return InFunc(InContext)
+                .transform(
+                    [&](auto&& InResult)
+                    {
+                        m_Allocators.push_back(FencedAllocator{ std::move(InCommandAllocator), m_Queue->Signal() });
+                        m_Queue->ExecuteCommandList(*m_List);
+                        return InResult;
+                    }
+                )
+                .transform_error(
+                    [&](Error&& InError)
+                    {
+                        m_Allocators.push_back(FencedAllocator{ std::move(InCommandAllocator), m_Queue->Signal() });
+                        return InError;
+                    }
+                );
         }
-
-        template<ExecuteReadbackType InFuncType>
-        ExpectedError<void> ExecuteReadback(const std::string_view InName, const GPUResourceManager::ReadbackResultHandle InReadbackHandle, InFuncType&& InFunc)
-        {
-            PIXScopedEvent(m_Queue->GetRaw(), 0ull, "%s", InName.data());
-            return m_ResourceManager->ExecuteReadback(InReadbackHandle, std::forward<InFuncType>(InFunc));
-        }
-
-        void Flush();
-
-    private:
 
         struct FencedAllocator
         {
