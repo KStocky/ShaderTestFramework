@@ -21,11 +21,18 @@ namespace stf
     template<typename T>
     concept ExecuteReadbackType =
         TFuncTraits<T>::ParamTypes::Size == 1 &&
-        std::is_same_v<typename TFuncTraits<T>::ParamTypes::template Type<0>, const MappedResource&> &&
+        std::is_same_v<typename TFuncTraits<T>::ParamTypes::template Type<0>, const MappedResource&>&&
         requires (T InFunc, const MappedResource& InResource)
-        {
-            { InFunc(InResource) } -> ExpectedErrorType;
-        };
+    {
+        { InFunc(InResource) } -> ExpectedErrorType;
+    };
+
+    template<typename T>
+    concept VoidExecuteReadbackType = ExecuteReadbackType<T> &&
+        requires (T InFunc, const MappedResource & InResource)
+    {
+        { InFunc(InResource) } -> ExpectedErrorWithValueType<void>;
+    };
 
     class CommandList;
 
@@ -178,7 +185,7 @@ namespace stf
         [[nodiscard]] ConstantBufferViewHandle CreateCBV(const ConstantBufferHandle InHandle);
 
         [[nodiscard]] ExpectedError<u32> GetDescriptorIndex(const DescriptorOpaqueHandle InHandle) const;
-        
+
         template<TriviallyCopyableType T>
         ExpectedError<void> UploadData(const T& InData, const ConstantBufferHandle InBufferHandle)
         {
@@ -195,32 +202,19 @@ namespace stf
         ExpectedError<ReadbackResultHandle> QueueReadback(CommandList& InCommandList, const ReadbackBufferHandle InHandle);
 
         template<ExecuteReadbackType FuncType>
-        ExpectedError<void> ExecuteReadback(const ReadbackResultHandle InHandle, FuncType&& InFunc)
+        auto ExecuteReadback(const ReadbackResultHandle InHandle, FuncType&& InFunc)
         {
+            using RetType = decltype(InFunc(std::declval<MappedResource>()));
             return m_Readbacks.Get(InHandle.GetReadbackHandle())
                 .and_then(
-                    [&](const InFlightReadback& InReadback)
+                    [&](const InFlightReadback& InReadback) -> RetType
                     {
                         if (!m_Queue->HasFencePointBeenReached(InReadback.FencePoint))
                         {
-                            return Unexpected{ Errors::GPUResourceManager::ReadbackHasNotBeenCompleted(InReadback.SourceBufferName) };
+                            return Unexpected{ Error{ Errors::GPUResourceManager::ReadbackHasNotBeenCompleted(InReadback.SourceBufferName) } };
                         }
 
-                        return m_Resources.Get(InReadback.Handle.GetReadbackHandle())
-                            .and_then(
-                                [&](const SharedPtr<GPUResource>& InReadbackBuffer)
-                                {
-                                    return InFunc(InReadbackBuffer->Map());
-                                })
-                            .and_then(
-                                [&]() -> ExpectedError<void>
-                                {
-                                    ThrowIfUnexpected(m_Resources.Release(InReadback.Handle.GetReadbackHandle()));
-                                    ThrowIfUnexpected(m_Readbacks.Release(InHandle.GetReadbackHandle()));
-
-                                    return {};
-                                }
-                            );
+                        return ExecuteReadbackImpl(InReadback.Handle, InHandle.GetReadbackHandle(), std::forward<FuncType>(InFunc));
                     }
                 );
         }
@@ -232,6 +226,47 @@ namespace stf
         void SetDescriptorHeap(CommandList& InCommandList);
 
     private:
+
+        template<VoidExecuteReadbackType InLambdaType>
+        ExpectedError<void> ExecuteReadbackImpl(const ReadbackBufferHandle InReadbackBufferHandle, const InFlightReadbackHandle InInflightReadbackHandle, InLambdaType&& InFunc)
+        {
+            return m_Resources.Get(InReadbackBufferHandle.GetReadbackHandle())
+                .and_then(
+                    [&](const SharedPtr<GPUResource>& InReadbackBuffer)
+                    {
+                        return InFunc(InReadbackBuffer->Map());
+                    })
+                .and_then(
+                    [&]() -> ExpectedError<void>
+                    {
+                        ThrowIfUnexpected(m_Resources.Release(InReadbackBufferHandle.GetReadbackHandle()));
+                        ThrowIfUnexpected(m_Readbacks.Release(InInflightReadbackHandle));
+
+                        return {};
+                    }
+                );
+        }
+
+        template<ExecuteReadbackType InLambdaType>
+            requires (!VoidExecuteReadbackType<InLambdaType>)
+        auto ExecuteReadbackImpl(const ReadbackBufferHandle InReadbackBufferHandle, const InFlightReadbackHandle InInflightReadbackHandle, InLambdaType&& InFunc)
+        {
+            return m_Resources.Get(InReadbackBufferHandle.GetReadbackHandle())
+                .and_then(
+                    [&](const SharedPtr<GPUResource>& InReadbackBuffer)
+                    {
+                        return InFunc(InReadbackBuffer->Map());
+                    })
+                .transform(
+                    [&](auto&& Result)
+                    {
+                        ThrowIfUnexpected(m_Resources.Release(InReadbackBufferHandle.GetReadbackHandle()));
+                        ThrowIfUnexpected(m_Readbacks.Release(InInflightReadbackHandle));
+
+                        return Result;
+                    }
+                );
+        }
 
         SharedPtr<GPUDevice> m_Device;
         SharedPtr<CommandQueue> m_Queue;
