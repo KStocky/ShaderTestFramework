@@ -232,7 +232,7 @@ namespace stf
         }
 
         template<ExecuteReadbackType InFuncType>
-        ExpectedError<void> ExecuteReadback(const GPUResourceManager::ReadbackResultHandle InReadbackHandle, InFuncType&& InFunc)
+        auto ExecuteReadback(const GPUResourceManager::ReadbackResultHandle InReadbackHandle, InFuncType&& InFunc)
         {
             return m_ResourceManager->ExecuteReadback(InReadbackHandle, std::forward<InFuncType>(InFunc));
         }
