@@ -162,7 +162,7 @@ namespace stf
         {
             if (m_Size == capacity())
             {
-                ThrowIfUnexpected(resize(m_Size * 2));
+                ThrowIfUnexpected(resize(m_Data.size() * 2));
             }
 
             m_Data[m_TailIndex] = In;
@@ -175,7 +175,7 @@ namespace stf
         {
             if (m_Size == capacity())
             {
-                ThrowIfUnexpected(resize(m_Size * 2));
+                ThrowIfUnexpected(resize(m_Data.size() * 2));
             }
 
             m_Data[m_TailIndex] = std::move(In);
