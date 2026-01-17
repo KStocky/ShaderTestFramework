@@ -80,6 +80,36 @@ namespace ModelsTests
     _Static_assert(ttl::models<TwoParamTwoTypesConcept, TwoParamFuncTwoTypes, ParamType1, ParamType2>::value);
 }
 
+namespace ModelsTTest
+{
+    struct IntType
+    {
+        template<typename T>
+        __decltype(
+            ttl::models_if_same<T, int>()
+        ) requires();
+    };
+
+    struct NotInt{};
+
+    template<typename T>
+    ttl::models_t<bool, IntType, T> DoTheThing(T In)
+    {
+        return true;
+    }
+
+    struct DoTheThingable
+    {
+        template<typename T>
+        __decltype(
+            ttl::models_if_same<bool, __decltype(DoTheThing(ttl::declval<T>()))>()
+        ) requires();
+    };
+
+    _Static_assert(ttl::models<DoTheThingable, int>::value);
+    _Static_assert(!ttl::models<DoTheThingable, NotInt>::value);
+}
+
 namespace ModelsIfTests
 {
     struct TrueType : ttl::true_type{};
