@@ -4,7 +4,6 @@
 #include "D3D12/Shader/ShaderBinding.h"
 #include "D3D12/Shader/ShaderCompiler.h"
 #include "Framework/ShaderTestDriver.h"
-#include "Framework/ShaderTestShader.h"
 #include "Framework/TestDataBufferLayout.h"
 #include "Stats/StatSystem.h"
 #include "Utility/Error.h"
@@ -119,7 +118,6 @@ namespace stf
         Results RunTestImpl(RuntimeTestDesc InTestDesc, const bool InIsFailureRetry);
 
         ExpectedError<CompiledShaderData> CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const;
-        ExpectedError<SharedPtr<ShaderTestShader>> CreateTestShader(const CompiledShaderData& InCompiledShaderData) const;
         void PopulateDefaultByteReaders();
 
         bool ShouldTakeCapture(const EGPUCaptureMode InCaptureMode, const bool InIsFailureRetry) const;

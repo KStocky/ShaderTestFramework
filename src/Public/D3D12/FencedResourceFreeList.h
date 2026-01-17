@@ -102,7 +102,6 @@ namespace stf
                         const u32VersionedIndex versionedIndex{ static_cast<u32>(m_Resources.size()) };
 
                         m_Resources.emplace_back(std::move(InResource), versionedIndex.GetVersion());
-                        m_DeferredResources.emplace_back(false);
 
                         return Handle{ FencedResourceFreeListToken<T>{}, versionedIndex };
                     }
@@ -118,7 +117,6 @@ namespace stf
                         const auto nextVersion = InVersionedIndex.Next();
                         const auto index = nextVersion.GetIndex();
                         m_Resources[index].Version = nextVersion.GetVersion();
-                        m_DeferredResources[index] = true;
                         m_DeferredReleasedHandles.push_back(
                             FencedResource
                             {
@@ -176,9 +174,6 @@ namespace stf
             {
                 const auto& releasedResource = ThrowIfUnexpected(m_DeferredReleasedHandles.pop_front());
                 const auto versionedIndex = releasedResource.VersionedIndex;
-                const u32 index = versionedIndex.GetIndex();
-
-                m_DeferredResources[index] = false;
                 m_FreeList.push_back(versionedIndex);
             }
         }
@@ -196,7 +191,6 @@ namespace stf
         };
 
         std::vector<VersionedResource> m_Resources;
-        std::vector<bool> m_DeferredResources;
         RingBuffer<FencedResource> m_DeferredReleasedHandles;
         RingBuffer<u32VersionedIndex> m_FreeList;
 

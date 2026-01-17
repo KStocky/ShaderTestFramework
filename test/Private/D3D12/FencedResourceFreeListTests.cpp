@@ -9,6 +9,7 @@
 
 #include <Utility/EnumReflection.h>
 #include <Utility/Object.h>
+#include <Utility/Tuple.h>
 
 #include <algorithm>
 #include <functional>
@@ -64,6 +65,21 @@ TEST_CASE_PERSISTENT_FIXTURE(FencedResourceFreeListTestFixture, "Scenario: Fence
             return id++;
         };
 
+    auto manageResource =
+        [&](FreeListType& InFreeList)
+        {
+            auto resource = resourceGenerator();
+            const auto ret = resource;
+            const auto handle = InFreeList.Manage(std::move(resource));
+            
+            REQUIRE(InFreeList.ValidateHandle(handle));
+            const auto getResult = getResource(InFreeList, handle);
+
+            REQUIRE(getResult == ret);
+
+            return Tuple{ ret, handle };
+        };
+
     GIVEN("DeviceType: " << Enum::UnscopedName(deviceType))
     {
         SECTION("Setup")
@@ -107,10 +123,7 @@ TEST_CASE_PERSISTENT_FIXTURE(FencedResourceFreeListTestFixture, "Scenario: Fence
 
             WHEN("Resource requested")
             {
-                const auto firstHandle = freeList.Manage(resourceGenerator());
-
-                REQUIRE(freeList.ValidateHandle(firstHandle));
-                const auto firstResource = getResource(freeList, firstHandle);
+                const auto [firstResource, firstHandle] = manageResource(freeList);
 
                 AND_WHEN("resource is immediately released with no GPU work")
                 {
@@ -127,9 +140,7 @@ TEST_CASE_PERSISTENT_FIXTURE(FencedResourceFreeListTestFixture, "Scenario: Fence
 
                     AND_WHEN("resource is acquired again")
                     {
-                        const auto secondHandle = freeList.Manage(resourceGenerator());
-                        REQUIRE(freeList.ValidateHandle(secondHandle));
-                        const auto secondResource = getResource(freeList, secondHandle);
+                        const auto [secondResource, secondHandle] = manageResource(freeList);
 
                         THEN("first and second resource are different")
                         {
@@ -160,9 +171,7 @@ TEST_CASE_PERSISTENT_FIXTURE(FencedResourceFreeListTestFixture, "Scenario: Fence
 
                         AND_WHEN("resource is requested again")
                         {
-                            const auto secondHandle = freeList.Manage(resourceGenerator());
-                            REQUIRE(freeList.ValidateHandle(secondHandle));
-                            const auto secondResource = getResource(freeList, secondHandle);
+                            const auto [secondResource, secondHandle] = manageResource(freeList);
 
                             THEN("second handle is to a different resource from the first")
                             {
@@ -171,9 +180,7 @@ TEST_CASE_PERSISTENT_FIXTURE(FencedResourceFreeListTestFixture, "Scenario: Fence
 
                             AND_WHEN("yet another resource requested")
                             {
-                                const auto thirdHandle = freeList.Manage(resourceGenerator());
-                                REQUIRE(freeList.ValidateHandle(thirdHandle));
-                                const auto thirdResource = getResource(freeList, thirdHandle);
+                                const auto [thirdResource, thirdHandle] = manageResource(freeList);
 
                                 THEN("third resource is different from the second")
                                 {
@@ -194,9 +201,7 @@ TEST_CASE_PERSISTENT_FIXTURE(FencedResourceFreeListTestFixture, "Scenario: Fence
 
                             AND_WHEN("resource is requested again")
                             {
-                                const auto secondHandle = freeList.Manage(resourceGenerator());
-                                REQUIRE(freeList.ValidateHandle(secondHandle));
-                                const auto secondResource = getResource(freeList, secondHandle);
+                                const auto [secondResource, secondHandle] = manageResource(freeList);
 
                                 THEN("second handle is to a different resource from the first")
                                 {

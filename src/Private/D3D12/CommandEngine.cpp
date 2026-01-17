@@ -93,8 +93,14 @@ namespace stf
         return m_ResourceManager->GetDescriptorIndex(InHandle);
     }
 
-    ScopedCommandShader::ScopedCommandShader(const SharedPtr<Shader>& InShader)
+    ScopedCommandShader::ScopedCommandShader(
+        const SharedPtr<Shader>& InShader, 
+        const SharedPtr<ScopedGPUResourceManager>& InResourceManager,
+        const SharedPtr<CommandList>& InList
+    )
         : m_Shader(InShader)
+        , m_ResourceManager(InResourceManager)
+        , m_List(InList)
     {
     }
 
@@ -103,9 +109,20 @@ namespace stf
         return m_Shader->StageBindingData(InBinding);
     }
 
-    void ScopedCommandShader::StageBindlessResource(ScopedCommandContext& InContext, std::string InName, const GPUResourceManager::BufferUAVHandle InHandle)
+    ExpectedError<void> ScopedCommandShader::StageBindlessResource(std::string InBindingName, const GPUResourceManager::BufferUAVHandle InHandle)
     {
-        InContext.StageBindlessResource(CommandShaderToken{}, std::move(InName), InHandle);
+        return m_ResourceManager->GetDescriptorIndex(InHandle.GetUAVHandle())
+            .and_then(
+                [&](const u32 InIndex)
+                {
+                    return m_Shader->StageBindingData(ShaderBinding{ InBindingName, InIndex });
+                }
+            )
+            .transform(
+                [&]()
+                {
+                    m_ResourceManager->SetUAV(*m_List, InHandle);
+                });
     }
 
     ScopedCommandContext::ScopedCommandContext(CommandEngineToken,
@@ -113,7 +130,7 @@ namespace stf
         const SharedPtr<GPUResourceManager>& InResourceManager
     )
         : m_List(InList)
-        , m_ResourceManager(MakeUnique<ScopedGPUResourceManager>(InResourceManager))
+        , m_ResourceManager(MakeShared<ScopedGPUResourceManager>(InResourceManager))
     {
     }
 
@@ -162,79 +179,39 @@ namespace stf
         m_ResourceManager->SetRootDescriptor(*m_List, InRootParamIndex, InHandle);
     }
 
-    void ScopedCommandContext::StageBindlessResource(CommandShaderToken, std::string InBindingName, const GPUResourceManager::BufferUAVHandle InHandle)
+    void ScopedCommandContext::PreBindShader(const SharedPtr<Shader>& InShader)
     {
-        SetUAV(InHandle);
-
-        m_BindlessResourcesToResolve.emplace_back(
-            StagedBindlessResource
-            {
-                .Name = std::move(InBindingName),
-                .Descriptor = InHandle.GetUAVHandle()
-            });
+        m_ResourceManager->SetDescriptorHeap(*m_List);
+        m_List->SetComputeRootSignature(InShader->GetRootSig());
     }
 
-    ExpectedError<void> ScopedCommandContext::Dispatch(const uint3 InDispatchConfig)
+    void ScopedCommandContext::SetShaderStateAndDispatch(const SharedPtr<Shader>& InShader, const uint3 InDispatchConfig)
     {
-        //m_ResourceManager->SetDescriptorHeap(*m_List);
-        return ResolveAndStageBindlessResources()
-            .and_then(
-                [&]() -> ExpectedError<void>
+        InShader->ForEachStagingBuffer(
+            [&](const u32 InRootParamIndex, const ShaderBindingMap::StagingInfo& InStagingInfo)
+            {
+                switch (InStagingInfo.Type)
                 {
-                    //m_BoundShader->ForEachStagingBuffer(
-                    //    [&](const u32 InRootParamIndex, const ShaderBindingMap::StagingInfo& InStagingInfo)
-                    //    {
-                    //        switch (InStagingInfo.Type)
-                    //        {
-                    //            case ShaderBindingMap::EBindType::RootConstants:
-                    //            {
-                    //                m_List->SetComputeRoot32BitConstants(InRootParamIndex, std::span{ InStagingInfo.Buffer }, 0);
-                    //                break;
-                    //            }
-                    //            case ShaderBindingMap::EBindType::RootDescriptor:
-                    //            {
-                    //                const auto cbv = CreateCBV(std::as_bytes(std::span{ InStagingInfo.Buffer }));
-                    //                SetRootDescriptor(InRootParamIndex, cbv);
-                    //                break;
-                    //            }
-                    //            default:
-                    //            {
-                    //                std::unreachable();
-                    //            }
-                    //        }
-                    //    }
-                    //);
-
-                    m_List->Dispatch(InDispatchConfig.x, InDispatchConfig.y, InDispatchConfig.z);
-                    return {};
+                case ShaderBindingMap::EBindType::RootConstants:
+                {
+                    m_List->SetComputeRoot32BitConstants(InRootParamIndex, std::span{ InStagingInfo.Buffer }, 0);
+                    break;
                 }
-            );
-    }
-
-    ExpectedError<void> ScopedCommandContext::ResolveAndStageBindlessResources()
-    {
-        if (!m_BindlessResourcesToResolve.empty() && !m_BoundShader)
-        {
-            return Unexpected{ Error::FromFragment<"THIS SHOULD NOT HAPPEN: There are bindless resources to resolve, with no bound shader">()};
-        }
-
-        for (const auto& [bindingName, descriptor] : m_BindlessResourcesToResolve)
-        {
-            const auto stageResult = m_ResourceManager->GetDescriptorIndex(descriptor)
-                .and_then(
-                    [&](const u32 InIndex)
-                    {
-                        return m_BoundShader->StageBindingData(ShaderBinding{ bindingName, InIndex });
-                    }
-                );
-
-            if (!stageResult)
-            {
-                return stageResult;
+                case ShaderBindingMap::EBindType::RootDescriptor:
+                {
+                    const auto cbv = CreateCBV(std::as_bytes(std::span{ InStagingInfo.Buffer }));
+                    SetRootDescriptor(InRootParamIndex, cbv);
+                    break;
+                }
+                default:
+                {
+                    std::unreachable();
+                }
+                }
             }
-        }
+        );
 
-        return {};
+        m_List->Dispatch(InDispatchConfig.x, InDispatchConfig.y, InDispatchConfig.z);
     }
 
     CommandEngine::CommandEngine(ObjectToken InToken, const CreationParams& InParams)

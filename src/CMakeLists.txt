@@ -56,10 +56,8 @@ set(SOURCES
     Public/D3D12/Shader/VirtualShaderDirectoryMappingManager.h
     Public/Framework/PIXCapturer.h
     Public/Framework/ShaderTestCommon.h
-    Public/Framework/ShaderTestDescriptorManager.h
     Public/Framework/ShaderTestDriver.h
     Public/Framework/ShaderTestFixture.h
-    Public/Framework/ShaderTestShader.h
     Public/Framework/TestDataBufferLayout.h
     Public/Framework/TestDataBufferProcessor.h
     Public/Framework/TestDataBufferStructs.h
@@ -115,10 +113,8 @@ set(SOURCES
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManager.cpp
     Private/Framework/PIXCapturer.cpp
     Private/Framework/ShaderTestCommon.cpp
-    Private/Framework/ShaderTestDescriptorManager.cpp
     Private/Framework/ShaderTestDriver.cpp
     Private/Framework/ShaderTestFixture.cpp
-    Private/Framework/ShaderTestShader.cpp
     Private/Framework/TestDataBufferLayout.cpp
     Private/Framework/TestDataBufferProcessor.cpp
     Private/Framework/TestDataBufferStructs.cpp

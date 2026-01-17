@@ -202,7 +202,6 @@ set(SOURCES
     Private/Framework/HLSLFramework/ThreadIdRegistrationTests.cpp
     Private/Framework/HLSLFramework/TTLTypeTraitsTests.cpp
     Private/Framework/SectionsInHLSLProofOfConceptTests.cpp
-    Private/Framework/ShaderTestDescriptorManagerTests.cpp
     Private/Framework/ShaderTestFixtureTests.cpp
     Private/Framework/TestDataBufferLayoutTests.cpp
     Private/Framework/TestDataBufferProcessorTests.cpp

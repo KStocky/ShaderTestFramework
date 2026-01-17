@@ -26,6 +26,12 @@ namespace stf
         Error BindingDoesNotExist(const std::string_view InBindingName);
     }
 
+    template<typename T, typename StagingInfoType>
+    concept StagingBufferFunctionType = requires(T InFunc, u32 InRootParamIndex, StagingInfoType InStagingInfo)
+    {
+        { InFunc(InRootParamIndex, InStagingInfo) } -> std::same_as<void>;
+    };
+
     class ShaderBindingMap
     {
     public:
@@ -53,10 +59,7 @@ namespace stf
         ExpectedError<void> StageBindingData(const ShaderBinding& InBinding);
 
         template<typename T>
-            requires requires(T InFunc, u32 InRootParamIndex, StagingInfo InStagingInfo)
-            {
-                { InFunc(InRootParamIndex, InStagingInfo) } -> std::same_as<void>;
-            }
+            requires StagingBufferFunctionType<T, StagingInfo>
         void ForEachStagingBuffer(T&& InFunc)
         {
             for (const auto& [rootParamIndex, stagingInfo] : m_RootParamBuffers)

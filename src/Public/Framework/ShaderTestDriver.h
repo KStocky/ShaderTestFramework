@@ -5,8 +5,7 @@
 
 #include "D3D12/Shader/PipelineState.h"
 #include "D3D12/Shader/RootSignature.h"
-#include "Framework/ShaderTestDescriptorManager.h"
-#include "Framework/ShaderTestShader.h"
+#include "Framework/ShaderTestCommon.h"
 #include "Framework/TestDataBufferLayout.h"
 #include "Framework/TypeByteReader.h"
 
@@ -33,7 +32,7 @@ namespace stf
 
         struct TestDesc
         {
-            ShaderTestShader& Shader;
+            SharedPtr<Shader> Shader;
             const TestDataBufferLayout& TestBufferLayout;
             std::vector<ShaderBinding> Bindings;
             std::string_view TestName;
@@ -41,9 +40,6 @@ namespace stf
         };
 
         ShaderTestDriver(ObjectToken, CreationParams InParams);
-
-        SharedPtr<GPUResource> CreateBuffer(const D3D12_HEAP_TYPE InType, const D3D12_RESOURCE_DESC1& InDesc);
-        ShaderTestUAV CreateUAV(SharedPtr<GPUResource> InResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc);
 
         TypeReaderIndex RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader);
         TypeReaderIndex RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader);
@@ -57,9 +53,7 @@ namespace stf
 
         SharedPtr<GPUDevice> m_Device;
         SharedPtr<CommandEngine> m_CommandEngine;
-        SharedPtr<ShaderTestDescriptorManager> m_DescriptorManager;
 
-        std::vector<SharedPtr<DescriptorHeap>> m_DeferredDeletedDescriptorHeaps;
         MultiTypeByteReaderMap m_ByteReaderMap;
     };
 }

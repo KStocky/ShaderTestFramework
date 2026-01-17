@@ -54,10 +54,9 @@ namespace stf
         };
 
     template<typename T>
-    concept BindShaderLambdaType = !LambdaType<T> && 
-        TFuncTraits<T>::ParamTypes::Size == 2 &&
-        std::is_same_v<typename TFuncTraits<T>::ParamTypes::template Type<0>, ScopedCommandContext&> &&
-        std::is_same_v<typename TFuncTraits<T>::ParamTypes::template Type<1>, ScopedCommandShader&> &&
+    concept BindShaderLambdaType = !LambdaType<T> &&
+        TFuncTraits<T>::ParamTypes::Size == 1 &&
+        std::is_same_v<typename TFuncTraits<T>::ParamTypes::template Type<0>, ScopedCommandShader&>&&
         std::is_same_v<typename TFuncTraits<T>::ReturnType, ExpectedError<void>>;
 
     class ScopedGPUResourceManager
@@ -103,19 +102,23 @@ namespace stf
     {
     public:
 
-        ScopedCommandShader(const SharedPtr<Shader>& InShader);
+        ScopedCommandShader(
+            const SharedPtr<Shader>& InShader, 
+            const SharedPtr<ScopedGPUResourceManager>& InResourceManager,
+            const SharedPtr<CommandList>& InList);
         ScopedCommandShader(const ScopedCommandShader&) = delete;
         ScopedCommandShader(ScopedCommandShader&&) = delete;
         ScopedCommandShader& operator=(const ScopedCommandShader&) = delete;
         ScopedCommandShader& operator=(ScopedCommandShader&&) = delete;
 
         ExpectedError<void> StageBindingData(const ShaderBinding& InBinding);
-
-        void StageBindlessResource(ScopedCommandContext& InContext, std::string InBindingName, const GPUResourceManager::BufferUAVHandle InHandle);
+        ExpectedError<void> StageBindlessResource(std::string InBindingName, const GPUResourceManager::BufferUAVHandle InHandle);
 
     private:
 
         SharedPtr<Shader> m_Shader;
+        SharedPtr<ScopedGPUResourceManager> m_ResourceManager;
+        SharedPtr<CommandList> m_List;
     };
 
     class ScopedCommandContext
@@ -158,33 +161,28 @@ namespace stf
         void SetRootDescriptor(const u32 InRootParamIndex, const GPUResourceManager::ConstantBufferViewHandle InHandle);
 
         template<BindShaderLambdaType BindFunc>
-        ExpectedError<void> BindComputeShader(const SharedPtr<Shader>& InShader, BindFunc&& InFunc)
+        ExpectedError<void> Dispatch(const uint3 InDispatchConfig, const SharedPtr<Shader>& InShader, BindFunc&& InFunc)
         {
-            m_BoundShader = InShader;
-            m_BindlessResourcesToResolve.clear();
-            ScopedCommandShader shader(m_BoundShader);
-            return InFunc(*this, shader);
+            PreBindShader(InShader);
+            ScopedCommandShader shader(InShader, m_ResourceManager, m_List);
+
+            return InFunc(shader)
+                .transform(
+                    [&]()
+                    {
+                        SetShaderStateAndDispatch(InShader, InDispatchConfig);
+                    }
+                );
         }
-
-        void StageBindlessResource(CommandShaderToken, std::string InBindingName, const GPUResourceManager::BufferUAVHandle InHandle);
-
-        ExpectedError<void> Dispatch(const uint3 InDispatchConfig);
 
     private:
 
-        struct StagedBindlessResource
-        {
-            std::string Name;
-            GPUResourceManager::DescriptorOpaqueHandle Descriptor;
-        };
-
-        ExpectedError<void> ResolveAndStageBindlessResources();
+        void PreBindShader(const SharedPtr<Shader>& InShader);
+        void SetShaderStateAndDispatch(const SharedPtr<Shader>& InShader, const uint3 InDispatchConfig);
 
         SharedPtr<CommandList> m_List = nullptr;
         SharedPtr<Shader> m_BoundShader = nullptr;
-        UniquePtr<ScopedGPUResourceManager> m_ResourceManager = nullptr;
-
-        std::vector<StagedBindlessResource> m_BindlessResourcesToResolve;
+        SharedPtr<ScopedGPUResourceManager> m_ResourceManager = nullptr;
     };
 
     class CommandEngine
@@ -256,6 +254,7 @@ namespace stf
                 .or_else(
                     [&](Error&& InError) -> ExpectedError<void>
                     {
+                        m_List->Close();
                         m_Allocators.push_back(FencedAllocator{ std::move(InCommandAllocator), m_Queue->Signal() });
                         return Unexpected{ InError };
                     }
@@ -278,6 +277,7 @@ namespace stf
                 .transform_error(
                     [&](Error&& InError)
                     {
+                        m_List->Close();
                         m_Allocators.push_back(FencedAllocator{ std::move(InCommandAllocator), m_Queue->Signal() });
                         return InError;
                     }

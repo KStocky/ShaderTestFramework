@@ -4,6 +4,7 @@
 #include "D3D12/Shader/Shader.h"
 
 #include "Framework/PIXCapturer.h"
+#include "Framework/ShaderTestCommon.h"
 #include "Utility/EnumReflection.h"
 
 #include <format>
@@ -120,15 +121,15 @@ namespace stf
             .and_then(
                 [&](const CompiledShaderData& InCompilationResult)
                 {
-                    return CreateTestShader(InCompilationResult);
+                    return Shader::Make(InCompilationResult, *m_Device);
                 })
             .and_then(
-                [&](const SharedPtr<ShaderTestShader>& InShader)
+                [&](const SharedPtr<Shader>& InShader)
                 {
                     const auto capturer = PIXCapturer(InTestDesc.TestName, takeCapture);
                     return m_TestDriver->RunShaderTest(
                         {
-                            .Shader = *InShader,
+                            .Shader = InShader,
                             .TestBufferLayout{ InTestDesc.TestDataLayout },
                             .Bindings = std::move(InTestDesc.Bindings),
                             .TestName = InTestDesc.TestName,
@@ -168,20 +169,6 @@ namespace stf
         }
 
         return m_Compiler.CompileShader(job);
-    }
-
-    ExpectedError<SharedPtr<ShaderTestShader>> ShaderTestFixture::CreateTestShader(const CompiledShaderData& InCompiledShaderData) const
-    {
-        return Shader::Make(InCompiledShaderData, *m_Device)
-            .and_then(
-                [](const SharedPtr<Shader>& InShader) -> ExpectedError<SharedPtr<ShaderTestShader>>
-                {
-                    return Object::New<ShaderTestShader>(
-                        ShaderTestShader::CreationParams
-                        {
-                            .Shader = InShader
-                        });
-                });
     }
 
     void ShaderTestFixture::RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader)

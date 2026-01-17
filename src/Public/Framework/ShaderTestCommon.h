@@ -56,15 +56,6 @@ namespace stf
         friend std::ostream& operator<<(std::ostream& InOs, const TestRunResults& In);
     };
 
-    enum class ETestRunErrorType
-    {
-        Unknown,
-        DescriptorManagement,
-        ShaderCompilation,
-        Binding,
-        RootSignatureGeneration
-    };
-
     class Results
     {
     public:

@@ -204,32 +204,6 @@ namespace stf
         return {};
     }
 
-    /*
-    void ShaderBindingMap::CommitBindings(ScopedCommandContext& InContext) const
-    {
-        for (const auto& [rootParamIndex, buffer] : m_RootParamBuffers)
-        {
-            switch (buffer.Type)
-            {
-                case EBindType::RootConstants:
-                {
-                    InContext->SetComputeRoot32BitConstants(rootParamIndex, std::span{ buffer.Buffer }, 0);
-                    break;
-                }
-                case EBindType::RootDescriptor:
-                {
-                    const auto cbv = InContext.CreateCBV(std::as_bytes( std::span{buffer.Buffer} ));
-                    InContext.SetRootDescriptor(rootParamIndex, cbv);
-                    break;
-                }
-                default:
-                {
-                    std::unreachable();
-                }
-            }
-        }
-    }
-    */
     ShaderBindingMap::ShaderBindingMap(
         SharedPtr<RootSignature>&& InRootSignature,
         BindingMapType&& InNameToBindingsMap,
