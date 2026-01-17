@@ -22,7 +22,7 @@ TEST_CASE_PERSISTENT_FIXTURE(AssertInfoWithDataTestsFixture, "HLSLFrameworkTests
 {
     using namespace stf;
     auto serializeImpl = OverloadSet{ 
-        [] <typename T>(const T& InVal, std::vector<std::byte>& InOutBytes) -> std::enable_if_t<!TIsInstantiationOf<Tuple, T>::Value>
+        [] <typename T>(const T& InVal, std::vector<std::byte>& InOutBytes) -> std::enable_if_t<!TIsInstantiationOf<T, Tuple>::Value>
         {
             static constexpr u32 size = sizeof(T);
             static constexpr u32 align = alignof(T);

@@ -14,7 +14,7 @@ namespace DescriptorHeapTestPrivate
     public:
 
         Fixture()
-            : device(stf::MakeShared<stf::GPUDevice>(
+            : device(stf::Object::New<stf::GPUDevice>(
                 stf::GPUDevice::CreationParams
                 {
                 }))

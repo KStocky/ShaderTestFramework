@@ -30,10 +30,16 @@ namespace stf
     concept DefaultConstructibleType = std::is_default_constructible_v<T>;
 
     template<typename T>
+    concept ArithmeticType = std::is_arithmetic_v<T>;
+
+    template<typename T>
     concept MoveAssignableType = std::is_move_assignable_v<T>;
 
     template<typename T>
     concept MoveConstructibleType = std::is_move_constructible_v<T>;
+
+    template<typename T>
+    concept TriviallyCopyableType = std::is_trivially_copyable_v<T>;
 
     template<typename T>
     concept PureFunctionType = std::is_function_v<std::remove_pointer_t<std::remove_reference_t<T>>>;
@@ -72,7 +78,10 @@ namespace stf
     concept ConstexprDefaultConstructableEmptyCallableType = ConstexprDefaultConstructableType<T> && EmptyCallableType<T, U...>;
 
     template<template<typename...> typename Template, typename... Ts>
-    concept InstantiatableFrom = TIsInstantiationOf<Template, Template<Ts...>>::Value;
+    concept InstantiatableFrom = TIsInstantiationOf<Template<Ts...>, Template>::Value;
+
+    template<typename T, template<typename...> typename Template>
+    concept InstantiationOf = TIsInstantiationOf<T, Template>::Value;
 
     template<typename T, typename... Ts>
     concept Newable = requires(void* InBuff, Ts&&... In)
@@ -138,5 +147,18 @@ namespace stf
         std::is_trivially_copyable_v<T> &&
         (alignof(T) == 4 || alignof(T) == 2 || alignof(T) == 8) &&
         Formattable<T, char>;
+
+
+    template<typename BackingType, u32... Bits>
+    concept CValidBitField =
+        std::unsigned_integral<BackingType> &&
+        (sizeof(BackingType) * 8) == (Bits + ...) &&
+        ((Bits != 0) && ...);
+
+    template<typename T>
+    concept OStreamable = requires(std::ostream& InOutStream, const T & In)
+    {
+        { InOutStream << In } -> std::same_as<std::ostream&>;
+    };
 
 }

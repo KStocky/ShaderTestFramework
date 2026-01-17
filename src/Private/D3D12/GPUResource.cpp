@@ -4,8 +4,10 @@
 
 namespace stf
 {
-    GPUResource::GPUResource(CreationParams InParams) noexcept
-        : m_Resource(std::move(InParams.Resource))
+    GPUResource::GPUResource(ObjectToken InToken, const CreationParams& InParams) noexcept
+        : Object(InToken)
+        , m_Name{InParams.Name}
+        , m_Resource(InParams.Resource)
         , m_ClearValue(InParams.ClearValue)
         , m_CurrentBarrier(InParams.InitialBarrier)
     {
@@ -41,6 +43,11 @@ namespace stf
         return m_ClearValue;
     }
 
+    std::string GPUResource::GetName() const
+    {
+        return m_Name;
+    }
+
     u64 GPUResource::GetGPUAddress() const noexcept
     {
         return m_Resource->GetGPUVirtualAddress();
@@ -51,8 +58,8 @@ namespace stf
         return MappedResource(GPUResourceToken{}, m_Resource);
     }
 
-    MappedResource::MappedResource(GPUResourceToken, ComPtr<ID3D12Resource2> InResource)
-        : m_Resource(std::move(InResource))
+    MappedResource::MappedResource(GPUResourceToken, const ComPtr<ID3D12Resource2>& InResource)
+        : m_Resource(InResource)
         , m_MappedData()
     {
         if (m_Resource)
@@ -60,7 +67,7 @@ namespace stf
             D3D12_RANGE range{ 0, m_Resource->GetDesc().Width };
             void* mappedData = nullptr;
             ThrowIfFailed(m_Resource->Map(0, &range, &mappedData));
-            m_MappedData = std::span<const std::byte>(static_cast<const std::byte*>(mappedData), range.End);
+            m_MappedData = std::span<std::byte>(static_cast<std::byte*>(mappedData), range.End);
         }
     }
 

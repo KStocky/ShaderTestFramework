@@ -4,8 +4,9 @@
 
 namespace stf
 {
-    CommandAllocator::CommandAllocator(CreationParams InParams)
-        : m_Allocator(std::move(InParams.Allocator))
+    CommandAllocator::CommandAllocator(ObjectToken InToken, CreationParams InParams)
+        : Object(InToken)
+        , m_Allocator(std::move(InParams.Allocator))
         , m_Type(InParams.Type)
     {
     }

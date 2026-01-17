@@ -107,7 +107,7 @@ namespace stf
     class TypeList;
 
     template<typename T>
-    concept TypeListType = TIsInstantiationOf<TypeList, T>::Value;
+    concept TypeListType = TIsInstantiationOf<T, TypeList>::Value;
 
     template<typename... InTypes>
     class TypeList

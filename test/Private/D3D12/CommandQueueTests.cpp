@@ -1,0 +1,142 @@
+#include <Platform.h>
+#include <D3D12/CommandQueue.h>
+#include <D3D12/GPUDevice.h>
+#include <Utility/EnumReflection.h>
+
+#include <functional>
+
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators.hpp>
+
+class CommandQueueTestFixture
+{
+
+protected:
+
+    void BeginTestCase(const stf::GPUDevice::EDeviceType InType) const
+    {
+        device = stf::Object::New<stf::GPUDevice> (
+            stf::GPUDevice::CreationParams
+            {
+                .DeviceType = InType
+            });
+    }
+
+    void EndTestCase() const
+    {
+        device = nullptr;
+    }
+
+    mutable stf::SharedPtr<stf::GPUDevice> device;
+};
+
+TEST_CASE_PERSISTENT_FIXTURE( CommandQueueTestFixture, "Scenario: CommandQueueTests")
+{
+    using namespace stf;
+
+    const auto deviceType = GENERATE
+    (
+        GPUDevice::EDeviceType::Hardware, 
+        GPUDevice::EDeviceType::Software
+    );
+
+    GIVEN("DeviceType: " << Enum::UnscopedName(deviceType))
+    {
+        SECTION("Setup")
+        {
+            REQUIRE_FALSE(device);
+            BeginTestCase(deviceType);
+            REQUIRE(device);
+        }
+
+        AND_GIVEN("Two command queues created")
+        {
+            auto directQueue = device->CreateCommandQueue(
+                D3D12_COMMAND_QUEUE_DESC
+                {
+                    .Type = D3D12_COMMAND_LIST_TYPE_DIRECT,
+                    .Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL,
+                    .Flags = D3D12_COMMAND_QUEUE_FLAG_NONE,
+                    .NodeMask = 0
+                }
+            );
+
+            auto copyQueue = device->CreateCommandQueue(
+                D3D12_COMMAND_QUEUE_DESC
+                {
+                    .Type = D3D12_COMMAND_LIST_TYPE_COPY,
+                    .Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL,
+                    .Flags = D3D12_COMMAND_QUEUE_FLAG_NONE,
+                    .NodeMask = 0
+                }
+            );
+
+            THEN("queues are valid")
+            {
+                REQUIRE(directQueue);
+                REQUIRE(copyQueue);
+            }
+
+            WHEN("Fence signalled with no work")
+            {
+                const auto fencePoint = directQueue->Signal();
+
+                THEN("Fence point will have been reached immediately")
+                {
+                    REQUIRE(directQueue->HasFencePointBeenReached(fencePoint));
+                }
+            }
+
+            WHEN("Next signalled fence point queried")
+            {
+                const auto futureFencePoint = copyQueue->NextSignal();
+
+                THEN("Fence point will not have been reached")
+                {
+                    REQUIRE_FALSE(copyQueue->HasFencePointBeenReached(futureFencePoint));
+                }
+
+                AND_WHEN("Future fence point is waited on by another queue")
+                {
+                    directQueue->WaitOnFenceGPU(futureFencePoint);
+
+                    AND_WHEN("The queue that is waiting is signalled")
+                    {
+                        const auto waitingFencePoint = directQueue->Signal();
+
+                        THEN("Fence point is not reached")
+                        {
+                            REQUIRE_FALSE(directQueue->HasFencePointBeenReached(waitingFencePoint));
+                        }
+
+                        AND_WHEN("The future fence point is eventually signalled")
+                        {
+                            [[maybe_unused]] const auto actualFencePoint = copyQueue->Signal();
+                            const auto waitResult = directQueue->WaitOnFenceCPU(waitingFencePoint, Milliseconds<u32>{ 1u });
+
+                            THEN("Future fence point has been reached")
+                            {
+                                REQUIRE(copyQueue->HasFencePointBeenReached(futureFencePoint));
+                            }
+
+                            THEN("Waiting queue is no longer waiting")
+                            {
+                                REQUIRE(waitResult.has_value());
+                                REQUIRE((waitResult.value() == Fence::ECPUWaitResult::FenceAlreadyReached || waitResult.value() == Fence::ECPUWaitResult::WaitFenceReached));
+                                REQUIRE(directQueue->HasFencePointBeenReached(waitingFencePoint));
+                            }
+                        }
+                    }
+                }
+            }
+
+            [[maybe_unused]] const auto directSignal = directQueue->Signal();
+            [[maybe_unused]] const auto copySignal = copyQueue->Signal();
+        }
+
+        SECTION("Teardown")
+        {
+            EndTestCase();
+        }
+    }
+}

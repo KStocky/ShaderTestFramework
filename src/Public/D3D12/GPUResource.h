@@ -29,12 +29,12 @@ namespace stf
     {
     public:
 
-        MappedResource(GPUResourceToken, ComPtr<ID3D12Resource2> InResource);
+        MappedResource(GPUResourceToken, const ComPtr<ID3D12Resource2>& InResource);
         MappedResource(const MappedResource&) = delete;
         MappedResource& operator=(const MappedResource&) = delete;
         ~MappedResource();
 
-        std::span<const std::byte> Get() const
+        std::span<std::byte> Get() const
         {
             return m_MappedData;
         }
@@ -42,10 +42,11 @@ namespace stf
     private:
 
         ComPtr<ID3D12Resource2> m_Resource;
-        std::span<const std::byte> m_MappedData;
+        std::span<std::byte> m_MappedData;
     };
 
-    class GPUResource : Object
+    class GPUResource 
+        : public Object
     {
     public:
 
@@ -54,10 +55,10 @@ namespace stf
             ComPtr<ID3D12Resource2> Resource;
             std::optional<D3D12_CLEAR_VALUE> ClearValue{};
             GPUEnhancedBarrier InitialBarrier{};
+            std::string Name;
         };
 
-        GPUResource() = default;
-        GPUResource(CreationParams InParams) noexcept;
+        GPUResource(ObjectToken, const CreationParams& InParams) noexcept;
 
         ID3D12Resource2* GetRaw() const noexcept;
         operator ID3D12Resource2* () const noexcept;
@@ -67,12 +68,15 @@ namespace stf
         D3D12_RESOURCE_DESC1 GetDesc() const noexcept;
         std::optional<D3D12_CLEAR_VALUE> GetClearValue() const noexcept;
 
+        std::string GetName() const;
+
         u64 GetGPUAddress() const noexcept;
 
         MappedResource Map() const;
 
     private:
 
+        std::string m_Name;
         ComPtr<ID3D12Resource2> m_Resource;
         std::optional<D3D12_CLEAR_VALUE> m_ClearValue{};
         GPUEnhancedBarrier m_CurrentBarrier;

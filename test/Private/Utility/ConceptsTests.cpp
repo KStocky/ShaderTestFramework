@@ -2,6 +2,8 @@
 
 #include <array>
 #include <cstddef>
+#include <format>
+#include <Platform.h>
 
 namespace CallableTypeTests
 {
@@ -403,6 +405,34 @@ namespace InstantiatableFromTests
     static_assert(InstantiatableFrom<NotB, A>);
 }
 
+namespace InstantiatableOfTests
+{
+    using namespace stf;
+    struct A {};
+    struct B {};
+
+    template<typename T>
+    struct OneTypeParam {};
+
+    template<typename T>
+    struct OtherOneTypeParam {};
+
+    template<typename T, typename U>
+    struct TwoTypeParam {};
+
+    template<typename T, typename U>
+    struct OtherTwoTypeParam {};
+
+
+    static_assert(InstantiationOf<OneTypeParam<A>, OneTypeParam>);
+    static_assert(InstantiationOf<OneTypeParam<B>, OneTypeParam>);
+    static_assert(!InstantiationOf<OneTypeParam<A>, OtherOneTypeParam>);
+    static_assert(!InstantiationOf<OneTypeParam<B>, OtherOneTypeParam>);
+
+    static_assert(InstantiationOf<TwoTypeParam<A,B>, TwoTypeParam>);
+    static_assert(!InstantiationOf<TwoTypeParam<A,B>, OtherTwoTypeParam>);
+}
+
 namespace NewableTests
 {
     using namespace stf;
@@ -415,4 +445,42 @@ namespace NewableTests
 
     static_assert(Newable<NewableStruct>);
     static_assert(!Newable<NotNewableStruct>);
+}
+
+namespace ValidBitFieldTests
+{
+    using namespace stf;
+
+    struct NonIntegral
+    {
+    };
+
+    static_assert(CValidBitField<u8, 8>);
+    static_assert(CValidBitField<u8, 4, 4>);
+    static_assert(CValidBitField<u8, 2, 2, 2, 2>);
+
+    static_assert(!CValidBitField<u8, 7>);
+    static_assert(!CValidBitField<u8, 4, 5>);
+    static_assert(!CValidBitField<u8, 22, 2, 2, 2>);
+    static_assert(!CValidBitField<u8, 0, 4, 4>);
+
+    static_assert(!CValidBitField<NonIntegral, sizeof(NonIntegral) * 8>);
+    static_assert(!CValidBitField<i32, 32>);
+}
+
+namespace OStreamableTests
+{
+    using namespace stf;
+    struct TestOStreamable
+    {
+        friend std::ostream& operator<<(std::ostream& InStream, const TestOStreamable&)
+        {
+            return InStream;
+        }
+    };
+
+    struct TestNotOStreamable {};
+
+    static_assert(OStreamable<TestOStreamable>);
+    static_assert(!OStreamable<TestNotOStreamable>);
 }

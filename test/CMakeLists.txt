@@ -81,6 +81,8 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/Asserts/IsFalse.hlsl
     Shader/HLSLFrameworkTests/Asserts/IsTrue.hlsl
     Shader/HLSLFrameworkTests/Asserts/NotEqual.hlsl
+    Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/BindingsHave2ByteAlignment.hlsl
+    Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/ConstantBufferArray.hlsl
     Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/GlobalBindings.hlsl
     Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/GlobalBindingsTooLarge.hlsl
     Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/MultipleConstantBuffers.hlsl
@@ -139,14 +141,19 @@ set(SHADER_SOURCES
 )
 
 set(SOURCES
+    Private/Container/FreeListTests.cpp
     Private/Container/RingBufferTests.cpp
     Private/D3D12/BindlessFreeListAllocatorTests.cpp
     Private/D3D12/CommandEngineTests.cpp
     Private/D3D12/CommandListTests.cpp
+    Private/D3D12/CommandQueueTests.cpp
     Private/D3D12/DescriptorFreeListAllocatorTests.cpp
     Private/D3D12/DescriptorHeapTests.cpp
+    Private/D3D12/DescriptorManagerTests.cpp
     Private/D3D12/DescriptorRingAllocatorTests.cpp
     Private/D3D12/DescriptorTests.cpp
+    Private/D3D12/FencedResourceFreeListTests.cpp
+    Private/D3D12/FencedResourcePoolTests.cpp
     Private/D3D12/Shader/HLSLTests.cpp
     Private/D3D12/Shader/ReflectionTests.cpp
     Private/D3D12/Shader/ShaderBindingTests.cpp
@@ -194,9 +201,7 @@ set(SOURCES
     Private/Framework/HLSLFramework/ThreadDimensionsTests.cpp
     Private/Framework/HLSLFramework/ThreadIdRegistrationTests.cpp
     Private/Framework/HLSLFramework/TTLTypeTraitsTests.cpp
-    Private/Framework/HLSLTypesTests.cpp
     Private/Framework/SectionsInHLSLProofOfConceptTests.cpp
-    Private/Framework/ShaderTestDescriptorManagerTests.cpp
     Private/Framework/ShaderTestFixtureTests.cpp
     Private/Framework/TestDataBufferLayoutTests.cpp
     Private/Framework/TestDataBufferProcessorTests.cpp
@@ -207,14 +212,20 @@ set(SOURCES
     Private/Utility/AlignedOffsetTests.cpp
     Private/Utility/ConceptsTests.cpp
     Private/Utility/EnumReflectionTests.cpp
+    Private/Utility/ErrorTests.cpp
+    Private/Utility/ExpectedTests.cpp
     Private/Utility/FunctionTraitsTests.cpp
+    Private/Utility/HLSLTypesTests.cpp
     Private/Utility/LambdaTests.cpp
     Private/Utility/ObjectTests.cpp
+    Private/Utility/PointerTests.cpp
     Private/Utility/TupleTests.cpp
     Private/Utility/TypeListTests.cpp
     Private/Utility/TypeTraitsTests.cpp
+    Private/Utility/VersionedIndexTests.cpp
     Public/D3D12/Shader/ShaderCompilerTestsCommon.h
     Public/Framework/HLSLFramework/HLSLFrameworkTestsCommon.h
+    Public/TestUtilities/ErrorMatchers.h
     Public/TestUtilities/Noisy.h
 )
 

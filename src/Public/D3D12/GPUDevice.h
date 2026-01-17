@@ -30,12 +30,12 @@ namespace stf
     struct GPUAdapterInfo
     {
         std::wstring Name;
-        uint64_t DedicatedVRAM = 0;
-        uint64_t SystemRAM = 0;
-        uint32_t VendorId = 0;
-        uint32_t DeviceId = 0;
-        uint32_t SubSysId = 0;
-        uint32_t Revision = 0;
+        u64 DedicatedVRAM = 0;
+        u64 SystemRAM = 0;
+        u32 VendorId = 0;
+        u32 DeviceId = 0;
+        u32 SubSysId = 0;
+        u32 Revision = 0;
     };
 
     struct D3D12FeatureInfo
@@ -62,21 +62,21 @@ namespace stf
 
     struct GPUVirtualAddressInfo
     {
-        uint32_t MaxBitsPerResource = 0;
-        uint32_t MaxBitsPerProcess = 0;
+        u32 MaxBitsPerResource = 0;
+        u32 MaxBitsPerProcess = 0;
     };
 
     struct GPUWaveOperationInfo
     {
-        uint32_t MinWaveLaneCount = 0;
-        uint32_t MaxWaveLaneCount = 0;
-        uint32_t TotalLaneCount = 0;
+        u32 MinWaveLaneCount = 0;
+        u32 MaxWaveLaneCount = 0;
+        u32 TotalLaneCount = 0;
         bool IsSupported = false;
     };
 
     struct GPUArchitectureInfo
     {
-        uint32_t GPUIndex = 0;
+        u32 GPUIndex = 0;
         bool SupportsTileBasedRendering = false;
         bool UMA = false;
         bool CacheCoherentUMA = false;
@@ -85,11 +85,22 @@ namespace stf
 
     struct VariableRateShadingInfo
     {
-        uint32_t ImageTileSize = 0;
+        u32 ImageTileSize = 0;
         bool AdditionalShadingRates = false;
         bool PerPrimitiveShadingRateSupportedWithViewportIndexing = false;
         bool BackgroundProcessingSupported = false;
         D3D12_VARIABLE_SHADING_RATE_TIER Tier = D3D12_VARIABLE_SHADING_RATE_TIER_NOT_SUPPORTED;
+    };
+
+    struct DescriptorHeapProperties
+    {
+        u32 MaxSamplers = 0;
+        u32 MaxStaticSamplers = 0;
+        u32 MaxViews = 0;
+        u32 ViewDescriptorSize = 0;
+        u32 RTVDescriptorSize = 0;
+        u32 DSVDescriptorSize = 0;
+        u32 SamplerDescriptorSize = 0;
     };
 
     struct GPUHardwareInfo
@@ -100,6 +111,7 @@ namespace stf
         GPUVirtualAddressInfo VirtualAddressInfo;
         GPUArchitectureInfo ArchitectureInfo;
         VariableRateShadingInfo VRSInfo;
+        DescriptorHeapProperties DescriptorHeapInfo;
     };
 
     template<typename T>
@@ -108,7 +120,8 @@ namespace stf
         std::is_same_v<T, D3D12_COMPUTE_PIPELINE_STATE_DESC> ||
         std::is_same_v<T, D3DX12_MESH_SHADER_PIPELINE_STATE_DESC>;
 
-    class GPUDevice : Object
+    class GPUDevice 
+        : public Object
     {
     public:
 
@@ -132,8 +145,52 @@ namespace stf
             bool EnableGPUCapture = false;
         };
 
-        GPUDevice() = default;
-        GPUDevice(const CreationParams InDesc);
+        struct CommittedResourceDesc
+        {
+            D3D12_HEAP_PROPERTIES HeapProps =
+            {
+                .Type = D3D12_HEAP_TYPE_DEFAULT,
+                .CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN,
+                .MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN,
+                .CreationNodeMask = 0u,
+                .VisibleNodeMask = 0u
+            };
+
+            D3D12_HEAP_FLAGS HeapFlags = D3D12_HEAP_FLAG_NONE;
+            D3D12_RESOURCE_DESC1 ResourceDesc =
+            {
+                .Dimension = D3D12_RESOURCE_DIMENSION_UNKNOWN,
+                .Alignment = 0u,
+                .Width = 0u,
+                .Height = 0u,
+                .DepthOrArraySize = 0u,
+                .MipLevels = 0u,
+                .Format = DXGI_FORMAT_UNKNOWN,
+                .SampleDesc
+                {
+                    .Count = 0,
+                    .Quality = 0
+                },
+                .Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN,
+                .Flags = D3D12_RESOURCE_FLAG_NONE,
+                .SamplerFeedbackMipRegion =
+                {
+                    .Width = 0u,
+                    .Height = 0u,
+                    .Depth = 0u
+                }
+            };
+
+            D3D12_BARRIER_LAYOUT BarrierLayout = D3D12_BARRIER_LAYOUT_UNDEFINED;
+
+            std::optional<D3D12_CLEAR_VALUE> ClearValue = std::nullopt;
+
+            std::span<DXGI_FORMAT> CastableFormats = {};
+
+            std::string Name = "DefaultResource";
+        };
+
+        GPUDevice(ObjectToken, const CreationParams InDesc);
         ~GPUDevice();
 
         bool IsValid() const;
@@ -144,13 +201,7 @@ namespace stf
         SharedPtr<CommandQueue> CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName = "DefaultCommandQueue") const;
 
         SharedPtr<GPUResource> CreateCommittedResource(
-            const D3D12_HEAP_PROPERTIES& InHeapProps,
-            const D3D12_HEAP_FLAGS InFlags,
-            const D3D12_RESOURCE_DESC1& InResourceDesc,
-            const D3D12_BARRIER_LAYOUT InInitialLayout,
-            const D3D12_CLEAR_VALUE* InClearValue = nullptr,
-            const std::span<DXGI_FORMAT> InCastableFormats = {},
-            const std::string_view InName = "DefaultResource"
+            const CommittedResourceDesc& InDesc
         ) const;
 
         SharedPtr<DescriptorHeap> CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName = "DefaultDescriptorHeap") const;
@@ -168,7 +219,7 @@ namespace stf
             };
             ComPtr<ID3D12PipelineState> raw = nullptr;
             ThrowIfFailed(m_Device->CreatePipelineState(&desc, IID_PPV_ARGS(raw.GetAddressOf())));
-            return MakeShared<PipelineState>(PipelineState::CreationParams{ std::move(raw) });
+            return Object::New<PipelineState>(PipelineState::CreationParams{ std::move(raw) });
         }
 
         SharedPtr<RootSignature> CreateRootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC& InDesc) const;
@@ -176,6 +227,7 @@ namespace stf
 
 
         void CopyDescriptors(const DescriptorRange& InDestination, const DescriptorRange& InSource, const D3D12_DESCRIPTOR_HEAP_TYPE InType) const;
+        void CreateConstantBufferView(const GPUResource& InResource, const DescriptorHandle InHandle) const;
         void CreateShaderResourceView(const GPUResource& InResource, const DescriptorHandle InHandle) const;
         void CreateUnorderedAccessView(const GPUResource& InResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC& InDesc, const DescriptorHandle InHandle) const;
 
@@ -191,13 +243,8 @@ namespace stf
 
         ComPtr<ID3D12Device12> m_Device = nullptr;
 
-        SharedPtr<GPUHardwareInfo> m_Info = nullptr;
+        UniquePtr<GPUHardwareInfo> m_Info = nullptr;
 
         HMODULE m_PixHandle = nullptr;
-
-        u32 m_CBVDescriptorSize = 0;
-        u32 m_RTVDescriptorSize = 0;
-        u32 m_DSVDescriptorSize = 0;
-        u32 m_SamplerDescriptorSize = 0;
     };
 }

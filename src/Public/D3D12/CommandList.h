@@ -21,7 +21,8 @@ namespace stf
     template<typename T>
     concept RootSigConstantType = std::is_trivial_v<T> && sizeof(T) == 4;
 
-    class CommandList : Object
+    class CommandList 
+        : public Object
     {
     public:
 
@@ -30,8 +31,7 @@ namespace stf
             ComPtr<ID3D12GraphicsCommandList9> List = nullptr;
         };
 
-        CommandList() = default;
-        CommandList(CreationParams InParams);
+        CommandList(ObjectToken, CreationParams InParams);
 
         void CopyBufferResource(GPUResource& InDest, GPUResource& InSource);
 
@@ -44,10 +44,9 @@ namespace stf
             m_List->SetComputeRoot32BitConstant(InRootParamIndex, val, InOffset);
         }
 
-        template<RootSigConstantType T, u64 InSpanSize>
-        void SetComputeRoot32BitConstants(const u32 InRootParamIndex, const std::span<T, InSpanSize> InVals, const u32 InOffset)
+        void SetComputeRoot32BitConstants(const u32 InRootParamIndex, const std::span<const std::byte> InVals, const u32 InOffset)
         {
-            m_List->SetComputeRoot32BitConstants(InRootParamIndex, static_cast<u32>(InVals.size()), InVals.data(), InOffset);
+            m_List->SetComputeRoot32BitConstants(InRootParamIndex, static_cast<u32>(InVals.size()) / 4u, InVals.data(), InOffset);
         }
 
         void SetComputeRootSignature(const RootSignature& InRootSig);
@@ -66,6 +65,8 @@ namespace stf
         {
             m_List->SetGraphicsRoot32BitConstants(InRootParamIndex, static_cast<u32>(InVals.size()), InVals.data(), InOffset);
         }
+
+        void SetComputeRootConstantBufferView(const u32 InRootParamIndex, GPUResource& InConstantBuffer);
 
         void SetGraphicsRootSignature(const RootSignature& InRootSig);
         void SetPipelineState(const PipelineState& InState);

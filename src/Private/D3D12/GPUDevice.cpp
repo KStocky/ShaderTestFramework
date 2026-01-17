@@ -8,6 +8,8 @@
 #include <span>
 #include <vector>
 
+#include <d3dx12/d3dx12.h>
+
 #include <dxgidebug.h>
 
 #include <WinPixEventRuntime/pix3.h>
@@ -121,13 +123,10 @@ namespace stf
         }
     }
 
-    GPUDevice::GPUDevice(const CreationParams InDesc)
-        : m_Device(nullptr)
+    GPUDevice::GPUDevice(ObjectToken InToken, const CreationParams InDesc)
+        : Object(InToken)
+        , m_Device(nullptr)
         , m_PixHandle(ConditionalLoadPIX(InDesc.EnableGPUCapture))
-        , m_CBVDescriptorSize(0)
-        , m_RTVDescriptorSize(0)
-        , m_DSVDescriptorSize(0)
-        , m_SamplerDescriptorSize(0)
     {
         ThrowIfUnexpected(SetupDebugLayer(InDesc.DebugLevel));
         const u32 factoryCreateFlags = InDesc.DebugLevel != EDebugLevel::Off ? DXGI_CREATE_FACTORY_DEBUG : 0;
@@ -148,11 +147,6 @@ namespace stf
                 SetDebugDeviceSettings();
             }
         }
-
-        m_CBVDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-        m_RTVDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-        m_DSVDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-        m_SamplerDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
 
         CacheHardwareInfo(m_Device.Get(), adapterInfo.Adapter.Get());
     }
@@ -190,7 +184,7 @@ namespace stf
 
         ThrowIfFailed(m_Device->CreateCommandAllocator(InType, IID_PPV_ARGS(allocator.GetAddressOf())));
         SetName(allocator.Get(), InName);
-        return MakeShared<CommandAllocator>(CommandAllocator::CreationParams{ std::move(allocator), InType });
+        return Object::New<CommandAllocator>(CommandAllocator::CreationParams{ std::move(allocator), InType });
     }
 
     SharedPtr<CommandList> GPUDevice::CreateCommandList(D3D12_COMMAND_LIST_TYPE InType, std::string_view InName) const
@@ -199,7 +193,7 @@ namespace stf
 
         ThrowIfFailed(m_Device->CreateCommandList1(0, InType, D3D12_COMMAND_LIST_FLAG_NONE, IID_PPV_ARGS(list.GetAddressOf())));
         SetName(list.Get(), InName);
-        return MakeShared<CommandList>(CommandList::CreationParams{ std::move(list) });
+        return Object::New<CommandList>(CommandList::CreationParams{ std::move(list) });
     }
 
     SharedPtr<CommandQueue> GPUDevice::CreateCommandQueue(const D3D12_COMMAND_QUEUE_DESC& InDesc, const std::string_view InName) const
@@ -207,27 +201,33 @@ namespace stf
         ComPtr<ID3D12CommandQueue> raw = nullptr;
         ThrowIfFailed(m_Device->CreateCommandQueue(&InDesc, IID_PPV_ARGS(raw.GetAddressOf())));
         SetName(raw.Get(), InName);
-        return MakeShared<CommandQueue>(CommandQueue::CreationParams{ std::move(raw), CreateFence(0ull) });
+        return Object::New<CommandQueue>(CommandQueue::CreationParams{ std::move(raw), CreateFence(0ull) });
     }
 
-    SharedPtr<GPUResource> GPUDevice::CreateCommittedResource(const D3D12_HEAP_PROPERTIES& InHeapProps, const D3D12_HEAP_FLAGS InFlags, const D3D12_RESOURCE_DESC1& InResourceDesc, const D3D12_BARRIER_LAYOUT InInitialLayout, const D3D12_CLEAR_VALUE* InClearValue, const std::span<DXGI_FORMAT> InCastableFormats, const std::string_view InName) const
+    SharedPtr<GPUResource> GPUDevice::CreateCommittedResource(const CommittedResourceDesc& InDesc) const
     {
         ComPtr<ID3D12Resource2> raw{ nullptr };
 
         ThrowIfFailed(
             m_Device->CreateCommittedResource3(
-                &InHeapProps,
-                InFlags,
-                &InResourceDesc,
-                InInitialLayout,
-                InClearValue,
+                &InDesc.HeapProps,
+                InDesc.HeapFlags,
+                &InDesc.ResourceDesc,
+                InDesc.BarrierLayout,
+                InDesc.ClearValue.has_value() ? &InDesc.ClearValue.value() : nullptr,
                 nullptr,
-                static_cast<u32>(InCastableFormats.size()),
-                InCastableFormats.data(),
+                static_cast<u32>(InDesc.CastableFormats.size()),
+                InDesc.CastableFormats.data(),
                 IID_PPV_ARGS(raw.GetAddressOf()))
         );
-        SetName(raw.Get(), InName);
-        return MakeShared<GPUResource>(GPUResource::CreationParams{ std::move(raw), InClearValue ? std::optional{*InClearValue} : std::nullopt, {D3D12_BARRIER_SYNC_NONE, D3D12_BARRIER_ACCESS_NO_ACCESS, InInitialLayout} });
+        SetName(raw.Get(), std::string_view{ InDesc.Name });
+        return Object::New<GPUResource>(
+            GPUResource::CreationParams{ 
+                .Resource = std::move(raw),
+                .ClearValue = InDesc.ClearValue, 
+                .InitialBarrier = {D3D12_BARRIER_SYNC_NONE, D3D12_BARRIER_ACCESS_NO_ACCESS, InDesc.BarrierLayout}, 
+                .Name = InDesc.Name 
+            });
     }
 
     SharedPtr<DescriptorHeap> GPUDevice::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC& InDesc, const std::string_view InName) const
@@ -237,7 +237,7 @@ namespace stf
 
         SetName(heap.Get(), InName);
         const u32 descriptorSize = GetDescriptorSize(InDesc.Type);
-        return MakeShared<DescriptorHeap>(DescriptorHeap::Desc{ std::move(heap), descriptorSize });
+        return Object::New<DescriptorHeap>(DescriptorHeap::Desc{ std::move(heap), descriptorSize });
     }
 
     SharedPtr<Fence> GPUDevice::CreateFence(const u64 InInitialValue, const std::string_view InName) const
@@ -246,7 +246,7 @@ namespace stf
 
         ThrowIfFailed(m_Device->CreateFence(InInitialValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(fence.GetAddressOf())));
         SetName(fence.Get(), InName);
-        return MakeShared<Fence>(Fence::CreationParams{ std::move(fence), InInitialValue });
+        return Object::New<Fence>(Fence::CreationParams{ std::move(fence), InInitialValue });
     }
 
     SharedPtr<RootSignature> GPUDevice::CreateRootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC& InDesc) const
@@ -260,7 +260,7 @@ namespace stf
 
         ComPtr<ID3D12VersionedRootSignatureDeserializer> deserializer;
         ThrowIfFailed(D3D12CreateVersionedRootSignatureDeserializer(signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(deserializer.GetAddressOf())));
-        return MakeShared<RootSignature>(RootSignature::CreationParams{ std::move(rootSignatureObject), std::move(deserializer), std::move(signature) });
+        return Object::New<RootSignature>(RootSignature::CreationParams{ std::move(rootSignatureObject), std::move(deserializer), std::move(signature) });
     }
 
     SharedPtr<RootSignature> GPUDevice::CreateRootSignature(const CompiledShaderData& InShader) const
@@ -286,6 +286,15 @@ namespace stf
             ThrowIfUnexpected(InDestination.First()).GetCPUHandle(),
             ThrowIfUnexpected(InSource.First()).GetCPUHandle(),
             InType);
+    }
+
+    void GPUDevice::CreateConstantBufferView(const GPUResource& InResource, const DescriptorHandle InHandle) const
+    {
+        D3D12_CONSTANT_BUFFER_VIEW_DESC viewDesc{};
+        viewDesc.BufferLocation = InResource.GetGPUAddress();
+        viewDesc.SizeInBytes = static_cast<u32>(InResource.GetDesc().Width);
+
+        m_Device->CreateConstantBufferView(&viewDesc, InHandle.GetCPUHandle());
     }
 
     void GPUDevice::CreateShaderResourceView(const GPUResource& InResource, const DescriptorHandle InHandle) const
@@ -374,8 +383,8 @@ namespace stf
         featureLevels.pFeatureLevelsRequested = levels.data();
         ThrowIfFailed(InDevice->CheckFeatureSupport(D3D12_FEATURE_FEATURE_LEVELS, &featureLevels, static_cast<uint32_t>(sizeof(featureLevels))));
 
-        GPUVirtualAddressInfo virtualAddressInfo{};
-        ThrowIfFailed(InDevice->CheckFeatureSupport(D3D12_FEATURE_GPU_VIRTUAL_ADDRESS_SUPPORT, &virtualAddressInfo, static_cast<uint32_t>(sizeof(virtualAddressInfo))));
+        D3D12_FEATURE_DATA_GPU_VIRTUAL_ADDRESS_SUPPORT virtualAddressSupport{};
+        ThrowIfFailed(InDevice->CheckFeatureSupport(D3D12_FEATURE_GPU_VIRTUAL_ADDRESS_SUPPORT, &virtualAddressSupport, static_cast<u32>(sizeof(virtualAddressSupport))));
 
         D3D12_FEATURE_DATA_SHADER_MODEL maxShaderModel{ .HighestShaderModel = D3D_HIGHEST_SHADER_MODEL };
         ThrowIfFailed(InDevice->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &maxShaderModel, static_cast<uint32_t>(sizeof(maxShaderModel))));
@@ -406,92 +415,112 @@ namespace stf
         D3D12_FEATURE_DATA_D3D12_OPTIONS12 options12{};
         ThrowIfFailed(InDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS12, &options12, static_cast<uint32_t>(sizeof(options12))));
 
-        m_Info = MakeShared<GPUHardwareInfo>
+        D3D12_FEATURE_DATA_D3D12_OPTIONS19 options19{};
+        ThrowIfFailed(InDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS19, &options19, static_cast<uint32_t>(sizeof(options19))));
+
+        m_Info = MakeUnique<GPUHardwareInfo>
             (
-                GPUAdapterInfo
-                {
-                    .Name = adapterDesc.Description,
-                    .DedicatedVRAM = adapterDesc.DedicatedVideoMemory,
-                    .SystemRAM = adapterDesc.DedicatedSystemMemory,
-                    .VendorId = adapterDesc.VendorId,
-                    .DeviceId = adapterDesc.DeviceId,
-                    .SubSysId = adapterDesc.SubSysId,
-                    .Revision = adapterDesc.Revision
-                },
-                D3D12FeatureInfo
-                {
-                    .ShaderCacheSupportFlags = shaderCacheInfo.SupportFlags,
-                    .TiledResourceTier = options1.TiledResourcesTier,
-                    .ResourceBindingTier = options1.ResourceBindingTier,
-                    .ConservativeRasterizationTier = options1.ConservativeRasterizationTier,
-                    .ResourceHeapTier = options1.ResourceHeapTier,
-                    .RenderPassTier = options5.RenderPassesTier,
-                    .RayTracingTier = options5.RaytracingTier,
-                    .MaxFeatureLevel = featureLevels.MaxSupportedFeatureLevel,
-                    .MaxShaderModel = maxShaderModel.HighestShaderModel,
-                    .RootSignatureVersion = rootSigInfo.HighestVersion,
-                    .MeshShaderTier = options7.MeshShaderTier,
-                    .SamplerFeedbackTier = options7.SamplerFeedbackTier,
-                    .ProgrammableSamplePositionsTier = options2.ProgrammableSamplePositionsTier,
-                    .DoublePrecisionSupport = !!options1.DoublePrecisionFloatShaderOps,
-                    .Float10Support = Enum::EnumHasMask(options1.MinPrecisionSupport, D3D12_SHADER_MIN_PRECISION_SUPPORT_10_BIT),
-                    .Float16Support = Enum::EnumHasMask(options1.MinPrecisionSupport, D3D12_SHADER_MIN_PRECISION_SUPPORT_16_BIT),
-                    .DepthBoundsTestSupport = !!options2.DepthBoundsTestSupported,
-                    .EnhancedBarriersSupport = !!options12.EnhancedBarriersSupported
-                },
-                GPUWaveOperationInfo
-                {
-                    .MinWaveLaneCount = waveOpInfo.WaveLaneCountMin,
-                    .MaxWaveLaneCount = waveOpInfo.WaveLaneCountMax,
-                    .TotalLaneCount = waveOpInfo.TotalLaneCount,
-                    .IsSupported = !!waveOpInfo.WaveOps
-                },
-                virtualAddressInfo,
-                GPUArchitectureInfo
-                {
-                    .GPUIndex = architectureInfo.NodeIndex,
-                    .SupportsTileBasedRendering = !!architectureInfo.TileBasedRenderer,
-                    .UMA = !!architectureInfo.UMA,
-                    .CacheCoherentUMA = !!architectureInfo.CacheCoherentUMA,
-                    .IsolatedMMU = !!architectureInfo.IsolatedMMU
-                },
-                VariableRateShadingInfo
-                {
-                    .ImageTileSize = options6.ShadingRateImageTileSize,
-                    .AdditionalShadingRates = !!options6.AdditionalShadingRatesSupported,
-                    .PerPrimitiveShadingRateSupportedWithViewportIndexing = !!options6.PerPrimitiveShadingRateSupportedWithViewportIndexing,
-                    .BackgroundProcessingSupported = !!options6.BackgroundProcessingSupported,
-                    .Tier = options6.VariableShadingRateTier
+                GPUHardwareInfo{
+                    .AdapterInfo = GPUAdapterInfo
+                    {
+                        .Name = adapterDesc.Description,
+                        .DedicatedVRAM = adapterDesc.DedicatedVideoMemory,
+                        .SystemRAM = adapterDesc.DedicatedSystemMemory,
+                        .VendorId = adapterDesc.VendorId,
+                        .DeviceId = adapterDesc.DeviceId,
+                        .SubSysId = adapterDesc.SubSysId,
+                        .Revision = adapterDesc.Revision
+                    },
+                    .FeatureInfo = D3D12FeatureInfo
+                    {
+                        .ShaderCacheSupportFlags = shaderCacheInfo.SupportFlags,
+                        .TiledResourceTier = options1.TiledResourcesTier,
+                        .ResourceBindingTier = options1.ResourceBindingTier,
+                        .ConservativeRasterizationTier = options1.ConservativeRasterizationTier,
+                        .ResourceHeapTier = options1.ResourceHeapTier,
+                        .RenderPassTier = options5.RenderPassesTier,
+                        .RayTracingTier = options5.RaytracingTier,
+                        .MaxFeatureLevel = featureLevels.MaxSupportedFeatureLevel,
+                        .MaxShaderModel = maxShaderModel.HighestShaderModel,
+                        .RootSignatureVersion = rootSigInfo.HighestVersion,
+                        .MeshShaderTier = options7.MeshShaderTier,
+                        .SamplerFeedbackTier = options7.SamplerFeedbackTier,
+                        .ProgrammableSamplePositionsTier = options2.ProgrammableSamplePositionsTier,
+                        .DoublePrecisionSupport = !!options1.DoublePrecisionFloatShaderOps,
+                        .Float10Support = Enum::EnumHasMask(options1.MinPrecisionSupport, D3D12_SHADER_MIN_PRECISION_SUPPORT_10_BIT),
+                        .Float16Support = Enum::EnumHasMask(options1.MinPrecisionSupport, D3D12_SHADER_MIN_PRECISION_SUPPORT_16_BIT),
+                        .DepthBoundsTestSupport = !!options2.DepthBoundsTestSupported,
+                        .EnhancedBarriersSupport = !!options12.EnhancedBarriersSupported
+                    },
+                    .WaveOperationInfo = GPUWaveOperationInfo
+                    {
+                        .MinWaveLaneCount = waveOpInfo.WaveLaneCountMin,
+                        .MaxWaveLaneCount = waveOpInfo.WaveLaneCountMax,
+                        .TotalLaneCount = waveOpInfo.TotalLaneCount,
+                        .IsSupported = !!waveOpInfo.WaveOps
+                    },
+                    .VirtualAddressInfo = GPUVirtualAddressInfo
+                    {
+                        .MaxBitsPerResource = virtualAddressSupport.MaxGPUVirtualAddressBitsPerResource,
+                        .MaxBitsPerProcess = virtualAddressSupport.MaxGPUVirtualAddressBitsPerProcess
+                    },
+                    .ArchitectureInfo = GPUArchitectureInfo
+                    {
+                        .GPUIndex = architectureInfo.NodeIndex,
+                        .SupportsTileBasedRendering = !!architectureInfo.TileBasedRenderer,
+                        .UMA = !!architectureInfo.UMA,
+                        .CacheCoherentUMA = !!architectureInfo.CacheCoherentUMA,
+                        .IsolatedMMU = !!architectureInfo.IsolatedMMU
+                    },
+                    .VRSInfo = VariableRateShadingInfo
+                    {
+                        .ImageTileSize = options6.ShadingRateImageTileSize,
+                        .AdditionalShadingRates = !!options6.AdditionalShadingRatesSupported,
+                        .PerPrimitiveShadingRateSupportedWithViewportIndexing = !!options6.PerPrimitiveShadingRateSupportedWithViewportIndexing,
+                        .BackgroundProcessingSupported = !!options6.BackgroundProcessingSupported,
+                        .Tier = options6.VariableShadingRateTier
+                    },
+                    .DescriptorHeapInfo = DescriptorHeapProperties
+                    {
+                        .MaxSamplers = options19.MaxSamplerDescriptorHeapSize,
+                        .MaxStaticSamplers = options19.MaxSamplerDescriptorHeapSizeWithStaticSamplers,
+                        .MaxViews = options19.MaxViewDescriptorHeapSize,
+                        .ViewDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
+                        .RTVDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV),
+                        .DSVDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV),
+                        .SamplerDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER),
+                    }
                 }
             );
     }
 
     u32 GPUDevice::GetDescriptorSize(const D3D12_DESCRIPTOR_HEAP_TYPE InType) const
     {
+        const auto& hardwareInfo = GetHardwareInfo();
         switch (InType)
         {
-        case D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV:
-        {
-            return m_CBVDescriptorSize;
-        }
-        case D3D12_DESCRIPTOR_HEAP_TYPE_DSV:
-        {
-            return m_DSVDescriptorSize;
-        }
-        case D3D12_DESCRIPTOR_HEAP_TYPE_RTV:
-        {
-            return m_RTVDescriptorSize;
-        }
-        case D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER:
-        {
-            return m_SamplerDescriptorSize;
-        }
-        case D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES:
-        default:
-        {
-            ThrowIfFalse(false, "Unknown Descriptor heap type");
+            case D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV:
+            {
+                return hardwareInfo.DescriptorHeapInfo.ViewDescriptorSize;
+            }
+            case D3D12_DESCRIPTOR_HEAP_TYPE_DSV:
+            {
+                return hardwareInfo.DescriptorHeapInfo.DSVDescriptorSize;
+            }
+            case D3D12_DESCRIPTOR_HEAP_TYPE_RTV:
+            {
+                return hardwareInfo.DescriptorHeapInfo.RTVDescriptorSize;
+            }
+            case D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER:
+            {
+                return hardwareInfo.DescriptorHeapInfo.SamplerDescriptorSize;
+            }
+            case D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES:
+            default:
+            {
+                ThrowIfFalse(false, "Unknown Descriptor heap type");
 
-        }
+            }
         }
 
         return 0;

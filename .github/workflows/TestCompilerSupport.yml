@@ -11,8 +11,8 @@ on:
       - "main"
 
 env:
-    MSVC_VERSION: 14.37
-    VS_VERSION: 17.7
+    MSVC_VERSION: 14.41
+    VS_VERSION: 17.11
 
 jobs:
   Test-Compiler-Support:

@@ -1,5 +1,7 @@
-#include <Framework/HLSLTypes.h>
+
 #include <Framework/ShaderTestFixture.h>
+#include <Utility/HLSLTypes.h>
+
 #include <catch2/catch_test_macros.hpp>
 
 SCENARIO("Example8Tests")

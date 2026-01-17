@@ -4,8 +4,9 @@
 
 namespace stf
 {
-    DescriptorHeap::DescriptorHeap(Desc InParams) noexcept
-        : m_Heap(std::move(InParams.Heap))
+    DescriptorHeap::DescriptorHeap(ObjectToken InToken, Desc InParams) noexcept
+        : Object(InToken)
+        , m_Heap(std::move(InParams.Heap))
         , m_DescriptorSize(InParams.DescriptorSize)
     {
     }

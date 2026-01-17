@@ -3,29 +3,25 @@
 #include "Platform.h"
 
 #include "Container/RingBuffer.h"
-#include "Utility/Expected.h"
+#include "Utility/Error.h"
 
 #include <compare>
 #include <vector>
 
 namespace stf
 {
+    namespace Errors::BindlessFreeListAllocator
+    {
+        ErrorFragment Empty();
+        ErrorFragment InvalidIndex(const u32 InIndex);
+        ErrorFragment IndexAlreadyReleased(const u32 InIndex);
+        ErrorFragment ShrinkAttempted(const u32 InCurrentSize, const u32 InRequestedSize);
+    }
+
     class BindlessFreeListAllocator
     {
         struct Private { explicit Private() = default; };
     public:
-
-        enum class EErrorType
-        {
-            UnknownError,
-            EmptyError,
-            InvalidIndex,
-            IndexAlreadyReleased,
-            ShrinkAttempted
-        };
-
-        template<typename T>
-        using Expected = Expected<T, EErrorType>;
 
         class BindlessIndex
         {
@@ -51,16 +47,16 @@ namespace stf
         BindlessFreeListAllocator() = default;
         BindlessFreeListAllocator(CreationParams InParams);
 
-        [[nodiscard]] Expected<BindlessIndex> Allocate();
-        Expected<void> Release(const BindlessIndex InIndex);
-        Expected<void> Resize(const u32 InNewSize);
+        [[nodiscard]] ExpectedError<BindlessIndex> Allocate();
+        ExpectedError<void> Release(const BindlessIndex InIndex);
+        ExpectedError<void> Resize(const u32 InNewSize);
 
         u32 GetSize() const;
         u32 GetCapacity() const;
 
-    private:
+        ExpectedError<bool> IsAllocated(const BindlessIndex InIndex) const;
 
-        using EBufferError = RingBuffer<u32>::EErrorType;
+    private:
 
         RingBuffer<u32> m_FreeList;
         std::vector<bool> m_FreeSet;

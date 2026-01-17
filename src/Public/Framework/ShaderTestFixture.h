@@ -3,12 +3,11 @@
 #include "D3D12/GPUDevice.h"
 #include "D3D12/Shader/ShaderBinding.h"
 #include "D3D12/Shader/ShaderCompiler.h"
-#include "Framework/HLSLTypes.h"
 #include "Framework/ShaderTestDriver.h"
-#include "Framework/ShaderTestShader.h"
 #include "Framework/TestDataBufferLayout.h"
 #include "Stats/StatSystem.h"
-#include "Utility/Expected.h"
+#include "Utility/Error.h"
+#include "Utility/HLSLTypes.h"
 #include "Utility/Pointer.h"
 #include "Utility/TransparentStringHash.h"
 #include <vector>
@@ -118,7 +117,7 @@ namespace stf
 
         Results RunTestImpl(RuntimeTestDesc InTestDesc, const bool InIsFailureRetry);
 
-        Expected<SharedPtr<ShaderTestShader>, ErrorTypeAndDescription> CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const;
+        ExpectedError<CompiledShaderData> CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const;
         void PopulateDefaultByteReaders();
 
         bool ShouldTakeCapture(const EGPUCaptureMode InCaptureMode, const bool InIsFailureRetry) const;

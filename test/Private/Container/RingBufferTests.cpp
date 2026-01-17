@@ -1,4 +1,5 @@
 
+#include "TestUtilities/ErrorMatchers.h"
 #include <Container/RingBuffer.h>
 
 #include <catch2/catch_test_macros.hpp>
@@ -106,6 +107,23 @@ SCENARIO("RingBufferTests")
 				REQUIRE(expected == buffer.size());
 				REQUIRE(expected == buffer.front().Num);
 			}
+
+            AND_WHEN("another item is pushed back")
+            {
+                static constexpr i64 secondExpected = 2;
+                buffer.push_back(secondExpected);
+
+                THEN("buffer contains item")
+                {
+                    REQUIRE(secondExpected == buffer.size());
+                    auto popResult = buffer.pop_front();
+                    REQUIRE(popResult);
+                    REQUIRE(expected == popResult.value().Num);
+                    auto secondPopResult = buffer.pop_front();
+                    REQUIRE(secondPopResult);
+                    REQUIRE(secondExpected == secondPopResult.value().Num);
+                }
+            }
 		}
 
 		WHEN("iterated on")
@@ -180,12 +198,13 @@ SCENARIO("RingBufferTests")
 
         WHEN("Resized to something smaller")
         {
-            const auto resizeResult = buffer.resize(size - 1);
+            constexpr u64 smallerSize = size - 1ull;
+            const auto resizeResult = buffer.resize(smallerSize);
 
             THEN("fails")
             {
                 REQUIRE_FALSE(resizeResult.has_value());
-                REQUIRE(resizeResult.error() == RingBuffer<MoveableType>::EErrorType::AttemptedShrink);
+                REQUIRE(resizeResult.error().HasFragment(Errors::RingBuffer::AttemptedShrink(buffer.size(), size - 1ull)));
             }
         }
 
@@ -285,12 +304,13 @@ SCENARIO("RingBufferTests")
 
         WHEN("Resized to something smaller")
         {
-            const auto resizeResult = buffer.resize(capacity - 1);
+            constexpr u64 smallerCapacity = capacity - 1;
+            const auto resizeResult = buffer.resize(smallerCapacity);
 
             THEN("fails")
             {
                 REQUIRE_FALSE(resizeResult.has_value());
-                REQUIRE(resizeResult.error() == RingBuffer<MoveableType>::EErrorType::AttemptedShrink);
+                REQUIRE_THAT(resizeResult.error(), ErrorContains(Errors::RingBuffer::AttemptedShrink(buffer.size(), smallerCapacity)));
             }
         }
 

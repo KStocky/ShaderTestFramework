@@ -1,8 +1,11 @@
 #include "Framework/ShaderTestFixture.h"
 
-#include "Framework/PIXCapturer.h"
-#include "Utility/EnumReflection.h"
 #include "D3D12/GPUDevice.h"
+#include "D3D12/Shader/Shader.h"
+
+#include "Framework/PIXCapturer.h"
+#include "Framework/ShaderTestCommon.h"
+#include "Utility/EnumReflection.h"
 
 #include <format>
 #include <sstream>
@@ -28,8 +31,8 @@ namespace stf
     std::vector<TimedStat> ShaderTestFixture::cachedStats;
 
     ShaderTestFixture::ShaderTestFixture(FixtureDesc InParams)
-        : m_Device(MakeShared<GPUDevice>(InParams.GPUDeviceParams))
-        , m_TestDriver(MakeShared<ShaderTestDriver>(
+        : m_Device(Object::New<GPUDevice>(InParams.GPUDeviceParams))
+        , m_TestDriver(Object::New<ShaderTestDriver>(
             ShaderTestDriver::CreationParams
             {
                 .Device = m_Device
@@ -85,12 +88,12 @@ namespace stf
         ScopedDuration scope(std::format("ShaderTestFixture::RunCompileTimeTest: {}", InTestDesc.TestName));
         return CompileShader("", EShaderType::Lib, std::move(InTestDesc.CompilationEnv), false)
             .transform(
-                [](SharedPtr<ShaderTestShader>)
+                [](CompiledShaderData)
                 {
                     return Results{ TestRunResults{} };
                 })
             .or_else(
-                [](ErrorTypeAndDescription InError) -> Expected<Results, std::monostate>
+                [](Error InError) -> Expected<Results, std::monostate>
                 {
                     return Results{ std::move(InError) };
                 }
@@ -116,24 +119,17 @@ namespace stf
 
         return CompileShader(InTestDesc.TestName, EShaderType::Compute, std::move(InTestDesc.CompilationEnv), takeCapture)
             .and_then(
-                [](SharedPtr<ShaderTestShader> InShader) -> Expected<SharedPtr<ShaderTestShader>, ErrorTypeAndDescription>
+                [&](const CompiledShaderData& InCompilationResult)
                 {
-                    auto res = InShader->Init();
-                    return std::move(res)
-                        .transform(
-                            [shader = std::move(InShader)]()
-                            {
-                                return std::move(shader);
-                            }
-                        );
+                    return Shader::Make(InCompilationResult, *m_Device);
                 })
             .and_then(
-                [this, &InTestDesc, takeCapture](SharedPtr<ShaderTestShader> InShader)
+                [&](const SharedPtr<Shader>& InShader)
                 {
                     const auto capturer = PIXCapturer(InTestDesc.TestName, takeCapture);
                     return m_TestDriver->RunShaderTest(
                         {
-                            .Shader = *InShader,
+                            .Shader = InShader,
                             .TestBufferLayout{ InTestDesc.TestDataLayout },
                             .Bindings = std::move(InTestDesc.Bindings),
                             .TestName = InTestDesc.TestName,
@@ -141,14 +137,14 @@ namespace stf
                         });
                 })
             .or_else(
-                [](ErrorTypeAndDescription InError) -> Expected<Results, std::monostate>
+                [](Error InError) -> Expected<Results, std::monostate>
                 {
                     return Results{ std::move(InError) };
                 }
             ).value();
     }
 
-    Expected<SharedPtr<ShaderTestShader>, ErrorTypeAndDescription> ShaderTestFixture::CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const
+    ExpectedError<CompiledShaderData> ShaderTestFixture::CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const
     {
         ScopedDuration scope(std::format("ShaderTestFixture::CompileShader: {}", InName));
         ShaderCompilationJobDesc job;
@@ -172,22 +168,7 @@ namespace stf
             job.Flags = Enum::MakeFlags(EShaderCompileFlags::SkipOptimization, EShaderCompileFlags::O0);
         }
 
-        return m_Compiler
-            .CompileShader(job)
-            .transform(
-                [this](CompiledShaderData InData)
-                {
-                    return MakeShared<ShaderTestShader>(ShaderTestShader::CreationParams{ .ShaderData = std::move(InData), .Device = m_Device });
-                })
-            .transform_error(
-                [](std::string InError)
-                {
-                    return ErrorTypeAndDescription
-                    {
-                        .Type = ETestRunErrorType::ShaderCompilation,
-                        .Error = std::move(InError)
-                    };
-                });
+        return m_Compiler.CompileShader(job);
     }
 
     void ShaderTestFixture::RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader)

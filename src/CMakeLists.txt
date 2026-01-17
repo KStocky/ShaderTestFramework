@@ -22,6 +22,7 @@ set_target_properties(WINPIX PROPERTIES
 asset_dependency_init(ShaderTestFramework)
 
 set(SOURCES
+    Public/Container/FreeList.h
     Public/Container/RingBuffer.h
     Public/D3D12/AgilityDefinitions.h
     Public/D3D12/BindlessFreeListAllocator.h
@@ -32,28 +33,31 @@ set(SOURCES
     Public/D3D12/Descriptor.h
     Public/D3D12/DescriptorFreeListAllocator.h
     Public/D3D12/DescriptorHeap.h
+    Public/D3D12/DescriptorManager.h
     Public/D3D12/DescriptorRingAllocator.h
     Public/D3D12/Fence.h
+    Public/D3D12/FencedResourceFreeList.h
+    Public/D3D12/FencedResourcePool.h
     Public/D3D12/GPUDevice.h
     Public/D3D12/GPUResource.h
+    Public/D3D12/GPUResourceManager.h
     Public/D3D12/Shader/CompiledShaderData.h
     Public/D3D12/Shader/IncludeHandler.h
     Public/D3D12/Shader/PipelineState.h
     Public/D3D12/Shader/RootSignature.h
+    Public/D3D12/Shader/Shader.h
     Public/D3D12/Shader/ShaderBinding.h
+    Public/D3D12/Shader/ShaderBindingMap.h
     Public/D3D12/Shader/ShaderCompiler.h
     Public/D3D12/Shader/ShaderEnums.h
     Public/D3D12/Shader/ShaderHash.h
     Public/D3D12/Shader/ShaderReflectionUtils.h
     Public/D3D12/Shader/VirtualShaderDirectoryMapping.h
     Public/D3D12/Shader/VirtualShaderDirectoryMappingManager.h
-    Public/Framework/HLSLTypes.h
     Public/Framework/PIXCapturer.h
     Public/Framework/ShaderTestCommon.h
-    Public/Framework/ShaderTestDescriptorManager.h
     Public/Framework/ShaderTestDriver.h
     Public/Framework/ShaderTestFixture.h
-    Public/Framework/ShaderTestShader.h
     Public/Framework/TestDataBufferLayout.h
     Public/Framework/TestDataBufferProcessor.h
     Public/Framework/TestDataBufferStructs.h
@@ -64,22 +68,26 @@ set(SOURCES
     Public/Utility/Algorithm.h
     Public/Utility/Concepts.h
     Public/Utility/EnumReflection.h
+    Public/Utility/Error.h
     Public/Utility/Exception.h
     Public/Utility/Expected.h
     Public/Utility/FixedString.h
     Public/Utility/Float.h
     Public/Utility/FunctionTraits.h
+    Public/Utility/HLSLTypes.h
     Public/Utility/Lambda.h
     Public/Utility/Math.h
     Public/Utility/MoveOnly.h
     Public/Utility/Object.h
     Public/Utility/OverloadSet.h
     Public/Utility/Pointer.h
+    Public/Utility/StringLiteral.h
     Public/Utility/Time.h
     Public/Utility/Tuple.h
     Public/Utility/Type.h
     Public/Utility/TypeList.h
     Public/Utility/TypeTraits.h
+    Public/Utility/VersionedIndex.h
     Private/D3D12/BindlessFreeListAllocator.cpp
     Private/D3D12/CommandAllocator.cpp
     Private/D3D12/CommandEngine.cpp
@@ -87,24 +95,26 @@ set(SOURCES
     Private/D3D12/CommandQueue.cpp
     Private/D3D12/DescriptorFreeListAllocator.cpp
     Private/D3D12/DescriptorHeap.cpp
+    Private/D3D12/DescriptorManager.cpp
     Private/D3D12/DescriptorRingAllocator.cpp
     Private/D3D12/Fence.cpp
     Private/D3D12/GPUDevice.cpp
     Private/D3D12/GPUResource.cpp
+    Private/D3D12/GPUResourceManager.cpp
     Private/D3D12/Shader/CompiledShaderData.cpp
     Private/D3D12/Shader/IncludeHandler.cpp
     Private/D3D12/Shader/PipelineState.cpp
     Private/D3D12/Shader/RootSignature.cpp
+    Private/D3D12/Shader/Shader.cpp
     Private/D3D12/Shader/ShaderBinding.cpp
+    Private/D3D12/Shader/ShaderBindingMap.cpp
     Private/D3D12/Shader/ShaderCompiler.cpp
     Private/D3D12/Shader/ShaderReflectionUtils.cpp
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManager.cpp
     Private/Framework/PIXCapturer.cpp
     Private/Framework/ShaderTestCommon.cpp
-    Private/Framework/ShaderTestDescriptorManager.cpp
     Private/Framework/ShaderTestDriver.cpp
     Private/Framework/ShaderTestFixture.cpp
-    Private/Framework/ShaderTestShader.cpp
     Private/Framework/TestDataBufferLayout.cpp
     Private/Framework/TestDataBufferProcessor.cpp
     Private/Framework/TestDataBufferStructs.cpp

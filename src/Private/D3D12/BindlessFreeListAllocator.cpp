@@ -5,6 +5,29 @@
 
 namespace stf
 {
+    namespace Errors::BindlessFreeListAllocator
+    {
+        ErrorFragment Empty()
+        {
+            return ErrorFragment::Make<"Bindless allocator is empty">();
+        }
+
+        ErrorFragment InvalidIndex(const u32 InIndex)
+        {
+            return ErrorFragment::Make<"Bindless index {} is invalid">(InIndex);
+        }
+
+        ErrorFragment IndexAlreadyReleased(const u32 InIndex)
+        {
+            return ErrorFragment::Make<"Bindless index {} has already been released">(InIndex);
+        }
+
+        ErrorFragment ShrinkAttempted(const u32 InCurrentSize, const u32 InRequestedSize)
+        {
+            return ErrorFragment::Make<"Attempted shrink which is unsupported. Current size: {}, Requested size: {}">(InCurrentSize, InRequestedSize);
+        }
+    }
+
     BindlessFreeListAllocator::BindlessFreeListAllocator(CreationParams InParams)
         : m_FreeList(InParams.NumDescriptors)
         , m_FreeSet(InParams.NumDescriptors, true)
@@ -13,7 +36,7 @@ namespace stf
         std::ranges::generate_n(std::back_inserter(m_FreeList), m_NumDescriptors, [index = 0]() mutable { return index++; });
     }
 
-    BindlessFreeListAllocator::Expected<BindlessFreeListAllocator::BindlessIndex> BindlessFreeListAllocator::Allocate()
+    ExpectedError<BindlessFreeListAllocator::BindlessIndex> BindlessFreeListAllocator::Allocate()
     {
         return m_FreeList.pop_front()
             .transform(
@@ -23,35 +46,24 @@ namespace stf
                     return BindlessIndex{ Private{}, InIndex };
                 })
             .transform_error(
-                [](const EBufferError InError)
+                [](const Error& InError) -> Error
                 {
-                    switch (InError)
-                    {
-                        case EBufferError::EmptyBuffer:
-                        {
-                            return EErrorType::EmptyError;
-                        }
-
-                        default:
-                        {
-                            return EErrorType::UnknownError;
-                        }
-                    }
+                    return InError + Errors::BindlessFreeListAllocator::Empty();
                 }
             );
     }
 
-    BindlessFreeListAllocator::Expected<void> BindlessFreeListAllocator::Release(const BindlessIndex InIndex)
+    ExpectedError<void> BindlessFreeListAllocator::Release(const BindlessIndex InIndex)
     {
         const u32 index = InIndex;
         if (index >= m_NumDescriptors)
         {
-            return Unexpected(EErrorType::InvalidIndex);
+            return Unexpected{ Error{Errors::BindlessFreeListAllocator::InvalidIndex(index) } };
         }
 
         if (m_FreeSet[index])
         {
-            return Unexpected(EErrorType::IndexAlreadyReleased);
+            return Unexpected{ Error{ Errors::BindlessFreeListAllocator::IndexAlreadyReleased(index) } };
         }
 
         m_FreeList.push_back(index);
@@ -60,11 +72,11 @@ namespace stf
         return {};
     }
 
-    BindlessFreeListAllocator::Expected<void> BindlessFreeListAllocator::Resize(const u32 InNewSize)
+    ExpectedError<void> BindlessFreeListAllocator::Resize(const u32 InNewSize)
     {
         if (InNewSize < m_NumDescriptors)
         {
-            return Unexpected(EErrorType::ShrinkAttempted);
+            return Unexpected{ Error{ Errors::BindlessFreeListAllocator::ShrinkAttempted(m_NumDescriptors, InNewSize) } };
         }
 
         if (InNewSize == m_NumDescriptors)
@@ -82,22 +94,6 @@ namespace stf
                     std::ranges::generate_n(std::back_inserter(m_FreeList), numAdded, [index = m_NumDescriptors]() mutable { return index++; });
                     std::ranges::generate_n(std::back_inserter(m_FreeSet), numAdded, []() { return true; });
                     m_NumDescriptors = InNewSize;
-                }
-            ).transform_error(
-                [](const stf::RingBuffer<stf::u32>::EErrorType InError)
-                {
-                    using enum stf::RingBuffer<stf::u32>::EErrorType;
-                    switch (InError)
-                    {
-                        case AttemptedShrink:
-                        {
-                            return EErrorType::ShrinkAttempted;
-                        }
-                        default:
-                        {
-                            return EErrorType::UnknownError;
-                        }
-                    }
                 }
             );
     }
@@ -125,5 +121,16 @@ namespace stf
     u32 BindlessFreeListAllocator::BindlessIndex::GetIndex() const
     {
         return m_Index;
+    }
+
+    ExpectedError<bool> BindlessFreeListAllocator::IsAllocated(const BindlessIndex InIndex) const
+    {
+        const u32 index = InIndex;
+        if (index >= m_NumDescriptors)
+        {
+            return Unexpected{ Error{ Errors::BindlessFreeListAllocator::InvalidIndex(InIndex) } };
+        }
+
+        return !m_FreeSet[InIndex];
     }
 }

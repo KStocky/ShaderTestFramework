@@ -41,10 +41,10 @@ namespace TIsInstantiationOfTests
 
 	using NTTPInstantiation = NTTPTemplate<int, 42>;
 
-	static_assert(TIsInstantiationOf<TestTemplate, TestTemplate<int, double>>::Value);
-	static_assert(!TIsInstantiationOf<OtherTestTemplate, TestTemplate<int, double>>::Value);
+	static_assert(TIsInstantiationOf<TestTemplate<int, double>, TestTemplate>::Value);
+	static_assert(!TIsInstantiationOf<TestTemplate<int, double>, OtherTestTemplate>::Value);
 
-	static_assert(!TIsInstantiationOf<OtherTestTemplate, int>::Value);
+	static_assert(!TIsInstantiationOf<int, OtherTestTemplate>::Value);
 
 	// This will not compile
 	//static_assert(TIsInstantiationOf<NTTPTemplate, NTTPInstantiation>::Value);

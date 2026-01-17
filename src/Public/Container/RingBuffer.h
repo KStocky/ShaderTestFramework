@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Utility/Error.h"
 #include "Utility/Exception.h"
-#include "Utility/Expected.h"
 #include "Platform.h"
 #include <optional>
 #include <type_traits>
@@ -9,6 +9,20 @@
 
 namespace stf
 {
+
+    namespace Errors::RingBuffer
+    {
+        inline ErrorFragment Empty()
+        {
+            return ErrorFragment::Make<"Ring buffer was empty">();
+        }
+
+        inline ErrorFragment AttemptedShrink(const u64 InCurrentCapacity, const u64 InRequestedCapacity)
+        {
+            return ErrorFragment::Make<"Attempted shrink of ring buffer which is unsupported. Current Capacity: {}, Requested Capacity: {}">(InCurrentCapacity, InRequestedCapacity);
+        }
+    }
+
     template<typename T>
     class RingBuffer
     {
@@ -26,16 +40,6 @@ namespace stf
             Backwards
         };
 
-        enum class EErrorType
-        {
-            Success,
-            EmptyBuffer,
-            AttemptedShrink
-        };
-
-        template<typename ExpectedType>
-        using Expected = Expected<ExpectedType, EErrorType>;
-
         template<Qualifier Qual, Direction Dir>
         class Iterator
         {
@@ -49,7 +53,8 @@ namespace stf
             Iterator(buffer_type InBuffer, const u64 InIndex)
                 : m_Buffer(InBuffer)
                 , m_Index(InIndex)
-            {}
+            {
+            }
 
             Iterator& operator++()
             {
@@ -142,7 +147,8 @@ namespace stf
 
         RingBuffer()
             : RingBuffer(0)
-        {}
+        {
+        }
 
         explicit RingBuffer(const u64 InSize)
             : m_Data(InSize + 1)
@@ -156,7 +162,7 @@ namespace stf
         {
             if (m_Size == capacity())
             {
-                ThrowIfUnexpected(resize(m_Size * 2));
+                ThrowIfUnexpected(resize(m_Data.size() * 2));
             }
 
             m_Data[m_TailIndex] = In;
@@ -169,7 +175,7 @@ namespace stf
         {
             if (m_Size == capacity())
             {
-                ThrowIfUnexpected(resize(m_Size * 2));
+                ThrowIfUnexpected(resize(m_Data.size() * 2));
             }
 
             m_Data[m_TailIndex] = std::move(In);
@@ -178,11 +184,11 @@ namespace stf
             ++m_Size;
         }
 
-        Expected<value_type> pop_front()
+        ExpectedError<value_type> pop_front()
         {
             if (empty())
             {
-                return Unexpected(EErrorType::EmptyBuffer);
+                return Unexpected(Error{ Errors::RingBuffer::Empty() });
             }
 
             const auto prevHeadIndex = m_HeadIndex;
@@ -277,12 +283,12 @@ namespace stf
             return m_Data[m_HeadIndex].value();
         }
 
-        Expected<void> resize(const u64 InNewSize)
+        ExpectedError<void> resize(const u64 InNewSize)
         {
             const u64 newCapacity = InNewSize + 1;
             if (newCapacity < m_Data.size())
             {
-                return Unexpected{ EErrorType::AttemptedShrink };
+                return Unexpected{ Error {Errors::RingBuffer::AttemptedShrink(size(), InNewSize)}};
             }
 
             if (newCapacity == m_Data.size())

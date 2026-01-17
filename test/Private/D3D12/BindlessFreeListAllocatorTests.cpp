@@ -1,4 +1,5 @@
 
+#include "TestUtilities/ErrorMatchers.h"
 #include <D3D12/BindlessFreeListAllocator.h>
 
 #include <catch2/catch_test_macros.hpp>
@@ -29,8 +30,8 @@ SCENARIO("BindlessFreeListAllocatorTests")
                 const auto allocation = allocator.Allocate();
                 THEN("return expected error")
                 {
-                    REQUIRE(!allocation);
-                    REQUIRE(allocation.error() == BindlessFreeListAllocator::EErrorType::EmptyError);
+                    REQUIRE_FALSE(allocation);
+                    REQUIRE_THAT(allocation.error(), ErrorContains(Errors::BindlessFreeListAllocator::Empty()));
                 }
             }
         }
@@ -80,7 +81,7 @@ SCENARIO("BindlessFreeListAllocatorTests")
                     THEN("release failed")
                     {
                         REQUIRE_FALSE(releaseResult.has_value());
-                        REQUIRE(releaseResult.error() == BindlessFreeListAllocator::EErrorType::IndexAlreadyReleased);
+                        REQUIRE_THAT(releaseResult.error(), ErrorContains(Errors::BindlessFreeListAllocator::IndexAlreadyReleased(invalidAllocation.value().GetIndex())));
                     }
                 }
             }
@@ -109,7 +110,7 @@ SCENARIO("BindlessFreeListAllocatorTests")
                     THEN("release failed")
                     {
                         REQUIRE_FALSE(finalReleaseOnInitialAllocatorResult.has_value());
-                        REQUIRE(finalReleaseOnInitialAllocatorResult.error() == BindlessFreeListAllocator::EErrorType::InvalidIndex);
+                        REQUIRE_THAT(finalReleaseOnInitialAllocatorResult.error(), ErrorContains(Errors::BindlessFreeListAllocator::InvalidIndex(finalAllocation.value())));
                     }
                 }
 
@@ -155,7 +156,7 @@ SCENARIO("BindlessFreeListAllocatorTests")
                     THEN("Release fails")
                     {
                         REQUIRE_FALSE(secondReleaseResult.has_value());
-                        REQUIRE(secondReleaseResult.error() == BindlessFreeListAllocator::EErrorType::IndexAlreadyReleased);
+                        REQUIRE_THAT(secondReleaseResult.error(), ErrorContains(Errors::BindlessFreeListAllocator::IndexAlreadyReleased(bindlessIndex1.value())));
                         REQUIRE(initialCapacity == allocator.GetCapacity());
                         REQUIRE(0 == allocator.GetSize());
                     }
@@ -174,7 +175,7 @@ SCENARIO("BindlessFreeListAllocatorTests")
 
             THEN("State is as expected")
             {
-                for (const auto allocation : allocations)
+                for (const auto& allocation : allocations)
                 {
                     REQUIRE(allocation.has_value());
                 }
@@ -234,14 +235,14 @@ SCENARIO("BindlessFreeListAllocatorTests")
                 using ReleaseType = decltype(allocator.Release(std::declval<AllocationType>().value()));
 
                 std::vector<ReleaseType> releases;
-                for (const auto allocation : allocations)
+                for (const auto& allocation : allocations)
                 {
                     releases.push_back(allocator.Release(allocation.value()));
                 }
 
                 THEN("releases succeeded")
                 {
-                    for (const auto release : releases)
+                    for (const auto& release : releases)
                     {
                         REQUIRE(release.has_value());
                     }
@@ -275,7 +276,7 @@ SCENARIO("BindlessFreeListAllocatorTests")
 
                     THEN("allocation is unique")
                     {
-                        for (const auto oldAllocation : allocations)
+                        for (const auto& oldAllocation : allocations)
                         {
                             REQUIRE(allocation != oldAllocation);
                         }

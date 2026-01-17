@@ -58,14 +58,14 @@ namespace stf
     // This template check won't work for any template that takes a NTTP
     // This paper talks about what needs to be in the standard for this to occur.
     // https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p1985r3.pdf
-    template<template<typename...> class Template, typename T>
+    template<typename T, template<typename...> class Template>
     struct TIsInstantiationOf
     {
         static constexpr bool Value = false;
     };
 
     template<template<typename...> class Template, typename... InArgs>
-    struct TIsInstantiationOf<Template, Template<InArgs...>>
+    struct TIsInstantiationOf<Template<InArgs...>, Template>
     {
         static constexpr bool Value = true;
     };
