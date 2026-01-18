@@ -44,7 +44,7 @@ namespace stf
             std::vector<VirtualShaderDirectoryMapping> Mappings;
             GPUDevice::CreationParams GPUDeviceParams
             {
-                .DebugLevel = GPUDevice::EDebugLevel::DebugLayerWithValidation,
+                .DebugLevel = GPUDevice::EDebugLevel::DebugLayer,
                 .DeviceType = GPUDevice::EDeviceType::Software,
                 .EnableGPUCapture = false
             };
