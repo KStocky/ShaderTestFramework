@@ -224,8 +224,23 @@ namespace ttl
     template<> struct fundamental_type_traits<float32_t> : fundamental_type_traits_base<float32_t, 1, 1>{};
     template<> struct fundamental_type_traits<float64_t> : fundamental_type_traits_base<float64_t, 1, 1>{};
 
+    template<> struct fundamental_type_traits<const bool> : fundamental_type_traits_base<bool, 1, 1>{};
+    template<> struct fundamental_type_traits<const int16_t> : fundamental_type_traits_base<int16_t, 1, 1>{};
+    template<> struct fundamental_type_traits<const int32_t> : fundamental_type_traits_base<int32_t, 1, 1>{};
+    template<> struct fundamental_type_traits<const int64_t> : fundamental_type_traits_base<int64_t, 1, 1>{};
+
+    template<> struct fundamental_type_traits<const uint16_t> : fundamental_type_traits_base<uint16_t, 1, 1>{};
+    template<> struct fundamental_type_traits<const uint32_t> : fundamental_type_traits_base<uint32_t, 1, 1>{};
+    template<> struct fundamental_type_traits<const uint64_t> : fundamental_type_traits_base<uint64_t, 1, 1>{};
+
+    template<> struct fundamental_type_traits<const float16_t> : fundamental_type_traits_base<float16_t, 1, 1>{};
+    template<> struct fundamental_type_traits<const float32_t> : fundamental_type_traits_base<float32_t, 1, 1>{};
+    template<> struct fundamental_type_traits<const float64_t> : fundamental_type_traits_base<float64_t, 1, 1>{};
+
     template<typename T, uint InDim> struct fundamental_type_traits<vector<T, InDim> > : fundamental_type_traits_base<T, InDim, 1>{};
     template<typename T, uint InDim0, uint InDim1> struct fundamental_type_traits<matrix<T, InDim0, InDim1> > : fundamental_type_traits_base<T, InDim0, InDim1>{};
+    template<typename T, uint InDim> struct fundamental_type_traits<const vector<T, InDim> > : fundamental_type_traits_base<T, InDim, 1>{};
+    template<typename T, uint InDim0, uint InDim1> struct fundamental_type_traits<const matrix<T, InDim0, InDim1> > : fundamental_type_traits_base<T, InDim0, InDim1>{};
 }
 
 namespace ttl_detail
