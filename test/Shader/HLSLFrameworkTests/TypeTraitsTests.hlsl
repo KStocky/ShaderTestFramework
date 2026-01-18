@@ -378,6 +378,17 @@ namespace FundamentalTypeTraitsTests
         _Static_assert(ttl::fundamental_type_traits<float64_t>::is_fundamental);
         _Static_assert(!ttl::fundamental_type_traits<MyStruct>::is_fundamental);
 
+        _Static_assert(ttl::fundamental_type_traits<const bool>::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const int16_t>::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const int32_t>::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const int64_t>::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const uint16_t>::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const uint32_t>::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const uint64_t>::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const float16_t>::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const float32_t>::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const float64_t>::is_fundamental);
+
         _Static_assert(1u == ttl::fundamental_type_traits<bool>::dim0);
         _Static_assert(1u == ttl::fundamental_type_traits<int16_t>::dim0);
         _Static_assert(1u == ttl::fundamental_type_traits<int32_t>::dim0);
@@ -412,6 +423,16 @@ namespace FundamentalTypeTraitsTests
         _Static_assert(ttl::is_same<float16_t, ttl::fundamental_type_traits<float16_t>::base_type>::value);
         _Static_assert(ttl::is_same<float32_t, ttl::fundamental_type_traits<float32_t>::base_type>::value);
         _Static_assert(ttl::is_same<float64_t, ttl::fundamental_type_traits<float64_t>::base_type>::value);
+        _Static_assert(ttl::is_same<bool, ttl::fundamental_type_traits<const bool>::base_type>::value);
+        _Static_assert(ttl::is_same<int16_t, ttl::fundamental_type_traits<const int16_t>::base_type>::value);
+        _Static_assert(ttl::is_same<int32_t, ttl::fundamental_type_traits<const int32_t>::base_type>::value);
+        _Static_assert(ttl::is_same<int64_t, ttl::fundamental_type_traits<const int64_t>::base_type>::value);
+        _Static_assert(ttl::is_same<uint16_t, ttl::fundamental_type_traits<const uint16_t>::base_type>::value);
+        _Static_assert(ttl::is_same<uint32_t, ttl::fundamental_type_traits<const uint32_t>::base_type>::value);
+        _Static_assert(ttl::is_same<uint64_t, ttl::fundamental_type_traits<const uint64_t>::base_type>::value);
+        _Static_assert(ttl::is_same<float16_t, ttl::fundamental_type_traits<const float16_t>::base_type>::value);
+        _Static_assert(ttl::is_same<float32_t, ttl::fundamental_type_traits<const float32_t>::base_type>::value);
+        _Static_assert(ttl::is_same<float64_t, ttl::fundamental_type_traits<const float64_t>::base_type>::value);
         _Static_assert(ttl::is_same<void, ttl::fundamental_type_traits<MyStruct>::base_type>::value);
     }
 
@@ -428,6 +449,17 @@ namespace FundamentalTypeTraitsTests
         _Static_assert(ttl::fundamental_type_traits<vector<float16_t, InDim> >::is_fundamental);
         _Static_assert(ttl::fundamental_type_traits<vector<float32_t, InDim> >::is_fundamental);
         _Static_assert(ttl::fundamental_type_traits<vector<float64_t, InDim> >::is_fundamental);
+        
+        _Static_assert(ttl::fundamental_type_traits<const vector<bool, InDim> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const vector<int16_t, InDim> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const vector<int32_t, InDim> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const vector<int64_t, InDim> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const vector<uint16_t, InDim> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const vector<uint32_t, InDim> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const vector<uint64_t, InDim> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const vector<float16_t, InDim> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const vector<float32_t, InDim> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const vector<float64_t, InDim> >::is_fundamental);
 
         _Static_assert(InDim == ttl::fundamental_type_traits<vector<bool, InDim> >::dim0);
         _Static_assert(InDim == ttl::fundamental_type_traits<vector<int16_t, InDim> >::dim0);
@@ -461,6 +493,17 @@ namespace FundamentalTypeTraitsTests
         _Static_assert(ttl::is_same<float16_t, typename ttl::fundamental_type_traits<vector<float16_t, InDim> >::base_type>::value);
         _Static_assert(ttl::is_same<float32_t, typename ttl::fundamental_type_traits<vector<float32_t, InDim> >::base_type>::value);
         _Static_assert(ttl::is_same<float64_t, typename ttl::fundamental_type_traits<vector<float64_t, InDim> >::base_type>::value);
+
+        _Static_assert(ttl::is_same<bool, typename ttl::fundamental_type_traits<const vector<bool, InDim> >::base_type>::value);
+        _Static_assert(ttl::is_same<int16_t, typename ttl::fundamental_type_traits<const vector<int16_t, InDim> >::base_type>::value);
+        _Static_assert(ttl::is_same<int32_t, typename ttl::fundamental_type_traits<const vector<int32_t, InDim> >::base_type>::value);
+        _Static_assert(ttl::is_same<int64_t, typename ttl::fundamental_type_traits<const vector<int64_t, InDim> >::base_type>::value);
+        _Static_assert(ttl::is_same<uint16_t, typename ttl::fundamental_type_traits<const vector<uint16_t, InDim> >::base_type>::value);
+        _Static_assert(ttl::is_same<uint32_t, typename ttl::fundamental_type_traits<const vector<uint32_t, InDim> >::base_type>::value);
+        _Static_assert(ttl::is_same<uint64_t, typename ttl::fundamental_type_traits<const vector<uint64_t, InDim> >::base_type>::value);
+        _Static_assert(ttl::is_same<float16_t, typename ttl::fundamental_type_traits<const vector<float16_t, InDim> >::base_type>::value);
+        _Static_assert(ttl::is_same<float32_t, typename ttl::fundamental_type_traits<const vector<float32_t, InDim> >::base_type>::value);
+        _Static_assert(ttl::is_same<float64_t, typename ttl::fundamental_type_traits<const vector<float64_t, InDim> >::base_type>::value);
     }
 
     template<uint InDim0, uint InDim1>
@@ -476,6 +519,17 @@ namespace FundamentalTypeTraitsTests
         _Static_assert(ttl::fundamental_type_traits<matrix<float16_t, InDim0, InDim1> >::is_fundamental);
         _Static_assert(ttl::fundamental_type_traits<matrix<float32_t, InDim0, InDim1> >::is_fundamental);
         _Static_assert(ttl::fundamental_type_traits<matrix<float64_t, InDim0, InDim1> >::is_fundamental);
+
+        _Static_assert(ttl::fundamental_type_traits<const matrix<bool, InDim0, InDim1> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const matrix<int16_t, InDim0, InDim1> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const matrix<int32_t, InDim0, InDim1> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const matrix<int64_t, InDim0, InDim1> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const matrix<uint16_t, InDim0, InDim1> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const matrix<uint32_t, InDim0, InDim1> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const matrix<uint64_t, InDim0, InDim1> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const matrix<float16_t, InDim0, InDim1> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const matrix<float32_t, InDim0, InDim1> >::is_fundamental);
+        _Static_assert(ttl::fundamental_type_traits<const matrix<float64_t, InDim0, InDim1> >::is_fundamental);
 
         _Static_assert(InDim0 == ttl::fundamental_type_traits<matrix<bool, InDim0, InDim1> >::dim0);
         _Static_assert(InDim0 == ttl::fundamental_type_traits<matrix<int16_t, InDim0, InDim1> >::dim0);
@@ -509,6 +563,17 @@ namespace FundamentalTypeTraitsTests
         _Static_assert(ttl::is_same<float16_t, typename ttl::fundamental_type_traits<matrix<float16_t, InDim0, InDim1> >::base_type>::value);
         _Static_assert(ttl::is_same<float32_t, typename ttl::fundamental_type_traits<matrix<float32_t, InDim0, InDim1> >::base_type>::value);
         _Static_assert(ttl::is_same<float64_t, typename ttl::fundamental_type_traits<matrix<float64_t, InDim0, InDim1> >::base_type>::value);
+
+        _Static_assert(ttl::is_same<bool, typename ttl::fundamental_type_traits<const matrix<bool, InDim0, InDim1> >::base_type>::value);
+        _Static_assert(ttl::is_same<int16_t, typename ttl::fundamental_type_traits<const matrix<int16_t, InDim0, InDim1> >::base_type>::value);
+        _Static_assert(ttl::is_same<int32_t, typename ttl::fundamental_type_traits<const matrix<int32_t, InDim0, InDim1> >::base_type>::value);
+        _Static_assert(ttl::is_same<int64_t, typename ttl::fundamental_type_traits<const matrix<int64_t, InDim0, InDim1> >::base_type>::value);
+        _Static_assert(ttl::is_same<uint16_t, typename ttl::fundamental_type_traits<const matrix<uint16_t, InDim0, InDim1> >::base_type>::value);
+        _Static_assert(ttl::is_same<uint32_t, typename ttl::fundamental_type_traits<const matrix<uint32_t, InDim0, InDim1> >::base_type>::value);
+        _Static_assert(ttl::is_same<uint64_t, typename ttl::fundamental_type_traits<const matrix<uint64_t, InDim0, InDim1> >::base_type>::value);
+        _Static_assert(ttl::is_same<float16_t, typename ttl::fundamental_type_traits<const matrix<float16_t, InDim0, InDim1> >::base_type>::value);
+        _Static_assert(ttl::is_same<float32_t, typename ttl::fundamental_type_traits<const matrix<float32_t, InDim0, InDim1> >::base_type>::value);
+        _Static_assert(ttl::is_same<float64_t, typename ttl::fundamental_type_traits<const matrix<float64_t, InDim0, InDim1> >::base_type>::value);
     }
 
     void RunScalarTests()
