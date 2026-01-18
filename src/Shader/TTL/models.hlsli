@@ -116,6 +116,13 @@ namespace ttl
     };
 
     template <
+        typename Concept, 
+        typename Arg0, typename Arg1 = ttl_detail::null_type, typename Arg2 = ttl_detail::null_type,
+        typename Arg3 = ttl_detail::null_type, typename Arg4 = ttl_detail::null_type, typename Arg5 = ttl_detail::null_type
+    >
+    static const bool models_v = models<Concept, Arg0, Arg1, Arg2, Arg3, Arg4, Arg5>::value;
+
+    template <
         typename Type,
         typename Concept, 
         typename Arg0, typename Arg1 = ttl_detail::null_type, typename Arg2 = ttl_detail::null_type,
