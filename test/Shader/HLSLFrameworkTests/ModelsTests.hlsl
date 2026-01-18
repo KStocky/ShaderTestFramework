@@ -64,20 +64,40 @@ namespace ModelsTests
     _Static_assert(!ttl::models<ZeroParamConcept, TwoParamFuncSingleType, ParamType1>::value);
     _Static_assert(!ttl::models<ZeroParamConcept, TwoParamFuncTwoTypes, ParamType1, ParamType2>::value);
 
+    _Static_assert(ttl::models_v<ZeroParamConcept, ZeroParamFunc>);
+    _Static_assert(!ttl::models_v<ZeroParamConcept, OneParamFunc, ParamType1>);
+    _Static_assert(!ttl::models_v<ZeroParamConcept, TwoParamFuncSingleType, ParamType1>);
+    _Static_assert(!ttl::models_v<ZeroParamConcept, TwoParamFuncTwoTypes, ParamType1, ParamType2>);
+
     _Static_assert(!ttl::models<OneParamConcept, ZeroParamFunc>::value);
     _Static_assert(ttl::models<OneParamConcept, OneParamFunc, ParamType1>::value);
     _Static_assert(!ttl::models<OneParamConcept, TwoParamFuncSingleType, ParamType1>::value);
     _Static_assert(!ttl::models<OneParamConcept, TwoParamFuncTwoTypes, ParamType1, ParamType2>::value);
+
+    _Static_assert(!ttl::models_v<OneParamConcept, ZeroParamFunc>);
+    _Static_assert(ttl::models_v<OneParamConcept, OneParamFunc, ParamType1>);
+    _Static_assert(!ttl::models_v<OneParamConcept, TwoParamFuncSingleType, ParamType1>);
+    _Static_assert(!ttl::models_v<OneParamConcept, TwoParamFuncTwoTypes, ParamType1, ParamType2>);
 
     _Static_assert(!ttl::models<TwoParamSingleTypeConcept, ZeroParamFunc>::value);
     _Static_assert(!ttl::models<TwoParamSingleTypeConcept, OneParamFunc, ParamType1>::value);
     _Static_assert(ttl::models<TwoParamSingleTypeConcept, TwoParamFuncSingleType, ParamType1>::value);
     _Static_assert(!ttl::models<TwoParamSingleTypeConcept, TwoParamFuncTwoTypes, ParamType1, ParamType2>::value);
 
+    _Static_assert(!ttl::models_v<TwoParamSingleTypeConcept, ZeroParamFunc>);
+    _Static_assert(!ttl::models_v<TwoParamSingleTypeConcept, OneParamFunc, ParamType1>);
+    _Static_assert(ttl::models_v<TwoParamSingleTypeConcept, TwoParamFuncSingleType, ParamType1>);
+    _Static_assert(!ttl::models_v<TwoParamSingleTypeConcept, TwoParamFuncTwoTypes, ParamType1, ParamType2>);
+
     _Static_assert(!ttl::models<TwoParamTwoTypesConcept, ZeroParamFunc>::value);
     _Static_assert(!ttl::models<TwoParamTwoTypesConcept, OneParamFunc, ParamType1>::value);
     _Static_assert(!ttl::models<TwoParamTwoTypesConcept, TwoParamFuncSingleType, ParamType1>::value);
     _Static_assert(ttl::models<TwoParamTwoTypesConcept, TwoParamFuncTwoTypes, ParamType1, ParamType2>::value);
+
+    _Static_assert(!ttl::models_v<TwoParamTwoTypesConcept, ZeroParamFunc>);
+    _Static_assert(!ttl::models_v<TwoParamTwoTypesConcept, OneParamFunc, ParamType1>);
+    _Static_assert(!ttl::models_v<TwoParamTwoTypesConcept, TwoParamFuncSingleType, ParamType1>);
+    _Static_assert(ttl::models_v<TwoParamTwoTypesConcept, TwoParamFuncTwoTypes, ParamType1, ParamType2>);
 }
 
 namespace ModelsTTest
