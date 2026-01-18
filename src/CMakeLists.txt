@@ -125,6 +125,7 @@ set(SOURCES
 set(SHADER_SOURCES
     Shader/STF/ByteReaderTraits.hlsli
     Shader/STF/FrameworkResources.hlsli
+    Shader/STF/Matcher.hlsli
     Shader/STF/SectionManagement.hlsli
     Shader/STF/ShaderTestFramework.hlsli
     Shader/TTL/byte_writer.hlsli
