@@ -1,12 +1,12 @@
 
-#include "Framework/ShaderTestCommon.h"
+#include "Framework/AssertionsV1/Results.h"
 
 #include "Utility/EnumReflection.h"
 #include "Utility/OverloadSet.h"
 
 #include <ranges>
 
-namespace stf
+namespace stf::AssertionsV1
 {
     static uint3 Unflatten(const u32 InId, const uint3 InDims)
     {

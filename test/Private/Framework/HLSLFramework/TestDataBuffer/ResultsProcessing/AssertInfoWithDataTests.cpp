@@ -21,6 +21,7 @@ public:
 TEST_CASE_PERSISTENT_FIXTURE(AssertInfoWithDataTestsFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - AssertInfoWithData")
 {
     using namespace stf;
+    using namespace stf::AssertionsV1;
     auto serializeImpl = OverloadSet{ 
         [] <typename T>(const T& InVal, std::vector<std::byte>& InOutBytes) -> std::enable_if_t<!TIsInstantiationOf<T, Tuple>::Value>
         {

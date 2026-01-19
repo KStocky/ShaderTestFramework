@@ -1,10 +1,10 @@
 #pragma once
 #include "Platform.h"
 
-#include "Framework/TestDataBufferStructs.h"
+#include "Framework/AssertionsV1/TestDataBufferStructs.h"
 #include "Utility/Math.h"
 
-namespace stf
+namespace stf::AssertionsV1
 {
     template<typename MetaDataType>
     class TestDataSection

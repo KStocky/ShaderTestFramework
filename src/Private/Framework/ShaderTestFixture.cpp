@@ -4,7 +4,6 @@
 #include "D3D12/Shader/Shader.h"
 
 #include "Framework/PIXCapturer.h"
-#include "Framework/ShaderTestCommon.h"
 #include "Utility/EnumReflection.h"
 
 #include <format>
@@ -50,7 +49,7 @@ namespace stf
         cachedStats = statSystem.FlushTimedStats();
     }
 
-    Results ShaderTestFixture::RunTest(RuntimeTestDesc InTestDesc)
+    AssertionsV1::Results ShaderTestFixture::RunTest(RuntimeTestDesc InTestDesc)
     {
         ScopedDuration fullTest(std::format("ShaderTestFixture::RunTest: {}", InTestDesc.TestName));
 
@@ -83,19 +82,19 @@ namespace stf
         return RunTestImpl(std::move(InTestDesc), true);
     }
 
-    Results ShaderTestFixture::RunCompileTimeTest(CompileTestDesc InTestDesc)
+    AssertionsV1::Results ShaderTestFixture::RunCompileTimeTest(CompileTestDesc InTestDesc)
     {
         ScopedDuration scope(std::format("ShaderTestFixture::RunCompileTimeTest: {}", InTestDesc.TestName));
         return CompileShader("", EShaderType::Lib, std::move(InTestDesc.CompilationEnv), false)
             .transform(
                 [](CompiledShaderData)
                 {
-                    return Results{ TestRunResults{} };
+                    return AssertionsV1::Results{ AssertionsV1::TestRunResults{} };
                 })
             .or_else(
-                [](Error InError) -> Expected<Results, std::monostate>
+                [](Error InError) -> Expected<AssertionsV1::Results, std::monostate>
                 {
-                    return Results{ std::move(InError) };
+                    return AssertionsV1::Results{ std::move(InError) };
                 }
             ).value();
     }
@@ -105,7 +104,7 @@ namespace stf
         return cachedStats;
     }
 
-    Results ShaderTestFixture::RunTestImpl(RuntimeTestDesc InTestDesc, const bool InIsFailureRetry)
+    AssertionsV1::Results ShaderTestFixture::RunTestImpl(RuntimeTestDesc InTestDesc, const bool InIsFailureRetry)
     {
         const bool takeCapture = ShouldTakeCapture(InTestDesc.GPUCaptureMode, InIsFailureRetry);
         const bool enableStrings = InTestDesc.StringMode == EStringMode::On || (InIsFailureRetry && InTestDesc.StringMode == EStringMode::OnFailure);
@@ -137,9 +136,9 @@ namespace stf
                         });
                 })
             .or_else(
-                [](Error InError) -> Expected<Results, std::monostate>
+                [](Error&& InError) -> Expected<AssertionsV1::Results, std::monostate>
                 {
-                    return Results{ std::move(InError) };
+                    return AssertionsV1::Results{ std::move(InError) };
                 }
             ).value();
     }

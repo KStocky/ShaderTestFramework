@@ -1,10 +1,10 @@
 
-#include "Framework/TestDataBufferProcessor.h"
+#include "Framework/AssertionsV1/TestDataBufferProcessor.h"
 #include "Utility/Exception.h"
 
 #include <format>
 
-namespace stf
+namespace stf::AssertionsV1
 {
     std::vector<FailedAssert> ProcessFailedAsserts(const TestDataSection<HLSLAssertMetaData>& InAssertSection, const u32 InNumFailed, const std::span<const std::byte> InTestData, const MultiTypeByteReaderMap& InByteReaderMap)
     {

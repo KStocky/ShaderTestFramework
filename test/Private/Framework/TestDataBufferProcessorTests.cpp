@@ -1,6 +1,6 @@
 
 
-#include "Framework/TestDataBufferProcessor.h"
+#include "Framework/AssertionsV1/TestDataBufferProcessor.h"
 
 #include <Utility/Math.h>
 #include <Utility/Tuple.h>
@@ -19,6 +19,7 @@
 namespace TestDataBufferProcessorTests
 {
     using namespace stf;
+    using namespace stf::AssertionsV1;
     namespace
     {
         std::vector<std::byte> EncodeStringData(const TestDataSection<StringMetaData> InStringLayout, const std::span<std::string> InStrings)

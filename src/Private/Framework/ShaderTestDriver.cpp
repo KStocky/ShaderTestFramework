@@ -1,8 +1,7 @@
 
 #include "Framework/ShaderTestDriver.h"
-#include "Framework/ShaderTestCommon.h"
-#include "Framework/TestDataBufferProcessor.h"
 
+#include "Framework/AssertionsV1/TestDataBufferProcessor.h"
 #include <d3dx12/d3dx12.h>
 
 namespace stf
@@ -55,11 +54,11 @@ namespace stf
         );
     }
     
-    ExpectedError<Results> ShaderTestDriver::RunShaderTest(TestDesc&& InTestDesc)
+    ExpectedError<AssertionsV1::Results> ShaderTestDriver::RunShaderTest(TestDesc&& InTestDesc)
     {
         auto pipelineState = CreatePipelineState(InTestDesc.Shader->GetRootSig(), InTestDesc.Shader->GetCompiledShader());
         const u32 bufferSizeInBytes = std::max(InTestDesc.TestBufferLayout.GetSizeOfTestData(), 4u);
-        static constexpr u32 allocationBufferSizeInBytes = sizeof(AllocationBufferData);
+        static constexpr u32 allocationBufferSizeInBytes = sizeof(AssertionsV1::AllocationBufferData);
         const auto dispatchDimensions = InTestDesc.DispatchConfig * InTestDesc.Shader->GetThreadGroupSize();
 
         struct Resources
@@ -182,11 +181,11 @@ namespace stf
                         [&](const MappedResource& InAssertData)
                         {
                             return m_CommandEngine->ExecuteReadback(InReadbacks.AllocationReadback,
-                                [&](const MappedResource& InAllocationData) -> ExpectedError<Results>
+                                [&](const MappedResource& InAllocationData) -> ExpectedError<AssertionsV1::Results>
                                 {
                                     const auto allocationData = InAllocationData.Get();
-                                    AllocationBufferData data;
-                                    std::memcpy(&data, allocationData.data(), sizeof(AllocationBufferData));
+                                    AssertionsV1::AllocationBufferData data;
+                                    std::memcpy(&data, allocationData.data(), sizeof(AssertionsV1::AllocationBufferData));
                                     const auto assertData = InAssertData.Get();
 
                                     return ProcessTestDataBuffer(data, dispatchDimensions, InTestDesc.TestBufferLayout, assertData, m_ByteReaderMap);
@@ -217,18 +216,18 @@ namespace stf
             });
     }
 
-    Results ShaderTestDriver::ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer, const uint3 InDispatchDimensions, const TestDataBufferLayout& InTestDataLayout) const
+    AssertionsV1::Results ShaderTestDriver::ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer, const uint3 InDispatchDimensions, const AssertionsV1::TestDataBufferLayout& InTestDataLayout) const
     {
         const auto mappedAllocationData = InAllocationBuffer.Map();
         const auto allocationData = mappedAllocationData.Get();
 
-        AllocationBufferData data;
+        AssertionsV1::AllocationBufferData data;
 
-        std::memcpy(&data, allocationData.data(), sizeof(AllocationBufferData));
+        std::memcpy(&data, allocationData.data(), sizeof(AssertionsV1::AllocationBufferData));
 
         const auto mappedAssertData = InAssertBuffer.Map();
         const auto assertData = mappedAssertData.Get();
 
-        return ProcessTestDataBuffer(data, InDispatchDimensions, InTestDataLayout, assertData, m_ByteReaderMap);
+        return AssertionsV1::ProcessTestDataBuffer(data, InDispatchDimensions, InTestDataLayout, assertData, m_ByteReaderMap);
     }
 }

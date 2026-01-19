@@ -1,6 +1,6 @@
-#include "Framework/TestDataBufferStructs.h"
+#include "Framework/AssertionsV1/TestDataBufferStructs.h"
 
-namespace stf
+namespace stf::AssertionsV1
 {
     static_assert(sizeof(HLSLAssertMetaData) == 32,
         "The size of this struct must be the same size as ShaderTestPrivate::HLSLAssertMetaData");
