@@ -1,4 +1,4 @@
-#include "Framework/TestDataBufferLayout.h"
+#include "Framework/AssertionsV1/TestDataBufferLayout.h"
 #include <array>
 
 #include <catch2/catch_template_test_macros.hpp>
@@ -9,6 +9,7 @@
 namespace TestDataSectionTests
 {
     using namespace stf;
+    using namespace stf::AssertionsV1;
 
     template<u32 InAlignment, u32 InSize>
     struct alignas(InAlignment) TestStruct

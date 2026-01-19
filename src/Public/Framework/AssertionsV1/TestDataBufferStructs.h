@@ -4,7 +4,7 @@
 
 #include <ostream>
 
-namespace stf
+namespace stf::AssertionsV1
 {
     struct DynamicSectionDataInfo
     {

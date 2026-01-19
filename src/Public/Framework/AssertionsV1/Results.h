@@ -1,9 +1,8 @@
 #pragma once
 
 #include "Platform.h"
-
+#include "Framework/AssertionsV1/TestDataBufferLayout.h"
 #include "Framework/TypeByteReader.h"
-#include "Framework/TestDataBufferLayout.h"
 
 #include "Utility/Error.h"
 #include "Utility/HLSLTypes.h"
@@ -13,7 +12,7 @@
 #include <variant>
 #include <vector>
 
-namespace stf
+namespace stf::AssertionsV1
 {
     enum class EThreadIdType : u8
     {

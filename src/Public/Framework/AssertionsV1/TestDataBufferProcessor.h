@@ -2,8 +2,8 @@
 
 #include "Platform.h"
 
-#include "Framework/ShaderTestCommon.h"
-#include "Framework/TestDataBufferLayout.h"
+#include "Framework/AssertionsV1/Results.h"
+#include "Framework/AssertionsV1/TestDataBufferLayout.h"
 #include "Framework/TypeByteReader.h"
 #include "Utility/HLSLTypes.h"
 
@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-namespace stf
+namespace stf::AssertionsV1
 {
     std::vector<FailedAssert> ProcessFailedAsserts(const TestDataSection<HLSLAssertMetaData>& InAssertSection, const u32 InNumFailed, const std::span<const std::byte> InTestData, const MultiTypeByteReaderMap& InByteReaderMap);
     std::vector<std::string> ProcessStrings(const TestDataSection<StringMetaData>& InStringSection, const u32 InNumStrings, const std::span<const std::byte> InTestData);

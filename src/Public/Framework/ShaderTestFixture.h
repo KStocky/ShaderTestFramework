@@ -4,7 +4,8 @@
 #include "D3D12/Shader/ShaderBinding.h"
 #include "D3D12/Shader/ShaderCompiler.h"
 #include "Framework/ShaderTestDriver.h"
-#include "Framework/TestDataBufferLayout.h"
+#include "Framework/AssertionsV1/Results.h"
+#include "Framework/AssertionsV1/TestDataBufferLayout.h"
 #include "Stats/StatSystem.h"
 #include "Utility/Error.h"
 #include "Utility/HLSLTypes.h"
@@ -65,7 +66,7 @@ namespace stf
             std::string_view TestName;
             std::vector<ShaderBinding> Bindings {};
             uint3 ThreadGroupCount{};
-            TestDataBufferLayoutDesc TestDataLayout
+            AssertionsV1::TestDataBufferLayoutDesc TestDataLayout
             {
                 .NumFailedAsserts = 100u,
                 .NumBytesAssertData = 10000u,
@@ -87,8 +88,8 @@ namespace stf
         ShaderTestFixture(FixtureDesc InParams);
         ~ShaderTestFixture() noexcept;
 
-        Results RunTest(RuntimeTestDesc InTestDesc);
-        Results RunCompileTimeTest(CompileTestDesc InTestDesc);
+        AssertionsV1::Results RunTest(RuntimeTestDesc InTestDesc);
+        AssertionsV1::Results RunCompileTimeTest(CompileTestDesc InTestDesc);
         void RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader);
         void RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader);
 
@@ -115,7 +116,7 @@ namespace stf
             std::unordered_map<u32, std::vector<u32>> RootParamBuffers;
         };
 
-        Results RunTestImpl(RuntimeTestDesc InTestDesc, const bool InIsFailureRetry);
+        AssertionsV1::Results RunTestImpl(RuntimeTestDesc InTestDesc, const bool InIsFailureRetry);
 
         ExpectedError<CompiledShaderData> CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const;
         void PopulateDefaultByteReaders();

@@ -6,6 +6,7 @@
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - AssertInfoWithNoData")
 {
     using namespace stf;
+    using namespace stf::AssertionsV1;
     auto [testName, numRecordedAsserts, failedAsserts, numSucceeded, numFailed, dims] = GENERATE
     (
         table<std::string, u32, std::vector<FailedAssert>, u32 , u32, uint3>

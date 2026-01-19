@@ -7,6 +7,7 @@
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - SectionsWithStrings")
 {
     using namespace stf;
+    using namespace stf::AssertionsV1;
     auto [testName, expectedStrings, expectedSections, expectedFailingSectionIds] = GENERATE
     (
         table<std::string, std::vector<std::string>, std::vector<SectionInfoMetaData>, std::vector<i32>>
