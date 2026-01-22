@@ -7,7 +7,7 @@ void GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent(uint3 DispatchThrea
 	int b = __COUNTER__;
 	if (a == (b - 1))
 	{
-		stf::detail::Success();
+		stf::AssertionsV1::detail::Success();
 	}
 	else
 	{

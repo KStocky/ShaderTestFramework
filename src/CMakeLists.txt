@@ -58,6 +58,7 @@ set(SOURCES
     Public/Framework/AssertionsV1/TestDataBufferLayout.h
     Public/Framework/AssertionsV1/TestDataBufferProcessor.h
     Public/Framework/AssertionsV1/TestDataBufferStructs.h
+    Public/Framework/AssertionsV2/TestDataBufferStructs.h
     Public/Framework/PIXCapturer.h
     Public/Framework/ShaderTestDriver.h
     Public/Framework/ShaderTestFixture.h
@@ -123,8 +124,11 @@ set(SOURCES
 )
 
 set(SHADER_SOURCES
+    Shader/STF/AssertionsV1/Assertions.hlsli
+    Shader/STF/AssertionsV1/FrameworkResources.hlsli
+    Shader/STF/AssertionsV1/Sections.hlsli
+    Shader/STF/AssertionsV1/Strings.hlsli
     Shader/STF/ByteReaderTraits.hlsli
-    Shader/STF/FrameworkResources.hlsli
     Shader/STF/Matcher.hlsli
     Shader/STF/SectionManagement.hlsli
     Shader/STF/ShaderTestFramework.hlsli
