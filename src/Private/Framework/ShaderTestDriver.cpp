@@ -124,13 +124,13 @@ namespace stf
                                     return InContext.Dispatch(InTestDesc.DispatchConfig, InTestDesc.Shader,
                                         [&](ScopedCommandShader& InShader) -> ExpectedError<void>
                                         {
-                                            std::ignore = InShader.StageBindingData(ShaderBinding{ "stf::detail::DispatchDimensions", dispatchDimensions });
-                                            std::ignore = InShader.StageBindingData(ShaderBinding{ "stf::detail::Asserts", InTestDesc.TestBufferLayout.GetAssertSection() });
-                                            std::ignore = InShader.StageBindingData(ShaderBinding{ "stf::detail::Strings", InTestDesc.TestBufferLayout.GetStringSection() });
-                                            std::ignore = InShader.StageBindingData(ShaderBinding{ "stf::detail::Sections", InTestDesc.TestBufferLayout.GetSectionInfoSection() });
+                                            std::ignore = InShader.StageBindingData(ShaderBinding{ "stf::AssertionsV1::detail::DispatchDimensions", dispatchDimensions });
+                                            std::ignore = InShader.StageBindingData(ShaderBinding{ "stf::AssertionsV1::detail::Asserts", InTestDesc.TestBufferLayout.GetAssertSection() });
+                                            std::ignore = InShader.StageBindingData(ShaderBinding{ "stf::AssertionsV1::detail::Strings", InTestDesc.TestBufferLayout.GetStringSection() });
+                                            std::ignore = InShader.StageBindingData(ShaderBinding{ "stf::AssertionsV1::detail::Sections", InTestDesc.TestBufferLayout.GetSectionInfoSection() });
 
-                                            std::ignore = InShader.StageBindlessResource("stf::detail::AllocationBufferIndex", InBuffers.AllocationUAV);
-                                            std::ignore = InShader.StageBindlessResource("stf::detail::TestDataBufferIndex", InBuffers.AssertUAV);
+                                            std::ignore = InShader.StageBindlessResource("stf::AssertionsV1::detail::AllocationBufferIndex", InBuffers.AllocationUAV);
+                                            std::ignore = InShader.StageBindlessResource("stf::AssertionsV1::detail::TestDataBufferIndex", InBuffers.AssertUAV);
 
                                             for (const auto& binding : InTestDesc.Bindings)
                                             {
