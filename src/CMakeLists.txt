@@ -58,7 +58,6 @@ set(SOURCES
     Public/Framework/AssertionsV1/TestDataBufferLayout.h
     Public/Framework/AssertionsV1/TestDataBufferProcessor.h
     Public/Framework/AssertionsV1/TestDataBufferStructs.h
-    Public/Framework/AssertionsV2/TestDataBufferStructs.h
     Public/Framework/PIXCapturer.h
     Public/Framework/ShaderTestDriver.h
     Public/Framework/ShaderTestFixture.h
