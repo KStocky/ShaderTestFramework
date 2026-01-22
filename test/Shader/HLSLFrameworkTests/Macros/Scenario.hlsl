@@ -158,7 +158,7 @@ void GIVEN_ScenarioWithDispatchThreadId_WHEN_Ran_THEN_IdIsInt3(uint3 DispatchThr
     SCENARIO("")
     {
     }
-    ASSERT(AreEqual, stf::detail::FlattenIndex(DispatchThreadId, stf::detail::DispatchDimensions), stf::detail::Scratch.ThreadID.Data);
+    ASSERT(AreEqual, stf::detail::FlattenIndex(DispatchThreadId, stf::AssertionsV1::detail::DispatchDimensions), stf::detail::Scratch.ThreadID.Data);
     ASSERT(AreEqual, stf::detail::EThreadIDType::Int3, stf::detail::Scratch.ThreadID.Type);
 }
 

@@ -206,7 +206,7 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdOrWrite
 {
     TestType t;
     t.Value = 34;
-    stf::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -214,7 +214,7 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdWithWri
 {
     TestTypeWithNoTypeIdAndWriter t;
     t.Value = 34;
-    stf::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -222,7 +222,7 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithTypeIdNoWriter_T
 {
     TestTypeWithTypeIdNoWriter t;
     t.Value = 34;
-    stf::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -230,7 +230,7 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithTypeIdWithWriter
 {
     TestTypeWithTypeIdAndWriter t;
     t.Value = 34;
-    stf::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -238,7 +238,7 @@ void GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithoutType
 {
     TestType t;
     t.Value = 34;
-    stf::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -246,7 +246,7 @@ void GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithoutType
 {
     TestTypeWithNoTypeIdAndWriter t;
     t.Value = 34;
-    stf::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -254,7 +254,7 @@ void GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithTypeIdN
 {
     TestTypeWithTypeIdNoWriter t;
     t.Value = 34;
-    stf::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -262,7 +262,7 @@ void GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithTypeIdW
 {
     TestTypeWithTypeIdAndWriter t;
     t.Value = 34;
-    stf::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -272,7 +272,7 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithoutTypeIdOrWrite
     TestType u;
     t.Value = 34;
     u.Value = 12345678;
-    stf::AreEqual(t, u, 42);
+    stf::AssertionsV1::AreEqual(t, u, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -282,7 +282,7 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithoutTypeIdWithWri
     TestTypeWithNoTypeIdAndWriter u;
     t.Value = 34;
     u.Value = 12345678;
-    stf::AreEqual(t, u, 42);
+    stf::AssertionsV1::AreEqual(t, u, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -292,7 +292,7 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithTypeIdNoWriter_T
     TestTypeWithTypeIdNoWriter u;
     t.Value = 34;
     u.Value = 12345678;
-    stf::AreEqual(t, u, 42);
+    stf::AssertionsV1::AreEqual(t, u, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -302,7 +302,7 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithTypeIdWithWriter
     TestTypeWithTypeIdAndWriter u;
     t.Value = 34;
     u.Value = 12345678;
-    stf::AreEqual(t, u, 42);
+    stf::AssertionsV1::AreEqual(t, u, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -313,8 +313,8 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_LargeFailFirstThenSmallFailSingleAsser
     t.Value = 34;
     t.A = uint2(123, 42);
     u.Value = 12345678;
-    stf::IsTrue(t, 42);
-    stf::IsTrue(u, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(u, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -325,8 +325,8 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_LargeFailFirstThenSmallFailSingleAsser
     t.Value = 34;
     t.A = uint2(123, 42);
     u.Value = 12345678;
-    stf::IsTrue(t, 42);
-    stf::IsTrue(u, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(u, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -337,8 +337,8 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_SmallFailFirstThenLargeFailSingleAsser
     t.Value = 34;
     t.A = uint2(123, 42);
     u.Value = 12345678;
-    stf::IsTrue(u, 42);
-    stf::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(u, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -349,8 +349,8 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_SmallFailFirstThenLargeFailSingleAsser
     t.Value = 34;
     t.A = uint2(123, 42);
     u.Value = 12345678;
-    stf::IsTrue(u, 42);
-    stf::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(u, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -360,7 +360,7 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_SmallStructComparedWithLargerStructWit
     TestTypeWithVaryingSize u;
     t.Value = 1;
     u.Value = 3;
-    stf::AreEqual(t, u, 42);
+    stf::AssertionsV1::AreEqual(t, u, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -370,7 +370,7 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_LargeStructComparedWithSmallerStructWi
     TestTypeWithVaryingSize u;
     t.Value = 1;
     u.Value = 3;
-    stf::AreEqual(u, t, 42);
+    stf::AssertionsV1::AreEqual(u, t, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -382,7 +382,7 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_OneLargeFailDoubleAssertWithoutTypeIdW
     t.A = uint2(2000, 3000);
     u.Value = 4000;
     u.A = uint2(5000, 6000);
-    stf::AreEqual(t, u, 42);
+    stf::AssertionsV1::AreEqual(t, u, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -394,86 +394,86 @@ void GIVEN_AssertInfoAndDataCapacity_WHEN_TwoLargeFailDoubleAssertWithoutTypeIdW
     t.A = uint2(2000, 3000);
     u.Value = 4000;
     u.A = uint2(5000, 6000);
-    stf::AreEqual(t, u, 42);
-    stf::AreEqual(t, u, 42);
+    stf::AssertionsV1::AreEqual(t, u, 42);
+    stf::AssertionsV1::AreEqual(t, u, 42);
 }
 
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment2_THEN_HasExpectedResults()
 {
-    stf::AreEqual(uint16_t(24u), uint16_t(42u), 42);
+    stf::AssertionsV1::AreEqual(uint16_t(24u), uint16_t(42u), 42);
 }
 
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment2_THEN_HasExpectedResults()
 {
-    stf::AreEqual(uint16_t(24u), uint16_t(42u), 42);
-    stf::AreEqual(uint16_t(1024), uint16_t(4), 42);
+    stf::AssertionsV1::AreEqual(uint16_t(24u), uint16_t(42u), 42);
+    stf::AssertionsV1::AreEqual(uint16_t(1024), uint16_t(4), 42);
 }
 
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment8_THEN_HasExpectedResults()
 {
-    stf::AreEqual(uint64_t(24u), uint64_t(42u), 42);
+    stf::AssertionsV1::AreEqual(uint64_t(24u), uint64_t(42u), 42);
 }
 
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment8_THEN_HasExpectedResults()
 {
-    stf::AreEqual(uint64_t(24u), uint64_t(42u), 42);
-    stf::AreEqual(uint64_t(1024), uint64_t(4), 42);
+    stf::AssertionsV1::AreEqual(uint64_t(24u), uint64_t(42u), 42);
+    stf::AssertionsV1::AreEqual(uint64_t(1024), uint64_t(4), 42);
 }
 
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign2SecondAlign8_THEN_HasExpectedResults()
 {
-    stf::AreEqual(uint16_t(24u), uint16_t(42u), 42);
-    stf::AreEqual(uint64_t(1024), uint64_t(4), 42);
+    stf::AssertionsV1::AreEqual(uint16_t(24u), uint16_t(42u), 42);
+    stf::AssertionsV1::AreEqual(uint64_t(1024), uint64_t(4), 42);
 }
 
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign8SecondAlign2_THEN_HasExpectedResults()
 {
-    stf::AreEqual(uint64_t(24u), uint64_t(42u), 42);
-    stf::AreEqual(uint16_t(1024), uint16_t(4), 42);
+    stf::AssertionsV1::AreEqual(uint64_t(24u), uint64_t(42u), 42);
+    stf::AssertionsV1::AreEqual(uint16_t(1024), uint16_t(4), 42);
 }
 
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment2_THEN_HasExpectedResults()
 {
-    stf::IsFalse(uint16_t(24u), 42);
+    stf::AssertionsV1::IsFalse(uint16_t(24u), 42);
 }
 
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertOfTypesWithAlignment2_THEN_HasExpectedResults()
 {
-    stf::IsFalse(uint16_t(24u), 42);
-    stf::IsFalse(uint16_t(1024), 42);
+    stf::AssertionsV1::IsFalse(uint16_t(24u), 42);
+    stf::AssertionsV1::IsFalse(uint16_t(1024), 42);
 }
 
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment8_THEN_HasExpectedResults()
 {
-    stf::IsFalse(uint64_t(24u), 42);
+    stf::AssertionsV1::IsFalse(uint64_t(24u), 42);
 }
 
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertOfTypesWithAlignment8_THEN_HasExpectedResults()
 {
-    stf::IsFalse(uint64_t(24u), 42);
-    stf::IsFalse(uint64_t(1024), 42);
+    stf::AssertionsV1::IsFalse(uint64_t(24u), 42);
+    stf::AssertionsV1::IsFalse(uint64_t(1024), 42);
 }
 
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertFirstAlign2SecondAlign8_THEN_HasExpectedResults()
 {
-    stf::IsFalse(uint16_t(24u), 42);
-    stf::IsFalse(uint64_t(1024), 42);
+    stf::AssertionsV1::IsFalse(uint16_t(24u), 42);
+    stf::AssertionsV1::IsFalse(uint64_t(1024), 42);
 }
 
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertFirstAlign8SecondAlign2_THEN_HasExpectedResults()
 {
-    stf::IsFalse(uint64_t(24u), 42);
-    stf::IsFalse(uint16_t(1024), 42);
+    stf::AssertionsV1::IsFalse(uint64_t(24u), 42);
+    stf::AssertionsV1::IsFalse(uint16_t(1024), 42);
 }

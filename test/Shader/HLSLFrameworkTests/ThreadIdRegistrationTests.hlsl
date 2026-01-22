@@ -3,7 +3,7 @@
 [numthreads(1,1,1)]
 void GIVEN_SingleThreadDispatched_WHEN_DispatchThreadIdRegistered_THEN_RegisteredThreadIdIsCorrect(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    const uint expectedData = stf::detail::FlattenIndex(DispatchThreadId, stf::detail::DispatchDimensions);
+    const uint expectedData = stf::detail::FlattenIndex(DispatchThreadId, stf::AssertionsV1::detail::DispatchDimensions);
 
     stf::RegisterThreadID(DispatchThreadId);
 
@@ -14,7 +14,7 @@ void GIVEN_SingleThreadDispatched_WHEN_DispatchThreadIdRegistered_THEN_Registere
 [numthreads(1,1,1)]
 void GIVEN_SingleThreadPerGroupAnd10Groups_WHEN_DispatchThreadIdRegistered_THEN_RegisteredThreadIdIsCorrect(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    const uint expectedData = stf::detail::FlattenIndex(DispatchThreadId, stf::detail::DispatchDimensions);
+    const uint expectedData = stf::detail::FlattenIndex(DispatchThreadId, stf::AssertionsV1::detail::DispatchDimensions);
 
     stf::RegisterThreadID(DispatchThreadId);
 
@@ -25,7 +25,7 @@ void GIVEN_SingleThreadPerGroupAnd10Groups_WHEN_DispatchThreadIdRegistered_THEN_
 [numthreads(10,10,10)]
 void GIVEN_SingleGroupWithGroupSizeOf10_WHEN_DispatchThreadIdRegistered_THEN_RegisteredThreadIdIsCorrect(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    const uint expectedData = stf::detail::FlattenIndex(DispatchThreadId, stf::detail::DispatchDimensions);
+    const uint expectedData = stf::detail::FlattenIndex(DispatchThreadId, stf::AssertionsV1::detail::DispatchDimensions);
 
     stf::RegisterThreadID(DispatchThreadId);
 
@@ -36,7 +36,7 @@ void GIVEN_SingleGroupWithGroupSizeOf10_WHEN_DispatchThreadIdRegistered_THEN_Reg
 [numthreads(2,2,2)]
 void GIVEN_GroupWithSide2WithGroupSizeOfSide2_WHEN_DispatchThreadIdRegistered_THEN_RegisteredThreadIdIsCorrect(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
-    const uint expectedData = stf::detail::FlattenIndex(DispatchThreadId, stf::detail::DispatchDimensions);
+    const uint expectedData = stf::detail::FlattenIndex(DispatchThreadId, stf::AssertionsV1::detail::DispatchDimensions);
 
     stf::RegisterThreadID(DispatchThreadId);
 
