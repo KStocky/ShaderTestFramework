@@ -59,7 +59,7 @@ SCENARIO("PowTests")
             },
             .TestName = "RunPowTests",
             .ThreadGroupCount{1, 1, 1},
-            .GPUCaptureMode = stf::ShaderTestFixture::EGPUCaptureMode::On
+            .GPUCaptureMode = stf::EGPUCaptureMode::On
         })
     );
 }

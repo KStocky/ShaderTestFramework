@@ -15,7 +15,7 @@ SCENARIO("HLSLFrameworkTests - Matchers - MatcherType")
     );
 
     REQUIRE(fixture.RunCompileTimeTest(
-        ShaderTestFixture::CompileTestDesc
+        ShaderCompileTestDesc
         {
             .CompilationEnv
             {

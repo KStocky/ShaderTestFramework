@@ -43,7 +43,7 @@ SCENARIO("Example5Tests")
         });
 
     REQUIRE(fixture.RunCompileTimeTest(
-        stf::ShaderTestFixture::CompileTestDesc
+        stf::ShaderCompileTestDesc
         {
             .CompilationEnv
             {

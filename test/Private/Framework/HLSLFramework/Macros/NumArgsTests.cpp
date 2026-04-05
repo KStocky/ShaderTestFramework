@@ -14,7 +14,7 @@ SCENARIO("HLSLFrameworkTests - Macros - NumArgs")
     );
 
     REQUIRE(fixture.RunCompileTimeTest(
-        ShaderTestFixture::CompileTestDesc
+        ShaderCompileTestDesc
         {
             .CompilationEnv
             {

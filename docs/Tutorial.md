@@ -246,13 +246,13 @@ SCENARIO("PowTests")
             },
             .TestName = "RunPowTests",
             .ThreadGroupCount{1, 1, 1},
-            .GPUCaptureMode = stf::ShaderTestFixture::EGPUCaptureMode::On
+            .GPUCaptureMode = stf::EGPUCaptureMode::On
         })
     );
 }
 ```
 
-NOTE: you can also set the `GPUCaptureMode` to be `stf::ShaderTestFixture::EGPUCaptureMode::CaptureOnFailure`. This will run your test without capturing it. If the test passes, no GPU capture is created. If the test fails, the fixture will run the test again while capturing it.
+NOTE: you can also set the `GPUCaptureMode` to be `stf::EGPUCaptureMode::CaptureOnFailure`. This will run your test without capturing it. If the test passes, no GPU capture is created. If the test fails, the fixture will run the test again while capturing it.
 
 Now we run this example again. There will now be a `Captures` directory in the same directory that your executable lives. Inside it, there will be a `.wpix` file that we can open with PIX. From here we can click "Analyze" at the top and we will have a view like this 
 

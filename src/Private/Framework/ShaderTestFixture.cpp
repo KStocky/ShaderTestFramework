@@ -82,7 +82,7 @@ namespace stf
         return RunTestImpl(std::move(InTestDesc), true);
     }
 
-    AssertionsV1::Results ShaderTestFixture::RunCompileTimeTest(CompileTestDesc InTestDesc)
+    AssertionsV1::Results ShaderTestFixture::RunCompileTimeTest(ShaderCompileTestDesc InTestDesc)
     {
         ScopedDuration scope(std::format("ShaderTestFixture::RunCompileTimeTest: {}", InTestDesc.TestName));
         return CompileShader("", EShaderType::Lib, std::move(InTestDesc.CompilationEnv), false)
@@ -143,7 +143,7 @@ namespace stf
             ).value();
     }
 
-    ExpectedError<CompiledShaderData> ShaderTestFixture::CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const
+    ExpectedError<CompiledShaderData> ShaderTestFixture::CompileShader(const std::string_view InName, const EShaderType InType, ShaderCompilationEnvDesc InCompileDesc, const bool InTakingCapture) const
     {
         ScopedDuration scope(std::format("ShaderTestFixture::CompileShader: {}", InName));
         ShaderCompilationJobDesc job;

@@ -20,7 +20,7 @@ SCENARIO("Example5Tests")
     // If the shader compiles, the test passes, if it doesn't compile, the shader fails
     // Unlike RunTest, it will not attempt to actually dispatch the shader.
     REQUIRE(fixture.RunCompileTimeTest(
-        stf::ShaderTestFixture::CompileTestDesc
+        stf::ShaderCompileTestDesc
         {
             .CompilationEnv
             {
