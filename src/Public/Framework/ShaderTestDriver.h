@@ -12,7 +12,7 @@
 
 #include "Utility/Expected.h"
 #include "Utility/HLSLTypes.h"
-#include "Utility/Object.h"
+#include "Utility/MoveOnly.h"
 #include "Utility/Pointer.h"
 
 #include <dxcapi.h>
@@ -22,7 +22,7 @@
 namespace stf
 {
     class ShaderTestDriver 
-        : public Object
+        : MoveOnly
     {
     public:
 
@@ -40,7 +40,7 @@ namespace stf
             uint3 DispatchConfig;
         };
 
-        ShaderTestDriver(ObjectToken, CreationParams InParams);
+        ShaderTestDriver(CreationParams InParams);
 
         TypeReaderIndex RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader);
         TypeReaderIndex RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader);

@@ -24,9 +24,8 @@ namespace stf
         };
     }
 
-    ShaderTestDriver::ShaderTestDriver(ObjectToken InToken, CreationParams InParams)
-        : Object(InToken)
-        , m_Device(std::move(InParams.Device))
+    ShaderTestDriver::ShaderTestDriver(CreationParams InParams)
+        : m_Device(std::move(InParams.Device))
         , m_CommandEngine(Object::New<CommandEngine>(
             CommandEngine::CreationParams
             {
