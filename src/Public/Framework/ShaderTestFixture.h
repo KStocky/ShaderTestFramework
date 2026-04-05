@@ -52,8 +52,9 @@ namespace stf
         std::string_view TestName;
     };
 
-    class ShaderTestFixture
+    class ShaderTestFixtureBase
     {
+
     public:
         struct FixtureDesc
         {
@@ -65,6 +66,44 @@ namespace stf
                 .EnableGPUCapture = false
             };
         };
+
+        ShaderTestFixtureBase(FixtureDesc InParams);
+        ~ShaderTestFixtureBase() noexcept;
+
+        void RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader);
+        void RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader);
+
+        AssertionsV1::Results RunCompileTimeTest(ShaderCompileTestDesc InTestDesc);
+
+        static std::vector<TimedStat> GetTestStats();
+
+    protected:
+
+        static StatSystem statSystem;
+        static constexpr auto StatSystemGetter = []() -> StatSystem& { return statSystem; };
+        using ScopedDuration = ScopedCPUDurationStat<StatSystemGetter>;
+        static std::vector<TimedStat> cachedStats;
+
+        ExpectedError<CompiledShaderData> CompileShader(const std::string_view InName, const EShaderType InType, ShaderCompilationEnvDesc InCompileDesc, const bool InTakingCapture) const;
+        void PopulateDefaultByteReaders();
+
+        bool ShouldTakeCapture(const EGPUCaptureMode InCaptureMode, const bool InIsFailureRetry) const;
+
+        SharedPtr<GPUDevice> m_Device;
+        SharedPtr<ShaderTestDriver> m_TestDriver;
+        ShaderCompiler m_Compiler;
+        std::vector<ShaderMacro> m_Defines;
+    };
+
+    class ShaderTestFixture
+        : public ShaderTestFixtureBase
+    {
+    public:
+        
+        ShaderTestFixture(FixtureDesc InParams)
+            : ShaderTestFixtureBase{ std::move(InParams) }
+        {
+        }
 
         struct RuntimeTestDesc
         {
@@ -85,47 +124,11 @@ namespace stf
             EGPUCaptureMode GPUCaptureMode = EGPUCaptureMode::Off;
         };
 
-        ShaderTestFixture(FixtureDesc InParams);
-        ~ShaderTestFixture() noexcept;
+        
 
         AssertionsV1::Results RunTest(RuntimeTestDesc InTestDesc);
-        AssertionsV1::Results RunCompileTimeTest(ShaderCompileTestDesc InTestDesc);
-        void RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader);
-        void RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader);
-
-        static std::vector<TimedStat> GetTestStats();
 
     private:
-
-        static StatSystem statSystem;
-        static constexpr auto StatSystemGetter = []() -> StatSystem& { return statSystem; };
-        using ScopedDuration = ScopedCPUDurationStat<StatSystemGetter>;
-        static std::vector<TimedStat> cachedStats;
-
-        struct BindingInfo
-        {
-            u32 RootParamIndex = 0;
-            u32 OffsetIntoBuffer = 0;
-            u32 BindingSize = 0;
-        };
-
-        struct ReflectionResults
-        {
-            SharedPtr<RootSignature> RootSig;
-            std::unordered_map<std::string, BindingInfo, TransparentStringHash, std::equal_to<>> NameToBindingInfo;
-            std::unordered_map<u32, std::vector<u32>> RootParamBuffers;
-        };
-
         AssertionsV1::Results RunTestImpl(RuntimeTestDesc InTestDesc, const bool InIsFailureRetry);
-
-        ExpectedError<CompiledShaderData> CompileShader(const std::string_view InName, const EShaderType InType, ShaderCompilationEnvDesc InCompileDesc, const bool InTakingCapture) const;
-        void PopulateDefaultByteReaders();
-
-        bool ShouldTakeCapture(const EGPUCaptureMode InCaptureMode, const bool InIsFailureRetry) const;
-
-        SharedPtr<GPUDevice> m_Device;
-        SharedPtr<ShaderTestDriver> m_TestDriver;
-        ShaderCompiler m_Compiler;
-        std::vector<ShaderMacro> m_Defines;
     };
 }
