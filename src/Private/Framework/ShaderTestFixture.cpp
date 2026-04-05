@@ -26,10 +26,10 @@ namespace stf
         }
     }
 
-    StatSystem ShaderTestFixture::statSystem;
-    std::vector<TimedStat> ShaderTestFixture::cachedStats;
+    StatSystem ShaderTestFixtureBase::statSystem;
+    std::vector<TimedStat> ShaderTestFixtureBase::cachedStats;
 
-    ShaderTestFixture::ShaderTestFixture(FixtureDesc InParams)
+    ShaderTestFixtureBase::ShaderTestFixtureBase(FixtureDesc InParams)
         : m_Device(Object::New<GPUDevice>(InParams.GPUDeviceParams))
         , m_TestDriver(Object::New<ShaderTestDriver>(
             ShaderTestDriver::CreationParams
@@ -44,7 +44,7 @@ namespace stf
         PopulateDefaultByteReaders();
     }
 
-    ShaderTestFixture::~ShaderTestFixture() noexcept
+    ShaderTestFixtureBase::~ShaderTestFixtureBase() noexcept
     {
         cachedStats = statSystem.FlushTimedStats();
     }
@@ -82,7 +82,7 @@ namespace stf
         return RunTestImpl(std::move(InTestDesc), true);
     }
 
-    AssertionsV1::Results ShaderTestFixture::RunCompileTimeTest(ShaderCompileTestDesc InTestDesc)
+    AssertionsV1::Results ShaderTestFixtureBase::RunCompileTimeTest(ShaderCompileTestDesc InTestDesc)
     {
         ScopedDuration scope(std::format("ShaderTestFixture::RunCompileTimeTest: {}", InTestDesc.TestName));
         return CompileShader("", EShaderType::Lib, std::move(InTestDesc.CompilationEnv), false)
@@ -99,7 +99,7 @@ namespace stf
             ).value();
     }
 
-    std::vector<TimedStat> ShaderTestFixture::GetTestStats()
+    std::vector<TimedStat> ShaderTestFixtureBase::GetTestStats()
     {
         return cachedStats;
     }
@@ -143,7 +143,7 @@ namespace stf
             ).value();
     }
 
-    ExpectedError<CompiledShaderData> ShaderTestFixture::CompileShader(const std::string_view InName, const EShaderType InType, ShaderCompilationEnvDesc InCompileDesc, const bool InTakingCapture) const
+    ExpectedError<CompiledShaderData> ShaderTestFixtureBase::CompileShader(const std::string_view InName, const EShaderType InType, ShaderCompilationEnvDesc InCompileDesc, const bool InTakingCapture) const
     {
         ScopedDuration scope(std::format("ShaderTestFixture::CompileShader: {}", InName));
         ShaderCompilationJobDesc job;
@@ -170,13 +170,13 @@ namespace stf
         return m_Compiler.CompileShader(job);
     }
 
-    void ShaderTestFixture::RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader)
+    void ShaderTestFixtureBase::RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader)
     {
         const auto readerId = m_TestDriver->RegisterByteReader(InTypeIDName, std::move(InByteReader));
         m_Defines.push_back(ShaderMacro{ std::move(InTypeIDName), std::format("{}", readerId.GetIndex()) });
     }
 
-    void ShaderTestFixture::RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader)
+    void ShaderTestFixtureBase::RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader)
     {
         RegisterByteReader(std::move(InTypeIDName),
             [byteReader = std::move(InByteReader)](const u16, const std::span<const std::byte> InData)
@@ -256,7 +256,7 @@ namespace stf
         };
     }
 
-    void ShaderTestFixture::PopulateDefaultByteReaders()
+    void ShaderTestFixtureBase::PopulateDefaultByteReaders()
     {
         RegisterByteReader("TYPE_ID_UNDEFINED",
             [](const u16, const std::span<const std::byte> InBytes)
@@ -381,7 +381,7 @@ namespace stf
             });
     }
 
-    bool ShaderTestFixture::ShouldTakeCapture(const EGPUCaptureMode InCaptureMode, const bool InIsFailureRetry) const
+    bool ShaderTestFixtureBase::ShouldTakeCapture(const EGPUCaptureMode InCaptureMode, const bool InIsFailureRetry) const
     {
         const bool takeCaptureIfAble = InCaptureMode == EGPUCaptureMode::On || (InIsFailureRetry && InCaptureMode == EGPUCaptureMode::CaptureOnFailure);
         return m_Device->IsGPUCaptureEnabled() && takeCaptureIfAble;
