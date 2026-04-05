@@ -29,19 +29,12 @@ namespace stf
     StatSystem ShaderTestFixtureBase::statSystem;
     std::vector<TimedStat> ShaderTestFixtureBase::cachedStats;
 
-    ShaderTestFixtureBase::ShaderTestFixtureBase(FixtureDesc InParams)
+    ShaderTestFixtureBase::ShaderTestFixtureBase(const FixtureDesc& InParams)
         : m_Device(Object::New<GPUDevice>(InParams.GPUDeviceParams))
-        , m_TestDriver(Object::New<ShaderTestDriver>(
-            ShaderTestDriver::CreationParams
-            {
-                .Device = m_Device
-            }
-        ))
-        , m_Compiler(CreateShaderCompiler(std::move(InParams.Mappings)))
+        , m_Compiler(CreateShaderCompiler(InParams.Mappings))
         , m_Defines()
     {
         cachedStats.clear();
-        PopulateDefaultByteReaders();
     }
 
     ShaderTestFixtureBase::~ShaderTestFixtureBase() noexcept
@@ -126,7 +119,7 @@ namespace stf
                 [&](const SharedPtr<Shader>& InShader)
                 {
                     const auto capturer = PIXCapturer(InTestDesc.TestName, takeCapture);
-                    return m_TestDriver->RunShaderTest(
+                    return m_TestDriver.RunShaderTest(
                         {
                             .Shader = InShader,
                             .TestBufferLayout{ InTestDesc.TestDataLayout },
@@ -170,13 +163,13 @@ namespace stf
         return m_Compiler.CompileShader(job);
     }
 
-    void ShaderTestFixtureBase::RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader)
+    void ShaderTestFixture::RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader)
     {
-        const auto readerId = m_TestDriver->RegisterByteReader(InTypeIDName, std::move(InByteReader));
+        const auto readerId = m_TestDriver.RegisterByteReader(InTypeIDName, std::move(InByteReader));
         m_Defines.push_back(ShaderMacro{ std::move(InTypeIDName), std::format("{}", readerId.GetIndex()) });
     }
 
-    void ShaderTestFixtureBase::RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader)
+    void ShaderTestFixture::RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader)
     {
         RegisterByteReader(std::move(InTypeIDName),
             [byteReader = std::move(InByteReader)](const u16, const std::span<const std::byte> InData)
@@ -256,7 +249,7 @@ namespace stf
         };
     }
 
-    void ShaderTestFixtureBase::PopulateDefaultByteReaders()
+    void ShaderTestFixture::PopulateDefaultByteReaders()
     {
         RegisterByteReader("TYPE_ID_UNDEFINED",
             [](const u16, const std::span<const std::byte> InBytes)

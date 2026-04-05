@@ -67,11 +67,8 @@ namespace stf
             };
         };
 
-        ShaderTestFixtureBase(FixtureDesc InParams);
+        ShaderTestFixtureBase(const FixtureDesc& InParams);
         ~ShaderTestFixtureBase() noexcept;
-
-        void RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader);
-        void RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader);
 
         AssertionsV1::Results RunCompileTimeTest(ShaderCompileTestDesc InTestDesc);
 
@@ -85,12 +82,10 @@ namespace stf
         static std::vector<TimedStat> cachedStats;
 
         ExpectedError<CompiledShaderData> CompileShader(const std::string_view InName, const EShaderType InType, ShaderCompilationEnvDesc InCompileDesc, const bool InTakingCapture) const;
-        void PopulateDefaultByteReaders();
 
         bool ShouldTakeCapture(const EGPUCaptureMode InCaptureMode, const bool InIsFailureRetry) const;
 
         SharedPtr<GPUDevice> m_Device;
-        SharedPtr<ShaderTestDriver> m_TestDriver;
         ShaderCompiler m_Compiler;
         std::vector<ShaderMacro> m_Defines;
     };
@@ -100,9 +95,15 @@ namespace stf
     {
     public:
         
-        ShaderTestFixture(FixtureDesc InParams)
-            : ShaderTestFixtureBase{ std::move(InParams) }
+        ShaderTestFixture(const FixtureDesc& InParams)
+            : ShaderTestFixtureBase{ InParams }
+            , m_TestDriver{ 
+                ShaderTestDriver::CreationParams
+                {
+                    .Device = m_Device
+                } }
         {
+            PopulateDefaultByteReaders();
         }
 
         struct RuntimeTestDesc
@@ -128,7 +129,12 @@ namespace stf
 
         AssertionsV1::Results RunTest(RuntimeTestDesc InTestDesc);
 
+        void RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader);
+        void RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader);
     private:
         AssertionsV1::Results RunTestImpl(RuntimeTestDesc InTestDesc, const bool InIsFailureRetry);
+        void PopulateDefaultByteReaders();
+
+        ShaderTestDriver m_TestDriver;
     };
 }
