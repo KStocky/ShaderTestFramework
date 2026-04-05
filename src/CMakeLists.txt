@@ -58,6 +58,7 @@ set(SOURCES
     Public/Framework/AssertionsV1/TestDataBufferLayout.h
     Public/Framework/AssertionsV1/TestDataBufferProcessor.h
     Public/Framework/AssertionsV1/TestDataBufferStructs.h
+    Public/Framework/AssertionInterface.h
     Public/Framework/PIXCapturer.h
     Public/Framework/ShaderTestDriver.h
     Public/Framework/ShaderTestFixture.h
@@ -115,6 +116,7 @@ set(SOURCES
     Private/Framework/AssertionsV1/TestDataBufferLayout.cpp
     Private/Framework/AssertionsV1/TestDataBufferProcessor.cpp
     Private/Framework/AssertionsV1/TestDataBufferStructs.cpp
+    Private/Framework/AssertionInterface.cpp
     Private/Framework/PIXCapturer.cpp
     Private/Framework/ShaderTestDriver.cpp
     Private/Framework/ShaderTestFixture.cpp

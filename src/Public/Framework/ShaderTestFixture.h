@@ -125,8 +125,6 @@ namespace stf
             EGPUCaptureMode GPUCaptureMode = EGPUCaptureMode::Off;
         };
 
-        
-
         AssertionsV1::Results RunTest(RuntimeTestDesc InTestDesc);
 
         void RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader);

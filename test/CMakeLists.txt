@@ -168,6 +168,8 @@ set(SOURCES
     Private/D3D12/Shader/ShaderModelTests.cpp
     Private/D3D12/Shader/ShaderReflectionUtilsTests.cpp
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManagerTests.cpp
+    Private/Framework/AssertionInterface/AssertionInterfaceTypeTests.cpp
+    Private/Framework/AssertionInterface/TestRunResultsTypeTests.cpp
     Private/Framework/HLSLFramework/Asserts/AreEqualTests.cpp
     Private/Framework/HLSLFramework/Asserts/FailTests.cpp
     Private/Framework/HLSLFramework/Asserts/IsFalseTests.cpp
