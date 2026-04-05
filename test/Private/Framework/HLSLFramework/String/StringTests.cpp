@@ -43,7 +43,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                     },
                     .TestName = testName,
                     .ThreadGroupCount{1, 1, 1},
-                    .StringMode = ShaderTestFixture::EStringMode::On
+                    .StringMode = EStringMode::On
                 })
             );
         }

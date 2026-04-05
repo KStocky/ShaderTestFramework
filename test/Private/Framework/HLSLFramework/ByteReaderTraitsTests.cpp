@@ -14,7 +14,7 @@ SCENARIO("HLSLFrameworkTests - ByteReaderTraits")
     );
 
     REQUIRE(fixture.RunCompileTimeTest(
-        ShaderTestFixture::CompileTestDesc
+        ShaderCompileTestDesc
         {
             .CompilationEnv
             {

@@ -55,7 +55,7 @@ SCENARIO("ShaderTestFixtureTests - Run Compile Time Tests")
 
             const auto result = fixture.RunCompileTimeTest
             (
-                ShaderTestFixture::CompileTestDesc
+                ShaderCompileTestDesc
                 {
                     .CompilationEnv
                     {
@@ -83,7 +83,7 @@ SCENARIO("ShaderTestFixtureTests - Run Compile Time Tests")
 
             const auto result = fixture.RunCompileTimeTest
             (
-                ShaderTestFixture::CompileTestDesc
+                ShaderCompileTestDesc
                 {
                     .CompilationEnv
                     {

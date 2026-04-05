@@ -15,31 +15,46 @@
 
 namespace stf
 {
+
+    enum class EGPUCaptureMode : u8
+    {
+        Off,
+        CaptureOnFailure,
+        On
+    };
+
+    enum class EStringMode : u8
+    {
+        Off,
+        OnFailure,
+        On
+    };
+
+    enum class EStringMaxLength
+    {
+        s16 = 16,
+        s64 = 64,
+        s256 = 256
+    };
+
+    struct ShaderCompilationEnvDesc
+    {
+        ShaderCodeSource Source;
+        std::vector<std::wstring> CompilationFlags{};
+        std::vector<ShaderMacro> Defines{};
+        D3D_SHADER_MODEL ShaderModel = D3D_SHADER_MODEL_6_6;
+        EHLSLVersion HLSLVersion = EHLSLVersion::v202x;
+    };
+
+    struct ShaderCompileTestDesc
+    {
+        ShaderCompilationEnvDesc CompilationEnv;
+        std::string_view TestName;
+    };
+
     class ShaderTestFixture
     {
     public:
-
-        enum class EGPUCaptureMode : u8
-        {
-            Off,
-            CaptureOnFailure,
-            On
-        };
-
-        enum class EStringMode : u8
-        {
-            Off,
-            OnFailure,
-            On
-        };
-
-        enum class EStringMaxLength
-        {
-            s16 = 16,
-            s64 = 64,
-            s256 = 256
-        };
-
         struct FixtureDesc
         {
             std::vector<VirtualShaderDirectoryMapping> Mappings;
@@ -51,18 +66,9 @@ namespace stf
             };
         };
 
-        struct CompilationEnvDesc
-        {
-            ShaderCodeSource Source;
-            std::vector<std::wstring> CompilationFlags {};
-            std::vector<ShaderMacro> Defines {};
-            D3D_SHADER_MODEL ShaderModel = D3D_SHADER_MODEL_6_6;
-            EHLSLVersion HLSLVersion = EHLSLVersion::v202x;
-        };
-
         struct RuntimeTestDesc
         {
-            CompilationEnvDesc CompilationEnv;
+            ShaderCompilationEnvDesc CompilationEnv;
             std::string_view TestName;
             std::vector<ShaderBinding> Bindings {};
             uint3 ThreadGroupCount{};
@@ -79,17 +85,11 @@ namespace stf
             EGPUCaptureMode GPUCaptureMode = EGPUCaptureMode::Off;
         };
 
-        struct CompileTestDesc
-        {
-            CompilationEnvDesc CompilationEnv;
-            std::string_view TestName;
-        };
-
         ShaderTestFixture(FixtureDesc InParams);
         ~ShaderTestFixture() noexcept;
 
         AssertionsV1::Results RunTest(RuntimeTestDesc InTestDesc);
-        AssertionsV1::Results RunCompileTimeTest(CompileTestDesc InTestDesc);
+        AssertionsV1::Results RunCompileTimeTest(ShaderCompileTestDesc InTestDesc);
         void RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader);
         void RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader);
 
@@ -118,7 +118,7 @@ namespace stf
 
         AssertionsV1::Results RunTestImpl(RuntimeTestDesc InTestDesc, const bool InIsFailureRetry);
 
-        ExpectedError<CompiledShaderData> CompileShader(const std::string_view InName, const EShaderType InType, CompilationEnvDesc InCompileDesc, const bool InTakingCapture) const;
+        ExpectedError<CompiledShaderData> CompileShader(const std::string_view InName, const EShaderType InType, ShaderCompilationEnvDesc InCompileDesc, const bool InTakingCapture) const;
         void PopulateDefaultByteReaders();
 
         bool ShouldTakeCapture(const EGPUCaptureMode InCaptureMode, const bool InIsFailureRetry) const;
