@@ -20,117 +20,103 @@ namespace stf::assert::AssertionInterfaceTypeTests
         }
     };
 
-    struct ValidType
+    enum class ECreateGPUResourcesParamType : u8
     {
-        using TestRunResultsType = ValidTestRunResultsType;
-        using GPUResourcesType = UniqueType<Empty>;
+        NonConstRef,
+        NonConstRefWrongType,
+        ConstRef,
+        RValueRef,
+        Value
+    };
 
+    enum class EConstructorParamType : u8
+    {
+        CorrectType,
+        WrongType
+    };
+
+    enum class ECreateGPUResourcesReturnType : u8
+    {
+        CorrectType,
+        WrongType
+    };
+
+    struct TypeSpecifiersType
+    {
+        bool ValidTestRunResultsType = true;
+        ECreateGPUResourcesReturnType CreateGPUResourcesReturnType = ECreateGPUResourcesReturnType::CorrectType;
+        ECreateGPUResourcesParamType CreateGPUResourcesParamType = ECreateGPUResourcesParamType::NonConstRef;
+        EConstructorParamType ConstructorParamType = EConstructorParamType::CorrectType;
+    };
+
+    template<TypeSpecifiersType TypeSpecifiers = TypeSpecifiersType{}>
+    struct TestInterface
+    {
+        using TestRunResultsType = std::conditional_t<TypeSpecifiers.ValidTestRunResultsType, ValidTestRunResultsType, UniqueType<Empty>>;
+        using GPUResourcesType = UniqueType<Empty>;
         using CreationParams = UniqueType<Empty>;
 
-        ValidType(const CreationParams&) {}
+        using CreateGPUResourcesReturnType = std::conditional_t<
+            TypeSpecifiers.CreateGPUResourcesReturnType == ECreateGPUResourcesReturnType::CorrectType,
+            GPUResourcesType,
+            UniqueType<Empty>
+        >;
 
-        GPUResourcesType CreateGPUResources(ScopedCommandContext&)
+        using CreateGPUResourcesParamType = decltype(
+            []()
+            {
+                if constexpr (TypeSpecifiers.CreateGPUResourcesParamType == ECreateGPUResourcesParamType::NonConstRef)
+                {
+                    return std::type_identity<ScopedCommandContext&>{};
+                }
+                else if constexpr (TypeSpecifiers.CreateGPUResourcesParamType == ECreateGPUResourcesParamType::ConstRef)
+                {
+                    return std::type_identity<const ScopedCommandContext&>{};
+                }
+                else if constexpr (TypeSpecifiers.CreateGPUResourcesParamType == ECreateGPUResourcesParamType::RValueRef)
+                {
+                    return std::type_identity<ScopedCommandContext&&>{};
+                }
+                else if constexpr (TypeSpecifiers.CreateGPUResourcesParamType == ECreateGPUResourcesParamType::Value)
+                {
+                    return std::type_identity<ScopedCommandContext>{};
+                }
+                else
+                {
+                    return std::type_identity<UniqueType<Empty&>>{};
+                }
+            }()
+            )::type;
+
+        using ConstructorParamType = decltype(
+            []()
+            {
+                if constexpr (TypeSpecifiers.ConstructorParamType == EConstructorParamType::CorrectType)
+                {
+                    return CreationParams{};
+                }
+                else
+                {
+                    return UniqueType<Empty>{};
+                }
+            }()
+            );
+
+        TestInterface(ConstructorParamType)
         {
-            return GPUResourcesType{};
+        }
+
+        CreateGPUResourcesReturnType CreateGPUResources(CreateGPUResourcesParamType)
+        {
+            return CreateGPUResourcesReturnType{};
         }
     };
 
-    struct InvalidResultsType
-    {
-        using TestRunResultsType = UniqueType<Empty>;
-
-        using GPUResourcesType = UniqueType<Empty>;
-
-        using CreationParams = UniqueType<Empty>;
-
-        InvalidResultsType(const CreationParams&) {}
-
-        GPUResourcesType CreateGPUResources(ScopedCommandContext&)
-        {
-            return GPUResourcesType{};
-        }
-    };
-
-    struct CreateGPUResourcesReturnsWrongType
-    {
-        using TestRunResultsType = ValidTestRunResultsType;
-        using GPUResourcesType = UniqueType<Empty>;
-
-        using CreationParams = UniqueType<Empty>;
-
-        CreateGPUResourcesReturnsWrongType(const CreationParams&) {}
-
-        auto CreateGPUResources(ScopedCommandContext&)
-        {
-            return UniqueType<Empty>{};
-        }
-    };
-
-    struct CreateGPUResourcesAcceptsByConstRef
-    {
-        using TestRunResultsType = ValidTestRunResultsType;
-        using GPUResourcesType = UniqueType<Empty>;
-
-        using CreationParams = UniqueType<Empty>;
-
-        CreateGPUResourcesAcceptsByConstRef(const CreationParams&) {}
-
-        GPUResourcesType CreateGPUResources(const ScopedCommandContext&)
-        {
-            return GPUResourcesType{};
-        }
-    };
-
-    struct CreateGPUResourcesAcceptsByValue
-    {
-        using TestRunResultsType = ValidTestRunResultsType;
-        using GPUResourcesType = UniqueType<Empty>;
-
-        using CreationParams = UniqueType<Empty>;
-
-        CreateGPUResourcesAcceptsByValue(const CreationParams&) {}
-
-        GPUResourcesType CreateGPUResources(ScopedCommandContext)
-        {
-            return GPUResourcesType{};
-        }
-    };
-
-    struct CreateGPUResourcesAcceptsByRValueRef
-    {
-        using TestRunResultsType = ValidTestRunResultsType;
-        using GPUResourcesType = UniqueType<Empty>;
-
-        using CreationParams = UniqueType<Empty>;
-
-        CreateGPUResourcesAcceptsByRValueRef(const CreationParams&) {}
-
-        GPUResourcesType CreateGPUResources(ScopedCommandContext&&)
-        {
-            return GPUResourcesType{};
-        }
-    };
-
-    struct ConstructorAcceptsWrongType
-    {
-        using TestRunResultsType = ValidTestRunResultsType;
-        using GPUResourcesType = UniqueType<Empty>;
-
-        using CreationParams = UniqueType<Empty>;
-
-        ConstructorAcceptsWrongType(const UniqueType<Empty>&) {}
-
-        GPUResourcesType CreateGPUResources(ScopedCommandContext&)
-        {
-            return GPUResourcesType{};
-        }
-    };
-
-    static_assert(CAssertionInterfaceType<ValidType>, "Expected this type to be valid for the concept");
-    static_assert(!CAssertionInterfaceType<InvalidResultsType>, "Expected this type to not be valid for the concept");
-    static_assert(!CAssertionInterfaceType<CreateGPUResourcesReturnsWrongType>, "Expected this type to not be valid for the concept");
-    static_assert(CAssertionInterfaceType<CreateGPUResourcesAcceptsByConstRef>, "Expected this type to be valid for the concept");
-    static_assert(!CAssertionInterfaceType<CreateGPUResourcesAcceptsByValue>, "Expected this type to not be valid for the concept");
-    static_assert(!CAssertionInterfaceType<CreateGPUResourcesAcceptsByRValueRef>, "Expected this type to not be valid for the concept");
-    static_assert(!CAssertionInterfaceType<ConstructorAcceptsWrongType>, "Expected this type to not be valid for the concept");
+    static_assert(CAssertionInterfaceType<TestInterface<>>, "Expected this type to be valid for the concept");
+    static_assert(!CAssertionInterfaceType< TestInterface < TypeSpecifiersType{ .ValidTestRunResultsType = false } >> , "Expected this type to not be valid for the concept");
+    static_assert(!CAssertionInterfaceType< TestInterface < TypeSpecifiersType{ .CreateGPUResourcesReturnType = ECreateGPUResourcesReturnType::WrongType } >>, "Expected this type to not be valid for the concept");
+    static_assert(CAssertionInterfaceType< TestInterface < TypeSpecifiersType{ .CreateGPUResourcesParamType = ECreateGPUResourcesParamType::ConstRef } >>, "Expected this type to be valid for the concept");
+    static_assert(!CAssertionInterfaceType< TestInterface < TypeSpecifiersType{ .CreateGPUResourcesParamType = ECreateGPUResourcesParamType::Value } >>, "Expected this type to not be valid for the concept");
+    static_assert(!CAssertionInterfaceType< TestInterface < TypeSpecifiersType{ .CreateGPUResourcesParamType = ECreateGPUResourcesParamType::RValueRef } >>, "Expected this type to not be valid for the concept");
+    static_assert(!CAssertionInterfaceType< TestInterface < TypeSpecifiersType{ .ConstructorParamType = EConstructorParamType::WrongType } >>, "Expected this type to not be valid for the concept");
 }
