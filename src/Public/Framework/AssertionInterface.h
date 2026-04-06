@@ -1,8 +1,12 @@
 #pragma once
 
 #include "Platform.h"
-
 #include "Utility/Concepts.h"
+
+namespace stf
+{
+    class ScopedCommandContext;
+}
 
 namespace stf::assert
 {
@@ -17,5 +21,9 @@ namespace stf::assert
 
     template<typename T>
     concept CAssertionInterfaceType =
-        CTestRunResultsType<typename T::TestRunResultsType>;
+        CTestRunResultsType<typename T::TestRunResultsType> &&
+        requires(T In, ScopedCommandContext& InContext)
+        {
+            { In.CreateGPUResources(InContext) } -> std::same_as<typename T::GPUResourcesType>;
+        };
 }
