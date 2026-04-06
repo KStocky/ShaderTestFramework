@@ -219,6 +219,7 @@ set(SOURCES
     Private/Stats/StatSystemTests.cpp
     Private/TestUtilities/Noisy.cpp
     Private/TestUtilities/NoisyTests.cpp
+    Private/TestUtilities/UniqueTypeTests.cpp
     Private/Utility/AlignedOffsetTests.cpp
     Private/Utility/ConceptsTests.cpp
     Private/Utility/EnumReflectionTests.cpp
@@ -237,6 +238,7 @@ set(SOURCES
     Public/Framework/HLSLFramework/HLSLFrameworkTestsCommon.h
     Public/TestUtilities/ErrorMatchers.h
     Public/TestUtilities/Noisy.h
+    Public/TestUtilities/UniqueType.h
 )
 
 set(SHADER_SOURCE_REL_DIR "ShaderTests")
