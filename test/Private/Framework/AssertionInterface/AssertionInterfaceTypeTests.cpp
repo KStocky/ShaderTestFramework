@@ -25,6 +25,10 @@ namespace stf::assert::AssertionInterfaceTypeTests
         using TestRunResultsType = ValidTestRunResultsType;
         using GPUResourcesType = UniqueType<Empty>;
 
+        using CreationParams = UniqueType<Empty>;
+
+        ValidType(const CreationParams&) {}
+
         GPUResourcesType CreateGPUResources(ScopedCommandContext&)
         {
             return GPUResourcesType{};
@@ -37,6 +41,10 @@ namespace stf::assert::AssertionInterfaceTypeTests
 
         using GPUResourcesType = UniqueType<Empty>;
 
+        using CreationParams = UniqueType<Empty>;
+
+        InvalidResultsType(const CreationParams&) {}
+
         GPUResourcesType CreateGPUResources(ScopedCommandContext&)
         {
             return GPUResourcesType{};
@@ -47,6 +55,10 @@ namespace stf::assert::AssertionInterfaceTypeTests
     {
         using TestRunResultsType = ValidTestRunResultsType;
         using GPUResourcesType = UniqueType<Empty>;
+
+        using CreationParams = UniqueType<Empty>;
+
+        CreateGPUResourcesReturnsWrongType(const CreationParams&) {}
 
         auto CreateGPUResources(ScopedCommandContext&)
         {
@@ -59,6 +71,10 @@ namespace stf::assert::AssertionInterfaceTypeTests
         using TestRunResultsType = ValidTestRunResultsType;
         using GPUResourcesType = UniqueType<Empty>;
 
+        using CreationParams = UniqueType<Empty>;
+
+        CreateGPUResourcesAcceptsByConstRef(const CreationParams&) {}
+
         GPUResourcesType CreateGPUResources(const ScopedCommandContext&)
         {
             return GPUResourcesType{};
@@ -69,6 +85,10 @@ namespace stf::assert::AssertionInterfaceTypeTests
     {
         using TestRunResultsType = ValidTestRunResultsType;
         using GPUResourcesType = UniqueType<Empty>;
+
+        using CreationParams = UniqueType<Empty>;
+
+        CreateGPUResourcesAcceptsByValue(const CreationParams&) {}
 
         GPUResourcesType CreateGPUResources(ScopedCommandContext)
         {
@@ -81,7 +101,26 @@ namespace stf::assert::AssertionInterfaceTypeTests
         using TestRunResultsType = ValidTestRunResultsType;
         using GPUResourcesType = UniqueType<Empty>;
 
+        using CreationParams = UniqueType<Empty>;
+
+        CreateGPUResourcesAcceptsByRValueRef(const CreationParams&) {}
+
         GPUResourcesType CreateGPUResources(ScopedCommandContext&&)
+        {
+            return GPUResourcesType{};
+        }
+    };
+
+    struct ConstructorAcceptsWrongType
+    {
+        using TestRunResultsType = ValidTestRunResultsType;
+        using GPUResourcesType = UniqueType<Empty>;
+
+        using CreationParams = UniqueType<Empty>;
+
+        ConstructorAcceptsWrongType(const UniqueType<Empty>&) {}
+
+        GPUResourcesType CreateGPUResources(ScopedCommandContext&)
         {
             return GPUResourcesType{};
         }
@@ -93,4 +132,5 @@ namespace stf::assert::AssertionInterfaceTypeTests
     static_assert(CAssertionInterfaceType<CreateGPUResourcesAcceptsByConstRef>, "Expected this type to be valid for the concept");
     static_assert(!CAssertionInterfaceType<CreateGPUResourcesAcceptsByValue>, "Expected this type to not be valid for the concept");
     static_assert(!CAssertionInterfaceType<CreateGPUResourcesAcceptsByRValueRef>, "Expected this type to not be valid for the concept");
+    static_assert(!CAssertionInterfaceType<ConstructorAcceptsWrongType>, "Expected this type to not be valid for the concept");
 }
