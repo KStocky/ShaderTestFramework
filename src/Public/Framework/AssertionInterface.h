@@ -22,8 +22,10 @@ namespace stf::assert
     template<typename T>
     concept CAssertionInterfaceType =
         CTestRunResultsType<typename T::TestRunResultsType> &&
-        requires(T In, ScopedCommandContext& InContext)
+        requires(T In, typename T::CreationParams InParams, ScopedCommandContext& InContext)
         {
+            T{ InParams };
             { In.CreateGPUResources(InContext) } -> std::same_as<typename T::GPUResourcesType>;
+
         };
 }
