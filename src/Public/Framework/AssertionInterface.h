@@ -7,6 +7,7 @@
 namespace stf
 {
     class ScopedCommandContext;
+    class ScopedCommandShader;
 }
 
 namespace stf::assert
@@ -23,9 +24,14 @@ namespace stf::assert
     template<typename T>
     concept CAssertionInterfaceType =
         CTestRunResultsType<typename T::TestRunResultsType> &&
-        requires(T In, typename T::CreationParams InParams, ScopedCommandContext& InContext)
+        requires(
+            T In, 
+            typename T::CreationParams InParams, 
+            ScopedCommandContext& InContext,
+            ScopedCommandShader& InShader)
         {
             T{ InParams };
             { In.CreateGPUResources(InContext) } -> std::same_as<ExpectedError<typename T::GPUResourcesType>>;
+            { In.BindShaderData(InShader) } -> std::same_as<ExpectedError<void>>;
         };
 }
