@@ -2,6 +2,7 @@
 
 #include "Platform.h"
 #include "Utility/Concepts.h"
+#include "Utility/Error.h"
 
 namespace stf
 {
@@ -25,7 +26,6 @@ namespace stf::assert
         requires(T In, typename T::CreationParams InParams, ScopedCommandContext& InContext)
         {
             T{ InParams };
-            { In.CreateGPUResources(InContext) } -> std::same_as<typename T::GPUResourcesType>;
-
+            { In.CreateGPUResources(InContext) } -> std::same_as<ExpectedError<typename T::GPUResourcesType>>;
         };
 }

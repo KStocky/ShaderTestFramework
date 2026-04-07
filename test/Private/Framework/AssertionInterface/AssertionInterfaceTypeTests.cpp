@@ -58,7 +58,7 @@ namespace stf::assert::AssertionInterfaceTypeTests
 
         using CreateGPUResourcesReturnType = std::conditional_t<
             TypeSpecifiers.CreateGPUResourcesReturnType == ECreateGPUResourcesReturnType::CorrectType,
-            GPUResourcesType,
+            ExpectedError<GPUResourcesType>,
             UniqueType<Empty>
         >;
 
