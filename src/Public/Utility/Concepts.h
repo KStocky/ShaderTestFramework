@@ -161,4 +161,10 @@ namespace stf
         { InOutStream << In } -> std::same_as<std::ostream&>;
     };
 
+    template<typename T>
+    concept CEnumType = std::is_enum_v<T>;
+
+    template<typename T>
+    concept CScopedEnumType = CEnumType<T> && !std::is_convertible_v<T, std::underlying_type_t<T>>;
+
 }
