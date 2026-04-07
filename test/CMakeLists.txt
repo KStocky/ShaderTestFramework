@@ -217,6 +217,7 @@ set(SOURCES
     Private/Framework/TestDataBufferProcessorTests.cpp
     Private/Stats/ScopedObjectTests.cpp
     Private/Stats/StatSystemTests.cpp
+    Private/TestUtilities/EnumToTypeMapTests.cpp
     Private/TestUtilities/Noisy.cpp
     Private/TestUtilities/NoisyTests.cpp
     Private/TestUtilities/UniqueTypeTests.cpp
@@ -236,6 +237,7 @@ set(SOURCES
     Private/Utility/VersionedIndexTests.cpp
     Public/D3D12/Shader/ShaderCompilerTestsCommon.h
     Public/Framework/HLSLFramework/HLSLFrameworkTestsCommon.h
+    Public/TestUtilities/EnumToTypeMap.h
     Public/TestUtilities/ErrorMatchers.h
     Public/TestUtilities/Noisy.h
     Public/TestUtilities/UniqueType.h
