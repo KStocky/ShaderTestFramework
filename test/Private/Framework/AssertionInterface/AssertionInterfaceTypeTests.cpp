@@ -5,6 +5,8 @@
 #include "TestUtilities/EnumToTypeMap.h"
 #include "TestUtilities/UniqueType.h"
 
+#include "Utility/Type.h"
+
 namespace stf::assert::AssertionInterfaceTypeTests
 {
     struct Empty {};
@@ -24,10 +26,10 @@ namespace stf::assert::AssertionInterfaceTypeTests
     enum class EParamType : u8
     {
         NonConstRef,
-        NonConstRefWrongType,
         ConstRef,
         RValueRef,
-        Value
+        Value,
+        WrongType
     };
 
     enum class EReturnType : u8
@@ -36,21 +38,21 @@ namespace stf::assert::AssertionInterfaceTypeTests
         WrongType
     };
 
-    enum class EConstructorParamType : u8
-    {
-        CorrectType,
-        WrongType
-    };
-
     struct TypeSpecifiersType
     {
         bool ValidTestRunResultsType = true;
+
+        EParamType ConstructorParamType = EParamType::Value;
+
         EReturnType CreateGPUResourcesReturnType = EReturnType::CorrectType;
         EParamType CreateGPUResourcesParamType = EParamType::NonConstRef;
-        EConstructorParamType ConstructorParamType = EConstructorParamType::CorrectType;
-        EReturnType BindShaderDataReturnType = EReturnType::CorrectType;
-        EParamType BindShaderDataParamType = EParamType::NonConstRef;
 
+        EReturnType BindShaderDataReturnType = EReturnType::CorrectType;
+        EParamType BindShaderDataContextParamType = EParamType::NonConstRef;
+        EParamType BindShaderDataResourcesParamType = EParamType::ConstRef;
+
+        EReturnType ReadbackResultsReturnType = EReturnType::CorrectType;
+        EParamType ReadbackResultsParamType = EParamType::ConstRef;
     };
 
     template<TypeSpecifiersType TypeSpecifiers = TypeSpecifiersType{}>
@@ -60,49 +62,30 @@ namespace stf::assert::AssertionInterfaceTypeTests
         using GPUResourcesType = UniqueType<Empty>;
         using CreationParams = UniqueType<Empty>;
 
-        using CreateGPUResourcesParamTypeMapping =
+        template<typename BaseType, typename WrongType>
+        using ParamTypeMapping =
             EnumValsToTypes<
-                EnumToType<EParamType::NonConstRef, ScopedCommandContext&>,
-                EnumToType<EParamType::ConstRef, const ScopedCommandContext&>,
-                EnumToType<EParamType::RValueRef, ScopedCommandContext&&>,
-                EnumToType<EParamType::Value, ScopedCommandContext>,
-                EnumToType<EParamType::NonConstRefWrongType, Empty&>
+                EnumToType<EParamType::NonConstRef, BaseType&>,
+                EnumToType<EParamType::ConstRef, const BaseType&>,
+                EnumToType<EParamType::RValueRef, BaseType&&>,
+                EnumToType<EParamType::Value, BaseType>,
+                EnumToType<EParamType::WrongType, WrongType>
             >;
 
-        using CreateGPUResourcesParamType = CreateGPUResourcesParamTypeMapping::template FindTypeOr<TypeSpecifiers.CreateGPUResourcesParamType, UniqueType<Empty>>;
-
-        using CreateGPUResourcesReturnTypeMapping =
+        template<typename CorrectType, typename WrongType>
+        using ReturnTypeMapping =
             EnumValsToTypes<
-                EnumToType<EReturnType::CorrectType, ExpectedError<GPUResourcesType>>,
-                EnumToType<EReturnType::WrongType, UniqueType<Empty>>
-            >;
-        using CreateGPUResourcesReturnType = CreateGPUResourcesReturnTypeMapping::template FindTypeOr<TypeSpecifiers.CreateGPUResourcesReturnType, UniqueType<Empty>>;
-
-        using ConstructorParamTypeMapping =
-            EnumValsToTypes<
-                EnumToType<EConstructorParamType::CorrectType, CreationParams>,
-                EnumToType<EConstructorParamType::WrongType, UniqueType<Empty>>
+                EnumToType<EReturnType::CorrectType, CorrectType>,
+                EnumToType<EReturnType::WrongType, WrongType>
             >;
 
-        using ConstructorParamType = ConstructorParamTypeMapping::template FindTypeOr<TypeSpecifiers.ConstructorParamType, UniqueType<Empty>>;
+        using ConstructorParamType = ParamTypeMapping<CreationParams, Empty>::template FindTypeOr<TypeSpecifiers.ConstructorParamType, UniqueType<Empty>>;
 
-        using BindShaderDataParamTypeMapping =
-            EnumValsToTypes<
-                EnumToType<EParamType::NonConstRef, ScopedCommandShader&>,
-                EnumToType<EParamType::ConstRef, const ScopedCommandShader&>,
-                EnumToType<EParamType::RValueRef, ScopedCommandShader&&>,
-                EnumToType<EParamType::Value, ScopedCommandShader>,
-                EnumToType<EParamType::NonConstRefWrongType, Empty&>
-            >;
-
-        using BindShaderDataParamType = BindShaderDataParamTypeMapping::template FindTypeOr<TypeSpecifiers.BindShaderDataParamType, UniqueType<Empty>>;
-
-        using BindShaderDataReturnTypeMapping =
-            EnumValsToTypes<
-                EnumToType<EReturnType::CorrectType, ExpectedError<void>>,
-                EnumToType<EReturnType::WrongType, UniqueType<Empty>>
-            >;
-        using BindShaderDataReturnType = BindShaderDataReturnTypeMapping::template FindTypeOr<TypeSpecifiers.BindShaderDataReturnType, UniqueType<Empty>>;
+        using CreateGPUResourcesParamType = ParamTypeMapping<ScopedCommandContext, UniqueType<Empty>&>::template FindTypeOr<TypeSpecifiers.CreateGPUResourcesParamType, UniqueType<Empty>>;
+        using CreateGPUResourcesReturnType = ReturnTypeMapping<ExpectedError<GPUResourcesType>, UniqueType<Empty>>::template FindTypeOr<TypeSpecifiers.CreateGPUResourcesReturnType, UniqueType<Empty>>;
+        using BindShaderDataContextParamType = ParamTypeMapping<ScopedCommandShader, UniqueType<Empty>&>::template FindTypeOr<TypeSpecifiers.BindShaderDataContextParamType, UniqueType<Empty>>;
+        using BindShaderDataResourceParamType = ParamTypeMapping<GPUResourcesType, const UniqueType<Empty>&>::template FindTypeOr<TypeSpecifiers.BindShaderDataResourcesParamType, UniqueType<Empty>>;
+        using BindShaderDataReturnType = ReturnTypeMapping<ExpectedError<void>, UniqueType<Empty>>::template FindTypeOr<TypeSpecifiers.BindShaderDataReturnType, UniqueType<Empty>>;
 
         TestInterface(ConstructorParamType)
         {
@@ -112,27 +95,32 @@ namespace stf::assert::AssertionInterfaceTypeTests
         {
             return CreateGPUResourcesReturnType{};
         }
-
-        BindShaderDataReturnType BindShaderData(BindShaderDataParamType)
+        
+        BindShaderDataReturnType BindShaderData(BindShaderDataContextParamType, BindShaderDataResourceParamType)
         {
             return BindShaderDataReturnType{};
         }
     };
 
-    static_assert(CAssertionInterfaceType<TestInterface<>>, "Expected this type to be valid for the concept");
+    static_assert( CAssertionInterfaceType< TestInterface <> >, "Expected this type to be valid for the concept");
     static_assert(!CAssertionInterfaceType< TestInterface < TypeSpecifiersType{ .ValidTestRunResultsType = false } >> , "Expected this type to not be valid for the concept");
 
+    static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .ConstructorParamType = EParamType::NonConstRef } >> , "Expected this type to not be valid for the concept");
+
     static_assert(!CAssertionInterfaceType< TestInterface < TypeSpecifiersType{ .CreateGPUResourcesReturnType = EReturnType::WrongType } >>, "Expected this type to not be valid for the concept");
-    static_assert(CAssertionInterfaceType< TestInterface < TypeSpecifiersType{ .CreateGPUResourcesParamType = EParamType::ConstRef } >>, "Expected this type to be valid for the concept");
+    static_assert( CAssertionInterfaceType< TestInterface < TypeSpecifiersType{ .CreateGPUResourcesParamType = EParamType::ConstRef } >>, "Expected this type to be valid for the concept");
     static_assert(!CAssertionInterfaceType< TestInterface < TypeSpecifiersType{ .CreateGPUResourcesParamType = EParamType::Value } >>, "Expected this type to not be valid for the concept");
     static_assert(!CAssertionInterfaceType< TestInterface < TypeSpecifiersType{ .CreateGPUResourcesParamType = EParamType::RValueRef } >>, "Expected this type to not be valid for the concept");
-    static_assert(!CAssertionInterfaceType< TestInterface < TypeSpecifiersType{ .CreateGPUResourcesParamType = EParamType::NonConstRefWrongType } >>, "Expected this type to not be valid for the concept");
-
-    static_assert(!CAssertionInterfaceType< TestInterface < TypeSpecifiersType{ .ConstructorParamType = EConstructorParamType::WrongType } >>, "Expected this type to not be valid for the concept");
+    static_assert(!CAssertionInterfaceType< TestInterface < TypeSpecifiersType{ .CreateGPUResourcesParamType = EParamType::WrongType } >>, "Expected this type to not be valid for the concept");
 
     static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .BindShaderDataReturnType = EReturnType::WrongType } >> , "Expected this type to not be valid for the concept");
-    static_assert(CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .BindShaderDataParamType = EParamType::ConstRef } >> , "Expected this type to be valid for the concept");
-    static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .BindShaderDataParamType = EParamType::Value } >> , "Expected this type to not be valid for the concept");
-    static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .BindShaderDataParamType = EParamType::RValueRef } >> , "Expected this type to not be valid for the concept");
-    static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .BindShaderDataParamType = EParamType::NonConstRefWrongType } >> , "Expected this type to not be valid for the concept");
+    static_assert( CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .BindShaderDataContextParamType = EParamType::ConstRef } >> , "Expected this type to be valid for the concept");
+    static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .BindShaderDataContextParamType = EParamType::Value } >> , "Expected this type to not be valid for the concept");
+    static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .BindShaderDataContextParamType = EParamType::RValueRef } >> , "Expected this type to not be valid for the concept");
+    static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .BindShaderDataContextParamType = EParamType::WrongType } >> , "Expected this type to not be valid for the concept");
+    static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .BindShaderDataResourcesParamType = EParamType::NonConstRef } >> , "Expected this type to be valid for the concept");
+    static_assert( CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .BindShaderDataResourcesParamType = EParamType::Value } >> , "Expected this type to not be valid for the concept");
+    static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .BindShaderDataResourcesParamType = EParamType::RValueRef } >> , "Expected this type to not be valid for the concept");
+    static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .BindShaderDataResourcesParamType = EParamType::WrongType } >> , "Expected this type to not be valid for the concept");
+
 }
