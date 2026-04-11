@@ -34,6 +34,6 @@ namespace stf::assert
             T{ InParams };
             { In.CreateGPUResources(InContext) } -> std::same_as<ExpectedError<typename T::GPUResourcesType>>;
             { In.BindShaderData(InShader, InResources) } -> std::same_as<ExpectedError<void>>;
-            { In.ReadbackResults(InResources) } -> std::same_as<ExpectedError<typename T::GPUReadbackResourcesType>>;
+            { In.QueueReadbacks(InResources) } -> std::same_as<ExpectedError<typename T::GPUReadbackResourcesType>>;
         };
 }

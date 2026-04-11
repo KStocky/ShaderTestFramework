@@ -51,8 +51,8 @@ namespace stf::assert::AssertionInterfaceTypeTests
         EParamType BindShaderDataContextParamType = EParamType::NonConstRef;
         EParamType BindShaderDataResourcesParamType = EParamType::ConstRef;
 
-        EReturnType ReadbackResultsReturnType = EReturnType::CorrectType;
-        EParamType ReadbackResultsParamType = EParamType::ConstRef;
+        EReturnType QueueReadbacksReturnType = EReturnType::CorrectType;
+        EParamType QueueReadbacksParamType = EParamType::ConstRef;
     };
 
     template<TypeSpecifiersType TypeSpecifiers = TypeSpecifiersType{}>
@@ -89,8 +89,8 @@ namespace stf::assert::AssertionInterfaceTypeTests
         using BindShaderDataResourceParamType = ParamTypeMapping<GPUResourcesType, const UniqueType<Empty>&>::template FindTypeOr<TypeSpecifiers.BindShaderDataResourcesParamType, UniqueType<Empty>>;
         using BindShaderDataReturnType = ReturnTypeMapping<ExpectedError<void>, UniqueType<Empty>>::template FindTypeOr<TypeSpecifiers.BindShaderDataReturnType, UniqueType<Empty>>;
 
-        using ReadbackResultsParamType = ParamTypeMapping<GPUResourcesType, const UniqueType<Empty>&>::template FindTypeOr<TypeSpecifiers.ReadbackResultsParamType, UniqueType<Empty>>;
-        using ReadbackResultsReturnType = ReturnTypeMapping<ExpectedError<GPUReadbackResourcesType>, UniqueType<Empty>>::template FindTypeOr<TypeSpecifiers.ReadbackResultsReturnType, UniqueType<Empty>>;
+        using QueueReadbacksParamType = ParamTypeMapping<GPUResourcesType, const UniqueType<Empty>&>::template FindTypeOr<TypeSpecifiers.QueueReadbacksParamType, UniqueType<Empty>>;
+        using QueueReadbacksReturnType = ReturnTypeMapping<ExpectedError<GPUReadbackResourcesType>, UniqueType<Empty>>::template FindTypeOr<TypeSpecifiers.QueueReadbacksReturnType, UniqueType<Empty>>;
 
         TestInterface(ConstructorParamType)
         {
@@ -106,9 +106,9 @@ namespace stf::assert::AssertionInterfaceTypeTests
             return BindShaderDataReturnType{};
         }
 
-        ReadbackResultsReturnType ReadbackResults(ReadbackResultsParamType)
+        QueueReadbacksReturnType QueueReadbacks(QueueReadbacksParamType)
         {
-            return ReadbackResultsReturnType{};
+            return QueueReadbacksReturnType{};
         }
     };
 
@@ -133,9 +133,9 @@ namespace stf::assert::AssertionInterfaceTypeTests
     static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .BindShaderDataResourcesParamType = EParamType::RValueRef } >> , "Expected this type to not be valid for the concept");
     static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .BindShaderDataResourcesParamType = EParamType::WrongType } >> , "Expected this type to not be valid for the concept");
 
-    static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .ReadbackResultsReturnType = EReturnType::WrongType } >> , "Expected this type to not be valid for the concept");
-    static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .ReadbackResultsParamType = EParamType::NonConstRef } >> , "Expected this type to be valid for the concept");
-    static_assert( CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .ReadbackResultsParamType = EParamType::Value } >> , "Expected this type to not be valid for the concept");
-    static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .ReadbackResultsParamType = EParamType::RValueRef } >> , "Expected this type to not be valid for the concept");
-    static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .ReadbackResultsParamType = EParamType::WrongType } >> , "Expected this type to not be valid for the concept");
+    static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .QueueReadbacksReturnType = EReturnType::WrongType } >> , "Expected this type to not be valid for the concept");
+    static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .QueueReadbacksParamType = EParamType::NonConstRef } >> , "Expected this type to be valid for the concept");
+    static_assert( CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .QueueReadbacksParamType = EParamType::Value } >> , "Expected this type to not be valid for the concept");
+    static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .QueueReadbacksParamType = EParamType::RValueRef } >> , "Expected this type to not be valid for the concept");
+    static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .QueueReadbacksParamType = EParamType::WrongType } >> , "Expected this type to not be valid for the concept");
 }
