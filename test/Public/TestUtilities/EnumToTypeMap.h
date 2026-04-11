@@ -42,14 +42,43 @@ namespace stf
         static constexpr auto value = Val;
     };
 
-    template<CEnumType EnumType, typename MappingType>
-    struct EnumValsToTypes;
-
-    template<CEnumType EnumType, EnumType... EnumVals, typename... Ts>
-    struct EnumValsToTypes<EnumType, Tuple<EnumToType<EnumVals, Ts>...>>
+    namespace detail
     {
-        using TupleType = Tuple<EnumToType<EnumVals, Ts>...>;
-        template<EnumType ValToFind, typename DefaultType>
+        template<typename T>
+        struct TIsInstantiationOfEnumToType : std::bool_constant<false> {};
+
+        template<auto EnumVal, typename T>
+            requires CEnumType<decltype(EnumVal)>
+        struct TIsInstantiationOfEnumToType<EnumToType<EnumVal, T>> : std::bool_constant<true> {};
+
+
+        template<typename... T>
+        concept CValidEnumToTypeMappings = 
+            (TIsInstantiationOfEnumToType<T>::value && ...) &&
+            requires(T... In)
+        {
+            {
+                [] <auto... EnumVals, typename... Ts>(EnumToType<EnumVals, Ts>...)
+                {
+                    if constexpr (CAllSameType<decltype(EnumVals)...>)
+                    {
+                        return std::bool_constant<true>{};
+                    }
+                    else
+                    {
+                        return std::bool_constant<false>{};
+                    }
+                }(In...)
+            } -> std::same_as<std::bool_constant<true>>;
+        };
+    }
+
+    template<typename... Ts>
+        requires detail::CValidEnumToTypeMappings<Ts...>
+    struct EnumValsToTypes
+    {
+        using TupleType = Tuple<Ts...>;
+        template<auto ValToFind, typename DefaultType>
         using FindTypeOr = typename detail::EnumValToTypeFinder<ValToFind, DefaultType, std::tuple_size_v<TupleType> -1, TupleType>::type;
     };
 }
