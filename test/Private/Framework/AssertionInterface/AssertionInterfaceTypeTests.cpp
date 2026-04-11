@@ -77,60 +77,45 @@ namespace stf::assert::AssertionInterfaceTypeTests
 
         using CreateGPUResourcesParamTypeMapping =
             EnumValsToTypes<
-                ECreateGPUResourcesParamType,
-                Tuple<
-                    EnumToType<ECreateGPUResourcesParamType::NonConstRef, ScopedCommandContext&>,
-                    EnumToType<ECreateGPUResourcesParamType::ConstRef, const ScopedCommandContext&>,
-                    EnumToType<ECreateGPUResourcesParamType::RValueRef, ScopedCommandContext&&>,
-                    EnumToType<ECreateGPUResourcesParamType::Value, ScopedCommandContext>,
-                    EnumToType<ECreateGPUResourcesParamType::NonConstRefWrongType, Empty&>
-                >
+                EnumToType<ECreateGPUResourcesParamType::NonConstRef, ScopedCommandContext&>,
+                EnumToType<ECreateGPUResourcesParamType::ConstRef, const ScopedCommandContext&>,
+                EnumToType<ECreateGPUResourcesParamType::RValueRef, ScopedCommandContext&&>,
+                EnumToType<ECreateGPUResourcesParamType::Value, ScopedCommandContext>,
+                EnumToType<ECreateGPUResourcesParamType::NonConstRefWrongType, Empty&>
             >;
 
         using CreateGPUResourcesParamType = CreateGPUResourcesParamTypeMapping::template FindTypeOr<TypeSpecifiers.CreateGPUResourcesParamType, UniqueType<Empty>>;
 
         using CreateGPUResourcesReturnTypeMapping =
             EnumValsToTypes<
-            ECreateGPUResourcesReturnType,
-                Tuple<
-                    EnumToType<ECreateGPUResourcesReturnType::CorrectType, ExpectedError<GPUResourcesType>>,
-                    EnumToType<ECreateGPUResourcesReturnType::WrongType, UniqueType<Empty>>
-                >
+                EnumToType<ECreateGPUResourcesReturnType::CorrectType, ExpectedError<GPUResourcesType>>,
+                EnumToType<ECreateGPUResourcesReturnType::WrongType, UniqueType<Empty>>
             >;
         using CreateGPUResourcesReturnType = CreateGPUResourcesReturnTypeMapping::template FindTypeOr<TypeSpecifiers.CreateGPUResourcesReturnType, UniqueType<Empty>>;
 
         using ConstructorParamTypeMapping =
             EnumValsToTypes<
-                EConstructorParamType,
-                Tuple<
-                    EnumToType<EConstructorParamType::CorrectType, CreationParams>,
-                    EnumToType<EConstructorParamType::WrongType, UniqueType<Empty>>
-                >
+                EnumToType<EConstructorParamType::CorrectType, CreationParams>,
+                EnumToType<EConstructorParamType::WrongType, UniqueType<Empty>>
             >;
 
         using ConstructorParamType = ConstructorParamTypeMapping::template FindTypeOr<TypeSpecifiers.ConstructorParamType, UniqueType<Empty>>;
 
         using BindShaderDataParamTypeMapping =
             EnumValsToTypes<
-            EBindShaderDataParamType,
-                Tuple<
-                    EnumToType<EBindShaderDataParamType::NonConstRef, ScopedCommandShader&>,
-                    EnumToType<EBindShaderDataParamType::ConstRef, const ScopedCommandShader&>,
-                    EnumToType<EBindShaderDataParamType::RValueRef, ScopedCommandShader&&>,
-                    EnumToType<EBindShaderDataParamType::Value, ScopedCommandShader>,
-                    EnumToType<EBindShaderDataParamType::NonConstRefWrongType, Empty&>
-                >
+                EnumToType<EBindShaderDataParamType::NonConstRef, ScopedCommandShader&>,
+                EnumToType<EBindShaderDataParamType::ConstRef, const ScopedCommandShader&>,
+                EnumToType<EBindShaderDataParamType::RValueRef, ScopedCommandShader&&>,
+                EnumToType<EBindShaderDataParamType::Value, ScopedCommandShader>,
+                EnumToType<EBindShaderDataParamType::NonConstRefWrongType, Empty&>
             >;
 
         using BindShaderDataParamType = BindShaderDataParamTypeMapping::template FindTypeOr<TypeSpecifiers.BindShaderDataParamType, UniqueType<Empty>>;
 
         using BindShaderDataReturnTypeMapping =
             EnumValsToTypes<
-            EBindShaderDataReturnType,
-                Tuple<
-                    EnumToType<EBindShaderDataReturnType::CorrectType, ExpectedError<void>>,
-                    EnumToType<EBindShaderDataReturnType::WrongType, UniqueType<Empty>>
-                >
+                EnumToType<EBindShaderDataReturnType::CorrectType, ExpectedError<void>>,
+                EnumToType<EBindShaderDataReturnType::WrongType, UniqueType<Empty>>
             >;
         using BindShaderDataReturnType = BindShaderDataReturnTypeMapping::template FindTypeOr<TypeSpecifiers.BindShaderDataReturnType, UniqueType<Empty>>;
 
