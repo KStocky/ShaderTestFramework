@@ -167,4 +167,22 @@ namespace stf
     template<typename T>
     concept CScopedEnumType = CEnumType<T> && !std::is_convertible_v<T, std::underlying_type_t<T>>;
 
+    template<typename... Ts>
+    concept CAllSameType = 
+        []()
+        {
+            constexpr auto sizeOfPack = sizeof...(Ts);
+            if constexpr (sizeOfPack == 0)
+            {
+                return false;
+            }
+            else if constexpr (sizeOfPack == 1)
+            {
+                return true;
+            }
+            else
+            {
+                return (std::is_same_v<TFirstType<Ts...>, Ts> && ...);
+            }
+        }();
 }
