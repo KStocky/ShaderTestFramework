@@ -69,4 +69,17 @@ namespace stf
     {
         static constexpr bool Value = true;
     };
+
+    namespace FirstTypePrivate
+    {
+        template<typename T, typename... U>
+        struct FirstTypeHelper
+        {
+            using Type = T;
+        };
+    }
+    
+
+    template<typename... T>
+    using TFirstType = typename FirstTypePrivate::FirstTypeHelper<T...>::Type;
 }
