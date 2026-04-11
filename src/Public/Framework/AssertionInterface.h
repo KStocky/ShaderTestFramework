@@ -26,12 +26,14 @@ namespace stf::assert
         CTestRunResultsType<typename T::TestRunResultsType> &&
         requires(
             T In, 
-            typename T::CreationParams InParams, 
+            const typename T::CreationParams& InParams,
+            const typename T::GPUResourcesType& InResources,
             ScopedCommandContext& InContext,
             ScopedCommandShader& InShader)
         {
             T{ InParams };
             { In.CreateGPUResources(InContext) } -> std::same_as<ExpectedError<typename T::GPUResourcesType>>;
-            { In.BindShaderData(InShader) } -> std::same_as<ExpectedError<void>>;
+            { In.BindShaderData(InShader, InResources) } -> std::same_as<ExpectedError<void>>;
+            { In.ReadbackResults(InResources) } -> std::same_as<ExpectedError<typename T::GPUReadbackResourcesType>>;
         };
 }
