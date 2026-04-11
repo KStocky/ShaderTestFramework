@@ -509,3 +509,14 @@ namespace stf::EnumTypeTests
     static_assert(CScopedEnumType<ScopedEnumU8>);
     static_assert(!CScopedEnumType<NotEnum>);
 }
+
+namespace stf::AllSameTypeTests
+{
+    struct A {};
+    struct B {};
+
+    static_assert(!CAllSameType<>);
+    static_assert(CAllSameType<A>);
+    static_assert(CAllSameType<A,A,A,A,A,A>);
+    static_assert(!CAllSameType<A,A,B,A,A,A>);
+}
