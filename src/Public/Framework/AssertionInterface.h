@@ -6,6 +6,7 @@
 
 namespace stf
 {
+    class CommandEngine;
     class ScopedCommandContext;
     class ScopedCommandShader;
 }
@@ -30,12 +31,13 @@ namespace stf::assert
             const typename T::GPUResourcesType& InResources,
             const typename T::GPUReadbackResourcesType& InReadbacks,
             ScopedCommandContext& InContext,
-            ScopedCommandShader& InShader)
+            ScopedCommandShader& InShader,
+            CommandEngine& InEngine)
         {
             T{ InParams };
             { In.CreateGPUResources(InContext) } -> std::same_as<ExpectedError<typename T::GPUResourcesType>>;
             { In.BindShaderData(InShader, InResources) } -> std::same_as<ExpectedError<void>>;
-            { In.QueueReadbacks(InResources) } -> std::same_as<ExpectedError<typename T::GPUReadbackResourcesType>>;
-            { In.ProcessReadbacks(InReadbacks) } -> std::same_as<ExpectedError<typename T::TestRunResultsType>>;
+            { In.QueueReadbacks(InContext, InResources) } -> std::same_as<ExpectedError<typename T::GPUReadbackResourcesType>>;
+            { In.ProcessReadbacks(InEngine, InReadbacks) } -> std::same_as<ExpectedError<typename T::TestRunResultsType>>;
         };
 }
