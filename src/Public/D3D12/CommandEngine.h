@@ -105,7 +105,8 @@ namespace stf
         ScopedCommandShader(
             const SharedPtr<Shader>& InShader, 
             const SharedPtr<ScopedGPUResourceManager>& InResourceManager,
-            const SharedPtr<CommandList>& InList);
+            const SharedPtr<CommandList>& InList,
+            const uint3 InDipatchConfig);
         ScopedCommandShader(const ScopedCommandShader&) = delete;
         ScopedCommandShader(ScopedCommandShader&&) = delete;
         ScopedCommandShader& operator=(const ScopedCommandShader&) = delete;
@@ -114,11 +115,16 @@ namespace stf
         ExpectedError<void> StageBindingData(const ShaderBinding& InBinding);
         ExpectedError<void> StageBindlessResource(std::string InBindingName, const GPUResourceManager::BufferUAVHandle InHandle);
 
+        uint3 GetThreadgroupCount() const;
+        uint3 GetThreadCount() const;
+        uint3 GetThreadGroupSize() const;
+
     private:
 
         SharedPtr<Shader> m_Shader;
         SharedPtr<ScopedGPUResourceManager> m_ResourceManager;
         SharedPtr<CommandList> m_List;
+        uint3 m_DispatchConfig;
     };
 
     class ScopedCommandContext
@@ -164,7 +170,7 @@ namespace stf
         ExpectedError<void> Dispatch(const uint3 InDispatchConfig, const SharedPtr<Shader>& InShader, BindFunc&& InFunc)
         {
             PreBindShader(InShader);
-            ScopedCommandShader shader(InShader, m_ResourceManager, m_List);
+            ScopedCommandShader shader(InShader, m_ResourceManager, m_List, InDispatchConfig);
 
             return InFunc(shader)
                 .transform(

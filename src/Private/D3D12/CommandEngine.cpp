@@ -96,11 +96,13 @@ namespace stf
     ScopedCommandShader::ScopedCommandShader(
         const SharedPtr<Shader>& InShader, 
         const SharedPtr<ScopedGPUResourceManager>& InResourceManager,
-        const SharedPtr<CommandList>& InList
+        const SharedPtr<CommandList>& InList,
+        const uint3 InDipatchConfig
     )
         : m_Shader(InShader)
         , m_ResourceManager(InResourceManager)
         , m_List(InList)
+        , m_DispatchConfig(InDipatchConfig)
     {
     }
 
@@ -123,6 +125,21 @@ namespace stf
                 {
                     m_ResourceManager->SetUAV(*m_List, InHandle);
                 });
+    }
+
+    uint3 ScopedCommandShader::GetThreadgroupCount() const
+    {
+        return m_DispatchConfig;
+    }
+
+    uint3 ScopedCommandShader::GetThreadCount() const
+    {
+        return GetThreadgroupCount() * GetThreadGroupSize();
+    }
+
+    uint3 ScopedCommandShader::GetThreadGroupSize() const
+    {
+        return m_Shader->GetThreadGroupSize();
     }
 
     ScopedCommandContext::ScopedCommandContext(CommandEngineToken,
@@ -192,21 +209,21 @@ namespace stf
             {
                 switch (InStagingInfo.Type)
                 {
-                case ShaderBindingMap::EBindType::RootConstants:
-                {
-                    m_List->SetComputeRoot32BitConstants(InRootParamIndex, std::span{ InStagingInfo.Buffer }, 0);
-                    break;
-                }
-                case ShaderBindingMap::EBindType::RootDescriptor:
-                {
-                    const auto cbv = CreateCBV(std::as_bytes(std::span{ InStagingInfo.Buffer }));
-                    SetRootDescriptor(InRootParamIndex, cbv);
-                    break;
-                }
-                default:
-                {
-                    std::unreachable();
-                }
+                    case ShaderBindingMap::EBindType::RootConstants:
+                    {
+                        m_List->SetComputeRoot32BitConstants(InRootParamIndex, std::span{ InStagingInfo.Buffer }, 0);
+                        break;
+                    }
+                    case ShaderBindingMap::EBindType::RootDescriptor:
+                    {
+                        const auto cbv = CreateCBV(std::as_bytes(std::span{ InStagingInfo.Buffer }));
+                        SetRootDescriptor(InRootParamIndex, cbv);
+                        break;
+                    }
+                    default:
+                    {
+                        std::unreachable();
+                    }
                 }
             }
         );
