@@ -187,7 +187,7 @@ namespace stf
                                     std::memcpy(&data, allocationData.data(), sizeof(AssertionsV1::AllocationBufferData));
                                     const auto assertData = InAssertData.Get();
 
-                                    return ProcessTestDataBuffer(data, dispatchDimensions, InTestDesc.TestBufferLayout, assertData, m_ByteReaderMap);
+                                    return ProcessTestDataBuffer(data, InTestDesc.TestBufferLayout, assertData, m_ByteReaderMap);
                                 });
                         });
                     
@@ -213,20 +213,5 @@ namespace stf
                 },
                 .Flags = D3D12_PIPELINE_STATE_FLAG_NONE
             });
-    }
-
-    AssertionsV1::Results ShaderTestDriver::ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer, const uint3 InDispatchDimensions, const AssertionsV1::TestDataBufferLayout& InTestDataLayout) const
-    {
-        const auto mappedAllocationData = InAllocationBuffer.Map();
-        const auto allocationData = mappedAllocationData.Get();
-
-        AssertionsV1::AllocationBufferData data;
-
-        std::memcpy(&data, allocationData.data(), sizeof(AssertionsV1::AllocationBufferData));
-
-        const auto mappedAssertData = InAssertBuffer.Map();
-        const auto assertData = mappedAssertData.Get();
-
-        return AssertionsV1::ProcessTestDataBuffer(data, InDispatchDimensions, InTestDataLayout, assertData, m_ByteReaderMap);
     }
 }

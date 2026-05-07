@@ -50,7 +50,6 @@ namespace stf
     private:
 
         SharedPtr<PipelineState> CreatePipelineState(const RootSignature& InRootSig, IDxcBlob* InShader) const;
-        AssertionsV1::Results ReadbackResults(const GPUResource& InAllocationBuffer, const GPUResource& InAssertBuffer, const uint3 InDispatchDimensions, const AssertionsV1::TestDataBufferLayout& InTestDataLayout) const;
 
         SharedPtr<GPUDevice> m_Device;
         SharedPtr<CommandEngine> m_CommandEngine;

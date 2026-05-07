@@ -49,7 +49,6 @@ namespace stf::AssertionsV1
         std::vector<SectionInfoMetaData> Sections{};
         u32 NumSucceeded = 0;
         u32 NumFailed = 0;
-        uint3 DispatchDimensions{};
 
         friend bool operator==(const TestRunResults&, const TestRunResults&) = default;
         friend std::ostream& operator<<(std::ostream& InOs, const TestRunResults& In);
