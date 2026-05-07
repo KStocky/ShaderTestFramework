@@ -1,7 +1,7 @@
 #include "/Test/STF/ShaderTestFramework.hlsli"
 
 _Static_assert(
-    sizeof(stf::AssertionsV1::detail::HLSLAssertMetaData) == 32u, 
+    sizeof(stf::AssertionsV1::detail::HLSLAssertMetaData) == 36u, 
     "The size of this struct must match the size of HLSLAssertMetaData in TestDataBufferProcessor.h");
 
 [numthreads(1,1,1)]
@@ -21,7 +21,7 @@ void GIVEN_ZeroAssertsRecorded_WHEN_Ran_THEN_AssertBufferInfoAsExpected()
 [numthreads(1,1,1)]
 void GIVEN_FiveAssertsRecordedAndNoData_WHEN_Ran_THEN_AssertBufferInfoAsExpected()
 {
-    const uint bufferSize = 5 * sizeof(stf::AssertionsV1::detail::HLSLAssertMetaData);
+    const uint bufferSize = ttl::aligned_offset(5 * sizeof(stf::AssertionsV1::detail::HLSLAssertMetaData), 8u);
 
     ASSERT(AreEqual, bufferSize, stf::AssertionsV1::detail::Asserts.SizeInBytesOfSection());
     ASSERT(AreEqual, 0u, stf::AssertionsV1::detail::Asserts.SizeInBytesOfData());
@@ -36,7 +36,7 @@ void GIVEN_FiveAssertsRecordedAndNoData_WHEN_Ran_THEN_AssertBufferInfoAsExpected
 void GIVEN_FiveAssertsRecordedAnd200BytesOfData_WHEN_Ran_THEN_AssertBufferInfoAsExpected()
 {
 
-    const uint bufferSize = 5 * sizeof(stf::AssertionsV1::detail::HLSLAssertMetaData) + 200;
+    const uint bufferSize = ttl::aligned_offset(5 * sizeof(stf::AssertionsV1::detail::HLSLAssertMetaData), 8u) + 200;
 
     ASSERT(AreEqual, bufferSize, stf::AssertionsV1::detail::Asserts.SizeInBytesOfSection());
     ASSERT(AreEqual, 200u, stf::AssertionsV1::detail::Asserts.SizeInBytesOfData());
@@ -52,7 +52,7 @@ void GIVEN_FiveAssertsRecordedAndNonMultipleOf8BytesOfData_WHEN_Ran_THEN_AssertB
 {
     const uint requestedByteSize = 97;
     const uint expectedByteSize = 104;
-    const uint bufferSize = 5 * sizeof(stf::AssertionsV1::detail::HLSLAssertMetaData) + expectedByteSize;
+    const uint bufferSize = ttl::aligned_offset(5 * sizeof(stf::AssertionsV1::detail::HLSLAssertMetaData), 8u) + expectedByteSize;
 
     ASSERT(AreEqual, bufferSize, stf::AssertionsV1::detail::Asserts.SizeInBytesOfSection());
     ASSERT(AreEqual, expectedByteSize, stf::AssertionsV1::detail::Asserts.SizeInBytesOfData());

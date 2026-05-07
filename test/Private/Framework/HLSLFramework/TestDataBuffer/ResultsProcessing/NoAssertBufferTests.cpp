@@ -25,8 +25,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
     {
         .FailedAsserts = {},
         .NumSucceeded = numSucceeded,
-        .NumFailed = numFailed,
-        .DispatchDimensions = uint3(1,1,1)
+        .NumFailed = numFailed
     };
 
     DYNAMIC_SECTION(testName)

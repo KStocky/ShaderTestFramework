@@ -15,8 +15,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
         "GIVEN_TwoSections_WHEN_Ran_THEN_EachSectionIsEnteredOnce",
         "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce",
         "GIVEN_ScenarioWithoutId_WHEN_Ran_THEN_IdIsNone",
-        "GIVEN_ScenarioWithDispatchThreadId_WHEN_Ran_THEN_IdIsInt3",
-        "GIVEN_ScenarioWithIntId_WHEN_Ran_THEN_IdIsInt"
+        "GIVEN_ScenarioWithDispatchThreadId_WHEN_Ran_THEN_IdAsExpected"
     );
 
     DYNAMIC_SECTION(testName)

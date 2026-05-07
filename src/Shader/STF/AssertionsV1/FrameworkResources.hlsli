@@ -2,6 +2,7 @@
 #define STF_ASSERTIONSV1_FRAME_RESOURCES_HEADER
 
 #include "/Test/TTL/type_traits.hlsli"
+#include "/Test/TTL/memory.hlsli"
 
 namespace stf
 {
@@ -29,7 +30,7 @@ namespace stf
 
                 uint SizeInBytesOfMeta()
                 {
-                    return sizeof(MetaDataType) * NumMeta;
+                    return ttl::aligned_offset(sizeof(MetaDataType) * NumMeta, 8u);
                 }
 
                 uint BeginData()
@@ -57,8 +58,7 @@ namespace stf
             struct HLSLAssertMetaData
             {
                 uint LineNumber;
-                uint ThreadId;
-                uint ThreadIdType;
+                uint3 ThreadId;
                 int SectionId;
                 uint ReaderAndTypeId;
                 DynamicSectionDataInfo DynamicDataInfo;

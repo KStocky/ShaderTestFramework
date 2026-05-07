@@ -54,6 +54,7 @@ set(SOURCES
     Public/D3D12/Shader/ShaderReflectionUtils.h
     Public/D3D12/Shader/VirtualShaderDirectoryMapping.h
     Public/D3D12/Shader/VirtualShaderDirectoryMappingManager.h
+    Public/Framework/AssertionsV1/AssertionsV1Interface.h
     Public/Framework/AssertionsV1/Results.h
     Public/Framework/AssertionsV1/TestDataBufferLayout.h
     Public/Framework/AssertionsV1/TestDataBufferProcessor.h
@@ -112,6 +113,7 @@ set(SOURCES
     Private/D3D12/Shader/ShaderCompiler.cpp
     Private/D3D12/Shader/ShaderReflectionUtils.cpp
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManager.cpp
+    Private/Framework/AssertionsV1/AssertionsV1Interface.cpp
     Private/Framework/AssertionsV1/Results.cpp
     Private/Framework/AssertionsV1/TestDataBufferLayout.cpp
     Private/Framework/AssertionsV1/TestDataBufferProcessor.cpp

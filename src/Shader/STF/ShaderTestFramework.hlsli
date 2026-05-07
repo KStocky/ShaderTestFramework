@@ -11,16 +11,9 @@
 
 namespace stf
 {
-    void RegisterThreadID(uint InID)
-    {
-        detail::Scratch.ThreadID.Type = detail::EThreadIDType::Int;
-        detail::Scratch.ThreadID.Data = InID;
-    }
-
     void RegisterThreadID(uint3 InID)
     {
-        detail::Scratch.ThreadID.Type = detail::EThreadIDType::Int3;
-        detail::Scratch.ThreadID.Data = detail::FlattenIndex(InID, AssertionsV1::detail::DispatchDimensions);
+        detail::Scratch.ThreadID = InID;
     }
 }
 

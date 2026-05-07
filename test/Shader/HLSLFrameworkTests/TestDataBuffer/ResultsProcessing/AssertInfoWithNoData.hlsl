@@ -57,7 +57,7 @@ void GIVEN_AssertInfoCapacity_WHEN_FailedAssertWithLineId_THEN_HasExpectedResult
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoCapacityWithFlatThreadId_WHEN_FailedAssert_THEN_HasExpectedResults()
 {
-    stf::RegisterThreadID(12);
+    stf::RegisterThreadID(uint3(12, 0, 0));
     TestType t;
     t.Value = false;
     stf::AssertionsV1::IsTrue(t, 66);

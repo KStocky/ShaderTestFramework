@@ -34,8 +34,8 @@ namespace stf
             {
                 RWByteAddressBuffer buffer = GetTestDataBuffer();
                 const uint metaAddress = InMetaIndex * sizeof(HLSLAssertMetaData);
-                buffer.Store4(metaAddress, uint4((uint)InId, stf::detail::Scratch.ThreadID.Data, (uint)stf::detail::Scratch.ThreadID.Type, (uint)stf::detail::Scratch.GetSectionID()));
-                buffer.Store3(metaAddress + 16, uint3(InReaderAndTypeId, InAddressAndSize));
+                buffer.Store4(metaAddress, uint4((uint)InId, stf::detail::Scratch.ThreadID));
+                buffer.Store4(metaAddress + 16, uint4((uint)stf::detail::Scratch.GetSectionID(), InReaderAndTypeId, InAddressAndSize));
             }
 
             

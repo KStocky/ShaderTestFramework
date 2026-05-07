@@ -19,7 +19,6 @@ namespace stf::AssertionsV1
 
     TestRunResults ProcessTestDataBuffer(
         const AllocationBufferData InAllocationBufferData,
-        const uint3 InDispatchDimensions,
         const TestDataBufferLayout& InLayout,
         std::span<const std::byte> InTestData,
         const MultiTypeByteReaderMap& InByteReaderMap);

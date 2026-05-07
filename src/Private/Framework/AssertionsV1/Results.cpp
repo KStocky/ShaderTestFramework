@@ -8,37 +8,6 @@
 
 namespace stf::AssertionsV1
 {
-    static uint3 Unflatten(const u32 InId, const uint3 InDims)
-    {
-        const u32 xyDim = InDims.x * InDims.y;
-        const u32 z = InId / xyDim;
-        const u32 xy = InId - (z * xyDim);
-        return uint3{ xy % InDims.x, xy / InDims.x, z };
-    }
-
-    static std::string ThreadInfoToString(const EThreadIdType InType, const u32 InId, const uint3 InDispatchDimensions)
-    {
-        switch (InType)
-        {
-            case EThreadIdType::None:
-            {
-                return "Thread Id not initialized for test";
-            }
-
-            case EThreadIdType::Int:
-            {
-                return std::format("ThreadId: {}", InId);
-            }
-
-            case EThreadIdType::Int3:
-            {
-                return std::format("ThreadId: {}", Unflatten(InId, InDispatchDimensions));
-            }
-        }
-
-        return "";
-    }
-
     Results::Results(Error InError)
         : m_Result(std::move(InError))
     {
@@ -99,7 +68,7 @@ namespace stf::AssertionsV1
         for (const auto& [index, error] : std::views::enumerate(In.FailedAsserts))
         {
             const std::string lineInfo = error.Info.LineNumber == u32(-1) ? std::string{ "" } : std::format("Line: {}", error.Info.LineNumber);
-            const std::string threadInfo = error.Info.ThreadIdType == 0 ? std::string{ "" } : ThreadInfoToString(static_cast<EThreadIdType>(error.Info.ThreadIdType), error.Info.ThreadId, In.DispatchDimensions);
+            const std::string threadInfo = std::format("ThreadId: {}", error.Info.ThreadId);
 
             InOs << std::format("Assert {}: {} {}\n", index, lineInfo, threadInfo);
             u32 indentLevel = 0;

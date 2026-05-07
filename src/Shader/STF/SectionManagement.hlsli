@@ -28,26 +28,13 @@ namespace stf
             int ParentID;
             ESectionRunState RunState; 
         };
-
-        enum class EThreadIDType
-        {
-            None,
-            Int,
-            Int3
-        };
-
-        struct ThreadIDInfo
-        {
-            uint Data;
-            EThreadIDType Type;
-        };
     
         struct PerThreadScratchData
         {
             int CurrentSectionID;
             int NextSectionID;
             int NextStringID;
-            ThreadIDInfo ThreadID;
+            uint3 ThreadID;
             ScenarioSectionInfo Sections[NumSections];
 
             int GetSectionID()

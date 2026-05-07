@@ -147,28 +147,15 @@ void GIVEN_ScenarioWithoutId_WHEN_Ran_THEN_IdIsNone(uint3 DispatchThreadId : SV_
     SCENARIO("")
     {
     }
-    ASSERT(AreEqual, 0u, stf::detail::Scratch.ThreadID.Data);
-    ASSERT(AreEqual, stf::detail::EThreadIDType::None, stf::detail::Scratch.ThreadID.Type);
+    ASSERT(AreEqual, uint3( 0, 0, 0 ), stf::detail::Scratch.ThreadID);
 }
 
 [numthreads(42,1,1)]
-void GIVEN_ScenarioWithDispatchThreadId_WHEN_Ran_THEN_IdIsInt3(uint3 DispatchThreadId : SV_DispatchThreadID)
+void GIVEN_ScenarioWithDispatchThreadId_WHEN_Ran_THEN_IdAsExpected(uint3 DispatchThreadId : SV_DispatchThreadID)
 {
     stf::RegisterThreadID(DispatchThreadId);
     SCENARIO("")
     {
     }
-    ASSERT(AreEqual, stf::detail::FlattenIndex(DispatchThreadId, stf::AssertionsV1::detail::DispatchDimensions), stf::detail::Scratch.ThreadID.Data);
-    ASSERT(AreEqual, stf::detail::EThreadIDType::Int3, stf::detail::Scratch.ThreadID.Type);
-}
-
-[numthreads(42,1,1)]
-void GIVEN_ScenarioWithIntId_WHEN_Ran_THEN_IdIsInt()
-{
-    stf::RegisterThreadID(42);
-    SCENARIO("")
-    {
-    }
-    ASSERT(AreEqual, 42u, stf::detail::Scratch.ThreadID.Data);
-    ASSERT(AreEqual, stf::detail::EThreadIDType::Int, stf::detail::Scratch.ThreadID.Type);
+    ASSERT(AreEqual, DispatchThreadId, stf::detail::Scratch.ThreadID);
 }

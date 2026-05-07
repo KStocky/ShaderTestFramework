@@ -2,7 +2,7 @@
 
 namespace stf::AssertionsV1
 {
-    static_assert(sizeof(HLSLAssertMetaData) == 32,
+    static_assert(sizeof(HLSLAssertMetaData) == 36,
         "The size of this struct must be the same size as ShaderTestPrivate::HLSLAssertMetaData");
 
     std::ostream& operator<<(std::ostream& InOs, const SectionInfoMetaData& In)
