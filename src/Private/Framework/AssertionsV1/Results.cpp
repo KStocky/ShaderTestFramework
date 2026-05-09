@@ -27,7 +27,7 @@ namespace stf::AssertionsV1
         },
         [](const TestRunResults& InTestResults)
         {
-            return InTestResults.NumFailed == 0;
+            return InTestResults.Succeeded();
         },
         [](const Error&)
         {

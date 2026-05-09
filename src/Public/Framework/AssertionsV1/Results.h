@@ -50,6 +50,8 @@ namespace stf::AssertionsV1
         u32 NumSucceeded = 0;
         u32 NumFailed = 0;
 
+        bool Succeeded() const { return NumFailed == 0; }
+
         friend bool operator==(const TestRunResults&, const TestRunResults&) = default;
         friend std::ostream& operator<<(std::ostream& InOs, const TestRunResults& In);
     };
