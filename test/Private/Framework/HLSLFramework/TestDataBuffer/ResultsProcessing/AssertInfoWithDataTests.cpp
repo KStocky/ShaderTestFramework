@@ -12,9 +12,18 @@ class AssertInfoWithDataTestsFixture : public ShaderTestFixtureBaseFixture
 {
 public:
     AssertInfoWithDataTestsFixture()
-        : ShaderTestFixtureBaseFixture()
+        : ShaderTestFixtureBaseFixture(
+            stf::ShaderTestFixture::FixtureDesc
+            {
+                .Mappings{ GetTestVirtualDirectoryMapping() }
+            },
+            []()
+            {
+                stf::AssertionsV1::AssertionsV1Interface assertionInterface;
+                assertionInterface.RegisterByteReader("TEST_TYPE_WITH_WRITER", [](const stf::u16, const std::span<const std::byte>) { return ""; });
+                return assertionInterface;
+            }())
     {
-        fixture.RegisterByteReader("TEST_TYPE_WITH_WRITER", [](const stf::u16, const std::span<const std::byte>) { return ""; });
     }
 };
 
@@ -1018,7 +1027,7 @@ TEST_CASE_PERSISTENT_FIXTURE(AssertInfoWithDataTestsFixture, "HLSLFrameworkTests
                 },
                 .TestName = testName,
                 .ThreadGroupCount{1, 1, 1},
-                .TestDataLayout
+                .PerTestData
                 {
                     .NumFailedAsserts = numRecordedAsserts,
                     .NumBytesAssertData = numBytesData

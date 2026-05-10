@@ -4,6 +4,7 @@
 #include "D3D12/Shader/ShaderBinding.h"
 #include "D3D12/Shader/ShaderCompiler.h"
 #include "Framework/ShaderTestDriver.h"
+#include "Framework/AssertionsV1/AssertionsV1Interface.h"
 #include "Framework/AssertionsV1/Results.h"
 #include "Framework/AssertionsV1/TestDataBufferLayout.h"
 #include "Stats/StatSystem.h"
@@ -70,8 +71,6 @@ namespace stf
         ShaderTestFixtureBase(const FixtureDesc& InParams);
         ~ShaderTestFixtureBase() noexcept;
 
-        AssertionsV1::Results RunCompileTimeTest(ShaderCompileTestDesc InTestDesc);
-
         static std::vector<TimedStat> GetTestStats();
 
     protected:
@@ -87,7 +86,6 @@ namespace stf
 
         SharedPtr<GPUDevice> m_Device;
         ShaderCompiler m_Compiler;
-        std::vector<ShaderMacro> m_Defines;
     };
 
     class ShaderTestFixture
@@ -95,15 +93,15 @@ namespace stf
     {
     public:
         
-        ShaderTestFixture(const FixtureDesc& InParams)
+        ShaderTestFixture(const FixtureDesc& InParams, AssertionsV1::AssertionsV1Interface InInterface = {})
             : ShaderTestFixtureBase{ InParams }
+            , m_Interface{ std::move(InInterface) }
             , m_TestDriver{ 
                 ShaderTestDriver::CreationParams
                 {
                     .Device = m_Device
                 } }
         {
-            PopulateDefaultByteReaders();
         }
 
         struct RuntimeTestDesc
@@ -112,7 +110,7 @@ namespace stf
             std::string_view TestName;
             std::vector<ShaderBinding> Bindings {};
             uint3 ThreadGroupCount{};
-            AssertionsV1::TestDataBufferLayoutDesc TestDataLayout
+            AssertionsV1::TestDataBufferLayoutDesc PerTestData
             {
                 .NumFailedAsserts = 100u,
                 .NumBytesAssertData = 10000u,
@@ -126,13 +124,12 @@ namespace stf
         };
 
         AssertionsV1::Results RunTest(RuntimeTestDesc InTestDesc);
+        AssertionsV1::Results RunCompileTimeTest(ShaderCompileTestDesc InTestDesc);
 
-        void RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader);
-        void RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader);
     private:
         AssertionsV1::Results RunTestImpl(RuntimeTestDesc InTestDesc, const bool InIsFailureRetry);
-        void PopulateDefaultByteReaders();
 
+        AssertionsV1::AssertionsV1Interface m_Interface;
         ShaderTestDriver m_TestDriver;
     };
 }

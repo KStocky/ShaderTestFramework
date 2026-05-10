@@ -21,7 +21,7 @@ SCENARIO("HLSLFrameworkTests - SectionHierarchy - ByteWriter")
             },
             .TestName = "SectionHierarchyByteWriterTests",
             .ThreadGroupCount{1, 1, 1},
-            .TestDataLayout
+            .PerTestData
             {
                 .NumFailedAsserts = 100,
                 .NumBytesAssertData = 1024,

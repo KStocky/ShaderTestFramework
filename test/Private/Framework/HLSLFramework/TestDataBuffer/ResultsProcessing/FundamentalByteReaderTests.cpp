@@ -135,7 +135,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                 },
                 .TestName = testName,
                 .ThreadGroupCount{1, 1, 1},
-                .TestDataLayout
+                .PerTestData
                 {
                     .NumFailedAsserts = 10,
                     .NumBytesAssertData = 400

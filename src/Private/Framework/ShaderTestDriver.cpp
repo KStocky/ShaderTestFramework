@@ -1,29 +1,10 @@
 
 #include "Framework/ShaderTestDriver.h"
 
-#include "Framework/AssertionsV1/TestDataBufferProcessor.h"
 #include <d3dx12/d3dx12.h>
 
 namespace stf
 {
-
-    static D3D12_UNORDERED_ACCESS_VIEW_DESC CreateRawUAVDesc(const u32 InNumBytes)
-    {
-        return D3D12_UNORDERED_ACCESS_VIEW_DESC
-        {
-            .Format = DXGI_FORMAT_R32_TYPELESS,
-            .ViewDimension = D3D12_UAV_DIMENSION_BUFFER,
-            .Buffer
-            {
-                .FirstElement = 0,
-                .NumElements = (InNumBytes + 3) / 4,
-                .StructureByteStride = 0,
-                .CounterOffsetInBytes = 0,
-                .Flags = D3D12_BUFFER_UAV_FLAG_RAW
-            }
-        };
-    }
-
     ShaderTestDriver::ShaderTestDriver(CreationParams InParams)
         : m_Device(std::move(InParams.Device))
         , m_CommandEngine(Object::New<CommandEngine>(
@@ -35,87 +16,24 @@ namespace stf
     {
     }
 
-    TypeReaderIndex ShaderTestDriver::RegisterByteReader(std::string, MultiTypeByteReader InByteReader)
-    {
-        const u32 typeId = static_cast<u32>(m_ByteReaderMap.size());
-        m_ByteReaderMap.push_back(std::move(InByteReader));
-
-        return TypeReaderIndex{ typeId };
-    }
-
-    TypeReaderIndex ShaderTestDriver::RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader)
-    {
-        return RegisterByteReader(std::move(InTypeIDName),
-            [byteReader = std::move(InByteReader)](const u16, const std::span<const std::byte> InData)
-            {
-                return byteReader(InData);
-            }
-        );
-    }
-    
-    ExpectedError<AssertionsV1::Results> ShaderTestDriver::RunShaderTest(TestDesc&& InTestDesc)
+    ExpectedError<AssertionsV1::TestRunResults> ShaderTestDriver::RunShaderTest(TestDesc&& InTestDesc, AssertionsV1::AssertionsV1Interface& InInterface)
     {
         auto pipelineState = CreatePipelineState(InTestDesc.Shader->GetRootSig(), InTestDesc.Shader->GetCompiledShader());
-        const u32 bufferSizeInBytes = std::max(InTestDesc.TestBufferLayout.GetSizeOfTestData(), 4u);
-        static constexpr u32 allocationBufferSizeInBytes = sizeof(AssertionsV1::AllocationBufferData);
-        const auto dispatchDimensions = InTestDesc.DispatchConfig * InTestDesc.Shader->GetThreadGroupSize();
 
-        struct Resources
-        {
-            GPUResourceManager::BufferHandle AssertBuffer;
-            GPUResourceManager::BufferHandle AllocationBuffer;
-            GPUResourceManager::BufferUAVHandle AssertUAV;
-            GPUResourceManager::BufferUAVHandle AllocationUAV;
-        };
-
-        struct Readbacks
-        {
-            const GPUResourceManager::ReadbackResultHandle AssertReadback;
-            const GPUResourceManager::ReadbackResultHandle AllocationReadback;
-        };
+        using GPUResources = AssertionsV1::AssertionsV1Interface::GPUResourcesType;
+        using GPUReadbacks = AssertionsV1::AssertionsV1Interface::GPUReadbackResourcesType;
 
         return m_CommandEngine->Execute(InTestDesc.TestName,
-            [&](ScopedCommandContext& InContext) -> ExpectedError<Readbacks>
+            [&](ScopedCommandContext& InContext) -> ExpectedError<GPUReadbacks>
             {
                 return InContext.Section("Test Setup",
-                    [&](ScopedCommandContext& InContext) -> ExpectedError<Resources>
+                    [&](ScopedCommandContext& InContext) -> ExpectedError<GPUResources>
                     {
                         InContext->SetPipelineState(*pipelineState);
-
-                        const auto assertBuffer = InContext.CreateBuffer(
-                            GPUResourceManager::BufferDesc
-                            {
-                                .Name = "Assert data buffer",
-                                .RequestedSize = bufferSizeInBytes,
-                                .Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS
-                            }
-                        );
-
-                        const auto allocationBuffer = InContext.CreateBuffer(
-                            GPUResourceManager::BufferDesc
-                            {
-                                .Name = "Allocation data buffer",
-                                .RequestedSize = allocationBufferSizeInBytes,
-                                .Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS
-                            }
-                        );
-
-                        const auto assertBufferUAV = InContext.CreateUAV(assertBuffer,
-                            CreateRawUAVDesc(bufferSizeInBytes));
-
-                        const auto allocationBufferUAV = InContext.CreateUAV(allocationBuffer,
-                            CreateRawUAVDesc(allocationBufferSizeInBytes));
-
-                        return Resources
-                        {
-                            .AssertBuffer = assertBuffer,
-                            .AllocationBuffer = allocationBuffer,
-                            .AssertUAV = assertBufferUAV,
-                            .AllocationUAV = allocationBufferUAV
-                        };
+                        return InInterface.CreateGPUResources(InContext, InTestDesc.PerTestData);
                     })
                     .and_then(
-                        [&](Resources&& InBuffers) -> ExpectedError<Resources>
+                        [&](GPUResources&& InResources) -> ExpectedError<GPUResources>
                         {
                             return InContext.Section("Test Dispatch",
                                 [&](ScopedCommandContext& InContext)
@@ -123,13 +41,10 @@ namespace stf
                                     return InContext.Dispatch(InTestDesc.DispatchConfig, InTestDesc.Shader,
                                         [&](ScopedCommandShader& InShader) -> ExpectedError<void>
                                         {
-                                            std::ignore = InShader.StageBindingData(ShaderBinding{ "stf::AssertionsV1::detail::DispatchDimensions", dispatchDimensions });
-                                            std::ignore = InShader.StageBindingData(ShaderBinding{ "stf::AssertionsV1::detail::Asserts", InTestDesc.TestBufferLayout.GetAssertSection() });
-                                            std::ignore = InShader.StageBindingData(ShaderBinding{ "stf::AssertionsV1::detail::Strings", InTestDesc.TestBufferLayout.GetStringSection() });
-                                            std::ignore = InShader.StageBindingData(ShaderBinding{ "stf::AssertionsV1::detail::Sections", InTestDesc.TestBufferLayout.GetSectionInfoSection() });
-
-                                            std::ignore = InShader.StageBindlessResource("stf::AssertionsV1::detail::AllocationBufferIndex", InBuffers.AllocationUAV);
-                                            std::ignore = InShader.StageBindlessResource("stf::AssertionsV1::detail::TestDataBufferIndex", InBuffers.AssertUAV);
+                                            if (auto result = InInterface.BindShaderData(InShader, InResources, InTestDesc.PerTestData); !result)
+                                            {
+                                                return result;
+                                            }
 
                                             for (const auto& binding : InTestDesc.Bindings)
                                             {
@@ -143,54 +58,26 @@ namespace stf
                                         });
                                 })
                                 .transform(
-                                    [&]() -> Resources
+                                    [&]() -> GPUResources
                                     {
-                                        return InBuffers;
+                                        return InResources;
                                     });
                         })
                     .and_then(
-                        [&](const Resources& InBuffers)
+                        [&](const GPUResources& InResources)
                         {
                             return InContext.Section("Results readback",
                                 [&](ScopedCommandContext& InContext)
                                 {
-                                    return InContext.QueueReadback(InBuffers.AssertBuffer)
-                                        .and_then(
-                                            [&](const GPUResourceManager::ReadbackResultHandle InAssertReadback)
-                                            {
-                                                return InContext.QueueReadback(InBuffers.AllocationBuffer)
-                                                    .transform(
-                                                        [&](const GPUResourceManager::ReadbackResultHandle InAllocationReadback)
-                                                        {
-                                                            return Readbacks
-                                                            {
-                                                                .AssertReadback = InAssertReadback,
-                                                                .AllocationReadback = InAllocationReadback
-                                                            };
-                                                        });
-                                            });
+                                    return InInterface.QueueReadbacks(InContext, InResources);
                                 });
                         });
             })
             .and_then(
-                [&](const Readbacks& InReadbacks)
+                [&](const GPUReadbacks& InReadbacks)
                 {
                     m_CommandEngine->Flush();
-                    return m_CommandEngine->ExecuteReadback(InReadbacks.AssertReadback,
-                        [&](const MappedResource& InAssertData)
-                        {
-                            return m_CommandEngine->ExecuteReadback(InReadbacks.AllocationReadback,
-                                [&](const MappedResource& InAllocationData) -> ExpectedError<AssertionsV1::Results>
-                                {
-                                    const auto allocationData = InAllocationData.Get();
-                                    AssertionsV1::AllocationBufferData data;
-                                    std::memcpy(&data, allocationData.data(), sizeof(AssertionsV1::AllocationBufferData));
-                                    const auto assertData = InAssertData.Get();
-
-                                    return ProcessTestDataBuffer(data, InTestDesc.TestBufferLayout, assertData, m_ByteReaderMap);
-                                });
-                        });
-                    
+                    return InInterface.ProcessReadbacks(*m_CommandEngine, InReadbacks, InTestDesc.PerTestData);
                 });
     }
     
