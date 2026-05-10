@@ -18,6 +18,7 @@ namespace stf::assert
 {
     template<typename T>
     concept CTestRunResultsType = 
+        std::default_initializable<T> &&
         OStreamable<T> &&
         std::equality_comparable<T> &&
         requires(const T& In)

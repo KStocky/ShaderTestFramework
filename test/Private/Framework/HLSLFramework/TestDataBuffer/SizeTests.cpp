@@ -35,7 +35,10 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                 .PerTestData
                 {
                     .NumFailedAsserts = numRecordedFailedAsserts,
-                    .NumBytesAssertData = numBytesAssertData
+                    .NumBytesAssertData = numBytesAssertData,
+                    .NumStrings = 0,
+                    .NumBytesStringData = 0,
+                    .NumSections = 0
                 }
             }
         ));

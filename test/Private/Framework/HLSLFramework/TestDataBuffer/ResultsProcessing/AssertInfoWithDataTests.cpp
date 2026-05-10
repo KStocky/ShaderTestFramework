@@ -1030,7 +1030,10 @@ TEST_CASE_PERSISTENT_FIXTURE(AssertInfoWithDataTestsFixture, "HLSLFrameworkTests
                 .PerTestData
                 {
                     .NumFailedAsserts = numRecordedAsserts,
-                    .NumBytesAssertData = numBytesData
+                    .NumBytesAssertData = numBytesData,
+                    .NumStrings = 0,
+                    .NumBytesStringData = 0,
+                    .NumSections = 0
                 }
             }
         );

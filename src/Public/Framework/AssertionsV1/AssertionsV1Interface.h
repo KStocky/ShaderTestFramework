@@ -21,7 +21,7 @@ namespace stf::AssertionsV1
     {
     public:
 
-        using PerTestData = TestDataBufferLayout;
+        using PerTestData = TestDataBufferLayoutDesc;
         using TestRunResultsType = TestRunResults;
         
         struct GPUResourcesType

@@ -236,7 +236,8 @@ namespace stf::AssertionsV1
 
     ExpectedError<AssertionsV1Interface::GPUResourcesType> AssertionsV1Interface::CreateGPUResources(ScopedCommandContext& InContext, const PerTestData& InPerTestData) const
     {
-        const u32 bufferSizeInBytes = std::max(InPerTestData.GetSizeOfTestData(), 4u);
+        const TestDataBufferLayout layout{ InPerTestData };
+        const u32 bufferSizeInBytes = std::max(layout.GetSizeOfTestData(), 4u);
         static constexpr u32 allocationBufferSizeInBytes = sizeof(AssertionsV1::AllocationBufferData);
 
         const auto assertBuffer = InContext.CreateBuffer(
@@ -274,11 +275,12 @@ namespace stf::AssertionsV1
 
     ExpectedError<void> AssertionsV1Interface::BindShaderData(ScopedCommandShader& InShader, const GPUResourcesType& InResources, const PerTestData& InPerTestData) const
     {
+        const TestDataBufferLayout layout{ InPerTestData };
         const auto dispatchDimensions = InShader.GetThreadCount();
         std::ignore = InShader.StageBindingData(ShaderBinding{ "stf::AssertionsV1::detail::DispatchDimensions", dispatchDimensions });
-        std::ignore = InShader.StageBindingData(ShaderBinding{ "stf::AssertionsV1::detail::Asserts", InPerTestData.GetAssertSection() });
-        std::ignore = InShader.StageBindingData(ShaderBinding{ "stf::AssertionsV1::detail::Strings", InPerTestData.GetStringSection() });
-        std::ignore = InShader.StageBindingData(ShaderBinding{ "stf::AssertionsV1::detail::Sections", InPerTestData.GetSectionInfoSection() });
+        std::ignore = InShader.StageBindingData(ShaderBinding{ "stf::AssertionsV1::detail::Asserts", layout.GetAssertSection() });
+        std::ignore = InShader.StageBindingData(ShaderBinding{ "stf::AssertionsV1::detail::Strings", layout.GetStringSection() });
+        std::ignore = InShader.StageBindingData(ShaderBinding{ "stf::AssertionsV1::detail::Sections", layout.GetSectionInfoSection() });
 
         std::ignore = InShader.StageBindlessResource("stf::AssertionsV1::detail::AllocationBufferIndex", InResources.AllocationUAV);
         std::ignore = InShader.StageBindlessResource("stf::AssertionsV1::detail::TestDataBufferIndex", InResources.AssertUAV);
@@ -318,7 +320,7 @@ namespace stf::AssertionsV1
                         std::memcpy(&data, allocationData.data(), sizeof(AssertionsV1::AllocationBufferData));
                         const auto assertData = InAssertData.Get();
 
-                        return ProcessTestDataBuffer(data, InPerTestData, assertData, m_ByteReaderMap);
+                        return ProcessTestDataBuffer(data, TestDataBufferLayout{ InPerTestData }, assertData, m_ByteReaderMap);
                     });
             });
     }

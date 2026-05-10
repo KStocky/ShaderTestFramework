@@ -8,43 +8,6 @@
 
 namespace stf::AssertionsV1
 {
-    Results::Results(Error InError)
-        : m_Result(std::move(InError))
-    {
-    }
-
-    Results::Results(TestRunResults InResults)
-        : m_Result(std::move(InResults))
-    {
-    }
-
-    Results::operator bool() const
-    {
-        return std::visit(OverloadSet{
-        [](std::monostate)
-        {
-            return false;
-        },
-        [](const TestRunResults& InTestResults)
-        {
-            return InTestResults.Succeeded();
-        },
-        [](const Error&)
-        {
-            return false;
-        } }, m_Result);
-    }
-
-    const TestRunResults* Results::GetTestResults() const
-    {
-        return std::get_if<TestRunResults>(&m_Result);
-    }
-
-    const Error* Results::GetTestRunError() const
-    {
-        return std::get_if<Error>(&m_Result);
-    }
-
     bool operator==(const FailedAssert& InA, const FailedAssert& InB)
     {
         return InA.Data == InB.Data && InA.Info == InB.Info && InA.TypeId == InB.TypeId;
@@ -137,28 +100,6 @@ namespace stf::AssertionsV1
                 byteIndex = AlignedOffset(byteIndex + size, 4);
             }
         }
-
-        return InOs;
-    }
-
-    std::ostream& operator<<(std::ostream& InOs, const Results& In)
-    {
-        std::visit(
-            OverloadSet
-            {
-                [&InOs](std::monostate)
-                {
-                    InOs << "Results not initialized";
-                },
-                [&InOs](const TestRunResults& InTestResults)
-                {
-                    InOs << InTestResults;
-                },
-                [&InOs](const Error& InCompilationError)
-                {
-                    InOs << InCompilationError;
-                }
-            }, In.m_Result);
 
         return InOs;
     }

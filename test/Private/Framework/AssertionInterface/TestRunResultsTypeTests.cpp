@@ -56,9 +56,23 @@ namespace stf::assert::TestRunResultsTypeTests
         friend bool operator!=(const NoOStreamOperator&, const NoOStreamOperator&) { return true; };
     };
 
+    struct NoDefaultCtor
+    {
+        NoDefaultCtor() = delete;
+        bool Succeeded() const { return true; }
+        friend bool operator==(const NoDefaultCtor&, const NoDefaultCtor&) { return false; };
+        friend bool operator!=(const NoDefaultCtor&, const NoDefaultCtor&) { return true; };
+
+        friend std::ostream& operator<<(std::ostream& InOut, const NoDefaultCtor&)
+        {
+            return InOut;
+        }
+    };
+
     static_assert(CTestRunResultsType<ValidTestRunResultsType>, "Expected this type to be valid for the concept");
     static_assert(!CTestRunResultsType<NonConstSucceeded>, "Expected this type to not be valid for the concept");
     static_assert(!CTestRunResultsType<NoSucceeded>, "Expected this type to not be valid for the concept");
     static_assert(!CTestRunResultsType<NoOperatorEquals>, "Expected this type to not be valid for the concept");
     static_assert(!CTestRunResultsType<NoOStreamOperator>, "Expected this type to not be valid for the concept");
+    static_assert(!CTestRunResultsType<NoDefaultCtor>, "Expected this type to not be valid for the concept");
 }

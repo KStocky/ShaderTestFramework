@@ -68,11 +68,11 @@ namespace stf::AssertionsV1
 
     struct TestDataBufferLayoutDesc
     {
-        u32 NumFailedAsserts = 0;
-        u32 NumBytesAssertData = 0;
-        u32 NumStrings = 0;
-        u32 NumBytesStringData = 0;
-        u32 NumSections = 0;
+        u32 NumFailedAsserts = 100;
+        u32 NumBytesAssertData = 10000;
+        u32 NumStrings = 100;
+        u32 NumBytesStringData = 800;
+        u32 NumSections = 100;
     };
 
     class TestDataBufferLayout
