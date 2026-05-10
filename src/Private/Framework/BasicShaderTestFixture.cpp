@@ -1,4 +1,4 @@
-#include "Framework/ShaderTestFixture.h"
+#include "Framework/BasicShaderTestFixture.h"
 
 #include "D3D12/GPUDevice.h"
 
@@ -22,29 +22,29 @@ namespace stf
         }
     }
 
-    StatSystem ShaderTestFixtureBase::statSystem;
-    std::vector<TimedStat> ShaderTestFixtureBase::cachedStats;
+    StatSystem BasicShaderTestFixtureBase::statSystem;
+    std::vector<TimedStat> BasicShaderTestFixtureBase::cachedStats;
 
-    ShaderTestFixtureBase::ShaderTestFixtureBase(const FixtureDesc& InParams)
+    BasicShaderTestFixtureBase::BasicShaderTestFixtureBase(const FixtureDesc& InParams)
         : m_Device(Object::New<GPUDevice>(InParams.GPUDeviceParams))
         , m_Compiler(CreateShaderCompiler(InParams.Mappings))
     {
         cachedStats.clear();
     }
 
-    ShaderTestFixtureBase::~ShaderTestFixtureBase() noexcept
+    BasicShaderTestFixtureBase::~BasicShaderTestFixtureBase() noexcept
     {
         cachedStats = statSystem.FlushTimedStats();
     }
 
-    std::vector<TimedStat> ShaderTestFixtureBase::GetTestStats()
+    std::vector<TimedStat> BasicShaderTestFixtureBase::GetTestStats()
     {
         return cachedStats;
     }
 
-    ExpectedError<CompiledShaderData> ShaderTestFixtureBase::CompileShader(const std::string_view InName, const EShaderType InType, ShaderCompilationEnvDesc InCompileDesc, const bool InTakingCapture) const
+    ExpectedError<CompiledShaderData> BasicShaderTestFixtureBase::CompileShader(const std::string_view InName, const EShaderType InType, ShaderCompilationEnvDesc InCompileDesc, const bool InTakingCapture) const
     {
-        ScopedDuration scope(std::format("ShaderTestFixtureBase::CompileShader: {}", InName));
+        ScopedDuration scope(std::format("BasicShaderTestFixtureBase::CompileShader: {}", InName));
         ShaderCompilationJobDesc job;
         job.AdditionalFlags = std::move(InCompileDesc.CompilationFlags);
         job.AdditionalFlags.emplace_back(L"-enable-16bit-types");
@@ -68,7 +68,7 @@ namespace stf
         return m_Compiler.CompileShader(job);
     }
 
-    bool ShaderTestFixtureBase::ShouldTakeCapture(const EGPUCaptureMode InCaptureMode, const bool InIsFailureRetry) const
+    bool BasicShaderTestFixtureBase::ShouldTakeCapture(const EGPUCaptureMode InCaptureMode, const bool InIsFailureRetry) const
     {
         const bool takeCaptureIfAble = InCaptureMode == EGPUCaptureMode::On || (InIsFailureRetry && InCaptureMode == EGPUCaptureMode::CaptureOnFailure);
         return m_Device->IsGPUCaptureEnabled() && takeCaptureIfAble;

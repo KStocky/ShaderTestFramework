@@ -1,4 +1,4 @@
-#include <Framework/ShaderTestFixture.h>
+#include <Framework/AssertionsV1/ShaderTestFixture.h>
 
 #include <ranges>
 
@@ -6,8 +6,8 @@
 
 SCENARIO("Example6Tests - Failing tests With FundamentalTypes")
 {
-    stf::ShaderTestFixture fixture(
-        stf::ShaderTestFixture::FixtureDesc
+    stf::AssertionsV1::ShaderTestFixture fixture(
+        stf::AssertionsV1::ShaderTestFixture::FixtureDesc
         {
             // We can add virtual shader directory mappings to our shader test environment
             // Here we are saying that if a file path begins with "/Shader" then it is a virtual file directory
@@ -20,7 +20,7 @@ SCENARIO("Example6Tests - Failing tests With FundamentalTypes")
     // RunTest takes a desc that describes the test setup
     // In this case we give the HLSL source code, entry function name and thread group count.
     REQUIRE(fixture.RunTest(
-        stf::ShaderTestFixture::RuntimeTestDesc
+        stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc
         {
             .CompilationEnv
             {
@@ -36,8 +36,8 @@ SCENARIO("Example6Tests - Failing tests With FundamentalTypes")
 
 SCENARIO("Example6Tests - Failing test with no Byte Reader")
 {
-    stf::ShaderTestFixture fixture(
-        stf::ShaderTestFixture::FixtureDesc
+    stf::AssertionsV1::ShaderTestFixture fixture(
+        stf::AssertionsV1::ShaderTestFixture::FixtureDesc
         {
             // We can add virtual shader directory mappings to our shader test environment
             // Here we are saying that if a file path begins with "/Shader" then it is a virtual file directory
@@ -50,7 +50,7 @@ SCENARIO("Example6Tests - Failing test with no Byte Reader")
     // RunTest takes a desc that describes the test setup
     // In this case we give the HLSL source code, entry function name and thread group count.
     REQUIRE(fixture.RunTest(
-        stf::ShaderTestFixture::RuntimeTestDesc
+        stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc
         {
             .CompilationEnv
             {
@@ -85,8 +85,8 @@ SCENARIO("Example6Tests - Failing test with Byte Reader")
             return std::format("a = {}, b = {}, c = {}", val.a, val.b, val.c ? "true" : "false");
         });
 
-    stf::ShaderTestFixture fixture(
-        stf::ShaderTestFixture::FixtureDesc
+    stf::AssertionsV1::ShaderTestFixture fixture(
+        stf::AssertionsV1::ShaderTestFixture::FixtureDesc
         {
             // We can add virtual shader directory mappings to our shader test environment
             // Here we are saying that if a file path begins with "/Shader" then it is a virtual file directory
@@ -100,7 +100,7 @@ SCENARIO("Example6Tests - Failing test with Byte Reader")
     // RunTest takes a desc that describes the test setup
     // In this case we give the HLSL source code, entry function name and thread group count.
     REQUIRE(fixture.RunTest(
-        stf::ShaderTestFixture::RuntimeTestDesc
+        stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc
         {
             .CompilationEnv
             {
@@ -139,8 +139,8 @@ SCENARIO("Example6Tests - Failing test with MultiType Byte Reader")
             return ret.str();
         });
 
-    stf::ShaderTestFixture fixture(
-        stf::ShaderTestFixture::FixtureDesc
+    stf::AssertionsV1::ShaderTestFixture fixture(
+        stf::AssertionsV1::ShaderTestFixture::FixtureDesc
         {
             // We can add virtual shader directory mappings to our shader test environment
             // Here we are saying that if a file path begins with "/Shader" then it is a virtual file directory
@@ -154,7 +154,7 @@ SCENARIO("Example6Tests - Failing test with MultiType Byte Reader")
     // RunTest takes a desc that describes the test setup
     // In this case we give the HLSL source code, entry function name and thread group count.
     REQUIRE(fixture.RunTest(
-        stf::ShaderTestFixture::RuntimeTestDesc
+        stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc
         {
             .CompilationEnv
             {
@@ -195,8 +195,8 @@ SCENARIO("Example6Tests - Failing test with Byte Writer")
             return ret.str();
         });
 
-    stf::ShaderTestFixture fixture(
-        stf::ShaderTestFixture::FixtureDesc
+    stf::AssertionsV1::ShaderTestFixture fixture(
+        stf::AssertionsV1::ShaderTestFixture::FixtureDesc
         {
             // We can add virtual shader directory mappings to our shader test environment
             // Here we are saying that if a file path begins with "/Shader" then it is a virtual file directory
@@ -210,7 +210,7 @@ SCENARIO("Example6Tests - Failing test with Byte Writer")
     // RunTest takes a desc that describes the test setup
     // In this case we give the HLSL source code, entry function name and thread group count.
     REQUIRE(fixture.RunTest(
-        stf::ShaderTestFixture::RuntimeTestDesc
+        stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc
         {
             .CompilationEnv
             {

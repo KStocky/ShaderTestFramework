@@ -1,5 +1,5 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
-#include <Framework/ShaderTestFixture.h>
+#include <Framework/AssertionsV1/ShaderTestFixture.h>
 #include <Utility/Math.h>
 #include <Utility/OverloadSet.h>
 #include <Utility/Tuple.h>
@@ -13,7 +13,7 @@ class AssertInfoWithDataTestsFixture : public ShaderTestFixtureBaseFixture
 public:
     AssertInfoWithDataTestsFixture()
         : ShaderTestFixtureBaseFixture(
-            stf::ShaderTestFixture::FixtureDesc
+            stf::AssertionsV1::ShaderTestFixture::FixtureDesc
             {
                 .Mappings{ GetTestVirtualDirectoryMapping() }
             },
@@ -1019,7 +1019,7 @@ TEST_CASE_PERSISTENT_FIXTURE(AssertInfoWithDataTestsFixture, "HLSLFrameworkTests
     DYNAMIC_SECTION(testName)
     {
         const auto results = fixture.RunTest(
-            ShaderTestFixture::RuntimeTestDesc
+            AssertionsV1::ShaderTestFixture::RuntimeTestDesc
             {
                 .CompilationEnv
                 {

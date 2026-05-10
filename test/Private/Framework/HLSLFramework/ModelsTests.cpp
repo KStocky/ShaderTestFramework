@@ -1,13 +1,13 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
-#include <Framework/ShaderTestFixture.h>
+#include <Framework/AssertionsV1/ShaderTestFixture.h>
 
 #include <catch2/catch_test_macros.hpp>
 
 SCENARIO("HLSLFrameworkTests - Models")
 {
     using namespace stf;
-    ShaderTestFixture fixture(
-        ShaderTestFixture::FixtureDesc
+    AssertionsV1::ShaderTestFixture fixture(
+        AssertionsV1::ShaderTestFixture::FixtureDesc
         {
             .Mappings{ GetTestVirtualDirectoryMapping() }
         }

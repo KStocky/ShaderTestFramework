@@ -10,7 +10,7 @@
 
 All code snippets for this section will be taken from ([Ex8_ConstantBuffers](../../examples/Ex8_ConstantBuffers))
 
-Shader Test Framework provides a simple way of specifying constant buffer bindings. i.e. bindings which are not buffers, samplers or textures. `stf::ShaderTestFixture::RuntimeTestDesc` contains a member called `Bindings` which can be populated with a `std::vector` of pairs of `std::string`s and constant buffer data. Bindings must refer to global names. Meaning that you can't bind individual members of global parameters or constant buffers. You must provide all of the data to bind to a global name in the shader.
+Shader Test Framework provides a simple way of specifying constant buffer bindings. i.e. bindings which are not buffers, samplers or textures. `stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc` contains a member called `Bindings` which can be populated with a `std::vector` of pairs of `std::string`s and constant buffer data. Bindings must refer to global names. Meaning that you can't bind individual members of global parameters or constant buffers. You must provide all of the data to bind to a global name in the shader.
 
 Given the following HLSL test:
 
@@ -57,11 +57,11 @@ struct StructUsedInHLSL
 };
 ```
 
-and then bind data to `GlobalBinding` with the following call to `stf::ShaderTestFixture::RunTest`:
+and then bind data to `GlobalBinding` with the following call to `stf::AssertionsV1::ShaderTestFixture::RunTest`:
 
 ```c++
 fixture.RunTest(
-        stf::ShaderTestFixture::RuntimeTestDesc
+        stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc
         {
             // Some runtime desc args
 

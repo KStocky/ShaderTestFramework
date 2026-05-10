@@ -1,4 +1,4 @@
-#include <Framework/ShaderTestFixture.h>
+#include <Framework/AssertionsV1/ShaderTestFixture.h>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -9,8 +9,8 @@ SCENARIO("Example2Tests")
     // and should be replaced with the path that evaluates from current_path()/SHADER_SRC
     // std::filesystem::current_path() returns the current working directory
     // We set both the current working directory and the SHADER_SRC macro in our cmake script.
-    stf::ShaderTestFixture fixture(
-        stf::ShaderTestFixture::FixtureDesc
+    stf::AssertionsV1::ShaderTestFixture fixture(
+        stf::AssertionsV1::ShaderTestFixture::FixtureDesc
         {
             .Mappings{ stf::VirtualShaderDirectoryMapping{"/Shader", std::filesystem::current_path() / SHADER_SRC} }
         }
@@ -19,7 +19,7 @@ SCENARIO("Example2Tests")
     // RunTest takes a desc that describes the test setup
     // In this case we give the HLSL source code, entry function name and thread group count.
     REQUIRE(fixture.RunTest(
-        stf::ShaderTestFixture::RuntimeTestDesc
+        stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc
         {
             .CompilationEnv
             {

@@ -1,5 +1,5 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
-#include <Framework/ShaderTestFixture.h>
+#include <Framework/AssertionsV1/ShaderTestFixture.h>
 #include <Utility/EnumReflection.h>
 
 #include <string>
@@ -78,7 +78,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
             WHEN("String is " << actualStringLength << " characters")
             {
                 const auto results = fixture.RunTest(
-                    ShaderTestFixture::RuntimeTestDesc
+                    AssertionsV1::ShaderTestFixture::RuntimeTestDesc
                     {
                         .CompilationEnv
                         {

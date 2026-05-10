@@ -1,13 +1,13 @@
 
-#include <Framework/ShaderTestFixture.h>
+#include <Framework/AssertionsV1/ShaderTestFixture.h>
 #include <Utility/HLSLTypes.h>
 
 #include <catch2/catch_test_macros.hpp>
 
 SCENARIO("Example8Tests")
 {
-    stf::ShaderTestFixture fixture(
-        stf::ShaderTestFixture::FixtureDesc
+    stf::AssertionsV1::ShaderTestFixture fixture(
+        stf::AssertionsV1::ShaderTestFixture::FixtureDesc
         {
             // We can add virtual shader directory mappings to our shader test environment
             // Here we are saying that if a file path begins with "/Shader" then it is a virtual file directory
@@ -33,7 +33,7 @@ SCENARIO("Example8Tests")
     // RunTest takes a desc that describes the test setup
     // In this case we give the HLSL source code, entry function name and thread group count.
     REQUIRE(fixture.RunTest(
-        stf::ShaderTestFixture::RuntimeTestDesc
+        stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc
         {
             .CompilationEnv
             {
