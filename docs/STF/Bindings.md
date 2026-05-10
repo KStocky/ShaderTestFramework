@@ -76,7 +76,7 @@ fixture.RunTest(
 
 Notice how `StructUsedInHLSL` has an extra member when compared to the HLSL equivalent `MyStruct`. We need to add 4 bytes of padding in between the `float3` and `int2` on the C++ side due to how constant buffer data is packed. The rules on how constant buffers are packed can be read [here](https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/dx-graphics-hlsl-packing-rules).
 
-Then when we set data on `GlobalBinding` we simply provide an instantiation of `StructUsedInHLSL`. [Designated Initializers](https://en.cppreference.com/w/cpp/language/aggregate_initialization#Designated_initializers) work well for this because you can specify just the members you care about initializing and ignore any members that you don't care about (e.g. we don't care what data is in the padding bytes)
+Then when we set data on `GlobalBinding` we simply provide an instantiation of `StructUsedInHLSL`. [Designated Initializers](https://en.cppreference.com/cpp/language/aggregate_initialization#Designated_initializers) work well for this because you can specify just the members you care about initializing and ignore any members that you don't care about (e.g. we don't care what data is in the padding bytes)
 
 ## Resource Bindings
 

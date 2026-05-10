@@ -97,7 +97,7 @@ stf::AssertionsV1::ShaderTestFixture fixture(
 );
 ```
 
-[`std::filesystem::current_path()`](https://en.cppreference.com/w/cpp/filesystem/current_path) returns the current Working Directory path of the process. `SHADER_SRC` is the define that we created in [Passing Directory Mappings from CMake to C++](#passing-directory-mappings-from-cmake-to-c). Therefore this mapping will map the shader directory that we created in [Asset Dependency Management Library](#asset-dependency-management-library) to the virtual directory `"/Shader"`.
+[`std::filesystem::current_path()`](https://en.cppreference.com/cpp/filesystem/current_path) returns the current Working Directory path of the process. `SHADER_SRC` is the define that we created in [Passing Directory Mappings from CMake to C++](#passing-directory-mappings-from-cmake-to-c). Therefore this mapping will map the shader directory that we created in [Asset Dependency Management Library](#asset-dependency-management-library) to the virtual directory `"/Shader"`.
 
 This mapping is then used when we are specifying the `Source` in the `stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc`:
 
