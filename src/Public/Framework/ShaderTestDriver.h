@@ -36,7 +36,7 @@ namespace stf
         struct TestDesc
         {
             SharedPtr<Shader> Shader;
-            const typename TInterface::PerTestData& PerTestData;
+            typename TInterface::PerTestData PerTestData;
             std::vector<ShaderBinding> Bindings;
             std::string_view TestName;
             uint3 DispatchConfig;
