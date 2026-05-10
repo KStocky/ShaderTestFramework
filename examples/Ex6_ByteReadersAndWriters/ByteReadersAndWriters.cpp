@@ -66,20 +66,10 @@ SCENARIO("Example6Tests - Failing test with no Byte Reader")
 
 SCENARIO("Example6Tests - Failing test with Byte Reader")
 {
-    stf::ShaderTestFixture fixture(
-        stf::ShaderTestFixture::FixtureDesc
-        {
-            // We can add virtual shader directory mappings to our shader test environment
-            // Here we are saying that if a file path begins with "/Shader" then it is a virtual file directory
-            // and should be replaced with the path that evaluates from current_path()/SHADER_SRC
-            // std::filesystem::current_path() returns the current working directory
-            // We set both the current working directory and the SHADER_SRC macro in our cmake script.
-            .Mappings{ stf::VirtualShaderDirectoryMapping{"/Shader", std::filesystem::current_path() / SHADER_SRC } }
-        });
-
+    stf::AssertionsV1::AssertionsV1Interface assertionInterface;
     // Our ByteReader takes a single parameter.
     // 1. The data of the assert.
-    fixture.RegisterByteReader("MY_TYPE_READER_ID",
+    assertionInterface.RegisterByteReader("MY_TYPE_READER_ID",
         [](const std::span<const std::byte> InData)
         {
             struct MyType
@@ -94,6 +84,18 @@ SCENARIO("Example6Tests - Failing test with Byte Reader")
 
             return std::format("a = {}, b = {}, c = {}", val.a, val.b, val.c ? "true" : "false");
         });
+
+    stf::ShaderTestFixture fixture(
+        stf::ShaderTestFixture::FixtureDesc
+        {
+            // We can add virtual shader directory mappings to our shader test environment
+            // Here we are saying that if a file path begins with "/Shader" then it is a virtual file directory
+            // and should be replaced with the path that evaluates from current_path()/SHADER_SRC
+            // std::filesystem::current_path() returns the current working directory
+            // We set both the current working directory and the SHADER_SRC macro in our cmake script.
+            .Mappings{ stf::VirtualShaderDirectoryMapping{"/Shader", std::filesystem::current_path() / SHADER_SRC } }
+        },
+        std::move(assertionInterface));
 
     // RunTest takes a desc that describes the test setup
     // In this case we give the HLSL source code, entry function name and thread group count.
@@ -114,23 +116,13 @@ SCENARIO("Example6Tests - Failing test with Byte Reader")
 
 SCENARIO("Example6Tests - Failing test with MultiType Byte Reader")
 {
-    stf::ShaderTestFixture fixture(
-        stf::ShaderTestFixture::FixtureDesc
-        {
-            // We can add virtual shader directory mappings to our shader test environment
-            // Here we are saying that if a file path begins with "/Shader" then it is a virtual file directory
-            // and should be replaced with the path that evaluates from current_path()/SHADER_SRC
-            // std::filesystem::current_path() returns the current working directory
-            // We set both the current working directory and the SHADER_SRC macro in our cmake script.
-            .Mappings{ stf::VirtualShaderDirectoryMapping{ "/Shader", std::filesystem::current_path() / SHADER_SRC } }
-        });
-
+    stf::AssertionsV1::AssertionsV1Interface assertionInterface;
     // Our ByteReader takes two parameters.
     // 1. TypeId -> This is the typeid that we registered with in the shader
     // In this case it is the size of the array that we are passing back
     // But in general this can represent anything to represent how to interpret the data that is passed in.
     // 2. The data of the assert.
-    fixture.RegisterByteReader("MY_TYPE_READER_ID",
+    assertionInterface.RegisterByteReader("MY_TYPE_READER_ID",
         [](const stf::u16 InTypeId, const std::span<const std::byte> InData)
         {
             auto val = std::make_unique_for_overwrite<stf::u32[]>(InTypeId);
@@ -146,6 +138,18 @@ SCENARIO("Example6Tests - Failing test with MultiType Byte Reader")
 
             return ret.str();
         });
+
+    stf::ShaderTestFixture fixture(
+        stf::ShaderTestFixture::FixtureDesc
+        {
+            // We can add virtual shader directory mappings to our shader test environment
+            // Here we are saying that if a file path begins with "/Shader" then it is a virtual file directory
+            // and should be replaced with the path that evaluates from current_path()/SHADER_SRC
+            // std::filesystem::current_path() returns the current working directory
+            // We set both the current working directory and the SHADER_SRC macro in our cmake script.
+            .Mappings{ stf::VirtualShaderDirectoryMapping{ "/Shader", std::filesystem::current_path() / SHADER_SRC } }
+        },
+        std::move(assertionInterface));
 
     // RunTest takes a desc that describes the test setup
     // In this case we give the HLSL source code, entry function name and thread group count.
@@ -166,20 +170,10 @@ SCENARIO("Example6Tests - Failing test with MultiType Byte Reader")
 
 SCENARIO("Example6Tests - Failing test with Byte Writer")
 {
-    stf::ShaderTestFixture fixture(
-        stf::ShaderTestFixture::FixtureDesc
-        {
-            // We can add virtual shader directory mappings to our shader test environment
-            // Here we are saying that if a file path begins with "/Shader" then it is a virtual file directory
-            // and should be replaced with the path that evaluates from current_path()/SHADER_SRC
-            // std::filesystem::current_path() returns the current working directory
-            // We set both the current working directory and the SHADER_SRC macro in our cmake script.
-            .Mappings{ stf::VirtualShaderDirectoryMapping{ "/Shader", std::filesystem::current_path() / SHADER_SRC } }
-        });
-
+    stf::AssertionsV1::AssertionsV1Interface assertionInterface;
     // Our ByteReader takes a single parameter.
     // 1. The data of the assert.
-    fixture.RegisterByteReader("MY_TYPE_READER_ID",
+    assertionInterface.RegisterByteReader("MY_TYPE_READER_ID",
         [](const std::span<const std::byte> InData)
         {
             if (InData.size_bytes() == 0)
@@ -200,6 +194,18 @@ SCENARIO("Example6Tests - Failing test with Byte Writer")
 
             return ret.str();
         });
+
+    stf::ShaderTestFixture fixture(
+        stf::ShaderTestFixture::FixtureDesc
+        {
+            // We can add virtual shader directory mappings to our shader test environment
+            // Here we are saying that if a file path begins with "/Shader" then it is a virtual file directory
+            // and should be replaced with the path that evaluates from current_path()/SHADER_SRC
+            // std::filesystem::current_path() returns the current working directory
+            // We set both the current working directory and the SHADER_SRC macro in our cmake script.
+            .Mappings{ stf::VirtualShaderDirectoryMapping{ "/Shader", std::filesystem::current_path() / SHADER_SRC } }
+        },
+        std::move(assertionInterface));
 
     // RunTest takes a desc that describes the test setup
     // In this case we give the HLSL source code, entry function name and thread group count.

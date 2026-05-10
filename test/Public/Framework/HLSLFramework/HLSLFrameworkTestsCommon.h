@@ -31,6 +31,10 @@ public:
         : fixture(std::move(InDesc))
     {}
 
+    ShaderTestFixtureBaseFixture(stf::ShaderTestFixture::FixtureDesc InDesc, stf::AssertionsV1::AssertionsV1Interface InInterface)
+        : fixture(std::move(InDesc), std::move(InInterface))
+    {}
+
 protected:
     mutable stf::ShaderTestFixture fixture;
 };

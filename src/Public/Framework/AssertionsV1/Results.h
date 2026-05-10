@@ -14,13 +14,6 @@
 
 namespace stf::AssertionsV1
 {
-    enum class EThreadIdType : u8
-    {
-        None,
-        Int,
-        Int3
-    };
-
     struct AllocationBufferData
     {
         u32 NumPassedAsserts = 0;

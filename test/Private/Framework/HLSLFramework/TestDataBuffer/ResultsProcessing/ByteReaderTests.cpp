@@ -9,22 +9,31 @@ class ByteReaderTestsFixture : public ShaderTestFixtureBaseFixture
 {
 public:
     ByteReaderTestsFixture()
-        : ShaderTestFixtureBaseFixture()
+        : ShaderTestFixtureBaseFixture(
+            stf::ShaderTestFixture::FixtureDesc
+            {
+                .Mappings{ GetTestVirtualDirectoryMapping() }
+            },
+            []()
+            {
+                stf::AssertionsV1::AssertionsV1Interface assertionInterface;
+                assertionInterface.RegisterByteReader("TEST_READER_1",
+                    [](const stf::u16, const std::span<const std::byte> InBytes)
+                    {
+                        stf::u32 value;
+                        std::memcpy(&value, InBytes.data(), sizeof(stf::u32));
+                        return std::format("Reader 1: {}", value);
+                    });
+                assertionInterface.RegisterByteReader("TEST_READER_2",
+                    [](const stf::u16, const std::span<const std::byte> InBytes)
+                    {
+                        stf::u32 value;
+                        std::memcpy(&value, InBytes.data(), sizeof(stf::u32));
+                        return std::format("Reader 2: {}", value);
+                    });
+                return assertionInterface;
+            }())
     {
-        fixture.RegisterByteReader("TEST_READER_1",
-            [](const stf::u16, const std::span<const std::byte> InBytes)
-            {
-                stf::u32 value;
-                std::memcpy(&value, InBytes.data(), sizeof(stf::u32));
-                return std::format("Reader 1: {}", value);
-            });
-        fixture.RegisterByteReader("TEST_READER_2",
-            [](const stf::u16, const std::span<const std::byte> InBytes)
-            {
-                stf::u32 value;
-                std::memcpy(&value, InBytes.data(), sizeof(stf::u32));
-                return std::format("Reader 2: {}", value);
-            });
     }
 };
 
@@ -78,7 +87,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ByteReaderTestsFixture, "HLSLFrameworkTests - TestD
                 },
                 .TestName = testName,
                 .ThreadGroupCount{1, 1, 1},
-                .TestDataLayout
+                .PerTestData
                 {
                     .NumFailedAsserts = 10,
                     .NumBytesAssertData = 400

@@ -12,13 +12,16 @@
 #include "D3D12/GPUResourceManager.h"
 #include "Utility/Error.h"
 
+#include <string>
+#include <vector>
+
 namespace stf::AssertionsV1
 {
     class AssertionsV1Interface
     {
     public:
 
-        using CreationParams = TestDataBufferLayout;
+        using PerTestData = TestDataBufferLayout;
         using TestRunResultsType = TestRunResults;
         
         struct GPUResourcesType
@@ -35,16 +38,21 @@ namespace stf::AssertionsV1
             const GPUResourceManager::ReadbackResultHandle AllocationReadback;
         };
 
-        AssertionsV1Interface(const CreationParams& InParams);
+        AssertionsV1Interface();
 
-        ExpectedError<GPUResourcesType> CreateGPUResources(ScopedCommandContext& InContext) const;
-        ExpectedError<void> BindShaderData(ScopedCommandShader& InShader, const GPUResourcesType& InResources) const;
+        TypeReaderIndex RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader);
+        TypeReaderIndex RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader);
+
+        std::vector<std::wstring> GetAdditionalCompilerArgs() const;
+
+        ExpectedError<GPUResourcesType> CreateGPUResources(ScopedCommandContext& InContext, const PerTestData& InPerTestData) const;
+        ExpectedError<void> BindShaderData(ScopedCommandShader& InShader, const GPUResourcesType& InResources, const PerTestData& InPerTestData) const;
         ExpectedError<GPUReadbackResourcesType> QueueReadbacks(ScopedCommandContext& InContext, const GPUResourcesType& InResources) const;
-        ExpectedError<TestRunResultsType> ProcessReadbacks(CommandEngine& InEngine, const GPUReadbackResourcesType& InReadbacks) const;
+        ExpectedError<TestRunResultsType> ProcessReadbacks(CommandEngine& InEngine, const GPUReadbackResourcesType& InReadbacks, const PerTestData& InPerTestData) const;
 
     private:
 
-        CreationParams m_Params;
         MultiTypeByteReaderMap m_ByteReaderMap;
+        std::vector<std::wstring> m_AdditionalArgs;
     };
 }

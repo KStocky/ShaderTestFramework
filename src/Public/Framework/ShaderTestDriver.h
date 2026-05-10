@@ -6,9 +6,9 @@
 #include "D3D12/Shader/PipelineState.h"
 #include "D3D12/Shader/RootSignature.h"
 
+#include "Framework/AssertionsV1/AssertionsV1Interface.h"
 #include "Framework/AssertionsV1/Results.h"
 #include "Framework/AssertionsV1/TestDataBufferLayout.h"
-#include "Framework/TypeByteReader.h"
 
 #include "Utility/Expected.h"
 #include "Utility/HLSLTypes.h"
@@ -34,7 +34,7 @@ namespace stf
         struct TestDesc
         {
             SharedPtr<Shader> Shader;
-            const AssertionsV1::TestDataBufferLayout& TestBufferLayout;
+            const AssertionsV1::TestDataBufferLayout& PerTestData;
             std::vector<ShaderBinding> Bindings;
             std::string_view TestName;
             uint3 DispatchConfig;
@@ -42,10 +42,7 @@ namespace stf
 
         ShaderTestDriver(CreationParams InParams);
 
-        TypeReaderIndex RegisterByteReader(std::string InTypeIDName, MultiTypeByteReader InByteReader);
-        TypeReaderIndex RegisterByteReader(std::string InTypeIDName, SingleTypeByteReader InByteReader);
-
-        ExpectedError<AssertionsV1::Results> RunShaderTest(TestDesc&& InTestDesc);
+        ExpectedError<AssertionsV1::TestRunResults> RunShaderTest(TestDesc&& InTestDesc, AssertionsV1::AssertionsV1Interface& InInterface);
 
     private:
 
@@ -53,7 +50,5 @@ namespace stf
 
         SharedPtr<GPUDevice> m_Device;
         SharedPtr<CommandEngine> m_CommandEngine;
-
-        MultiTypeByteReaderMap m_ByteReaderMap;
     };
 }
