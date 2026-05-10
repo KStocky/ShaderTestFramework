@@ -2,6 +2,7 @@
 
 #include "Platform.h"
 #include "Framework/AssertionsV1/TestDataBufferLayout.h"
+#include "Framework/AssertionInterface/Results.h"
 #include "Framework/TypeByteReader.h"
 
 #include "Utility/Error.h"
@@ -9,7 +10,6 @@
 
 #include <compare>
 #include <string>
-#include <variant>
 #include <vector>
 
 namespace stf::AssertionsV1
@@ -49,22 +49,5 @@ namespace stf::AssertionsV1
         friend std::ostream& operator<<(std::ostream& InOs, const TestRunResults& In);
     };
 
-    class Results
-    {
-    public:
-
-        Results() = default;
-        Results(Error InError);
-        Results(TestRunResults InResults);
-
-        operator bool() const;
-
-        const TestRunResults* GetTestResults() const;
-        const Error* GetTestRunError() const;
-
-        friend std::ostream& operator<<(std::ostream& InOs, const Results& In);
-
-    private:
-        std::variant<std::monostate, TestRunResults, Error> m_Result;
-    };
+    using Results = stf::assert::Results<TestRunResults>;
 }

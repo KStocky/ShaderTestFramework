@@ -1,9 +1,7 @@
 #include "Framework/ShaderTestFixture.h"
 
 #include "D3D12/GPUDevice.h"
-#include "D3D12/Shader/Shader.h"
 
-#include "Framework/PIXCapturer.h"
 #include "Utility/EnumReflection.h"
 
 #include <format>
@@ -39,121 +37,14 @@ namespace stf
         cachedStats = statSystem.FlushTimedStats();
     }
 
-    AssertionsV1::Results ShaderTestFixture::RunTest(RuntimeTestDesc InTestDesc)
-    {
-        ScopedDuration fullTest(std::format("ShaderTestFixture::RunTest: {}", InTestDesc.TestName));
-
-        InTestDesc.CompilationEnv.Defines.push_back(
-            ShaderMacro
-            {
-                .Name = "TTL_STRING_MAX_LENGTH",
-                .Definition = std::to_string(static_cast<i32>(InTestDesc.StringMaxLength))
-            });
-
-        auto interfaceArgs = m_Interface.GetAdditionalCompilerArgs();
-        InTestDesc.CompilationEnv.CompilationFlags.insert(
-            InTestDesc.CompilationEnv.CompilationFlags.end(),
-            std::make_move_iterator(interfaceArgs.begin()),
-            std::make_move_iterator(interfaceArgs.end()));
-
-        const bool requestedRetryOnFail =
-            InTestDesc.GPUCaptureMode == EGPUCaptureMode::CaptureOnFailure ||
-            InTestDesc.StringMode == EStringMode::OnFailure;
-
-        if (!requestedRetryOnFail)
-        {
-            return RunTestImpl(std::move(InTestDesc), false);
-        }
-
-        if (auto firstResult = RunTestImpl(InTestDesc, false))
-        {
-            return firstResult;
-        }
-        else if (firstResult.GetTestRunError())
-        {
-            return firstResult;
-        }
-
-        return RunTestImpl(std::move(InTestDesc), true);
-    }
-
-    AssertionsV1::Results ShaderTestFixture::RunCompileTimeTest(ShaderCompileTestDesc InTestDesc)
-    {
-        ScopedDuration scope(std::format("ShaderTestFixture::RunCompileTimeTest: {}", InTestDesc.TestName));
-
-        auto interfaceArgs = m_Interface.GetAdditionalCompilerArgs();
-        InTestDesc.CompilationEnv.CompilationFlags.insert(
-            InTestDesc.CompilationEnv.CompilationFlags.end(),
-            std::make_move_iterator(interfaceArgs.begin()),
-            std::make_move_iterator(interfaceArgs.end()));
-
-        return CompileShader("", EShaderType::Lib, std::move(InTestDesc.CompilationEnv), false)
-            .transform(
-                [](CompiledShaderData)
-                {
-                    return AssertionsV1::Results{ AssertionsV1::TestRunResults{} };
-                })
-            .or_else(
-                [](Error InError) -> Expected<AssertionsV1::Results, std::monostate>
-                {
-                    return AssertionsV1::Results{ std::move(InError) };
-                }
-            ).value();
-    }
-
     std::vector<TimedStat> ShaderTestFixtureBase::GetTestStats()
     {
         return cachedStats;
     }
 
-    AssertionsV1::Results ShaderTestFixture::RunTestImpl(RuntimeTestDesc InTestDesc, const bool InIsFailureRetry)
-    {
-        const bool takeCapture = ShouldTakeCapture(InTestDesc.GPUCaptureMode, InIsFailureRetry);
-        const bool enableStrings = InTestDesc.StringMode == EStringMode::On || (InIsFailureRetry && InTestDesc.StringMode == EStringMode::OnFailure);
-        InTestDesc.CompilationEnv.Defines.push_back(
-            ShaderMacro
-            {
-                .Name = "TTL_ENABLE_STRINGS",
-                .Definition = enableStrings ? "1" : "0"
-            }
-        );
-
-        return CompileShader(InTestDesc.TestName, EShaderType::Compute, std::move(InTestDesc.CompilationEnv), takeCapture)
-            .and_then(
-                [&](const CompiledShaderData& InCompilationResult)
-                {
-                    return Shader::Make(InCompilationResult, *m_Device);
-                })
-            .and_then(
-                [&](const SharedPtr<Shader>& InShader)
-                {
-                    const auto capturer = PIXCapturer(InTestDesc.TestName, takeCapture);
-                    const AssertionsV1::TestDataBufferLayout layout{ InTestDesc.PerTestData };
-                    return m_TestDriver.RunShaderTest(
-                        {
-                            .Shader = InShader,
-                            .PerTestData = layout,
-                            .Bindings = std::move(InTestDesc.Bindings),
-                            .TestName = InTestDesc.TestName,
-                            .DispatchConfig = InTestDesc.ThreadGroupCount
-                        }, m_Interface);
-                })
-            .transform(
-                [](AssertionsV1::TestRunResults&& InResults) -> AssertionsV1::Results
-                {
-                    return AssertionsV1::Results{ std::move(InResults) };
-                })
-            .or_else(
-                [](Error&& InError) -> Expected<AssertionsV1::Results, std::monostate>
-                {
-                    return AssertionsV1::Results{ std::move(InError) };
-                }
-            ).value();
-    }
-
     ExpectedError<CompiledShaderData> ShaderTestFixtureBase::CompileShader(const std::string_view InName, const EShaderType InType, ShaderCompilationEnvDesc InCompileDesc, const bool InTakingCapture) const
     {
-        ScopedDuration scope(std::format("ShaderTestFixture::CompileShader: {}", InName));
+        ScopedDuration scope(std::format("ShaderTestFixtureBase::CompileShader: {}", InName));
         ShaderCompilationJobDesc job;
         job.AdditionalFlags = std::move(InCompileDesc.CompilationFlags);
         job.AdditionalFlags.emplace_back(L"-enable-16bit-types");
