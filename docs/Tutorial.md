@@ -43,10 +43,10 @@ Let's start with a really simple example ([code](../examples/Ex0_MinimalShaderTe
 ```c++
 SCENARIO("MinimalShaderTestExample")
 {
-    stf::ShaderTestFixture fixture(stf::ShaderTestFixture::FixtureDesc{});
+    stf::AssertionsV1::ShaderTestFixture fixture(stf::AssertionsV1::ShaderTestFixture::FixtureDesc{});
     REQUIRE(fixture.RunTest
         (
-            stf::ShaderTestFixture::RuntimeTestDesc
+            stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc
             {
                 .CompilationEnv
                 {
@@ -77,7 +77,7 @@ And you will get an output like
 All tests passed (1 assertion in 1 test case)
 ```
 
-This demonstrates how we can run a shader test from C++ by creating an `stf::ShaderTestFixture` and then calling `ShaderTestFixture::RunTest`. `ShaderTestFixture::RunTest` takes an `stf::ShaderTestFixture::RuntimeTestDesc` which describes the parameters of the test. The parameters that we need to specify in the minimal test case are:
+This demonstrates how we can run a shader test from C++ by creating an `stf::AssertionsV1::ShaderTestFixture` and then calling `AssertionsV1::ShaderTestFixture::RunTest`. `AssertionsV1::ShaderTestFixture::RunTest` takes an `stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc` which describes the parameters of the test. The parameters that we need to specify in the minimal test case are:
 
 1. `Source` - Can be either a `std::string` which contains the HLSL source code OR a `std::filesystem::path` which points to a file which contains the HLSL code that we want to compile.
 2. `TestName` - This is the name of the entry function of the test shader.
@@ -134,9 +134,9 @@ Let's have a look at ([code](../examples/Ex1_FailingPowTests/PowTests.cpp)) and 
 ```c++
 SCENARIO("PowTests")
 {
-    stf::ShaderTestFixture fixture(stf::ShaderTestFixture::FixtureDesc{});
+    stf::AssertionsV1::ShaderTestFixture fixture(stf::AssertionsV1::ShaderTestFixture::FixtureDesc{});
     REQUIRE(fixture.RunTest(
-        stf::ShaderTestFixture::RuntimeTestDesc
+        stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc
         {
             .CompilationEnv
             {
@@ -191,19 +191,19 @@ assertions: 1 | 1 failed
 
 We have 5 asserts. 4 of which passed. 1 failed. And the one that failed was the one that had 1 as the left argument and 3 as the right argument. This is the first assertion. The fix for this is fairly trivial however, let's pretend it is not. We can debug this with [PIX on Windows](https://devblogs.microsoft.com/pix/download/).
 
-To take a capture of a test that is run we can call `ShaderTestFixture::TakeCapture` before running a test. So, we can amend the example to look like this
+To take a capture of a test that is run we can call `AssertionsV1::ShaderTestFixture::TakeCapture` before running a test. So, we can amend the example to look like this
 
 To take a capture of a test we have to do two things:
-1. Enable GPU capturing capabilities when constructing the `stf::ShaderTestFixture`
-2. Set the `GPUCaptureMode` in the `stf::ShaderTestFixture::RuntimeTestDesc` when calling `ShaderTestFixture::RunTest`
+1. Enable GPU capturing capabilities when constructing the `stf::AssertionsV1::ShaderTestFixture`
+2. Set the `GPUCaptureMode` in the `stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc` when calling `AssertionsV1::ShaderTestFixture::RunTest`
 
 Making these two changes our example now looks like this:
 
 ```c++
 SCENARIO("PowTests")
 {
-    stf::ShaderTestFixture fixture(
-        stf::ShaderTestFixture::FixtureDesc
+    stf::AssertionsV1::ShaderTestFixture fixture(
+        stf::AssertionsV1::ShaderTestFixture::FixtureDesc
         {
             .GPUDeviceParams
             {
@@ -213,7 +213,7 @@ SCENARIO("PowTests")
     );
 
     REQUIRE(fixture.RunTest(
-        stf::ShaderTestFixture::RuntimeTestDesc
+        stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc
         {
             .CompilationEnv
             {

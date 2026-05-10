@@ -1,5 +1,5 @@
 #include <D3D12/Shader/ShaderEnums.h>
-#include <Framework/ShaderTestFixture.h>
+#include <Framework/AssertionsV1/ShaderTestFixture.h>
 
 #include <string>
 
@@ -7,12 +7,12 @@
 
 SCENARIO("MinimalShaderTestExample")
 {
-    stf::ShaderTestFixture fixture(stf::ShaderTestFixture::FixtureDesc{});
+    stf::AssertionsV1::ShaderTestFixture fixture(stf::AssertionsV1::ShaderTestFixture::FixtureDesc{});
 
     // RunTest takes a desc that describes the test setup
     // In this case we give the HLSL source code, entry function name and thread group count.
     REQUIRE(fixture.RunTest(
-        stf::ShaderTestFixture::RuntimeTestDesc
+        stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc
         {
             .CompilationEnv
             {

@@ -36,8 +36,8 @@ The following code from [CompileTimeTests.cpp](../../examples/Ex5_CompileTimeTes
 
 SCENARIO("Example5Tests")
 {
-    stf::ShaderTestFixture fixture(
-        stf::ShaderTestFixture::FixtureDesc
+    stf::AssertionsV1::ShaderTestFixture fixture(
+        stf::AssertionsV1::ShaderTestFixture::FixtureDesc
         {
             .Mappings{ stf::VirtualShaderDirectoryMapping{"/Shader", std::filesystem::current_path() / SHADER_SRC} }
         });
@@ -55,7 +55,7 @@ SCENARIO("Example5Tests")
 }
 ```
 
-The main difference is that we are calling `ShaderTestFixture::RunCompileTimeTest` to run the test. Compile Time Tests are not executed. Therefore a dispatch configuration is not required. An entry function also doesn't need to be specified, however giving a name to the test improves test failure reporting.
+The main difference is that we are calling `AssertionsV1::ShaderTestFixture::RunCompileTimeTest` to run the test. Compile Time Tests are not executed. Therefore a dispatch configuration is not required. An entry function also doesn't need to be specified, however giving a name to the test improves test failure reporting.
 
 ### HLSL
 

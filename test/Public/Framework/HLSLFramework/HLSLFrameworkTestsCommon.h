@@ -1,6 +1,6 @@
 #pragma once
 #include <D3D12/Shader/VirtualShaderDirectoryMapping.h>
-#include <Framework/ShaderTestFixture.h>
+#include <Framework/AssertionsV1/ShaderTestFixture.h>
 #include <filesystem>
 
 inline stf::VirtualShaderDirectoryMapping GetTestVirtualDirectoryMapping()
@@ -20,21 +20,21 @@ public:
 
     ShaderTestFixtureBaseFixture()
         : ShaderTestFixtureBaseFixture(
-            stf::ShaderTestFixture::FixtureDesc
+            stf::AssertionsV1::ShaderTestFixture::FixtureDesc
             {
                 .Mappings{ GetTestVirtualDirectoryMapping() }
             }
         )
     {}
 
-    ShaderTestFixtureBaseFixture(stf::ShaderTestFixture::FixtureDesc InDesc)
+    ShaderTestFixtureBaseFixture(stf::AssertionsV1::ShaderTestFixture::FixtureDesc InDesc)
         : fixture(std::move(InDesc))
     {}
 
-    ShaderTestFixtureBaseFixture(stf::ShaderTestFixture::FixtureDesc InDesc, stf::AssertionsV1::AssertionsV1Interface InInterface)
+    ShaderTestFixtureBaseFixture(stf::AssertionsV1::ShaderTestFixture::FixtureDesc InDesc, stf::AssertionsV1::AssertionsV1Interface InInterface)
         : fixture(std::move(InDesc), std::move(InInterface))
     {}
 
 protected:
-    mutable stf::ShaderTestFixture fixture;
+    mutable stf::AssertionsV1::ShaderTestFixture fixture;
 };

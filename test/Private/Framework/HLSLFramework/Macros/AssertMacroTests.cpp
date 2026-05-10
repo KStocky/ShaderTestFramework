@@ -28,7 +28,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
         [&testName]()
         {
             return
-                ShaderTestFixture::RuntimeTestDesc
+                AssertionsV1::ShaderTestFixture::RuntimeTestDesc
             {
                 .CompilationEnv
                 {

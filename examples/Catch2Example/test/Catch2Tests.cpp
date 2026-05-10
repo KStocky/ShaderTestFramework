@@ -1,5 +1,5 @@
 #include <D3D12/Shader/ShaderEnums.h>
-#include <Framework/ShaderTestFixture.h>
+#include <Framework/AssertionsV1/ShaderTestFixture.h>
 
 static stf::VirtualShaderDirectoryMapping GetTestVirtualDirectoryMapping()
 {
@@ -25,8 +25,8 @@ SCENARIO("Catch2ShaderTests")
         )
     );
 
-    stf::ShaderTestFixture fixture(
-        stf::ShaderTestFixture::FixtureDesc
+    stf::AssertionsV1::ShaderTestFixture fixture(
+        stf::AssertionsV1::ShaderTestFixture::FixtureDesc
         {
             .Mappings{ GetTestVirtualDirectoryMapping() }
         }
@@ -36,7 +36,7 @@ SCENARIO("Catch2ShaderTests")
         [&testName]()
         {
             return
-                stf::ShaderTestFixture::RuntimeTestDesc
+                stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc
             {
                 .CompilationEnv
                 {

@@ -56,14 +56,15 @@ set(SOURCES
     Public/D3D12/Shader/VirtualShaderDirectoryMappingManager.h
     Public/Framework/AssertionsV1/AssertionsV1Interface.h
     Public/Framework/AssertionsV1/Results.h
+    Public/Framework/AssertionsV1/ShaderTestFixture.h
     Public/Framework/AssertionsV1/TestDataBufferLayout.h
     Public/Framework/AssertionsV1/TestDataBufferProcessor.h
     Public/Framework/AssertionsV1/TestDataBufferStructs.h
     Public/Framework/AssertionInterface.h
     Public/Framework/AssertionInterface/Results.h
+    Public/Framework/BasicShaderTestFixture.h
     Public/Framework/PIXCapturer.h
     Public/Framework/ShaderTestDriver.h
-    Public/Framework/ShaderTestFixture.h
     Public/Framework/TypeByteReader.h
     Public/Platform.h
     Public/Stats/ScopedObject.h
@@ -120,9 +121,9 @@ set(SOURCES
     Private/Framework/AssertionsV1/TestDataBufferProcessor.cpp
     Private/Framework/AssertionsV1/TestDataBufferStructs.cpp
     Private/Framework/AssertionInterface.cpp
+    Private/Framework/BasicShaderTestFixture.cpp
     Private/Framework/PIXCapturer.cpp
     Private/Framework/ShaderTestDriver.cpp
-    Private/Framework/ShaderTestFixture.cpp
     Private/Framework/TypeByteReader.cpp
     Private/Stats/StatSystem.cpp
 )

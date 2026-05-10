@@ -6,7 +6,6 @@
 #include "D3D12/Shader/ShaderCompiler.h"
 #include "Framework/AssertionInterface.h"
 #include "Framework/AssertionInterface/Results.h"
-#include "Framework/AssertionsV1/AssertionsV1Interface.h"
 #include "Framework/PIXCapturer.h"
 #include "Framework/ShaderTestDriver.h"
 #include "Stats/StatSystem.h"
@@ -62,7 +61,7 @@ namespace stf
         std::string_view TestName;
     };
 
-    class ShaderTestFixtureBase
+    class BasicShaderTestFixtureBase
     {
 
     public:
@@ -77,8 +76,8 @@ namespace stf
             };
         };
 
-        ShaderTestFixtureBase(const FixtureDesc& InParams);
-        ~ShaderTestFixtureBase() noexcept;
+        BasicShaderTestFixtureBase(const FixtureDesc& InParams);
+        ~BasicShaderTestFixtureBase() noexcept;
 
         static std::vector<TimedStat> GetTestStats();
 
@@ -99,7 +98,7 @@ namespace stf
 
     template<assert::CAssertionInterfaceType TInterface>
     class BasicShaderTestFixture
-        : public ShaderTestFixtureBase
+        : public BasicShaderTestFixtureBase
     {
     public:
 
@@ -107,7 +106,7 @@ namespace stf
         using ResultsType = assert::Results<typename TInterface::TestRunResultsType>;
 
         BasicShaderTestFixture(const FixtureDesc& InParams, TInterface InInterface = {})
-            : ShaderTestFixtureBase{ InParams }
+            : BasicShaderTestFixtureBase{ InParams }
             , m_Interface{ std::move(InInterface) }
             , m_TestDriver{
                 ShaderTestDriver::CreationParams
@@ -240,6 +239,4 @@ namespace stf
         TInterface m_Interface;
         ShaderTestDriver m_TestDriver;
     };
-
-    using ShaderTestFixture = BasicShaderTestFixture<AssertionsV1::AssertionsV1Interface>;
 }
