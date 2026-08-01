@@ -8,16 +8,13 @@ project(
     DESCRIPTION "A testing framework for shader code"
     LANGUAGES CXX )
 
-if(CMAKE_GENERATOR MATCHES "Visual Studio" AND CMAKE_VS_VERSION_BUILD_NUMBER VERSION_LESS "17.7")
-    message(FATAL_ERROR "Shader Test Framework requires at least Visual Studio 17.7. You have ${CMAKE_VS_VERSION_BUILD_NUMBER} installed. Please update your installation of VS 2022 to latest")
+if(MSVC_VERSION VERSION_LESS 1944)
+    message(FATAL_ERROR "Shader Test Framework requires at least MSVC 1944 (Visual Studio 2022 17.14 ). You have ${MSVC_VERSION} installed. Please update your installation of VS 2022 to latest or if you have a later version installed point CMake to it using the toolset configuration preset.")
 endif()
 
-if(NOT MSVC)
-    message(FATAL_ERROR "Shader Test Framework requires the MSVC compiler. If you are using Ninja as the generator, set cl as the value of CMAKE_CXX_COMPILER")
-endif()
-
-if(MSVC_VERSION VERSION_LESS 1937)
-    message(FATAL_ERROR "Shader Test Framework requires at least MSVC 1937 (Visual Studio 2022 17.7 ). You have ${MSVC_VERSION} installed. Please update your installation of VS 2022 to latest or if you have a later version installed point CMake to it using the toolset configuration preset.")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang"
+   AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19)
+    message(FATAL_ERROR "Requires clang-cl 19 or newer")
 endif()
 
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
