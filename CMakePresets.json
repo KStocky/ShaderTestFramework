@@ -15,15 +15,12 @@
         "CMAKE_UNITY_BUILD": true,
         "STF_ENABLE_TESTING": true,
         "STF_INCLUDE_EXAMPLES": true,
-        "STF_STRICT_COMPILATION": true
+        "STF_STRICT_COMPILATION": true,
+        "CMAKE_CXX_COMPILER": "cl"
       },
       "architecture": {
         "value": "x64",
         "strategy": "external"
-      },
-      "toolset": {
-        "strategy": "external",
-        "value": "version=14.44"
       }
     },
     {
