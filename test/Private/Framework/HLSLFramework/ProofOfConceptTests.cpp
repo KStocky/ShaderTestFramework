@@ -35,3 +35,39 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
         );
     }
 }
+
+TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - Macro-expanded include")
+{
+    using namespace stf;
+
+    REQUIRE(fixture.RunTest(
+        AssertionsV1::ShaderTestFixture::RuntimeTestDesc
+        {
+            .CompilationEnv
+            {
+                .Source = std::string
+                {
+                    R"(
+                        #include STF_ASSERTION_INTERFACE_HEADER
+
+                        [numthreads(1, 1, 1)]
+                        void MacroExpandedInclude()
+                        {
+                            ASSERT(AreEqual, 1, 1);
+                        }
+                    )"
+                },
+                .Defines
+                {
+                    ShaderMacro
+                    {
+                        .Name = "STF_ASSERTION_INTERFACE_HEADER",
+                        .Definition = R"("/Test/STF/ShaderTestFramework.hlsli")"
+                    }
+                }
+            },
+            .TestName = "MacroExpandedInclude",
+            .ThreadGroupCount{ 1, 1, 1 }
+        })
+    );
+}
