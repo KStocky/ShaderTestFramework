@@ -81,6 +81,8 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/Asserts/IsFalse.hlsl
     Shader/HLSLFrameworkTests/Asserts/IsTrue.hlsl
     Shader/HLSLFrameworkTests/Asserts/NotEqual.hlsl
+    Shader/HLSLFrameworkTests/AssertionInterface/AssertionLibrary.hlsli
+    Shader/HLSLFrameworkTests/AssertionInterface/AssertionLibraryVirtualPathTests.hlsl
     Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/BindingsHave2ByteAlignment.hlsl
     Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/ConstantBufferArray.hlsl
     Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/GlobalBindings.hlsl
@@ -169,6 +171,7 @@ set(SOURCES
     Private/D3D12/Shader/ShaderModelTests.cpp
     Private/D3D12/Shader/ShaderReflectionUtilsTests.cpp
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManagerTests.cpp
+    Private/Framework/AssertionInterface/AssertionLibraryVirtualPathTests.cpp
     Private/Framework/AssertionInterface/AssertionInterfaceTypeTests.cpp
     Private/Framework/AssertionInterface/TestRunResultsTypeTests.cpp
     Private/Framework/AssertionsV1/AssertionsV1InterfaceTests.cpp
