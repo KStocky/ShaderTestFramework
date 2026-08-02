@@ -139,12 +139,7 @@ namespace stf
                     .Definition = std::to_string(static_cast<i32>(InTestDesc.StringMaxLength))
                 });
 
-            InTestDesc.CompilationEnv.Defines.push_back(
-                ShaderMacro
-                {
-                    .Name = "STF_ASSERTION_LIBRARY",
-                    .Definition = std::format("\"{}\"", m_Interface.AssertionLibraryVirtualPath.View())
-                });
+            AddAssertionLibraryDefine(InTestDesc.CompilationEnv);
 
             auto interfaceArgs = m_Interface.GetAdditionalCompilerArgs();
             InTestDesc.CompilationEnv.CompilationFlags.insert(
@@ -177,6 +172,8 @@ namespace stf
         {
             ScopedDuration scope(std::format("BasicShaderTestFixture::RunCompileTimeTest: {}", InTestDesc.TestName));
 
+            AddAssertionLibraryDefine(InTestDesc.CompilationEnv);
+
             auto interfaceArgs = m_Interface.GetAdditionalCompilerArgs();
             InTestDesc.CompilationEnv.CompilationFlags.insert(
                 InTestDesc.CompilationEnv.CompilationFlags.end(),
@@ -198,6 +195,16 @@ namespace stf
         }
 
     private:
+        void AddAssertionLibraryDefine(ShaderCompilationEnvDesc& InCompilationEnv) const
+        {
+            InCompilationEnv.Defines.push_back(
+                ShaderMacro
+                {
+                    .Name = "STF_ASSERTION_LIBRARY",
+                    .Definition = std::format("\"{}\"", m_Interface.AssertionLibraryVirtualPath.View())
+                });
+        }
+
         ResultsType RunTestImpl(RuntimeTestDesc InTestDesc, const bool InIsFailureRetry)
         {
             const bool takeCapture = ShouldTakeCapture(InTestDesc.GPUCaptureMode, InIsFailureRetry);
