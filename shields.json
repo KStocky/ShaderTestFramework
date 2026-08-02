@@ -1,1 +1,1 @@
-{"MinMSVCVersion":{"label":"Minimum MSVC/Visual Studio version","icon":"visualstudio","status":"14.41/17.11","color":"green"},"MinCMakeVersion":{"label":"Minimum CMake version","icon":"cmake","status":"3.26","color":"green"}}
+{"MinMSVCVersion":{"label":"Minimum MSVC/Visual Studio version","icon":"visualstudio","status":"14.44/17.14","color":"green"},"MinCMakeVersion":{"label":"Minimum CMake version","icon":"cmake","status":"3.26","color":"green"}}
