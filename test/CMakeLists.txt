@@ -109,6 +109,12 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/Macros/Sections.hlsl
     Shader/HLSLFrameworkTests/Macros/SectionVarCreation.hlsl
     Shader/HLSLFrameworkTests/Macros/Stamp.hlsl
+    Shader/HLSLFrameworkTests/Matcher/EqualsMatcherTests.hlsl
+    Shader/HLSLFrameworkTests/Matcher/GreaterThanEqualMatcherTests.hlsl
+    Shader/HLSLFrameworkTests/Matcher/GreaterThanMatcherTests.hlsl
+    Shader/HLSLFrameworkTests/Matcher/LessThanEqualMatcherTests.hlsl
+    Shader/HLSLFrameworkTests/Matcher/LessThanMatcherTests.hlsl
+    Shader/HLSLFrameworkTests/Matcher/MatcherTypeTests.hlsl
     Shader/HLSLFrameworkTests/Memory/AlignedOffsetTests.hlsl
     Shader/HLSLFrameworkTests/Memory/ZeroTests.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned.hlsl
@@ -175,6 +181,8 @@ set(SOURCES
     Private/Framework/HLSLFramework/Macros/SectionsTests.cpp
     Private/Framework/HLSLFramework/Macros/SectionVarCreationTests.cpp
     Private/Framework/HLSLFramework/Macros/StampTests.cpp
+    Private/Framework/HLSLFramework/Matcher/MatcherTests.cpp
+    Private/Framework/HLSLFramework/Matcher/MatcherTypeTests.cpp
     Private/Framework/HLSLFramework/Memory/AlignedOffset.cpp
     Private/Framework/HLSLFramework/Memory/ZeroTests.cpp
     Private/Framework/HLSLFramework/String/StringByteWriterTests.cpp
