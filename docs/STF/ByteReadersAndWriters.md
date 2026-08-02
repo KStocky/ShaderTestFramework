@@ -122,12 +122,13 @@ There were 0 successful asserts and 1 failed assertions
 
 As you can see, the error has been formatted using the information about the type. There two steps for making use of a Byte Reader in a test.
 
-#### Step 1: Registering a Byte Reader with the fixture
+#### Step 1: Registering a Byte Reader with the assertion interface
 
 The above example's byte reader is registered in the following lines of [ByteReadersAndWriters.cpp](../../examples/Ex6_ByteReadersAndWriters/ByteReadersAndWriters.cpp):
 
 ```c++
-fixture.RegisterByteReader("MY_TYPE_READER_ID",
+stf::AssertionsV1::AssertionsV1Interface assertionInterface;
+assertionInterface.RegisterByteReader("MY_TYPE_READER_ID",
     [](const std::span<const std::byte> InData)
     {
         struct MyType
@@ -142,9 +143,13 @@ fixture.RegisterByteReader("MY_TYPE_READER_ID",
 
         return std::format("a = {}, b = {}, c = {}", val.a, val.b, val.c ? "true" : "false");
     });
+
+stf::AssertionsV1::ShaderTestFixture fixture(
+    stf::AssertionsV1::ShaderTestFixture::FixtureDesc{/* mappings */},
+    std::move(assertionInterface));
 ```
 
-`RegisterByteReader` takes two parameters:
+`AssertionsV1Interface::RegisterByteReader` takes two parameters:
 
 1. Name - This is the name of the Byte Reader. We will use this to make the HLSL tests aware of this byte reader in the next step. The framework passes this name to the HLSL test using a define. This is why the name given here is in the style of a C++ macro.
 2. A lambda - This lambda takes a `const std::span<const std::byte>` and returns a `std::string`. The input parameter contains all of the bytes written as part of the failed assertion in HLSL. The output string is the string representation of the bytes that will be formatted into the failed assertion output.
@@ -208,7 +213,8 @@ The difference here is that we are passing two values to the `stf::ByteReaderTra
 The only difference between single type and multi type byte readers in C++ is that multi type byte readers take an extra parameter:
 
 ```c++
-fixture.RegisterByteReader("MY_TYPE_READER_ID",
+stf::AssertionsV1::AssertionsV1Interface assertionInterface;
+assertionInterface.RegisterByteReader("MY_TYPE_READER_ID",
     [](const stf::u16 InTypeId, const std::span<const std::byte> InData)
     {
         auto val = std::make_unique_for_overwrite<stf::u32[]>(InTypeId);
@@ -224,6 +230,10 @@ fixture.RegisterByteReader("MY_TYPE_READER_ID",
 
         return ret.str();
     });
+
+stf::AssertionsV1::ShaderTestFixture fixture(
+    stf::AssertionsV1::ShaderTestFixture::FixtureDesc{/* mappings */},
+    std::move(assertionInterface));
 ```
 
 As mentioned above, we are using this extra parameter to pass the size of the array through.

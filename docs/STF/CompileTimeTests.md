@@ -30,7 +30,7 @@ Writing compile time tests are different from regular run time tests differs bot
 The following code from [CompileTimeTests.cpp](../../examples/Ex5_CompileTimeTests/CompileTimeTests.cpp) demonstrates how to run a compile time test:
 
 ```c++
-#include <Framework/ShaderTestFixture.h>
+#include <Framework/AssertionsV1/ShaderTestFixture.h>
 
 #include <catch2/catch_test_macros.hpp>
 
