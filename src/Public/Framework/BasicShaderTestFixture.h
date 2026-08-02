@@ -139,6 +139,13 @@ namespace stf
                     .Definition = std::to_string(static_cast<i32>(InTestDesc.StringMaxLength))
                 });
 
+            InTestDesc.CompilationEnv.Defines.push_back(
+                ShaderMacro
+                {
+                    .Name = "STF_ASSERTION_LIBRARY",
+                    .Definition = std::format("\"{}\"", m_Interface.AssertionLibraryVirtualPath.View())
+                });
+
             auto interfaceArgs = m_Interface.GetAdditionalCompilerArgs();
             InTestDesc.CompilationEnv.CompilationFlags.insert(
                 InTestDesc.CompilationEnv.CompilationFlags.end(),

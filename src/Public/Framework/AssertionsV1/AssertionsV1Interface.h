@@ -50,6 +50,8 @@ namespace stf::AssertionsV1
         ExpectedError<GPUReadbackResourcesType> QueueReadbacks(ScopedCommandContext& InContext, const GPUResourcesType& InResources) const;
         ExpectedError<TestRunResultsType> ProcessReadbacks(CommandEngine& InEngine, const GPUReadbackResourcesType& InReadbacks, const PerTestData& InPerTestData) const;
 
+        static constexpr StringLiteral AssertionLibraryVirtualPath{ "/Test/STF/AssertionsV1/Framework.hlsli" };
+
     private:
 
         MultiTypeByteReaderMap m_ByteReaderMap;

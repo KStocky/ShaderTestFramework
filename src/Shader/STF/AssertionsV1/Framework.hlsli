@@ -1,0 +1,20 @@
+#ifndef STF_ASSERTIONS_V1_FRAMEWORK_HEADER
+#define STF_ASSERTIONS_V1_FRAMEWORK_HEADER
+
+#include "/Test/STF/AssertionsV1/Assertions.hlsli"
+#include "/Test/STF/AssertionsV1/Sections.hlsli"
+#include "/Test/STF/AssertionsV1/Strings.hlsli"
+#include "/Test/STF/SectionManagement.hlsli"
+
+#include "/Test/TTL/macro.hlsli"
+#include "/Test/TTL/type_traits.hlsli"
+
+namespace stf
+{
+    void RegisterThreadID(uint3 InID)
+    {
+        detail::Scratch.ThreadID = InID;
+    }
+}
+
+#endif
