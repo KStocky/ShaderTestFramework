@@ -28,29 +28,34 @@ jobs:
   
       - name: List VS 2022 installations
         shell: cmd
-        run: dir "C:\Program Files\Microsoft Visual Studio\2022"
+        run: |
+          dir "C:\Program Files\Microsoft Visual Studio"
+          "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -all -format text
   
       - name: List MSVC versions before
-        shell: cmd
-        run: dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
+        shell: powershell
+        run: |
+          $InstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
+          dir "$InstallPath\VC\Tools\MSVC"
   
       - name: Install MSVC ${{env.MSVC_VERSION}}
         shell: powershell
         run: |
-                Set-Location "C:\Program Files (x86)\Microsoft Visual Studio\Installer\"
-                $InstallPath = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
-                $componentsToAdd= @(
-                  "Microsoft.VisualStudio.Component.VC.${{env.MSVC_VERSION}}.${{env.VS_VERSION}}.x86.x64"
-                )
-                [string]$workloadArgs = $componentsToAdd | ForEach-Object {" --add " +  $_}
-                $Arguments = ('/c', "vs_installer.exe", 'modify', '--installPath', "`"$InstallPath`"",$workloadArgs, '--quiet', '--norestart', '--nocache')
-                # should be run twice... for reasons... https://github.com/actions/runner-images/issues/9701
-                $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
-                $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
+          Set-Location "C:\Program Files (x86)\Microsoft Visual Studio\Installer\"
+          $InstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
+          $componentsToAdd = @(
+            "Microsoft.VisualStudio.Component.VC.${{env.MSVC_VERSION}}.${{env.VS_VERSION}}.x86.x64"
+          )
+          [string]$workloadArgs = $componentsToAdd | ForEach-Object {" --add " + $_}
+          $Arguments = ('/c', "vs_installer.exe", 'modify', '--installPath', "`"$InstallPath`"", $workloadArgs, '--quiet', '--norestart', '--nocache')
+          $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
+          $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
   
       - name: List MSVC versions after
-        shell: cmd
-        run: dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC"
+        shell: powershell
+        run: |
+          $InstallPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
+          dir "$InstallPath\VC\Tools\MSVC"
       
       - name: Setup Environment to use MSVC ${{env.MSVC_VERSION}}
         uses: TheMrMilchmann/setup-msvc-dev@v3.0.1
