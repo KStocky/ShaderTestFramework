@@ -37,6 +37,15 @@ The installation guide can be found [here](./InstallationGuide.md)
 
 All of the following examples will be using [Catch2](https://github.com/catchorg/Catch2) as its testing framework
 
+This tutorial uses the V1 assertion interface throughout. The
+`stf::AssertionsV1::ShaderTestFixture` shown in the examples is an alias for
+`stf::BasicShaderTestFixture<stf::AssertionsV1::AssertionsV1Interface>`.
+Consequently, the assertion functions, result types, shader resources, and
+other assertion behavior described below are provided by AssertionsV1 rather
+than by the generic fixture itself. See
+[Assertion Interfaces](./STF/AssertionInterfaces.md) to learn how to select or
+implement a different interface.
+
 ### A Minimal Example
 Let's start with a really simple example ([code](../examples/Ex0_MinimalShaderTest/MinimalShaderTest.cpp)). This shader test will pass
 
