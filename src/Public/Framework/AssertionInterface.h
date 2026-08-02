@@ -3,6 +3,7 @@
 #include "Platform.h"
 #include "Utility/Concepts.h"
 #include "Utility/Error.h"
+#include "Utility/StringLiteral.h"
 
 #include <string>
 #include <vector>
@@ -39,6 +40,7 @@ namespace stf::assert
             ScopedCommandShader& InShader,
             CommandEngine& InEngine)
         {
+            { T::AssertionLibraryVirtualPath } -> std::same_as<const StringLiteral&>;
             { InConst.GetAdditionalCompilerArgs() } -> std::same_as<std::vector<std::wstring>>;
             { In.CreateGPUResources(InContext, InPerTestData) } -> std::same_as<ExpectedError<typename T::GPUResourcesType>>;
             { In.BindShaderData(InShader, InResources, InPerTestData) } -> std::same_as<ExpectedError<void>>;

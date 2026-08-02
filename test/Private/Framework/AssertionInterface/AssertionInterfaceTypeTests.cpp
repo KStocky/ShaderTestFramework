@@ -44,6 +44,7 @@ namespace stf::assert::AssertionInterfaceTypeTests
     struct TypeSpecifiersType
     {
         bool ValidTestRunResultsType = true;
+        bool ValidAssertionLibraryVirtualPath = true;
 
         EReturnType GetAdditionalCompilerArgsReturnType = EReturnType::CorrectType;
 
@@ -69,6 +70,12 @@ namespace stf::assert::AssertionInterfaceTypeTests
     template<TypeSpecifiersType TypeSpecifiers = TypeSpecifiersType{}>
     struct TestInterface
     {
+    public:
+
+        using AssertionLibraryVirtualPathType = std::conditional_t<TypeSpecifiers.ValidAssertionLibraryVirtualPath, StringLiteral, UniqueType<StringLiteral>>;
+
+        static constexpr AssertionLibraryVirtualPathType AssertionLibraryVirtualPath{ std::string_view{} };
+
         using TestRunResultsType = std::conditional_t<TypeSpecifiers.ValidTestRunResultsType, ValidTestRunResultsType, UniqueType<Empty>>;
         using GPUResourcesType = UniqueType<Empty>;
         using PerTestData = UniqueType<Empty>;
@@ -139,6 +146,8 @@ namespace stf::assert::AssertionInterfaceTypeTests
 
     static_assert( CAssertionInterfaceType< TestInterface <> >, "Expected this type to be valid for the concept");
     static_assert(!CAssertionInterfaceType< TestInterface < TypeSpecifiersType{ .ValidTestRunResultsType = false } >> , "Expected this type to not be valid for the concept");
+
+    static_assert(!CAssertionInterfaceType < TestInterface < TypeSpecifiersType{ .ValidAssertionLibraryVirtualPath = false } >> , "Expected this type to not be valid for the concept");
 
     static_assert(!CAssertionInterfaceType< TestInterface < TypeSpecifiersType{ .GetAdditionalCompilerArgsReturnType = EReturnType::WrongType } >>, "Expected this type to not be valid for the concept");
 

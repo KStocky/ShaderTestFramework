@@ -130,6 +130,7 @@ set(SOURCES
 
 set(SHADER_SOURCES
     Shader/STF/AssertionsV1/Assertions.hlsli
+    Shader/STF/AssertionsV1/Framework.hlsli
     Shader/STF/AssertionsV1/FrameworkResources.hlsli
     Shader/STF/AssertionsV1/Sections.hlsli
     Shader/STF/AssertionsV1/Strings.hlsli
