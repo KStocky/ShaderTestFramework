@@ -116,6 +116,11 @@ writeable to an `std::ostream`, and provide:
 bool Succeeded() const;
 ```
 
+Its default-constructed value must represent success. `RunCompileTimeTest`
+returns a default-constructed result after successful shader compilation
+because no shader is dispatched and there are no interface readbacks to
+process.
+
 `Succeeded()` determines the boolean result returned by the fixture to the
 host test framework. Returning an `stf::Error` from any interface operation
 instead reports a test-run error.
@@ -200,7 +205,7 @@ public:
 
     struct TestRunResultsType
     {
-        bool Passed = false;
+        bool Passed = true;
 
         bool Succeeded() const
         {
