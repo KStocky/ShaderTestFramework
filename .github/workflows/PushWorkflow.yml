@@ -39,6 +39,7 @@ jobs:
               - '**.md'
               - '**/RWLinkValidation.yml'
               - '**/PushWorkflow.yml'
+              - '**/.linkspector.yml' 
             non-unity:
               - '**/CMakeLists.txt'
               - '**/RWNonUnityBuild.yml'
