@@ -30,20 +30,20 @@ Writing compile time tests are different from regular run time tests differs bot
 The following code from [CompileTimeTests.cpp](../../examples/Ex5_CompileTimeTests/CompileTimeTests.cpp) demonstrates how to run a compile time test:
 
 ```c++
-#include <Framework/ShaderTestFixture.h>
+#include <Framework/AssertionsV1/ShaderTestFixture.h>
 
 #include <catch2/catch_test_macros.hpp>
 
 SCENARIO("Example5Tests")
 {
-    stf::ShaderTestFixture fixture(
-        stf::ShaderTestFixture::FixtureDesc
+    stf::AssertionsV1::ShaderTestFixture fixture(
+        stf::AssertionsV1::ShaderTestFixture::FixtureDesc
         {
             .Mappings{ stf::VirtualShaderDirectoryMapping{"/Shader", std::filesystem::current_path() / SHADER_SRC} }
         });
 
     REQUIRE(fixture.RunCompileTimeTest(
-        stf::ShaderTestFixture::CompileTestDesc
+        stf::ShaderCompileTestDesc
         {
             .CompilationEnv
             {
@@ -55,11 +55,11 @@ SCENARIO("Example5Tests")
 }
 ```
 
-The main difference is that we are calling `ShaderTestFixture::RunCompileTimeTest` to run the test. Compile Time Tests are not executed. Therefore a dispatch configuration is not required. An entry function also doesn't need to be specified, however giving a name to the test improves test failure reporting.
+The main difference is that we are calling `AssertionsV1::ShaderTestFixture::RunCompileTimeTest` to run the test. Compile Time Tests are not executed. Therefore a dispatch configuration is not required. An entry function also doesn't need to be specified, however giving a name to the test improves test failure reporting.
 
 ### HLSL
 
-In this example we will be writing tests for `ConditionalType` which is essentially an implementation of [`std::conditional`](https://en.cppreference.com/w/cpp/types/conditional). It implemented as follows:
+In this example we will be writing tests for `ConditionalType` which is essentially an implementation of [`std::conditional`](https://www.cppreference.com/w/cpp/types/conditional). It implemented as follows:
 ```c++
 template<bool InCond, typename IfTrue, typename IfFalse>
 struct ConditionalType

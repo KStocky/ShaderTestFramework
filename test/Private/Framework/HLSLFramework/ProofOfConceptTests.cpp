@@ -23,7 +23,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
     DYNAMIC_SECTION(testName)
     {
         REQUIRE(fixture.RunTest(
-            ShaderTestFixture::RuntimeTestDesc
+            AssertionsV1::ShaderTestFixture::RuntimeTestDesc
             {
                 .CompilationEnv
                 {
@@ -34,4 +34,40 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
             })
         );
     }
+}
+
+TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - Macro-expanded include")
+{
+    using namespace stf;
+
+    REQUIRE(fixture.RunTest(
+        AssertionsV1::ShaderTestFixture::RuntimeTestDesc
+        {
+            .CompilationEnv
+            {
+                .Source = std::string
+                {
+                    R"(
+                        #include INCLUDE_DEFINE
+
+                        [numthreads(1, 1, 1)]
+                        void MacroExpandedInclude()
+                        {
+                            _Static_assert(Test == 42, "Expected Test to be 42");
+                        }
+                    )"
+                },
+                .Defines
+                {
+                    ShaderMacro
+                    {
+                        .Name = "INCLUDE_DEFINE",
+                        .Definition = R"("/Tests/ProofOfConcept/HeaderWithStaticGlobal.hlsli")"
+                    }
+                }
+            },
+            .TestName = "MacroExpandedInclude",
+            .ThreadGroupCount{ 1, 1, 1 }
+        })
+    );
 }

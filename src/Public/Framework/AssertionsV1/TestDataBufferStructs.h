@@ -1,10 +1,11 @@
 #pragma once
 
 #include "Platform.h"
+#include "Utility/HLSLTypes.h"
 
 #include <ostream>
 
-namespace stf
+namespace stf::AssertionsV1
 {
     struct DynamicSectionDataInfo
     {
@@ -16,15 +17,15 @@ namespace stf
     struct AssertMetaData
     {
         u32 LineNumber = 0;
-        u32 ThreadId = 0;
-        u32 ThreadIdType = 0;
+        uint3 ThreadId{};
         i32 SectionId = -1;
 
         friend auto operator<=>(const AssertMetaData&, const AssertMetaData&) = default;
     };
 
-    struct HLSLAssertMetaData : AssertMetaData
+    struct HLSLAssertMetaData
     {
+        AssertMetaData BaseData{};
         u16 TypeId = 0;
         u16 ReaderId = 0;
         DynamicSectionDataInfo DynamicDataInfo {};

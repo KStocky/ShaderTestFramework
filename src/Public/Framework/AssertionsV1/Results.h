@@ -1,27 +1,19 @@
 #pragma once
 
 #include "Platform.h"
-
+#include "Framework/AssertionsV1/TestDataBufferLayout.h"
+#include "Framework/AssertionInterface/Results.h"
 #include "Framework/TypeByteReader.h"
-#include "Framework/TestDataBufferLayout.h"
 
 #include "Utility/Error.h"
 #include "Utility/HLSLTypes.h"
 
 #include <compare>
 #include <string>
-#include <variant>
 #include <vector>
 
-namespace stf
+namespace stf::AssertionsV1
 {
-    enum class EThreadIdType : u8
-    {
-        None,
-        Int,
-        Int3
-    };
-
     struct AllocationBufferData
     {
         u32 NumPassedAsserts = 0;
@@ -50,28 +42,12 @@ namespace stf
         std::vector<SectionInfoMetaData> Sections{};
         u32 NumSucceeded = 0;
         u32 NumFailed = 0;
-        uint3 DispatchDimensions{};
+
+        bool Succeeded() const { return NumFailed == 0; }
 
         friend bool operator==(const TestRunResults&, const TestRunResults&) = default;
         friend std::ostream& operator<<(std::ostream& InOs, const TestRunResults& In);
     };
 
-    class Results
-    {
-    public:
-
-        Results() = default;
-        Results(Error InError);
-        Results(TestRunResults InResults);
-
-        operator bool() const;
-
-        const TestRunResults* GetTestResults() const;
-        const Error* GetTestRunError() const;
-
-        friend std::ostream& operator<<(std::ostream& InOs, const Results& In);
-
-    private:
-        std::variant<std::monostate, TestRunResults, Error> m_Result;
-    };
+    using Results = stf::assert::Results<TestRunResults>;
 }

@@ -1,5 +1,7 @@
 #include <Utility/TypeTraits.h>
 
+#include <concepts>
+
 namespace TUnqualifiedTests
 {
     using namespace stf;
@@ -48,4 +50,26 @@ namespace TIsInstantiationOfTests
 
 	// This will not compile
 	//static_assert(TIsInstantiationOf<NTTPTemplate, NTTPInstantiation>::Value);
+}
+
+namespace stf::TFirstTypeTests
+{
+    template<typename... Ts>
+    concept CValidateTFirstType = requires
+    {
+        typename TFirstType<Ts...>;
+    };
+
+    struct A {};
+    struct B {};
+
+    static_assert(!CValidateTFirstType<>);
+    static_assert(CValidateTFirstType<A>);
+    static_assert(CValidateTFirstType<A, A, A, A>);
+    static_assert(CValidateTFirstType<B, A, B, A>);
+
+    static_assert(std::same_as<A, TFirstType<A>>);
+    static_assert(!std::same_as<B, TFirstType<A>>);
+    static_assert(!std::same_as<B, TFirstType<A, A, B>>);
+    static_assert(std::same_as<B, TFirstType<B, A, A, B>>);
 }

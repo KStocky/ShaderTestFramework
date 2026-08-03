@@ -69,7 +69,7 @@ This will set a private define (so any other target that depends on this one wil
 
 The following section will be referring to ([VirtualShaderPaths.cpp](../../examples/Ex2_VirtualShaderPaths/VirtualShaderPaths.cpp)). Just like the CMakeLists.txt that we went through [above](#dealing-with-shader-directories-using-cmake), this C++ file is commented to explain what is going on. However, this document will be going into more detail.
 
-When creating our `stf::ShaderTestFixture` for a shader test suite we are able to create virtual mappings of directories that both the Shader Compiler and the fixture itself will use. To create a mapping we simply populate the `stf::ShaderTestFixture::FixtureDesc::Mappings` member. 
+When creating our `stf::AssertionsV1::ShaderTestFixture` for a shader test suite we are able to create virtual mappings of directories that both the Shader Compiler and the fixture itself will use. To create a mapping we simply populate the `stf::AssertionsV1::ShaderTestFixture::FixtureDesc::Mappings` member. 
 
 Mappings is a `std::vector<stf::VirtualShaderDirectoryMapping>`. `stf::VirtualShaderDirectoryMapping` is defined as follows:
 
@@ -84,22 +84,22 @@ struct VirtualShaderDirectoryMapping
 1) `VirtualPath` - A virtual path is deemed as any path that is prefixed with a '/'.
 2) `RealPath` - This is the ABSOLUTE path to the real directory that is represented by the `VirtualPath`
 
-If a path that either the `ShaderTestFixture` or the shader compiler comes across starts with a known virtual path, that virtual path will be replaced with the associated `RealPath`.
+If a path that either the `AssertionsV1::ShaderTestFixture` or the shader compiler comes across starts with a known virtual path, that virtual path will be replaced with the associated `RealPath`.
 
 Below is the relevant lines from ([VirtualShaderPaths.cpp](../../examples/Ex2_VirtualShaderPaths/VirtualShaderPaths.cpp)) that creates a virtual mapping
 
 ```c++
-stf::ShaderTestFixture fixture(
-    stf::ShaderTestFixture::FixtureDesc
+stf::AssertionsV1::ShaderTestFixture fixture(
+    stf::AssertionsV1::ShaderTestFixture::FixtureDesc
     {
         .Mappings{ stf::VirtualShaderDirectoryMapping{"/Shader", std::filesystem::current_path() / SHADER_SRC} }
     }
 );
 ```
 
-[`std::filesystem::current_path()`](https://en.cppreference.com/w/cpp/filesystem/current_path) returns the current Working Directory path of the process. `SHADER_SRC` is the define that we created in [Passing Directory Mappings from CMake to C++](#passing-directory-mappings-from-cmake-to-c). Therefore this mapping will map the shader directory that we created in [Asset Dependency Management Library](#asset-dependency-management-library) to the virtual directory `"/Shader"`.
+[`std::filesystem::current_path()`](https://www.cppreference.com/w/cpp/filesystem/current_path) returns the current Working Directory path of the process. `SHADER_SRC` is the define that we created in [Passing Directory Mappings from CMake to C++](#passing-directory-mappings-from-cmake-to-c). Therefore this mapping will map the shader directory that we created in [Asset Dependency Management Library](#asset-dependency-management-library) to the virtual directory `"/Shader"`.
 
-This mapping is then used when we are specifying the `Source` in the `stf::ShaderTestFixture::RuntimeTestDesc`:
+This mapping is then used when we are specifying the `Source` in the `stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc`:
 
 ```c++
 .CompilationEnv
@@ -112,11 +112,10 @@ Here we are telling the fixture that our shader that we want to compile is in th
 
 ## Using Virtual Shader Directories in HLSL
 
-The `ShaderTestFixture` compiles its HLSL code using a custom `IDxcIncludeHandler` which simply does the virtual mapping substitution so that shader `#include`s can also make use of the virtual directories. An example of this can be found in [MyShaderTests.hlsl](../../examples/Ex2_VirtualShaderPaths/ShaderCode/MyShaderTests.hlsl):
+The `AssertionsV1::ShaderTestFixture` compiles its HLSL code using a custom `IDxcIncludeHandler` which simply does the virtual mapping substitution so that shader `#include`s can also make use of the virtual directories. An example of this can be found in [MyShaderTests.hlsl](../../examples/Ex2_VirtualShaderPaths/ShaderCode/MyShaderTests.hlsl):
 
 `#include "/Shader/MyCoolHLSLFunction.hlsli"`
 
 ---
 
 [Top](#virtual-shader-directories)
-

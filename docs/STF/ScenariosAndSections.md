@@ -55,7 +55,7 @@ struct Optional
 };
 ```
 
-It is essentially a very basic implementation of an optional type such as [std::optional](https://en.cppreference.com/w/cpp/utility/optional) but in HLSL. We might use this to return a value from a function that might not be valid. The main thing about this basic class is that it is complex enough to write a somewhat substantial test suite for, which should help to demonstrate the usefulness of Scenarios and Sections. You can find the implementation of this class in [Optional.hlsli](../../examples/Ex3_ScenariosAndSections/ShaderCode/Optional.hlsli)
+It is essentially a very basic implementation of an optional type such as [std::optional](https://www.cppreference.com/w/cpp/utility/optional) but in HLSL. We might use this to return a value from a function that might not be valid. The main thing about this basic class is that it is complex enough to write a somewhat substantial test suite for, which should help to demonstrate the usefulness of Scenarios and Sections. You can find the implementation of this class in [Optional.hlsli](../../examples/Ex3_ScenariosAndSections/ShaderCode/Optional.hlsli)
 
 ## Testing Optional\<T> without Scenarios And Sections
 

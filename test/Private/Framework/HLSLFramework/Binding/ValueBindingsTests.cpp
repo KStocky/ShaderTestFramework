@@ -2,7 +2,7 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
 
 #include <D3D12/Shader/ShaderBindingMap.h>
-#include <Framework/ShaderTestFixture.h>
+#include <Framework/AssertionsV1/ShaderTestFixture.h>
 #include <Utility/Expected.h>
 #include <Utility/HLSLTypes.h>
 
@@ -16,7 +16,7 @@ public:
 
     ValueBindingsFixture()
         : ShaderTestFixtureBaseFixture(
-            stf::ShaderTestFixture::FixtureDesc
+            stf::AssertionsV1::ShaderTestFixture::FixtureDesc
             {
                 .Mappings{ GetTestVirtualDirectoryMapping() },
                 .GPUDeviceParams
@@ -187,7 +187,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ValueBindingsFixture, "HLSLFrameworkTests - Binding
         [&testFile, &bindings]()
         {
             return
-                ShaderTestFixture::RuntimeTestDesc
+                AssertionsV1::ShaderTestFixture::RuntimeTestDesc
             {
                 .CompilationEnv
                 {

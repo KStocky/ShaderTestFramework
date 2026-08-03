@@ -2,7 +2,7 @@
 
 # Concepts
 
-The TTL (Test Template Library) provides a number of [Pseudo-concepts](../PseudoConcepts.md) in the [`concepts.hlsli`](../../../src/Shader/TTL/concepts.hlsli) header. These operate in a similar way to [C++20 concepts](https://en.cppreference.com/w/cpp/header/concepts) when used with [`ttl::models`](../Models/Models.md) and other meta function is the [models library](../Models/ModelsHeader.md).
+The TTL (Test Template Library) provides a number of [Pseudo-concepts](../PseudoConcepts.md) in the [`concepts.hlsli`](../../../src/Shader/TTL/concepts.hlsli) header. These operate in a similar way to [C++20 concepts](https://www.cppreference.com/w/cpp/header/concepts) when used with [`ttl::models`](../Models/Models.md) and other meta function is the [models library](../Models/ModelsHeader.md).
 
 
 ## Language concepts
@@ -22,6 +22,5 @@ The TTL (Test Template Library) provides a number of [Pseudo-concepts](../Pseudo
 | | |
 |-|-|
 |[`invocable_functor`<br>`invocable`](Invocable.md) | Specifies that callables can be invoked with a given set of argument types |
-
 
 

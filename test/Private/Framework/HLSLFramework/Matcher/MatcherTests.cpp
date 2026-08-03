@@ -1,6 +1,6 @@
 
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
-#include <Framework/ShaderTestFixture.h>
+#include <Framework/AssertionsV1/ShaderTestFixture.h>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
@@ -22,7 +22,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
         const std::string testName = std::format("{}MatcherTests", op);
 
         REQUIRE(fixture.RunTest(
-            ShaderTestFixture::RuntimeTestDesc
+            AssertionsV1::ShaderTestFixture::RuntimeTestDesc
             {
                 .CompilationEnv
                 {

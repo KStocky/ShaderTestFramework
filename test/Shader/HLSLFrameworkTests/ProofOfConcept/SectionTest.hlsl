@@ -104,7 +104,7 @@ void SectionTest(uint3 DispatchThreadId : SV_DispatchThreadID)
 
 	if (num == 5)
 	{
-		stf::detail::Success();
+		stf::AssertionsV1::detail::Success();
 	}
 	else
 	{

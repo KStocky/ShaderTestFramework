@@ -1,35 +1,36 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
-#include <Framework/ShaderTestFixture.h>
+#include <Framework/AssertionsV1/ShaderTestFixture.h>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - AssertInfoWithNoData")
 {
     using namespace stf;
-    auto [testName, numRecordedAsserts, failedAsserts, numSucceeded, numFailed, dims] = GENERATE
+    using namespace stf::AssertionsV1;
+    auto [testName, numRecordedAsserts, failedAsserts, numSucceeded, numFailed] = GENERATE
     (
-        table<std::string, u32, std::vector<FailedAssert>, u32 , u32, uint3>
+        table<std::string, u32, std::vector<FailedAssert>, u32 , u32>
         (
             {
                 std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_ZeroAssertsMade_THEN_HasExpectedResults", 10,
-                std::vector<FailedAssert>{}, 0, 0, uint3(1,1,1) },
+                std::vector<FailedAssert>{}, 0, 0 },
                 std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_NonZeroSuccessfulAssertsMade_THEN_HasExpectedResults", 10,
-                std::vector<FailedAssert>{}, 2, 0, uint3(1,1,1) },
+                std::vector<FailedAssert>{}, 2, 0 },
                 std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_FailedAssertNoTypeId_THEN_HasExpectedResults", 10,
-                std::vector{FailedAssert{{}, {}, AssertMetaData{42, 0, 0 }}}, 0, 1, uint3(1,1,1) },
+                std::vector{FailedAssert{{}, {}, AssertMetaData{ .LineNumber = 42 }}}, 0, 1 },
                 std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_TwoFailedAssert_THEN_HasExpectedResults", 10,
-                std::vector{FailedAssert{{}, {}, AssertMetaData{42, 0, 0}},
-                FailedAssert{{}, {}, AssertMetaData{32, 0, 0}}}, 0, 2, uint3(1,1,1) },
+                std::vector{FailedAssert{{}, {}, AssertMetaData{ .LineNumber = 42 }},
+                FailedAssert{{}, {}, AssertMetaData{ .LineNumber = 32 }}}, 0, 2 },
                 std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_FailedAssertWithLineId_THEN_HasExpectedResults", 10,
-                std::vector{FailedAssert{{}, {}, AssertMetaData{54, 0, 0}}}, 0, 1, uint3(1,1,1) },
+                std::vector{FailedAssert{{}, {}, AssertMetaData{ .LineNumber = 54 }}}, 0, 1 },
                 std::tuple{ "GIVEN_AssertInfoCapacityWithFlatThreadId_WHEN_FailedAssert_THEN_HasExpectedResults", 10,
-                std::vector{FailedAssert{{}, {}, AssertMetaData{66, 12, 1}}}, 0, 1, uint3(1,1,1) },
+                std::vector{FailedAssert{{}, {}, AssertMetaData{ .LineNumber = 66, .ThreadId = uint3{12, 0, 0} }}}, 0, 1 },
                 std::tuple{ "GIVEN_AssertInfoCapacityWithFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults", 10,
-                std::vector{FailedAssert{{}, {}, AssertMetaData{66, 12, 2}}}, 0, 1, uint3(24,1,1) },
+                std::vector{FailedAssert{{}, {}, AssertMetaData{ .LineNumber = 66, .ThreadId = uint3{12, 0, 0} }}}, 0, 1 },
                 std::tuple{ "GIVEN_AssertInfoCapacityWithNonFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults", 10,
-                std::vector{FailedAssert{{}, {}, AssertMetaData{66, 4, 2}}}, 0, 1, uint3(3,3,3) },
+                std::vector{FailedAssert{{}, {}, AssertMetaData{ .LineNumber = 66, .ThreadId = uint3{1, 1, 0} }}}, 0, 1 },
                 std::tuple{ "GIVEN_AssertInfoCapacity_WHEN_MoreFailedAssertsThanCapacity_THEN_HasExpectedResults", 1,
-                std::vector{FailedAssert{{}, {}, AssertMetaData{42, 0, 0 }}}, 0, 2, uint3(1,1,1) },
+                std::vector{FailedAssert{{}, {}, AssertMetaData{ .LineNumber = 42 }}}, 0, 2 },
             }
         )
     );
@@ -38,14 +39,13 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
     {
         .FailedAsserts = std::move(failedAsserts),
         .NumSucceeded = numSucceeded,
-        .NumFailed = numFailed,
-        .DispatchDimensions = dims
+        .NumFailed = numFailed
     };
 
     DYNAMIC_SECTION(testName)
     {
         const auto results = fixture.RunTest(
-            ShaderTestFixture::RuntimeTestDesc
+            AssertionsV1::ShaderTestFixture::RuntimeTestDesc
             {
                 .CompilationEnv
                 {
@@ -53,10 +53,13 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                 },
                 .TestName = testName,
                 .ThreadGroupCount{1, 1, 1},
-                .TestDataLayout
+                .PerTestData
                 {
                     .NumFailedAsserts = numRecordedAsserts,
-                    .NumBytesAssertData = 0
+                    .NumBytesAssertData = 0,
+                    .NumStrings = 0,
+                    .NumBytesStringData = 0,
+                    .NumSections = 0
                 }
             }
         );

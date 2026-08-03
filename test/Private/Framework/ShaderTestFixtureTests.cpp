@@ -44,18 +44,18 @@ SCENARIO("ShaderTestFixtureTests - Run Compile Time Tests")
     {
         if (shouldSucceed)
         {
-            ShaderTestFixture fixture{ ShaderTestFixture::FixtureDesc{} };
+            AssertionsV1::ShaderTestFixture fixture{ AssertionsV1::ShaderTestFixture::FixtureDesc{} };
 
             THEN("There should be zero stats")
             {
-                const auto stats = ShaderTestFixture::GetTestStats();
+                const auto stats = AssertionsV1::ShaderTestFixture::GetTestStats();
 
                 REQUIRE(stats.empty());
             }
 
             const auto result = fixture.RunCompileTimeTest
             (
-                ShaderTestFixture::CompileTestDesc
+                ShaderCompileTestDesc
                 {
                     .CompilationEnv
                     {
@@ -72,18 +72,18 @@ SCENARIO("ShaderTestFixtureTests - Run Compile Time Tests")
         }
         else
         {
-            ShaderTestFixture fixture{ ShaderTestFixture::FixtureDesc{} };
+            AssertionsV1::ShaderTestFixture fixture{ AssertionsV1::ShaderTestFixture::FixtureDesc{} };
 
             THEN("There should be zero stats")
             {
-                const auto stats = ShaderTestFixture::GetTestStats();
+                const auto stats = AssertionsV1::ShaderTestFixture::GetTestStats();
 
                 REQUIRE(stats.empty());
             }
 
             const auto result = fixture.RunCompileTimeTest
             (
-                ShaderTestFixture::CompileTestDesc
+                ShaderCompileTestDesc
                 {
                     .CompilationEnv
                     {
@@ -101,12 +101,12 @@ SCENARIO("ShaderTestFixtureTests - Run Compile Time Tests")
 
         THEN("Stats should be generated")
         {
-            const auto stats = ShaderTestFixture::GetTestStats();
+            const auto stats = AssertionsV1::ShaderTestFixture::GetTestStats();
             REQUIRE(!stats.empty());
 
             AND_WHEN("Any future attempts to get stats")
             {
-                const auto otherStats = ShaderTestFixture::GetTestStats();
+                const auto otherStats = AssertionsV1::ShaderTestFixture::GetTestStats();
 
                 THEN("Has same number of stats")
                 {

@@ -1,6 +1,6 @@
 
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
-#include <Framework/ShaderTestFixture.h>
+#include <Framework/AssertionsV1/ShaderTestFixture.h>
 
 #include <ranges>
 #include <string>
@@ -27,8 +27,8 @@ SCENARIO("BasicShaderTests")
     {
 
         {
-            ShaderTestFixture fixture(
-                ShaderTestFixture::FixtureDesc
+            AssertionsV1::ShaderTestFixture fixture(
+                AssertionsV1::ShaderTestFixture::FixtureDesc
                 {
                     .Mappings{ GetTestVirtualDirectoryMapping() }
                 }
@@ -36,13 +36,13 @@ SCENARIO("BasicShaderTests")
 
             THEN("There should be zero stats")
             {
-                const auto stats = ShaderTestFixture::GetTestStats();
+                const auto stats = AssertionsV1::ShaderTestFixture::GetTestStats();
 
                 REQUIRE(stats.empty());
             }
 
             const auto result = fixture.RunTest(
-                ShaderTestFixture::RuntimeTestDesc
+                AssertionsV1::ShaderTestFixture::RuntimeTestDesc
                 {
                     .CompilationEnv
                     {
@@ -71,12 +71,12 @@ SCENARIO("BasicShaderTests")
 
         THEN("Stats should be generated")
         {
-            const auto stats = ShaderTestFixture::GetTestStats();
+            const auto stats = AssertionsV1::ShaderTestFixture::GetTestStats();
             REQUIRE(!stats.empty());
 
             AND_WHEN("Any future attempts to get stats")
             {
-                const auto otherStats = ShaderTestFixture::GetTestStats();
+                const auto otherStats = AssertionsV1::ShaderTestFixture::GetTestStats();
 
                 THEN("Has same number of stats")
                 {

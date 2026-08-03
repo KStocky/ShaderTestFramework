@@ -1,11 +1,11 @@
-#include <Framework/ShaderTestFixture.h>
+#include <Framework/AssertionsV1/ShaderTestFixture.h>
 
 #include <catch2/catch_test_macros.hpp>
 
 SCENARIO("Example5Tests")
 {
-    stf::ShaderTestFixture fixture(
-        stf::ShaderTestFixture::FixtureDesc
+    stf::AssertionsV1::ShaderTestFixture fixture(
+        stf::AssertionsV1::ShaderTestFixture::FixtureDesc
         {
             // We can add virtual shader directory mappings to our shader test environment
             // Here we are saying that if a file path begins with "/Shader" then it is a virtual file directory
@@ -20,7 +20,7 @@ SCENARIO("Example5Tests")
     // If the shader compiles, the test passes, if it doesn't compile, the shader fails
     // Unlike RunTest, it will not attempt to actually dispatch the shader.
     REQUIRE(fixture.RunCompileTimeTest(
-        stf::ShaderTestFixture::CompileTestDesc
+        stf::ShaderCompileTestDesc
         {
             .CompilationEnv
             {

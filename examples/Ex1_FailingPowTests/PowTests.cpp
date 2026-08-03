@@ -1,5 +1,5 @@
 #include <D3D12/Shader/ShaderEnums.h>
-#include <Framework/ShaderTestFixture.h>
+#include <Framework/AssertionsV1/ShaderTestFixture.h>
 
 #include <string>
 
@@ -9,8 +9,8 @@ SCENARIO("PowTests")
 {
     // We need to enable GPU capturing to allow us to take a GPU capture during a test
     // This is done in the FixtureDesc.
-    stf::ShaderTestFixture fixture(
-        stf::ShaderTestFixture::FixtureDesc
+    stf::AssertionsV1::ShaderTestFixture fixture(
+        stf::AssertionsV1::ShaderTestFixture::FixtureDesc
         {
             .GPUDeviceParams
             {
@@ -23,7 +23,7 @@ SCENARIO("PowTests")
     // In this case we give the HLSL source code, entry function name and thread group count.
     // We also enable a gpu capture
     REQUIRE(fixture.RunTest(
-        stf::ShaderTestFixture::RuntimeTestDesc
+        stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc
         {
             .CompilationEnv
             {
@@ -59,7 +59,7 @@ SCENARIO("PowTests")
             },
             .TestName = "RunPowTests",
             .ThreadGroupCount{1, 1, 1},
-            .GPUCaptureMode = stf::ShaderTestFixture::EGPUCaptureMode::On
+            .GPUCaptureMode = stf::EGPUCaptureMode::On
         })
     );
 }

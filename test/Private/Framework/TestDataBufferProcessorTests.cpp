@@ -1,6 +1,6 @@
 
 
-#include "Framework/TestDataBufferProcessor.h"
+#include "Framework/AssertionsV1/TestDataBufferProcessor.h"
 
 #include <Utility/Math.h>
 #include <Utility/Tuple.h>
@@ -19,6 +19,7 @@
 namespace TestDataBufferProcessorTests
 {
     using namespace stf;
+    using namespace stf::AssertionsV1;
     namespace
     {
         std::vector<std::byte> EncodeStringData(const TestDataSection<StringMetaData> InStringLayout, const std::span<std::string> InStrings)
@@ -185,6 +186,25 @@ namespace TestDataBufferProcessorTests
                     return std::format("{}: Type {}: {}", InSalt, InTypeId, val);
                 };
         }
+
+        std::vector<std::byte> EncodeAssertBuffer(
+            const TestDataBufferLayout& InLayout,
+            const std::span<const HLSLAssertMetaData> InMetaData,
+            const std::span<const std::byte> InExpectedAssertData)
+        {
+            const u64 beginData = InLayout.GetAssertSection().BeginData();
+            std::vector<std::byte> ret(beginData + InExpectedAssertData.size_bytes());
+            std::memcpy(ret.data(), InMetaData.data(), InMetaData.size_bytes());
+            std::memcpy(ret.data() + beginData, InExpectedAssertData.data(), InExpectedAssertData.size_bytes());
+            return ret;
+        }
+
+        std::vector<std::byte> EncodeAssertBuffer(
+            const TestDataBufferLayout& InLayout,
+            const std::span<const HLSLAssertMetaData> InMetaData)
+        {
+            return EncodeAssertBuffer(InLayout, InMetaData, std::span<const std::byte>{});
+        }
     }
 
     SCENARIO("TestDataBufferProcessorTests - Results - Operator Bool")
@@ -199,7 +219,7 @@ namespace TestDataBufferProcessorTests
                     std::tuple{ "Constructed from empty string", Results{ Error{} }, false},
                     std::tuple{ "Constructed from non-empty string", Results{ Error{} }, false },
                     std::tuple{ "Zero Failed test run", Results{ TestRunResults{} }, true },
-                    std::tuple{ "Non-zero failed test run", Results{ TestRunResults{ {}, {}, {}, 0, 1, uint3{} } }, false }
+                    std::tuple{ "Non-zero failed test run", Results{ TestRunResults{ .NumFailed = 1 } }, false }
                 }
             )
         );
@@ -365,7 +385,7 @@ namespace TestDataBufferProcessorTests
         {
             WHEN("Processed")
             {
-                const auto results = ProcessTestDataBuffer(allocationBufferData, uint3(1, 1, 1), TestDataBufferLayout{ 0,0 }, std::vector<std::byte>{}, MultiTypeByteReaderMap{});
+                const auto results = ProcessTestDataBuffer(allocationBufferData, TestDataBufferLayout{ 0,0 }, std::vector<std::byte>{}, MultiTypeByteReaderMap{});
 
                 THEN("Results has expected errors")
                 {
@@ -384,9 +404,9 @@ namespace TestDataBufferProcessorTests
             table<std::string, u32, u64, TestDataBufferLayout, std::vector<HLSLAssertMetaData>>
             (
                 {
-                    std::tuple{ "One failing assert with enough capacity", 1, 1, TestDataBufferLayout{1, 0}, std::vector<HLSLAssertMetaData>{ HLSLAssertMetaData{ 42, 0, 1 } } },
-                    std::tuple{ "More failing asserts than layout limit", 2, 1, TestDataBufferLayout{1, 0}, std::vector<HLSLAssertMetaData>{ HLSLAssertMetaData{ 42, 0, 1 } } },
-                    std::tuple{ "Fewer failing asserts than layout limit", 1, 1, TestDataBufferLayout{2, 0}, std::vector<HLSLAssertMetaData>{ HLSLAssertMetaData{ 42, 0, 1 }, HLSLAssertMetaData{ 82, 0, 1 } } }
+                    std::tuple{ "One failing assert with enough capacity", 1, 1, TestDataBufferLayout{1, 0}, std::vector<HLSLAssertMetaData>{ HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 1 } } } },
+                    std::tuple{ "More failing asserts than layout limit", 2, 1, TestDataBufferLayout{1, 0}, std::vector<HLSLAssertMetaData>{ HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 1 } } } },
+                    std::tuple{ "Fewer failing asserts than layout limit", 1, 1, TestDataBufferLayout{2, 0}, std::vector<HLSLAssertMetaData>{ HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 1 } }, HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 82, .SectionId = 1 } } } }
                 }
             )
         );
@@ -395,7 +415,8 @@ namespace TestDataBufferProcessorTests
         {
             WHEN("Processed")
             {
-                const auto results = ProcessTestDataBuffer(AllocationBufferData{ 0, numFailed }, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), MultiTypeByteReaderMap{});
+                const auto testData = EncodeAssertBuffer(layout, buffer);
+                const auto results = ProcessTestDataBuffer(AllocationBufferData{ 0, numFailed }, layout, testData, MultiTypeByteReaderMap{});
 
                 THEN("Results has expected errors")
                 {
@@ -409,7 +430,7 @@ namespace TestDataBufferProcessorTests
                         {
                             for (u64 assertIndex = 0; assertIndex < expectedNumAsserts; ++assertIndex)
                             {
-                                REQUIRE(buffer[assertIndex] == results.FailedAsserts[assertIndex].Info);
+                                REQUIRE(buffer[assertIndex].BaseData == results.FailedAsserts[assertIndex].Info);
                             }
                         }
                     }
@@ -429,61 +450,57 @@ namespace TestDataBufferProcessorTests
                     {
                         "One failing assert with data",
                         1, 1, TestDataBufferLayout{1, 100},
-                        std::vector{ HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(HLSLAssertMetaData) * 1, 8 } },
+                        std::vector{ HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 0 }, .DynamicDataInfo = DynamicSectionDataInfo{ .DataAddress = TestDataBufferLayout{1, 100}.GetAssertSection().BeginData(), .DataSize = 8 } } },
                         std::vector{4u}
                     },
                     std::tuple
                     {
                         "One failing assert with no data",
                         1, 1, TestDataBufferLayout{1, 100},
-                        std::vector{ HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(HLSLAssertMetaData) * 0, 0 } },
+                        std::vector{ HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 0 } } },
                         std::vector<u32>{}
                     },
                     std::tuple
                     {
                         "Two failing assert with no data",
                         2, 2, TestDataBufferLayout{2, 100},
-                        std::vector{ HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(HLSLAssertMetaData) * 0, 0 }, HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(HLSLAssertMetaData) * 0, 0 } },
+                        std::vector{ HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 0 } }, HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 0 } } },
                         std::vector<u32>{}
                     },
                     std::tuple
                     {
                         "First fail has data, Second does not",
                         2, 2, TestDataBufferLayout{2, 100},
-                        std::vector{ HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(HLSLAssertMetaData) * 2, 8 }, HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(HLSLAssertMetaData) * 0, 0 } },
+                        std::vector{ HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 0 }, .DynamicDataInfo = DynamicSectionDataInfo{ .DataAddress = sizeof(HLSLAssertMetaData) * 2, .DataSize = 8 } }, HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 0 } } },
                         std::vector{16u}
                     },
                     std::tuple
                     {
                         "First fail does not have data, Second does",
                         2, 2, TestDataBufferLayout{2, 100},
-                        std::vector{ HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(HLSLAssertMetaData) * 0, 0 }, HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(HLSLAssertMetaData) * 2, 8 } },
+                        std::vector{ HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 0 } }, HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 0 }, .DynamicDataInfo = DynamicSectionDataInfo{ .DataAddress = sizeof(HLSLAssertMetaData) * 2, .DataSize = 8 } } },
                         std::vector{16u}
                     },
                     std::tuple
                     {
                         "Both asserts have data",
                         2, 2, TestDataBufferLayout{2, 100},
-                        std::vector{ HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(HLSLAssertMetaData) * 2, 8 }, HLSLAssertMetaData{ 42, 0, 0, 0, sizeof(HLSLAssertMetaData) * 2 + 8, 8 } },
+                        std::vector{ HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 0 }, .DynamicDataInfo = DynamicSectionDataInfo{ .DataAddress = sizeof(HLSLAssertMetaData) * 2, .DataSize = 8 } }, HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 0 }, .DynamicDataInfo = DynamicSectionDataInfo{ .DataAddress = sizeof(HLSLAssertMetaData) * 2 + 8, .DataSize = 8 } } },
                         std::vector{16u, 32u}
                     }
                 }
             )
         );
 
-        std::vector<std::byte> buffer;
         auto assertData = EncodeAssertData(expectedAssertData);
-        const u64 sizeMetaData = metaData.size() * sizeof(HLSLAssertMetaData);
-        buffer.resize(sizeMetaData + assertData.size());
-
-        std::memcpy(buffer.data(), metaData.data(), sizeMetaData);
-        std::memcpy(buffer.data() + sizeMetaData, assertData.data(), assertData.size());
+        const u64 sizeMetaData = layout.GetAssertSection().BeginData();
+        const auto buffer = EncodeAssertBuffer(layout, metaData, assertData);
 
         GIVEN(given)
         {
             WHEN("Processed")
             {
-                const auto results = ProcessTestDataBuffer(AllocationBufferData{ 0, numFailed }, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), MultiTypeByteReaderMap{});
+                const auto results = ProcessTestDataBuffer(AllocationBufferData{ 0, numFailed }, layout, buffer, MultiTypeByteReaderMap{});
 
                 THEN("Results has expected errors")
                 {
@@ -547,7 +564,7 @@ namespace TestDataBufferProcessorTests
                     {
                         "One failing assert with no byte reader",
                         1, TestDataBufferLayout{1, 100},
-                        std::vector{ HLSLAssertMetaData{ 42, 0, 0, 0, 0, 2, sizeof(HLSLAssertMetaData) * 1, 8}},
+                        std::vector{ HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 0 }, .ReaderId = 2, .DynamicDataInfo = DynamicSectionDataInfo{ .DataAddress = TestDataBufferLayout{1, 100}.GetAssertSection().BeginData(), .DataSize = 8 } }},
                         std::vector{42u},
                         std::vector<std::string>{"Bytes", "0x2A"}
                     },
@@ -555,7 +572,7 @@ namespace TestDataBufferProcessorTests
                     {
                         "One failing assert with byte reader",
                         1, TestDataBufferLayout{1, 100},
-                        std::vector{ HLSLAssertMetaData{ 42, 0, 0, 0, 0, 0, sizeof(HLSLAssertMetaData) * 1, 8 } },
+                        std::vector{ HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 0 }, .DynamicDataInfo = DynamicSectionDataInfo{ .DataAddress = TestDataBufferLayout{1, 100}.GetAssertSection().BeginData(), .DataSize = 8 } } },
                         std::vector{412u},
                         std::vector<std::string>{"Reader 1", "412"}
                     },
@@ -563,7 +580,7 @@ namespace TestDataBufferProcessorTests
                     {
                         "One failing assert with different byte reader",
                         1, TestDataBufferLayout{1, 100},
-                        std::vector{ HLSLAssertMetaData{ 42, 0, 0, 0, 0, 1, sizeof(HLSLAssertMetaData) * 1, 8 } },
+                        std::vector{ HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 0 }, .ReaderId = 1, .DynamicDataInfo = DynamicSectionDataInfo{ .DataAddress = TestDataBufferLayout{1, 100}.GetAssertSection().BeginData(), .DataSize = 8 } } },
                         std::vector{412u},
                         std::vector<std::string>{"Reader 2", "412"}
                     },
@@ -573,8 +590,8 @@ namespace TestDataBufferProcessorTests
                         2, TestDataBufferLayout{2, 100},
                         std::vector
                         {
-                            HLSLAssertMetaData{ 42, 0, 0, 0, 0, 0, sizeof(HLSLAssertMetaData) * 2, 8 },
-                            HLSLAssertMetaData{ 42, 0, 0, 0, 0, 0, sizeof(HLSLAssertMetaData) * 2 + 8, 8 }
+                            HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 0 }, .DynamicDataInfo = DynamicSectionDataInfo{ .DataAddress = sizeof(HLSLAssertMetaData) * 2, .DataSize = 8 } },
+                            HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 0 }, .DynamicDataInfo = DynamicSectionDataInfo{ .DataAddress = sizeof(HLSLAssertMetaData) * 2 + 8, .DataSize = 8 } }
                         },
                         std::vector{412u, 214u},
                         std::vector<std::string>{"Reader 1", "412", "214"}
@@ -585,8 +602,8 @@ namespace TestDataBufferProcessorTests
                         2, TestDataBufferLayout{2, 100},
                         std::vector
                         {
-                            HLSLAssertMetaData{ 42, 0, 0, 0, 0, 1, sizeof(HLSLAssertMetaData) * 2, 8 },
-                            HLSLAssertMetaData{ 42, 0, 0, 0, 0, 1, sizeof(HLSLAssertMetaData) * 2 + 8, 8 }
+                            HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 0 }, .ReaderId = 1, .DynamicDataInfo = DynamicSectionDataInfo{ .DataAddress = sizeof(HLSLAssertMetaData) * 2, .DataSize = 8 } },
+                            HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 0 }, .ReaderId = 1, .DynamicDataInfo = DynamicSectionDataInfo{ .DataAddress = sizeof(HLSLAssertMetaData) * 2 + 8, .DataSize = 8 } }
                         },
                         std::vector{412u, 214u},
                         std::vector<std::string>{"Reader 2", "412", "214"}
@@ -597,8 +614,8 @@ namespace TestDataBufferProcessorTests
                         2, TestDataBufferLayout{2, 100},
                         std::vector
                         {
-                            HLSLAssertMetaData{ 42, 0, 0, 0, 0, 0, sizeof(HLSLAssertMetaData) * 2, 8 },
-                            HLSLAssertMetaData{ 42, 0, 0, 0, 0, 1, sizeof(HLSLAssertMetaData) * 2 + 8, 8 }
+                            HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 0 }, .DynamicDataInfo = DynamicSectionDataInfo{ .DataAddress = sizeof(HLSLAssertMetaData) * 2, .DataSize = 8 } },
+                            HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 0 }, .ReaderId = 1, .DynamicDataInfo = DynamicSectionDataInfo{ .DataAddress = sizeof(HLSLAssertMetaData) * 2 + 8, .DataSize = 8 } }
                         },
                         std::vector{412u, 214u},
                         std::vector<std::string>{"Reader 1", "Reader 2", "412", "214"}
@@ -607,19 +624,14 @@ namespace TestDataBufferProcessorTests
             )
         );
 
-        std::vector<std::byte> buffer;
         auto assertData = EncodeAssertData(expectedAssertData);
-        const u64 sizeMetaData = metaData.size() * sizeof(HLSLAssertMetaData);
-        buffer.resize(sizeMetaData + assertData.size());
-
-        std::memcpy(buffer.data(), metaData.data(), sizeMetaData);
-        std::memcpy(buffer.data() + sizeMetaData, assertData.data(), assertData.size());
+        const auto buffer = EncodeAssertBuffer(layout, metaData, assertData);
 
         GIVEN(given)
         {
             WHEN("Processed")
             {
-                const auto results = ProcessTestDataBuffer(AllocationBufferData{ 0, numFailed }, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), MultiTypeByteReaderMap{ conv1, conv2 });
+                const auto results = ProcessTestDataBuffer(AllocationBufferData{ 0, numFailed }, layout, std::as_bytes(std::span{ buffer }), MultiTypeByteReaderMap{ conv1, conv2 });
 
                 THEN("Results has expected sub strings")
                 {
@@ -644,7 +656,7 @@ namespace TestDataBufferProcessorTests
             (
                 {
                     std::tuple{ "One failing assert with empty buffer", 1, 1, TestDataBufferLayout{1, 0}, std::vector<HLSLAssertMetaData>{} },
-                    std::tuple{ "Fewer failing asserts than layout limit", 3, 1, TestDataBufferLayout{3, 0}, std::vector<HLSLAssertMetaData>{ HLSLAssertMetaData{ 42, 0, 1 }, HLSLAssertMetaData{ 82, 0, 1 } } }
+                    std::tuple{ "Fewer failing asserts than layout limit", 3, 1, TestDataBufferLayout{3, 0}, std::vector<HLSLAssertMetaData>{ HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .SectionId = 1 } }, HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 82, .SectionId = 1 } } } }
                 }
             )
         );
@@ -655,7 +667,7 @@ namespace TestDataBufferProcessorTests
             {
                 THEN("throws")
                 {
-                    REQUIRE_THROWS(ProcessTestDataBuffer(AllocationBufferData{ 0, numFailed }, uint3(1, 1, 1), layout, std::as_bytes(std::span{ buffer }), MultiTypeByteReaderMap{}));
+                    REQUIRE_THROWS(ProcessTestDataBuffer(AllocationBufferData{ 0, numFailed }, layout, std::as_bytes(std::span{ buffer }), MultiTypeByteReaderMap{}));
                 }
             }
         }
@@ -693,7 +705,7 @@ namespace TestDataBufferProcessorTests
                     std::tuple
                     {
                         "Differing Meta data",
-                        FailedAssert{{}, {}, {1, 0, 0}},
+                        FailedAssert{{}, {}, AssertMetaData{ .LineNumber = 1 }},
                         FailedAssert{},
                         false
                     }
@@ -730,72 +742,36 @@ namespace TestDataBufferProcessorTests
     {
         using Catch::Matchers::ContainsSubstring;
 
-        auto [given, numFailed, expectedNumAsserts, dims, layout, buffer, expectedSubstrings, expectedAbsentSubstrings] = GENERATE
+        auto [given, numFailed, expectedNumAsserts, layout, buffer, expectedSubstrings, expectedAbsentSubstrings] = GENERATE
         (
-            table<std::string, u32, u64, uint3, TestDataBufferLayout, std::vector<HLSLAssertMetaData>, std::vector<std::string>, std::vector<std::string>>
+            table<std::string, u32, u64, TestDataBufferLayout, std::vector<HLSLAssertMetaData>, std::vector<std::string>, std::vector<std::string>>
             (
                 {
                     std::tuple
                     {
-                        "No thread id type and zero id",
-                        1, 1, uint3(10, 10, 10),
+                        "zero thread id",
+                        1, 1,
                         TestDataBufferLayout{1, 0},
-                        std::vector{ HLSLAssertMetaData{ 42, 0, 0 } },
-                        std::vector<std::string>{"line"},
-                        std::vector<std::string>{"threadid"}
-                    },
-                    std::tuple
-                    {
-                        "No thread id type and non zero id",
-                        1, 1, uint3(10, 10, 10),
-                        TestDataBufferLayout{1, 0},
-                        std::vector{ HLSLAssertMetaData{ 42, 34, 0 } },
-                        std::vector<std::string>{"line"},
-                        std::vector<std::string>{"threadid"}
-                    },
-                    std::tuple
-                    {
-                        "int thread id type and zero id",
-                        1, 1, uint3(10, 10, 10),
-                        TestDataBufferLayout{1, 0},
-                        std::vector{ HLSLAssertMetaData{ 42, 0, 1 } },
-                        std::vector<std::string>{"0"},
+                        std::vector{ HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42 } } },
+                        std::vector<std::string>{"Line: 42", "ThreadId: (0, 0, 0)"},
                         std::vector<std::string>{}
                     },
                     std::tuple
                     {
-                        "int thread id type and non zero id",
-                        1, 1, uint3(10, 10, 10),
+                        "non zero x thread id",
+                        1, 1,
                         TestDataBufferLayout{1, 0},
-                        std::vector{ HLSLAssertMetaData{ 42, 34, 1 } },
-                        std::vector<std::string>{"34"},
+                        std::vector{ HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .ThreadId = uint3{34, 0, 0} } } },
+                        std::vector<std::string>{"Line: 42", "ThreadId: (34, 0, 0)"},
                         std::vector<std::string>{}
                     },
                     std::tuple
                     {
-                        "int3 thread id type and zero id",
-                        1, 1, uint3(10, 10, 10),
+                        "non zero xyz thread id",
+                        1, 1,
                         TestDataBufferLayout{1, 0},
-                        std::vector{ HLSLAssertMetaData{ 42, 0, 2 } },
-                        std::vector<std::string>{"0"},
-                        std::vector<std::string>{}
-                    },
-                    std::tuple
-                    {
-                        "int3 thread id type and non zero id",
-                        1, 1, uint3(10, 10, 10),
-                        TestDataBufferLayout{1, 0},
-                        std::vector{ HLSLAssertMetaData{ 42, 34, 2 } },
-                        std::vector<std::string>{"4, 3, 0"},
-                        std::vector<std::string>{}
-                    },
-                    std::tuple
-                    {
-                        "int3 thread id type and different non zero id",
-                        1, 1, uint3(10, 10, 10),
-                        TestDataBufferLayout{1, 0},
-                        std::vector{ HLSLAssertMetaData{ 42, 342, 2 } },
-                        std::vector<std::string>{"2, 4, 3"},
+                        std::vector{ HLSLAssertMetaData{ .BaseData = AssertMetaData{ .LineNumber = 42, .ThreadId = uint3{2, 4, 3} } } },
+                        std::vector<std::string>{"Line: 42", "ThreadId: (2, 4, 3)"},
                         std::vector<std::string>{}
                     }
                 }
@@ -806,7 +782,8 @@ namespace TestDataBufferProcessorTests
         {
             WHEN("Processed")
             {
-                const auto results = ProcessTestDataBuffer(AllocationBufferData{ 0, numFailed }, dims, layout, std::as_bytes(std::span{ buffer }), MultiTypeByteReaderMap{});
+                const auto testData = EncodeAssertBuffer(layout, buffer);
+                const auto results = ProcessTestDataBuffer(AllocationBufferData{ 0, numFailed }, layout, testData, MultiTypeByteReaderMap{});
 
                 THEN("Results has expected sub strings")
                 {
@@ -910,8 +887,7 @@ namespace TestDataBufferProcessorTests
                                     .Info = AssertMetaData
                                     {
                                         .LineNumber = 42,
-                                        .ThreadId = 0,
-                                        .ThreadIdType = 0,
+                                        .ThreadId = uint3{0,0,0},
                                         .SectionId = -1
                                     }
                                 }
@@ -932,8 +908,7 @@ namespace TestDataBufferProcessorTests
                                     .Info = AssertMetaData
                                     {
                                         .LineNumber = 42,
-                                        .ThreadId = 0,
-                                        .ThreadIdType = 0,
+                                        .ThreadId = uint3{0,0,0},
                                         .SectionId = -1
                                     }
                                 }
@@ -955,8 +930,7 @@ namespace TestDataBufferProcessorTests
                                     .Info = AssertMetaData
                                     {
                                         .LineNumber = 42,
-                                        .ThreadId = 0,
-                                        .ThreadIdType = 0,
+                                        .ThreadId = uint3{0,0,0},
                                         .SectionId = -1
                                     }
                                 }
@@ -978,8 +952,7 @@ namespace TestDataBufferProcessorTests
                                     .Info = AssertMetaData
                                     {
                                         .LineNumber = 42,
-                                        .ThreadId = 0,
-                                        .ThreadIdType = 0,
+                                        .ThreadId = uint3{0,0,0},
                                         .SectionId = -1
                                     },
                                     .TypeId = 21
@@ -1002,8 +975,7 @@ namespace TestDataBufferProcessorTests
                                     .Info = AssertMetaData
                                     {
                                         .LineNumber = 42,
-                                        .ThreadId = 0,
-                                        .ThreadIdType = 0,
+                                        .ThreadId = uint3{0,0,0},
                                         .SectionId = -1
                                     },
                                     .TypeId = 21
@@ -1016,7 +988,7 @@ namespace TestDataBufferProcessorTests
                         },
                         std::tuple
                         {
-                            "single assert with no sections and no strings and single threadId",
+                            "single assert with no sections and no strings and threadId",
                             std::vector
                             {
                                 FailedAssert
@@ -1024,36 +996,14 @@ namespace TestDataBufferProcessorTests
                                     .Info = AssertMetaData
                                     {
                                         .LineNumber = 42,
-                                        .ThreadId = 34,
-                                        .ThreadIdType = 1,
+                                        .ThreadId = uint3{34,0,0},
                                         .SectionId = -1
                                     }
                                 }
                             },
                             std::vector<SectionInfoMetaData>{},
                             std::vector<std::string>{},
-                            std::vector<std::string>{"Assert 0", "Line: 42", "ThreadId: 34"},
-                            std::vector<std::string>{"INVALID SECTION ID", "SECTION", "SCENARIO", "UNKNOWN", "DATA"}
-                        },
-                        std::tuple
-                        {
-                            "single assert with no sections and no strings and multi dim threadId",
-                            std::vector
-                            {
-                                FailedAssert
-                                {
-                                    .Info = AssertMetaData
-                                    {
-                                        .LineNumber = 42,
-                                        .ThreadId = 34,
-                                        .ThreadIdType = 2,
-                                        .SectionId = -1
-                                    }
-                                }
-                            },
-                            std::vector<SectionInfoMetaData>{},
-                            std::vector<std::string>{},
-                            std::vector<std::string>{"Assert 0", "Line: 42", "ThreadId: (34, 0, 0)"},
+                            std::vector<std::string>{"Assert 0", "Line: 42", std::format("ThreadId: {}", uint3{34,0,0})},
                             std::vector<std::string>{"INVALID SECTION ID", "SECTION", "SCENARIO", "UNKNOWN", "DATA"}
                         },
                         std::tuple
@@ -1066,8 +1016,7 @@ namespace TestDataBufferProcessorTests
                                     .Info = AssertMetaData
                                     {
                                         .LineNumber = 42,
-                                        .ThreadId = 34,
-                                        .ThreadIdType = 2,
+                                        .ThreadId = uint3{34,0,0},
                                         .SectionId = -1
                                     }
                                 },
@@ -1076,15 +1025,14 @@ namespace TestDataBufferProcessorTests
                                     .Info = AssertMetaData
                                     {
                                         .LineNumber = 56,
-                                        .ThreadId = 16,
-                                        .ThreadIdType = 1,
+                                        .ThreadId = uint3{16,0,0},
                                         .SectionId = -1
                                     }
                                 }
                             },
                             std::vector<SectionInfoMetaData>{},
                             std::vector<std::string>{},
-                            std::vector<std::string>{"Assert 0", "Assert 1", "Line: 42", "Line: 56", "ThreadId: 16"},
+                            std::vector<std::string>{"Assert 0", "Assert 1", "Line: 42", "Line: 56", std::format("ThreadId: {}", uint3{34,0,0}), std::format("ThreadId: {}", uint3{16,0,0})},
                             std::vector<std::string>{"INVALID SECTION ID", "SECTION", "SCENARIO", "UNKNOWN", "DATA"}
                         },
                         std::tuple
@@ -1097,8 +1045,7 @@ namespace TestDataBufferProcessorTests
                                     .Info = AssertMetaData
                                     {
                                         .LineNumber = 42,
-                                        .ThreadId = 0,
-                                        .ThreadIdType = 0,
+                                        .ThreadId = uint3{0,0,0},
                                         .SectionId = 0
                                     }
                                 }
@@ -1123,8 +1070,7 @@ namespace TestDataBufferProcessorTests
                                     .Info = AssertMetaData
                                     {
                                         .LineNumber = 42,
-                                        .ThreadId = 0,
-                                        .ThreadIdType = 0,
+                                        .ThreadId = uint3{0,0,0},
                                         .SectionId = 0
                                     }
                                 }
@@ -1150,8 +1096,7 @@ namespace TestDataBufferProcessorTests
                                     .Info = AssertMetaData
                                     {
                                         .LineNumber = 42,
-                                        .ThreadId = 0,
-                                        .ThreadIdType = 0,
+                                        .ThreadId = uint3{0,0,0},
                                         .SectionId = 1
                                     }
                                 }
@@ -1176,8 +1121,7 @@ namespace TestDataBufferProcessorTests
                                     .Info = AssertMetaData
                                     {
                                         .LineNumber = 42,
-                                        .ThreadId = 0,
-                                        .ThreadIdType = 0,
+                                        .ThreadId = uint3{0,0,0},
                                         .SectionId = 1
                                     }
                                 }
@@ -1208,8 +1152,7 @@ namespace TestDataBufferProcessorTests
                                     .Info = AssertMetaData
                                     {
                                         .LineNumber = 42,
-                                        .ThreadId = 0,
-                                        .ThreadIdType = 0,
+                                        .ThreadId = uint3{0,0,0},
                                         .SectionId = 1
                                     }
                                 }
@@ -1238,8 +1181,7 @@ namespace TestDataBufferProcessorTests
                                     .Info = AssertMetaData
                                     {
                                         .LineNumber = 42,
-                                        .ThreadId = 0,
-                                        .ThreadIdType = 0,
+                                        .ThreadId = uint3{0,0,0},
                                         .SectionId = 0
                                     }
                                 }
@@ -1265,8 +1207,7 @@ namespace TestDataBufferProcessorTests
                                     .Info = AssertMetaData
                                     {
                                         .LineNumber = 42,
-                                        .ThreadId = 0,
-                                        .ThreadIdType = 0,
+                                        .ThreadId = uint3{0,0,0},
                                         .SectionId = 1
                                     }
                                 }
@@ -1297,8 +1238,7 @@ namespace TestDataBufferProcessorTests
                                     .Info = AssertMetaData
                                     {
                                         .LineNumber = 42,
-                                        .ThreadId = 0,
-                                        .ThreadIdType = 0,
+                                        .ThreadId = uint3{0,0,0},
                                         .SectionId = 0
                                     }
                                 }
@@ -1324,8 +1264,7 @@ namespace TestDataBufferProcessorTests
                                     .Info = AssertMetaData
                                     {
                                         .LineNumber = 42,
-                                        .ThreadId = 0,
-                                        .ThreadIdType = 0,
+                                        .ThreadId = uint3{0,0,0},
                                         .SectionId = 1
                                     }
                                 }
@@ -1356,7 +1295,7 @@ namespace TestDataBufferProcessorTests
                 {
                     std::stringstream buffer;
 
-                    const TestRunResults results{ .FailedAsserts = failedAsserts, .Strings = std::move(strings), .Sections = std::move(sections), .DispatchDimensions = uint3(100,1,1) };
+                    const TestRunResults results{ .FailedAsserts = failedAsserts, .Strings = std::move(strings), .Sections = std::move(sections) };
 
                     buffer << results;
 

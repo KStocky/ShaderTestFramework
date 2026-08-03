@@ -1,5 +1,5 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
-#include <Framework/ShaderTestFixture.h>
+#include <Framework/AssertionsV1/ShaderTestFixture.h>
 #include <Utility/EnumReflection.h>
 
 #include <string>
@@ -15,15 +15,15 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
     using namespace stf;
     const auto stringMode = GENERATE
     (
-        ShaderTestFixture::EStringMode::Off,
-        ShaderTestFixture::EStringMode::On
+        EStringMode::Off,
+        EStringMode::On
     );
 
     const auto maxStringLength = static_cast<u32>(GENERATE
     (
-        ShaderTestFixture::EStringMaxLength::s16,
-        ShaderTestFixture::EStringMaxLength::s64,
-        ShaderTestFixture::EStringMaxLength::s256
+        EStringMaxLength::s16,
+        EStringMaxLength::s64,
+        EStringMaxLength::s256
     ));
 
     const auto actualStringLength = GENERATE
@@ -37,7 +37,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
     );
 
     const bool shouldSucceed = 
-        (stringMode == ShaderTestFixture::EStringMode::Off) || 
+        (stringMode == EStringMode::Off) || 
         (actualStringLength < maxStringLength);
 
     const auto testString = 
@@ -78,7 +78,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
             WHEN("String is " << actualStringLength << " characters")
             {
                 const auto results = fixture.RunTest(
-                    ShaderTestFixture::RuntimeTestDesc
+                    AssertionsV1::ShaderTestFixture::RuntimeTestDesc
                     {
                         .CompilationEnv
                         {
@@ -91,7 +91,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                         },
                         .TestName = "Test",
                         .ThreadGroupCount = {1, 1, 1},
-                        .StringMaxLength = static_cast<ShaderTestFixture::EStringMaxLength>(maxStringLength),
+                        .StringMaxLength = static_cast<EStringMaxLength>(maxStringLength),
                         .StringMode = stringMode
                     }
                 );

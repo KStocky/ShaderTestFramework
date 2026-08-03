@@ -1,10 +1,10 @@
 
-#include "Framework/TestDataBufferProcessor.h"
+#include "Framework/AssertionsV1/TestDataBufferProcessor.h"
 #include "Utility/Exception.h"
 
 #include <format>
 
-namespace stf
+namespace stf::AssertionsV1
 {
     std::vector<FailedAssert> ProcessFailedAsserts(const TestDataSection<HLSLAssertMetaData>& InAssertSection, const u32 InNumFailed, const std::span<const std::byte> InTestData, const MultiTypeByteReaderMap& InByteReaderMap)
     {
@@ -29,7 +29,7 @@ namespace stf
                     return std::vector<std::byte>{begin, begin + assertInfo.DynamicDataInfo.DataSize};
                 };
 
-            ret.push_back(FailedAssert{ .Data = getData(), .ByteReader = std::move(byteReader), .Info = assertInfo, .TypeId = assertInfo.TypeId });
+            ret.push_back(FailedAssert{ .Data = getData(), .ByteReader = std::move(byteReader), .Info = assertInfo.BaseData, .TypeId = assertInfo.TypeId });
         }
 
         return ret;
@@ -103,12 +103,11 @@ namespace stf
         return ret;
     }
 
-    TestRunResults ProcessTestDataBuffer(const AllocationBufferData InAllocationBufferData, const uint3 InDispatchDimensions, const TestDataBufferLayout& InLayout, std::span<const std::byte> InTestData, const MultiTypeByteReaderMap& InByteReaderMap)
+    TestRunResults ProcessTestDataBuffer(const AllocationBufferData InAllocationBufferData, const TestDataBufferLayout& InLayout, std::span<const std::byte> InTestData, const MultiTypeByteReaderMap& InByteReaderMap)
     {
         TestRunResults ret{};
         ret.NumSucceeded = InAllocationBufferData.NumPassedAsserts;
         ret.NumFailed = InAllocationBufferData.NumFailedAsserts;
-        ret.DispatchDimensions = InDispatchDimensions;
 
         const auto assertSectionInfo = InLayout.GetAssertSection();
         const auto stringSectionInfo = InLayout.GetStringSection();

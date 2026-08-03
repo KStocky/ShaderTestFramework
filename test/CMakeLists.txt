@@ -81,6 +81,8 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/Asserts/IsFalse.hlsl
     Shader/HLSLFrameworkTests/Asserts/IsTrue.hlsl
     Shader/HLSLFrameworkTests/Asserts/NotEqual.hlsl
+    Shader/HLSLFrameworkTests/AssertionInterface/AssertionLibrary.hlsli
+    Shader/HLSLFrameworkTests/AssertionInterface/AssertionLibraryVirtualPathTests.hlsl
     Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/BindingsHave2ByteAlignment.hlsl
     Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/ConstantBufferArray.hlsl
     Shader/HLSLFrameworkTests/Binding/ValueBindingsTests/GlobalBindings.hlsl
@@ -121,6 +123,7 @@ set(SHADER_SOURCES
     Shader/HLSLFrameworkTests/ProofOfConcept/GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported.hlsl
+    Shader/HLSLFrameworkTests/ProofOfConcept/HeaderWithStaticGlobal.hlsli
     Shader/HLSLFrameworkTests/ProofOfConcept/MatesPrinter.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/SectionTest.hlsl
     Shader/HLSLFrameworkTests/ProofOfConcept/StringsAndTemplates.hlsl
@@ -168,6 +171,10 @@ set(SOURCES
     Private/D3D12/Shader/ShaderModelTests.cpp
     Private/D3D12/Shader/ShaderReflectionUtilsTests.cpp
     Private/D3D12/Shader/VirtualShaderDirectoryMappingManagerTests.cpp
+    Private/Framework/AssertionInterface/AssertionLibraryVirtualPathTests.cpp
+    Private/Framework/AssertionInterface/AssertionInterfaceTypeTests.cpp
+    Private/Framework/AssertionInterface/TestRunResultsTypeTests.cpp
+    Private/Framework/AssertionsV1/AssertionsV1InterfaceTests.cpp
     Private/Framework/HLSLFramework/Asserts/AreEqualTests.cpp
     Private/Framework/HLSLFramework/Asserts/FailTests.cpp
     Private/Framework/HLSLFramework/Asserts/IsFalseTests.cpp
@@ -215,8 +222,10 @@ set(SOURCES
     Private/Framework/TestDataBufferProcessorTests.cpp
     Private/Stats/ScopedObjectTests.cpp
     Private/Stats/StatSystemTests.cpp
+    Private/TestUtilities/EnumToTypeMapTests.cpp
     Private/TestUtilities/Noisy.cpp
     Private/TestUtilities/NoisyTests.cpp
+    Private/TestUtilities/UniqueTypeTests.cpp
     Private/Utility/AlignedOffsetTests.cpp
     Private/Utility/ConceptsTests.cpp
     Private/Utility/EnumReflectionTests.cpp
@@ -233,8 +242,10 @@ set(SOURCES
     Private/Utility/VersionedIndexTests.cpp
     Public/D3D12/Shader/ShaderCompilerTestsCommon.h
     Public/Framework/HLSLFramework/HLSLFrameworkTestsCommon.h
+    Public/TestUtilities/EnumToTypeMap.h
     Public/TestUtilities/ErrorMatchers.h
     Public/TestUtilities/Noisy.h
+    Public/TestUtilities/UniqueType.h
 )
 
 set(SHADER_SOURCE_REL_DIR "ShaderTests")

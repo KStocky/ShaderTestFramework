@@ -4,18 +4,18 @@
 
 void PassingStandardAsserts()
 {
-    stf::IsTrue(true);
-    stf::IsFalse(false);
-    stf::AreEqual(42, 42);
-    stf::NotEqual(24, 42);
+    stf::AssertionsV1::IsTrue(true);
+    stf::AssertionsV1::IsFalse(false);
+    stf::AssertionsV1::AreEqual(42, 42);
+    stf::AssertionsV1::NotEqual(24, 42);
 }
 
 void FailingStandardAsserts()
 {
-    stf::IsTrue(false);
-    stf::IsFalse(true);
-    stf::AreEqual(42, 24);
-    stf::NotEqual(42, 42);
+    stf::AssertionsV1::IsTrue(false);
+    stf::AssertionsV1::IsFalse(true);
+    stf::AssertionsV1::AreEqual(42, 24);
+    stf::AssertionsV1::NotEqual(42, 42);
 }
 
 void PassingAssertsWithMacro()

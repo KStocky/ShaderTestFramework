@@ -34,7 +34,7 @@ void GIVEN_AssertInfoCapacity_WHEN_FailedAssertNoTypeId_THEN_HasExpectedResults(
 {
     TestType t;
     t.Value = false;
-    stf::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -42,8 +42,8 @@ void GIVEN_AssertInfoCapacity_WHEN_TwoFailedAssert_THEN_HasExpectedResults()
 {
     TestType t;
     t.Value = false;
-    stf::IsTrue(t, 42);
-    stf::IsTrue(t, 32);
+    stf::AssertionsV1::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(t, 32);
 }
 
 [numthreads(1, 1, 1)]
@@ -57,10 +57,10 @@ void GIVEN_AssertInfoCapacity_WHEN_FailedAssertWithLineId_THEN_HasExpectedResult
 [numthreads(1, 1, 1)]
 void GIVEN_AssertInfoCapacityWithFlatThreadId_WHEN_FailedAssert_THEN_HasExpectedResults()
 {
-    stf::RegisterThreadID(12);
+    stf::RegisterThreadID(uint3(12, 0, 0));
     TestType t;
     t.Value = false;
-    stf::IsTrue(t, 66);
+    stf::AssertionsV1::IsTrue(t, 66);
 }
 
 [numthreads(24, 1, 1)]
@@ -72,7 +72,7 @@ void GIVEN_AssertInfoCapacityWithFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpect
     {
         TestType t;
         t.Value = false;
-        stf::IsTrue(t, 66);
+        stf::AssertionsV1::IsTrue(t, 66);
     }
 }
 
@@ -85,7 +85,7 @@ void GIVEN_AssertInfoCapacityWithNonFlat3DThreadId_WHEN_FailedAssert_THEN_HasExp
     {
         TestType t;
         t.Value = false;
-        stf::IsTrue(t, 66);
+        stf::AssertionsV1::IsTrue(t, 66);
     }
 }
 
@@ -94,6 +94,6 @@ void GIVEN_AssertInfoCapacity_WHEN_MoreFailedAssertsThanCapacity_THEN_HasExpecte
 {
     TestType t;
     t.Value = false;
-    stf::IsTrue(t, 42);
-    stf::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
 }

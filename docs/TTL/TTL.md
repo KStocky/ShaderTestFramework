@@ -2,7 +2,7 @@
 
 # Test Template Library
 
-The Test Template Library (TTL) is analogous to the [C++ standard library](https://en.cppreference.com/w/cpp/header). It contains a collection of headers which are not dependent on the Shader Test Framework. It is a standalone library of templates and functions. It does depend on the following compiler flags to compile:
+The Test Template Library (TTL) is analogous to the [C++ standard library](https://www.cppreference.com/w/cpp/header). It contains a collection of headers which are not dependent on the Shader Test Framework. It is a standalone library of templates and functions. It does depend on the following compiler flags to compile:
 
 - -HV 202x
 - -enable-16bit-types

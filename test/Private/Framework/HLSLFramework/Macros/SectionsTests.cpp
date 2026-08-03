@@ -19,7 +19,7 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
     DYNAMIC_SECTION(testName)
     {
         REQUIRE(fixture.RunTest(
-            ShaderTestFixture::RuntimeTestDesc
+            AssertionsV1::ShaderTestFixture::RuntimeTestDesc
             {
                 .CompilationEnv
                 {

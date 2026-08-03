@@ -42,7 +42,7 @@ void GIVEN_FailedSingleAssert_WHEN_NoReaderId_THEN_HasExpectedResults()
 {
     TestTypeWithoutId t;
     t.Value = 12345678u;
-    stf::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -50,7 +50,7 @@ void GIVEN_FailedSingleAssert_WHEN_ReaderId_THEN_HasExpectedResults()
 {
     TestTypeWithReaderId1 t;
     t.Value = 12345678u;
-    stf::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -60,8 +60,8 @@ void GIVEN_FailedTwoSingleAsserts_WHEN_FirstNoReaderIdSecondHasReaderId_THEN_Has
     TestTypeWithReaderId1 u;
     u.Value = 12345678u;
     t.Value = 87654321u;
-    stf::IsTrue(t, 42);
-    stf::IsTrue(u, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(u, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -69,10 +69,10 @@ void GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveSameReaderId_THEN_HasExpectedResu
 {
     TestTypeWithReaderId1 t;
     t.Value = 12345678u;
-    stf::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
 
     t.Value = 1234u;
-    stf::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
 }
 
 [numthreads(1, 1, 1)]
@@ -83,6 +83,6 @@ void GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveDifferentReaderId_THEN_HasExpecte
 
     t.Value = 12345678u;
     u.Value = 87654321u;
-    stf::IsTrue(t, 42);
-    stf::IsTrue(u, 42);
+    stf::AssertionsV1::IsTrue(t, 42);
+    stf::AssertionsV1::IsTrue(u, 42);
 }

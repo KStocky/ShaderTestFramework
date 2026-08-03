@@ -20,7 +20,7 @@
 ## Requirements
 
 1. Windows 10 Version 1909 (OS build 18363.1350) or greater - This is due to a dependency on the [DirectX Agility SDK](https://devblogs.microsoft.com/directx/gettingstarted-dx12agility/)
-2. Visual Studio 2022 17.7 - This is due to the project making use of several C++23 features e.g. [std::views::enumerate](https://en.cppreference.com/w/cpp/ranges/enumerate_view)
+2. Visual Studio 2022 17.14 (MSVC 19.44) - This is due to the project making use of several C++23 features e.g. [std::views::enumerate](https://www.cppreference.com/w/cpp/ranges/enumerate_view)
 3. [CMake 3.26](https://cmake.org/download/) - Shader Test Framework's CMake scripts make use of [CMAKE_VS_VERSION_BUILD_NUMBER](https://cmake.org/cmake/help/latest/variable/CMAKE_VS_VERSION_BUILD_NUMBER.html) which came in 3.26 
 4. A working internet connection on the first build - This is due to the CMake scripts downloading all of the dependencies of the project.
 
@@ -37,16 +37,25 @@ The installation guide can be found [here](./InstallationGuide.md)
 
 All of the following examples will be using [Catch2](https://github.com/catchorg/Catch2) as its testing framework
 
+This tutorial uses the V1 assertion interface throughout. The
+`stf::AssertionsV1::ShaderTestFixture` shown in the examples is an alias for
+`stf::BasicShaderTestFixture<stf::AssertionsV1::AssertionsV1Interface>`.
+Consequently, the assertion functions, result types, shader resources, and
+other assertion behavior described below are provided by AssertionsV1 rather
+than by the generic fixture itself. See
+[Assertion Interfaces](./STF/AssertionInterfaces.md) to learn how to select or
+implement a different interface.
+
 ### A Minimal Example
 Let's start with a really simple example ([code](../examples/Ex0_MinimalShaderTest/MinimalShaderTest.cpp)). This shader test will pass
 
 ```c++
 SCENARIO("MinimalShaderTestExample")
 {
-    stf::ShaderTestFixture fixture(stf::ShaderTestFixture::FixtureDesc{});
+    stf::AssertionsV1::ShaderTestFixture fixture(stf::AssertionsV1::ShaderTestFixture::FixtureDesc{});
     REQUIRE(fixture.RunTest
         (
-            stf::ShaderTestFixture::RuntimeTestDesc
+            stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc
             {
                 .CompilationEnv
                 {
@@ -77,7 +86,7 @@ And you will get an output like
 All tests passed (1 assertion in 1 test case)
 ```
 
-This demonstrates how we can run a shader test from C++ by creating an `stf::ShaderTestFixture` and then calling `ShaderTestFixture::RunTest`. `ShaderTestFixture::RunTest` takes an `stf::ShaderTestFixture::RuntimeTestDesc` which describes the parameters of the test. The parameters that we need to specify in the minimal test case are:
+This demonstrates how we can run a shader test from C++ by creating an `stf::AssertionsV1::ShaderTestFixture` and then calling `AssertionsV1::ShaderTestFixture::RunTest`. `AssertionsV1::ShaderTestFixture::RunTest` takes an `stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc` which describes the parameters of the test. The parameters that we need to specify in the minimal test case are:
 
 1. `Source` - Can be either a `std::string` which contains the HLSL source code OR a `std::filesystem::path` which points to a file which contains the HLSL code that we want to compile.
 2. `TestName` - This is the name of the entry function of the test shader.
@@ -134,9 +143,9 @@ Let's have a look at ([code](../examples/Ex1_FailingPowTests/PowTests.cpp)) and 
 ```c++
 SCENARIO("PowTests")
 {
-    stf::ShaderTestFixture fixture(stf::ShaderTestFixture::FixtureDesc{});
+    stf::AssertionsV1::ShaderTestFixture fixture(stf::AssertionsV1::ShaderTestFixture::FixtureDesc{});
     REQUIRE(fixture.RunTest(
-        stf::ShaderTestFixture::RuntimeTestDesc
+        stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc
         {
             .CompilationEnv
             {
@@ -191,19 +200,19 @@ assertions: 1 | 1 failed
 
 We have 5 asserts. 4 of which passed. 1 failed. And the one that failed was the one that had 1 as the left argument and 3 as the right argument. This is the first assertion. The fix for this is fairly trivial however, let's pretend it is not. We can debug this with [PIX on Windows](https://devblogs.microsoft.com/pix/download/).
 
-To take a capture of a test that is run we can call `ShaderTestFixture::TakeCapture` before running a test. So, we can amend the example to look like this
+To take a capture of a test that is run we can call `AssertionsV1::ShaderTestFixture::TakeCapture` before running a test. So, we can amend the example to look like this
 
 To take a capture of a test we have to do two things:
-1. Enable GPU capturing capabilities when constructing the `stf::ShaderTestFixture`
-2. Set the `GPUCaptureMode` in the `stf::ShaderTestFixture::RuntimeTestDesc` when calling `ShaderTestFixture::RunTest`
+1. Enable GPU capturing capabilities when constructing the `stf::AssertionsV1::ShaderTestFixture`
+2. Set the `GPUCaptureMode` in the `stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc` when calling `AssertionsV1::ShaderTestFixture::RunTest`
 
 Making these two changes our example now looks like this:
 
 ```c++
 SCENARIO("PowTests")
 {
-    stf::ShaderTestFixture fixture(
-        stf::ShaderTestFixture::FixtureDesc
+    stf::AssertionsV1::ShaderTestFixture fixture(
+        stf::AssertionsV1::ShaderTestFixture::FixtureDesc
         {
             .GPUDeviceParams
             {
@@ -213,7 +222,7 @@ SCENARIO("PowTests")
     );
 
     REQUIRE(fixture.RunTest(
-        stf::ShaderTestFixture::RuntimeTestDesc
+        stf::AssertionsV1::ShaderTestFixture::RuntimeTestDesc
         {
             .CompilationEnv
             {
@@ -246,13 +255,13 @@ SCENARIO("PowTests")
             },
             .TestName = "RunPowTests",
             .ThreadGroupCount{1, 1, 1},
-            .GPUCaptureMode = stf::ShaderTestFixture::EGPUCaptureMode::On
+            .GPUCaptureMode = stf::EGPUCaptureMode::On
         })
     );
 }
 ```
 
-NOTE: you can also set the `GPUCaptureMode` to be `stf::ShaderTestFixture::EGPUCaptureMode::CaptureOnFailure`. This will run your test without capturing it. If the test passes, no GPU capture is created. If the test fails, the fixture will run the test again while capturing it.
+NOTE: you can also set the `GPUCaptureMode` to be `stf::EGPUCaptureMode::CaptureOnFailure`. This will run your test without capturing it. If the test passes, no GPU capture is created. If the test fails, the fixture will run the test again while capturing it.
 
 Now we run this example again. There will now be a `Captures` directory in the same directory that your executable lives. Inside it, there will be a `.wpix` file that we can open with PIX. From here we can click "Analyze" at the top and we will have a view like this 
 

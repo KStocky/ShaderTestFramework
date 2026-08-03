@@ -1,5 +1,5 @@
 #include "Framework/HLSLFramework/HLSLFrameworkTestsCommon.h"
-#include <Framework/ShaderTestFixture.h>
+#include <Framework/AssertionsV1/ShaderTestFixture.h>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
@@ -7,6 +7,7 @@
 TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests - TestDataBuffer - ResultProcessing - NoAssertBuffer")
 {
     using namespace stf;
+    using namespace stf::AssertionsV1;
     auto [testName, numSucceeded, numFailed] = GENERATE
     (
         table<std::string, u32, u32>
@@ -24,14 +25,13 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
     {
         .FailedAsserts = {},
         .NumSucceeded = numSucceeded,
-        .NumFailed = numFailed,
-        .DispatchDimensions = uint3(1,1,1)
+        .NumFailed = numFailed
     };
 
     DYNAMIC_SECTION(testName)
     {
         const auto results = fixture.RunTest(
-            ShaderTestFixture::RuntimeTestDesc
+            AssertionsV1::ShaderTestFixture::RuntimeTestDesc
             {
                 .CompilationEnv
                 {
@@ -39,10 +39,13 @@ TEST_CASE_PERSISTENT_FIXTURE(ShaderTestFixtureBaseFixture, "HLSLFrameworkTests -
                 },
                 .TestName = testName,
                 .ThreadGroupCount{1, 1, 1},
-                .TestDataLayout
+                .PerTestData
                 {
                     .NumFailedAsserts = 0,
-                    .NumBytesAssertData = 0
+                    .NumBytesAssertData = 0,
+                    .NumStrings = 0,
+                    .NumBytesStringData = 0,
+                    .NumSections = 0
                 }
             }
         );

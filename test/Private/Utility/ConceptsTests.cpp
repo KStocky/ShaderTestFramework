@@ -484,3 +484,39 @@ namespace OStreamableTests
     static_assert(OStreamable<TestOStreamable>);
     static_assert(!OStreamable<TestNotOStreamable>);
 }
+
+namespace stf::EnumTypeTests
+{
+    enum UnscopedEnum
+    {
+        One,
+        Two
+    };
+
+    enum class ScopedEnumU8 : u8
+    {
+        Three,
+        Four
+    };
+
+    struct NotEnum{};
+
+    static_assert(CEnumType<UnscopedEnum>);
+    static_assert(CEnumType<ScopedEnumU8>);
+    static_assert(!CEnumType<NotEnum>);
+
+    static_assert(!CScopedEnumType<UnscopedEnum>);
+    static_assert(CScopedEnumType<ScopedEnumU8>);
+    static_assert(!CScopedEnumType<NotEnum>);
+}
+
+namespace stf::AllSameTypeTests
+{
+    struct A {};
+    struct B {};
+
+    static_assert(!CAllSameType<>);
+    static_assert(CAllSameType<A>);
+    static_assert(CAllSameType<A,A,A,A,A,A>);
+    static_assert(!CAllSameType<A,A,B,A,A,A>);
+}

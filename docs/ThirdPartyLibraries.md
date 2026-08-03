@@ -9,7 +9,7 @@
 | [DXC](https://www.nuget.org/packages/Microsoft.Direct3D.DXC) | HLSL compiler for compiler shaders. [Github Repo](https://github.com/microsoft/DirectXShaderCompiler) |
 | [WinPixEventRuntime](https://www.nuget.org/packages/WinPixEventRuntime) | STF uses this library to take programmatic PIX captures to help debug failing shader tests. [More Info](https://devblogs.microsoft.com/pix/winpixeventruntime/) |
 | [Catch2](https://github.com/catchorg/Catch2) | The main testing framework used by STF |
-| [Tuplet](https://github.com/codeinred/tuplet) | A fast replacement for [`std::tuple`](https://en.cppreference.com/w/cpp/utility/tuple) |
+| [Tuplet](https://github.com/codeinred/tuplet) | A fast replacement for [`std::tuple`](https://www.cppreference.com/w/cpp/utility/tuple) |
 | [float16_t](https://github.com/KStocky/float16_t) | A 16 bit floating point library that is a fork of a fork |
 | [setup-ninja](https://github.com/seanmiddleditch/gha-setup-ninja) | Github Action to install ninja on a github actions agents |
 | [msvc-dev-cmd](https://github.com/ilammy/msvc-dev-cmd) | Github Action which will set up an MSVC Development environment |
