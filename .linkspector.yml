@@ -4,6 +4,14 @@ useGitIgnore: true
 timeout: 60000
 retryCount: 3
 userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36'
+httpHeaders:
+  - url:
+      - https://www.cppreference.com
+      - https://en.cppreference.com
+    headers:
+      Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+      Accept-Language: en-GB,en;q=0.9
+      Referer: https://www.cppreference.com/
 
 ignorePatterns:
   - pattern: 'https://dev.epicgames.com'
