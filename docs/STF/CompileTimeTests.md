@@ -59,7 +59,7 @@ The main difference is that we are calling `AssertionsV1::ShaderTestFixture::Run
 
 ### HLSL
 
-In this example we will be writing tests for `ConditionalType` which is essentially an implementation of [`std::conditional`](https://en.cppreference.com/cpp/types/conditional). It implemented as follows:
+In this example we will be writing tests for `ConditionalType` which is essentially an implementation of [`std::conditional`](https://www.cppreference.com/w/cpp/types/conditional). It implemented as follows:
 ```c++
 template<bool InCond, typename IfTrue, typename IfFalse>
 struct ConditionalType
