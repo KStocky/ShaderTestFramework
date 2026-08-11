@@ -162,6 +162,9 @@ target_sources(ShaderTestFramework PRIVATE ${DXC_HEADERS})
 target_sources(ShaderTestFramework PRIVATE ${WINPIX_HEADERS})
 target_sources(ShaderTestFramework PRIVATE ${SHADER_SOURCES})
 
+add_library(ShaderTestFrameworkSingleFileCompilation OBJECT EXCLUDE_FROM_ALL ${SOURCES})
+set_target_properties(ShaderTestFrameworkSingleFileCompilation PROPERTIES UNITY_BUILD OFF)
+
 set_source_files_properties(${SHADER_SOURCES} PROPERTIES VS_SETTINGS "ExcludedFromBuild=true")
 
 # Hide away unity files in their own filter
@@ -172,20 +175,25 @@ source_group(TREE ${DXC_INCLUDE} PREFIX "ThirdParty/DXC" FILES ${DXC_HEADERS})
 source_group(TREE ${WINPIX_INCLUDE} PREFIX "ThirdParty/WinPix" FILES ${WINPIX_HEADERS})
 source_group(TREE ${SHADER_SOURCE_DIR} PREFIX "ShaderSources" FILES ${SHADER_SOURCES})
 
-target_compile_definitions(ShaderTestFramework PRIVATE STF_D3D12_SDK_VERSION_ID=${SDK_VER} SHADER_SRC="${SHADER_SOURCE_REL_DIR}" USE_PIX)
+function(configure_stf_compilation IN_TARGET)
+    target_compile_definitions(${IN_TARGET} PRIVATE STF_D3D12_SDK_VERSION_ID=${SDK_VER} SHADER_SRC="${SHADER_SOURCE_REL_DIR}" USE_PIX)
 
-# Silencing this while we are using a float16 library.
-# We can remove this when we start using std::float16_t whenever that is implemented...
-target_compile_definitions(ShaderTestFramework PUBLIC _SILENCE_CXX23_DENORM_DEPRECATION_WARNING NOMINMAX)
-target_compile_options(ShaderTestFramework PRIVATE ${GLOBAL_COMPILE_FLAGS})
-target_include_directories(ShaderTestFramework PUBLIC ${CMAKE_CURRENT_LIST_DIR}/Public/ ${AGILITY_INCLUDE} ${DXC_INCLUDE} ${WINPIX_INCLUDE})
-target_link_libraries(ShaderTestFramework PRIVATE d3d12.lib dxgi.lib DXC dxguid.lib WINPIX)
+    # Silencing this while we are using a float16 library.
+    # We can remove this when we start using std::float16_t whenever that is implemented...
+    target_compile_definitions(${IN_TARGET} PUBLIC _SILENCE_CXX23_DENORM_DEPRECATION_WARNING NOMINMAX)
+    target_compile_options(${IN_TARGET} PRIVATE ${GLOBAL_COMPILE_FLAGS})
+    target_include_directories(${IN_TARGET} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/Public/ ${AGILITY_INCLUDE} ${DXC_INCLUDE} ${WINPIX_INCLUDE})
+    target_link_libraries(${IN_TARGET} PRIVATE d3d12.lib dxgi.lib DXC dxguid.lib WINPIX)
+    add_tuplet(${IN_TARGET})
+    add_float16(${IN_TARGET})
+endfunction()
+
+configure_stf_compilation(ShaderTestFramework)
+configure_stf_compilation(ShaderTestFrameworkSingleFileCompilation)
+
 if (${STF_DISABLE_UNITY_STF})
     set_target_properties(ShaderTestFramework PROPERTIES UNITY_BUILD OFF)
 endif()
-
-add_tuplet(ShaderTestFramework)
-add_float16(ShaderTestFramework)
 
 target_add_asset_directory(ShaderTestFramework ${AGILITY_DLL} "/D3D12")
 target_add_asset_directory(ShaderTestFramework ${WARP_DLL} "/")
