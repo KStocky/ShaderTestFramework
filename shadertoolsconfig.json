@@ -1,0 +1,17 @@
+{
+  "root": true,
+  "hlsl.virtualDirectoryMappings": {
+    "/Test": "src/Shader"
+  },
+  "hlsl.preprocessorDefinitions": {
+    "TYPE_ID_UNDEFINED": 0,
+    "READER_ID_PER_THREAD_SCRATCH": 1,
+    "READER_ID_FUNDAMENTAL": 2
+  },
+  "hlsl.languageVersion": "202x",
+  "hlsl.additionalArguments": [
+    "-enable-16bit-types",
+    "-Wno-c++14-extensions",
+    "-Wno-c++1z-extensions"
+  ]
+}
