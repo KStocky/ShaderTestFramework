@@ -9,6 +9,7 @@
     "READER_ID_FUNDAMENTAL": 2
   },
   "hlsl.languageVersion": "202x",
+  "hlsl.targetProfile": "lib_6_6",
   "hlsl.additionalArguments": [
     "-enable-16bit-types",
     "-Wno-c++14-extensions",
