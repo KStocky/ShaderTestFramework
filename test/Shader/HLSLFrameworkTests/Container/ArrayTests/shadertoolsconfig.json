@@ -1,0 +1,145 @@
+{
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "GIVEN_IntArray_WHEN_LoadCalled_THEN_ReturnsExpectedValue: GIVEN_IntArray_WHEN_LoadCalled_THEN_ReturnsExpectedValue [strings off]",
+      "description": "Compile GIVEN_IntArray_WHEN_LoadCalled_THEN_ReturnsExpectedValue with the initial runtime string mode.",
+      "files": [
+        "GIVEN_IntArray_WHEN_LoadCalled_THEN_ReturnsExpectedValue.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_IntArray_WHEN_LoadCalled_THEN_ReturnsExpectedValue",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "GIVEN_IntArray_WHEN_PropertiesQueried_THEN_AsExpected: GIVEN_IntArray_WHEN_PropertiesQueried_THEN_AsExpected [strings off]",
+      "description": "Compile GIVEN_IntArray_WHEN_PropertiesQueried_THEN_AsExpected with the initial runtime string mode.",
+      "files": [
+        "GIVEN_IntArray_WHEN_PropertiesQueried_THEN_AsExpected.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_IntArray_WHEN_PropertiesQueried_THEN_AsExpected",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "GIVEN_IntArray_WHEN_Store2Called_THEN_Succeeds: GIVEN_IntArray_WHEN_Store2Called_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_IntArray_WHEN_Store2Called_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "GIVEN_IntArray_WHEN_Store2Called_THEN_Succeeds.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_IntArray_WHEN_Store2Called_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "GIVEN_IntArray_WHEN_Store2CalledWithDifferentType_THEN_Fails: GIVEN_IntArray_WHEN_Store2CalledWithDifferentType_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_IntArray_WHEN_Store2CalledWithDifferentType_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "GIVEN_IntArray_WHEN_Store2CalledWithDifferentType_THEN_Fails.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_IntArray_WHEN_Store2CalledWithDifferentType_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "GIVEN_IntArray_WHEN_Store3Called_THEN_Succeeds: GIVEN_IntArray_WHEN_Store3Called_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_IntArray_WHEN_Store3Called_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "GIVEN_IntArray_WHEN_Store3Called_THEN_Succeeds.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_IntArray_WHEN_Store3Called_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "GIVEN_IntArray_WHEN_Store3CalledWithDifferentType_THEN_Fails: GIVEN_IntArray_WHEN_Store3CalledWithDifferentType_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_IntArray_WHEN_Store3CalledWithDifferentType_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "GIVEN_IntArray_WHEN_Store3CalledWithDifferentType_THEN_Fails.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_IntArray_WHEN_Store3CalledWithDifferentType_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "GIVEN_IntArray_WHEN_Store4Called_THEN_Succeeds: GIVEN_IntArray_WHEN_Store4Called_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_IntArray_WHEN_Store4Called_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "GIVEN_IntArray_WHEN_Store4Called_THEN_Succeeds.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_IntArray_WHEN_Store4Called_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "GIVEN_IntArray_WHEN_Store4CalledWithDifferentType_THEN_Fails: GIVEN_IntArray_WHEN_Store4CalledWithDifferentType_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_IntArray_WHEN_Store4CalledWithDifferentType_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "GIVEN_IntArray_WHEN_Store4CalledWithDifferentType_THEN_Fails.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_IntArray_WHEN_Store4CalledWithDifferentType_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "GIVEN_IntArray_WHEN_StoreCalled_THEN_Succeeds: GIVEN_IntArray_WHEN_StoreCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_IntArray_WHEN_StoreCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "GIVEN_IntArray_WHEN_StoreCalled_THEN_Succeeds.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_IntArray_WHEN_StoreCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "GIVEN_IntArray_WHEN_StoreCalledWithDifferentType_THEN_Fails: GIVEN_IntArray_WHEN_StoreCalledWithDifferentType_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_IntArray_WHEN_StoreCalledWithDifferentType_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "GIVEN_IntArray_WHEN_StoreCalledWithDifferentType_THEN_Fails.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_IntArray_WHEN_StoreCalledWithDifferentType_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    }
+  ]
+}

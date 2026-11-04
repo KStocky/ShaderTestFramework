@@ -1,0 +1,1609 @@
+{
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdOrWriter_THEN_H-5f0c1d29 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdOrWriter_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdOrWriter_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdOrWriter_THEN_H-5f0c1d29 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdOrWriter_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdOrWriter_THEN_H-5f0c1d29 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdWithWriter_THEN-89cdf9d6 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdWithWriter_THEN-89cdf9d6 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdWithWriter_THEN-89cdf9d6 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithTypeIdNoWriter_THEN_HasE-dde42229 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithTypeIdNoWriter_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithTypeIdNoWriter_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithTypeIdNoWriter_THEN_HasE-dde42229 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithTypeIdNoWriter_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithTypeIdNoWriter_THEN_HasE-dde42229 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithTypeIdWithWriter_THEN_Ha-f6c3e4a6 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithTypeIdWithWriter_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithTypeIdWithWriter_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithTypeIdWithWriter_THEN_Ha-f6c3e4a6 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithTypeIdWithWriter_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedSingleAssertWithTypeIdWithWriter_THEN_Ha-f6c3e4a6 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdOrWrit-69ae0208 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdOrWriter_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdOrWriter_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdOrWrit-69ae0208 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdOrWriter_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdOrWrit-69ae0208 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdWithWr-025dd635 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdWithWr-025dd635 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithoutTypeIdWithWr-025dd635 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithTypeIdNoWriter_-ec9565cd [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithTypeIdNoWriter_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithTypeIdNoWriter_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithTypeIdNoWriter_-ec9565cd [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithTypeIdNoWriter_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithTypeIdNoWriter_-ec9565cd [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithTypeIdWithWrite-9c9150bc [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithTypeIdWithWriter_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithTypeIdWithWriter_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithTypeIdWithWrite-9c9150bc [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithTypeIdWithWriter_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndNotEnoughDataCapacity_WHEN_FailedSingleAssertWithTypeIdWithWrite-9c9150bc [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithoutTypeIdOrWriter_THEN_H-5ee23031 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithoutTypeIdOrWriter_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithoutTypeIdOrWriter_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithoutTypeIdOrWriter_THEN_H-5ee23031 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithoutTypeIdOrWriter_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithoutTypeIdOrWriter_THEN_H-5ee23031 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithoutTypeIdWithWriter_THEN-8188f0ff [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithoutTypeIdWithWriter_THEN-8188f0ff [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithoutTypeIdWithWriter_THEN-8188f0ff [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithTypeIdNoWriter_THEN_HasE-9f51740c [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithTypeIdNoWriter_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithTypeIdNoWriter_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithTypeIdNoWriter_THEN_HasE-9f51740c [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithTypeIdNoWriter_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithTypeIdNoWriter_THEN_HasE-9f51740c [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithTypeIdWithWriter_THEN_Ha-a1b31be2 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithTypeIdWithWriter_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithTypeIdWithWriter_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithTypeIdWithWriter_THEN_Ha-a1b31be2 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithTypeIdWithWriter_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_FailedDoubleAssertWithTypeIdWithWriter_THEN_Ha-a1b31be2 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_LargeFailFirstThenSmallFailSingleAssertWithout-b77418c0 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_LargeFailFirstThenSmallFailSingleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_LargeFailFirstThenSmallFailSingleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_LargeFailFirstThenSmallFailSingleAssertWithout-b77418c0 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_LargeFailFirstThenSmallFailSingleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_LargeFailFirstThenSmallFailSingleAssertWithout-b77418c0 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_LargeFailFirstThenSmallFailSingleAssertWithTyp-e92d7772 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_LargeFailFirstThenSmallFailSingleAssertWithTypeIdWithWriter_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_LargeFailFirstThenSmallFailSingleAssertWithTypeIdWithWriter_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_LargeFailFirstThenSmallFailSingleAssertWithTyp-e92d7772 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_LargeFailFirstThenSmallFailSingleAssertWithTypeIdWithWriter_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_LargeFailFirstThenSmallFailSingleAssertWithTyp-e92d7772 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_SmallFailFirstThenLargeFailSingleAssertWithout-8425d5ba [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_SmallFailFirstThenLargeFailSingleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_SmallFailFirstThenLargeFailSingleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_SmallFailFirstThenLargeFailSingleAssertWithout-8425d5ba [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_SmallFailFirstThenLargeFailSingleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_SmallFailFirstThenLargeFailSingleAssertWithout-8425d5ba [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_SmallFailFirstThenLargeFailSingleAssertWithTyp-9dace7a4 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_SmallFailFirstThenLargeFailSingleAssertWithTypeIdWithWriter_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_SmallFailFirstThenLargeFailSingleAssertWithTypeIdWithWriter_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_SmallFailFirstThenLargeFailSingleAssertWithTyp-9dace7a4 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_SmallFailFirstThenLargeFailSingleAssertWithTypeIdWithWriter_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_SmallFailFirstThenLargeFailSingleAssertWithTyp-9dace7a4 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_SmallStructComparedWithLargerStructWithWriterA-d28d9209 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_SmallStructComparedWithLargerStructWithWriterAndEnoughCapacity_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_SmallStructComparedWithLargerStructWithWriterAndEnoughCapacity_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_SmallStructComparedWithLargerStructWithWriterA-d28d9209 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_SmallStructComparedWithLargerStructWithWriterAndEnoughCapacity_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_SmallStructComparedWithLargerStructWithWriterA-d28d9209 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_LargeStructComparedWithSmallerStructWithWriter-7953c5a8 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_LargeStructComparedWithSmallerStructWithWriterAndEnoughCapacity_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_LargeStructComparedWithSmallerStructWithWriterAndEnoughCapacity_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_LargeStructComparedWithSmallerStructWithWriter-7953c5a8 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_LargeStructComparedWithSmallerStructWithWriterAndEnoughCapacity_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_LargeStructComparedWithSmallerStructWithWriter-7953c5a8 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_OneLargeFailDoubleAssertWithoutTypeIdWithWrite-0ef3612f [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_OneLargeFailDoubleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_OneLargeFailDoubleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_OneLargeFailDoubleAssertWithoutTypeIdWithWrite-0ef3612f [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_OneLargeFailDoubleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_OneLargeFailDoubleAssertWithoutTypeIdWithWrite-0ef3612f [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoLargeFailDoubleAssertWithoutTypeIdWithWrite-add188a9 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_TwoLargeFailDoubleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoLargeFailDoubleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoLargeFailDoubleAssertWithoutTypeIdWithWrite-add188a9 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_TwoLargeFailDoubleAssertWithoutTypeIdWithWriter_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoLargeFailDoubleAssertWithoutTypeIdWithWrite-add188a9 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment2_THEN_HasExpe-07482a86 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment2_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment2_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment2_THEN_HasExpe-07482a86 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment2_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment2_THEN_HasExpe-07482a86 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment2_THEN_HasE-9b8d4c02 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment2_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment2_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment2_THEN_HasE-9b8d4c02 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment2_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment2_THEN_HasE-9b8d4c02 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment8_THEN_HasExpe-34815e38 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment8_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment8_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment8_THEN_HasExpe-34815e38 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment8_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_DoubleAssertOfTypesWithAlignment8_THEN_HasExpe-34815e38 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment8_THEN_HasE-ff75edbe [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment8_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment8_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment8_THEN_HasE-ff75edbe [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment8_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertOfTypesWithAlignment8_THEN_HasE-ff75edbe [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign2SecondAlign8_THEN_Ha-203d38ec [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign2SecondAlign8_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign2SecondAlign8_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign2SecondAlign8_THEN_Ha-203d38ec [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign2SecondAlign8_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign2SecondAlign8_THEN_Ha-203d38ec [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign8SecondAlign2_THEN_Ha-14c1c42d [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign8SecondAlign2_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign8SecondAlign2_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign8SecondAlign2_THEN_Ha-14c1c42d [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign8SecondAlign2_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoDoubleAssertFirstAlign8SecondAlign2_THEN_Ha-14c1c42d [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment2_THEN_HasExpe-95090ada [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment2_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment2_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment2_THEN_HasExpe-95090ada [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment2_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment2_THEN_HasExpe-95090ada [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertOfTypesWithAlignment2_THEN_HasE-4d5e9306 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertOfTypesWithAlignment2_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertOfTypesWithAlignment2_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertOfTypesWithAlignment2_THEN_HasE-4d5e9306 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertOfTypesWithAlignment2_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertOfTypesWithAlignment2_THEN_HasE-4d5e9306 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment8_THEN_HasExpe-dbb06b1c [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment8_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment8_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment8_THEN_HasExpe-dbb06b1c [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment8_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_SingleAssertOfTypesWithAlignment8_THEN_HasExpe-dbb06b1c [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertOfTypesWithAlignment8_THEN_HasE-158028a0 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertOfTypesWithAlignment8_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertOfTypesWithAlignment8_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertOfTypesWithAlignment8_THEN_HasE-158028a0 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertOfTypesWithAlignment8_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertOfTypesWithAlignment8_THEN_HasE-158028a0 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertFirstAlign2SecondAlign8_THEN_Ha-a5c121d8 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertFirstAlign2SecondAlign8_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertFirstAlign2SecondAlign8_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertFirstAlign2SecondAlign8_THEN_Ha-a5c121d8 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertFirstAlign2SecondAlign8_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertFirstAlign2SecondAlign8_THEN_Ha-a5c121d8 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertFirstAlign8SecondAlign2_THEN_Ha-f7f07cd5 [strings off]",
+      "description": "Compile GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertFirstAlign8SecondAlign2_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertFirstAlign8SecondAlign2_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertFirstAlign8SecondAlign2_THEN_Ha-f7f07cd5 [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertFirstAlign8SecondAlign2_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithData: GIVEN_AssertInfoAndDataCapacity_WHEN_TwoSingleAssertFirstAlign8SecondAlign2_THEN_Ha-f7f07cd5 [strings off]",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithNoData: GIVEN_AssertInfoCapacity_WHEN_ZeroAssertsMade_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_AssertInfoCapacity_WHEN_ZeroAssertsMade_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithNoData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoCapacity_WHEN_ZeroAssertsMade_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "AssertInfoWithNoData: GIVEN_AssertInfoCapacity_WHEN_NonZeroSuccessfulAssertsMade_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_AssertInfoCapacity_WHEN_NonZeroSuccessfulAssertsMade_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithNoData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoCapacity_WHEN_NonZeroSuccessfulAssertsMade_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithNoData: GIVEN_AssertInfoCapacity_WHEN_FailedAssertNoTypeId_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_AssertInfoCapacity_WHEN_FailedAssertNoTypeId_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithNoData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoCapacity_WHEN_FailedAssertNoTypeId_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithNoData: GIVEN_AssertInfoCapacity_WHEN_FailedAssertNoTypeId_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoCapacity_WHEN_FailedAssertNoTypeId_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithNoData: GIVEN_AssertInfoCapacity_WHEN_FailedAssertNoTypeId_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "AssertInfoWithNoData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithNoData: GIVEN_AssertInfoCapacity_WHEN_TwoFailedAssert_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_AssertInfoCapacity_WHEN_TwoFailedAssert_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithNoData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoCapacity_WHEN_TwoFailedAssert_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithNoData: GIVEN_AssertInfoCapacity_WHEN_TwoFailedAssert_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoCapacity_WHEN_TwoFailedAssert_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithNoData: GIVEN_AssertInfoCapacity_WHEN_TwoFailedAssert_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "AssertInfoWithNoData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithNoData: GIVEN_AssertInfoCapacity_WHEN_FailedAssertWithLineId_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_AssertInfoCapacity_WHEN_FailedAssertWithLineId_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithNoData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoCapacity_WHEN_FailedAssertWithLineId_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithNoData: GIVEN_AssertInfoCapacity_WHEN_FailedAssertWithLineId_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoCapacity_WHEN_FailedAssertWithLineId_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithNoData: GIVEN_AssertInfoCapacity_WHEN_FailedAssertWithLineId_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "AssertInfoWithNoData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithNoData: GIVEN_AssertInfoCapacityWithFlatThreadId_WHEN_FailedAssert_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_AssertInfoCapacityWithFlatThreadId_WHEN_FailedAssert_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithNoData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoCapacityWithFlatThreadId_WHEN_FailedAssert_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithNoData: GIVEN_AssertInfoCapacityWithFlatThreadId_WHEN_FailedAssert_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoCapacityWithFlatThreadId_WHEN_FailedAssert_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithNoData: GIVEN_AssertInfoCapacityWithFlatThreadId_WHEN_FailedAssert_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "AssertInfoWithNoData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithNoData: GIVEN_AssertInfoCapacityWithFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_AssertInfoCapacityWithFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithNoData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoCapacityWithFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithNoData: GIVEN_AssertInfoCapacityWithFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoCapacityWithFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithNoData: GIVEN_AssertInfoCapacityWithFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "AssertInfoWithNoData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithNoData: GIVEN_AssertInfoCapacityWithNonFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_AssertInfoCapacityWithNonFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithNoData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoCapacityWithNonFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithNoData: GIVEN_AssertInfoCapacityWithNonFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoCapacityWithNonFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithNoData: GIVEN_AssertInfoCapacityWithNonFlat3DThreadId_WHEN_FailedAssert_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "AssertInfoWithNoData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertInfoWithNoData: GIVEN_AssertInfoCapacity_WHEN_MoreFailedAssertsThanCapacity_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_AssertInfoCapacity_WHEN_MoreFailedAssertsThanCapacity_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "AssertInfoWithNoData.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_AssertInfoCapacity_WHEN_MoreFailedAssertsThanCapacity_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertInfoWithNoData: GIVEN_AssertInfoCapacity_WHEN_MoreFailedAssertsThanCapacity_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_AssertInfoCapacity_WHEN_MoreFailedAssertsThanCapacity_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "AssertInfoWithNoData: GIVEN_AssertInfoCapacity_WHEN_MoreFailedAssertsThanCapacity_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "AssertInfoWithNoData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "ByteReader: GIVEN_FailedSingleAssert_WHEN_NoReaderId_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_FailedSingleAssert_WHEN_NoReaderId_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "ByteReader.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_FailedSingleAssert_WHEN_NoReaderId_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "ByteReader: GIVEN_FailedSingleAssert_WHEN_NoReaderId_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_FailedSingleAssert_WHEN_NoReaderId_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "ByteReader: GIVEN_FailedSingleAssert_WHEN_NoReaderId_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "ByteReader.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "ByteReader: GIVEN_FailedSingleAssert_WHEN_ReaderId_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_FailedSingleAssert_WHEN_ReaderId_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "ByteReader.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_FailedSingleAssert_WHEN_ReaderId_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "ByteReader: GIVEN_FailedSingleAssert_WHEN_ReaderId_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_FailedSingleAssert_WHEN_ReaderId_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "ByteReader: GIVEN_FailedSingleAssert_WHEN_ReaderId_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "ByteReader.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "ByteReader: GIVEN_FailedTwoSingleAsserts_WHEN_FirstNoReaderIdSecondHasReaderId_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_FailedTwoSingleAsserts_WHEN_FirstNoReaderIdSecondHasReaderId_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "ByteReader.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_FailedTwoSingleAsserts_WHEN_FirstNoReaderIdSecondHasReaderId_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "ByteReader: GIVEN_FailedTwoSingleAsserts_WHEN_FirstNoReaderIdSecondHasReaderId_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_FailedTwoSingleAsserts_WHEN_FirstNoReaderIdSecondHasReaderId_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "ByteReader: GIVEN_FailedTwoSingleAsserts_WHEN_FirstNoReaderIdSecondHasReaderId_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "ByteReader.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "ByteReader: GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveSameReaderId_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveSameReaderId_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "ByteReader.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveSameReaderId_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "ByteReader: GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveSameReaderId_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveSameReaderId_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "ByteReader: GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveSameReaderId_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "ByteReader.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "ByteReader: GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveDifferentReaderId_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveDifferentReaderId_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "ByteReader.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveDifferentReaderId_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "ByteReader: GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveDifferentReaderId_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveDifferentReaderId_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "ByteReader: GIVEN_FailedTwoSingleAsserts_WHEN_BothHaveDifferentReaderId_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "ByteReader.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "FundamentalByteReader: GIVEN_TwoBools_WHEN_Failed_THEN_OutputHasExpectedSubstrings [strings off]",
+      "description": "Compile GIVEN_TwoBools_WHEN_Failed_THEN_OutputHasExpectedSubstrings with the initial runtime string mode.",
+      "files": [
+        "FundamentalByteReader.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoBools_WHEN_Failed_THEN_OutputHasExpectedSubstrings",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "FundamentalByteReader: GIVEN_TwoBools_WHEN_Failed_THEN_OutputHasExpectedSubstrings [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoBools_WHEN_Failed_THEN_OutputHasExpectedSubstrings with strings enabled.",
+      "inherits": "FundamentalByteReader: GIVEN_TwoBools_WHEN_Failed_THEN_OutputHasExpectedSubstrings [strings off]",
+      "files": [
+        "FundamentalByteReader.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "FundamentalByteReader: GIVEN_TwoScalarUnsignedIntegers_WHEN_Failed_THEN_OutputHasExpectedSubstrings [strings off]",
+      "description": "Compile GIVEN_TwoScalarUnsignedIntegers_WHEN_Failed_THEN_OutputHasExpectedSubstrings with the initial runtime string mode.",
+      "files": [
+        "FundamentalByteReader.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoScalarUnsignedIntegers_WHEN_Failed_THEN_OutputHasExpectedSubstrings",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "FundamentalByteReader: GIVEN_TwoScalarUnsignedIntegers_WHEN_Failed_THEN_OutputHasExpectedSubstrings [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoScalarUnsignedIntegers_WHEN_Failed_THEN_OutputHasExpectedSubstrings with strings enabled.",
+      "inherits": "FundamentalByteReader: GIVEN_TwoScalarUnsignedIntegers_WHEN_Failed_THEN_OutputHasExpectedSubstrings [strings off]",
+      "files": [
+        "FundamentalByteReader.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "FundamentalByteReader: GIVEN_TwoScalarNegativeIntegers_WHEN_Failed_THEN_OutputHasExpectedSubstrings [strings off]",
+      "description": "Compile GIVEN_TwoScalarNegativeIntegers_WHEN_Failed_THEN_OutputHasExpectedSubstrings with the initial runtime string mode.",
+      "files": [
+        "FundamentalByteReader.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoScalarNegativeIntegers_WHEN_Failed_THEN_OutputHasExpectedSubstrings",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "FundamentalByteReader: GIVEN_TwoScalarNegativeIntegers_WHEN_Failed_THEN_OutputHasExpectedSubstrings [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoScalarNegativeIntegers_WHEN_Failed_THEN_OutputHasExpectedSubstrings with strings enabled.",
+      "inherits": "FundamentalByteReader: GIVEN_TwoScalarNegativeIntegers_WHEN_Failed_THEN_OutputHasExpectedSubstrings [strings off]",
+      "files": [
+        "FundamentalByteReader.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "FundamentalByteReader: GIVEN_TwoScalarFloatingPoint_WHEN_Failed_THEN_OutputHasExpectedSubstrings [strings off]",
+      "description": "Compile GIVEN_TwoScalarFloatingPoint_WHEN_Failed_THEN_OutputHasExpectedSubstrings with the initial runtime string mode.",
+      "files": [
+        "FundamentalByteReader.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoScalarFloatingPoint_WHEN_Failed_THEN_OutputHasExpectedSubstrings",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "FundamentalByteReader: GIVEN_TwoScalarFloatingPoint_WHEN_Failed_THEN_OutputHasExpectedSubstrings [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoScalarFloatingPoint_WHEN_Failed_THEN_OutputHasExpectedSubstrings with strings enabled.",
+      "inherits": "FundamentalByteReader: GIVEN_TwoScalarFloatingPoint_WHEN_Failed_THEN_OutputHasExpectedSubstrings [strings off]",
+      "files": [
+        "FundamentalByteReader.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "FundamentalByteReader: GIVEN_TwoScalarUnsignedIntegers16bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings [strings off]",
+      "description": "Compile GIVEN_TwoScalarUnsignedIntegers16bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings with the initial runtime string mode.",
+      "files": [
+        "FundamentalByteReader.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoScalarUnsignedIntegers16bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "FundamentalByteReader: GIVEN_TwoScalarUnsignedIntegers16bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoScalarUnsignedIntegers16bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings with strings enabled.",
+      "inherits": "FundamentalByteReader: GIVEN_TwoScalarUnsignedIntegers16bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings [strings off]",
+      "files": [
+        "FundamentalByteReader.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "FundamentalByteReader: GIVEN_TwoScalarNegativeIntegers16bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings [strings off]",
+      "description": "Compile GIVEN_TwoScalarNegativeIntegers16bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings with the initial runtime string mode.",
+      "files": [
+        "FundamentalByteReader.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoScalarNegativeIntegers16bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "FundamentalByteReader: GIVEN_TwoScalarNegativeIntegers16bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoScalarNegativeIntegers16bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings with strings enabled.",
+      "inherits": "FundamentalByteReader: GIVEN_TwoScalarNegativeIntegers16bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings [strings off]",
+      "files": [
+        "FundamentalByteReader.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "FundamentalByteReader: GIVEN_TwoScalarFloatingPoint16bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings [strings off]",
+      "description": "Compile GIVEN_TwoScalarFloatingPoint16bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings with the initial runtime string mode.",
+      "files": [
+        "FundamentalByteReader.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoScalarFloatingPoint16bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "FundamentalByteReader: GIVEN_TwoScalarFloatingPoint16bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoScalarFloatingPoint16bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings with strings enabled.",
+      "inherits": "FundamentalByteReader: GIVEN_TwoScalarFloatingPoint16bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings [strings off]",
+      "files": [
+        "FundamentalByteReader.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "FundamentalByteReader: GIVEN_TwoVector3FloatingPoint64bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings [strings off]",
+      "description": "Compile GIVEN_TwoVector3FloatingPoint64bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings with the initial runtime string mode.",
+      "files": [
+        "FundamentalByteReader.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoVector3FloatingPoint64bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "FundamentalByteReader: GIVEN_TwoVector3FloatingPoint64bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoVector3FloatingPoint64bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings with strings enabled.",
+      "inherits": "FundamentalByteReader: GIVEN_TwoVector3FloatingPoint64bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings [strings off]",
+      "files": [
+        "FundamentalByteReader.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "FundamentalByteReader: GIVEN_TwoMatrix2x2Integer64bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings [strings off]",
+      "description": "Compile GIVEN_TwoMatrix2x2Integer64bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings with the initial runtime string mode.",
+      "files": [
+        "FundamentalByteReader.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoMatrix2x2Integer64bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "FundamentalByteReader: GIVEN_TwoMatrix2x2Integer64bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoMatrix2x2Integer64bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings with strings enabled.",
+      "inherits": "FundamentalByteReader: GIVEN_TwoMatrix2x2Integer64bit_WHEN_Failed_THEN_OutputHasExpectedSubstrings [strings off]",
+      "files": [
+        "FundamentalByteReader.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "NoAssertBuffer: GIVEN_ZeroAssertBuffer_WHEN_ZeroAssertsMade_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_ZeroAssertBuffer_WHEN_ZeroAssertsMade_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "NoAssertBuffer.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_ZeroAssertBuffer_WHEN_ZeroAssertsMade_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "NoAssertBuffer: GIVEN_ZeroAssertBuffer_WHEN_NonZeroSuccessfulAssertsMade_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_ZeroAssertBuffer_WHEN_NonZeroSuccessfulAssertsMade_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "NoAssertBuffer.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_ZeroAssertBuffer_WHEN_NonZeroSuccessfulAssertsMade_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "NoAssertBuffer: GIVEN_ZeroAssertBuffer_WHEN_NonZeroFailedAssertsMade_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_ZeroAssertBuffer_WHEN_NonZeroFailedAssertsMade_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "NoAssertBuffer.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_ZeroAssertBuffer_WHEN_NonZeroFailedAssertsMade_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "NoAssertBuffer: GIVEN_ZeroAssertBuffer_WHEN_NonZeroFailedAssertsMade_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_ZeroAssertBuffer_WHEN_NonZeroFailedAssertsMade_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "NoAssertBuffer: GIVEN_ZeroAssertBuffer_WHEN_NonZeroFailedAssertsMade_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "NoAssertBuffer.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "NoAssertBuffer: GIVEN_ZeroAssertBuffer_WHEN_NonZeroSuccessfulAndFailedAssertsMade_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_ZeroAssertBuffer_WHEN_NonZeroSuccessfulAndFailedAssertsMade_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "NoAssertBuffer.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_ZeroAssertBuffer_WHEN_NonZeroSuccessfulAndFailedAssertsMade_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "NoAssertBuffer: GIVEN_ZeroAssertBuffer_WHEN_NonZeroSuccessfulAndFailedAssertsMade_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_ZeroAssertBuffer_WHEN_NonZeroSuccessfulAndFailedAssertsMade_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "NoAssertBuffer: GIVEN_ZeroAssertBuffer_WHEN_NonZeroSuccessfulAndFailedAssertsMade_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "NoAssertBuffer.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "SectionsWithStrings: GIVEN_ZeroSectionsWithStrings_WHEN_ZeroAssertsFailed_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_ZeroSectionsWithStrings_WHEN_ZeroAssertsFailed_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "SectionsWithStrings.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_ZeroSectionsWithStrings_WHEN_ZeroAssertsFailed_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "SectionsWithStrings: GIVEN_ZeroSectionsWithStrings_WHEN_AssertsFailed_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_ZeroSectionsWithStrings_WHEN_AssertsFailed_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "SectionsWithStrings.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_ZeroSectionsWithStrings_WHEN_AssertsFailed_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "SectionsWithStrings: GIVEN_ZeroSectionsWithStrings_WHEN_AssertsFailed_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_ZeroSectionsWithStrings_WHEN_AssertsFailed_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "SectionsWithStrings: GIVEN_ZeroSectionsWithStrings_WHEN_AssertsFailed_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "SectionsWithStrings.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "SectionsWithStrings: GIVEN_OneScenario_WHEN_AssertsFailedInScenario_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_OneScenario_WHEN_AssertsFailedInScenario_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "SectionsWithStrings.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_OneScenario_WHEN_AssertsFailedInScenario_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "SectionsWithStrings: GIVEN_OneScenario_WHEN_AssertsFailedInScenario_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_OneScenario_WHEN_AssertsFailedInScenario_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "SectionsWithStrings: GIVEN_OneScenario_WHEN_AssertsFailedInScenario_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "SectionsWithStrings.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "SectionsWithStrings: GIVEN_OneSection_WHEN_AssertsFailedInSection_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_OneSection_WHEN_AssertsFailedInSection_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "SectionsWithStrings.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_OneSection_WHEN_AssertsFailedInSection_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "SectionsWithStrings: GIVEN_OneSection_WHEN_AssertsFailedInSection_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_OneSection_WHEN_AssertsFailedInSection_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "SectionsWithStrings: GIVEN_OneSection_WHEN_AssertsFailedInSection_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "SectionsWithStrings.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "SectionsWithStrings: GIVEN_OneSection_WHEN_AssertsFailedOutsideSection_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_OneSection_WHEN_AssertsFailedOutsideSection_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "SectionsWithStrings.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_OneSection_WHEN_AssertsFailedOutsideSection_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "SectionsWithStrings: GIVEN_OneSection_WHEN_AssertsFailedOutsideSection_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_OneSection_WHEN_AssertsFailedOutsideSection_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "SectionsWithStrings: GIVEN_OneSection_WHEN_AssertsFailedOutsideSection_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "SectionsWithStrings.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "SectionsWithStrings: GIVEN_TwoNonNestedSection_WHEN_AssertsFailedInFirstSection_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_TwoNonNestedSection_WHEN_AssertsFailedInFirstSection_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "SectionsWithStrings.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoNonNestedSection_WHEN_AssertsFailedInFirstSection_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "SectionsWithStrings: GIVEN_TwoNonNestedSection_WHEN_AssertsFailedInFirstSection_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoNonNestedSection_WHEN_AssertsFailedInFirstSection_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "SectionsWithStrings: GIVEN_TwoNonNestedSection_WHEN_AssertsFailedInFirstSection_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "SectionsWithStrings.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "SectionsWithStrings: GIVEN_TwoNonNestedSection_WHEN_AssertsFailedInSecondSection_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_TwoNonNestedSection_WHEN_AssertsFailedInSecondSection_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "SectionsWithStrings.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoNonNestedSection_WHEN_AssertsFailedInSecondSection_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "SectionsWithStrings: GIVEN_TwoNonNestedSection_WHEN_AssertsFailedInSecondSection_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoNonNestedSection_WHEN_AssertsFailedInSecondSection_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "SectionsWithStrings: GIVEN_TwoNonNestedSection_WHEN_AssertsFailedInSecondSection_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "SectionsWithStrings.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "SectionsWithStrings: GIVEN_NestedSections_WHEN_AssertsInEachSection_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_NestedSections_WHEN_AssertsInEachSection_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "SectionsWithStrings.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_NestedSections_WHEN_AssertsInEachSection_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "SectionsWithStrings: GIVEN_NestedSections_WHEN_AssertsInEachSection_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_NestedSections_WHEN_AssertsInEachSection_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "SectionsWithStrings: GIVEN_NestedSections_WHEN_AssertsInEachSection_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "SectionsWithStrings.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "SectionsWithStrings: GIVEN_NestedSectionsWithMultipleThreads_WHEN_AssertsInEachSection_THEN_HasExpectedResults [strings off]",
+      "description": "Compile GIVEN_NestedSectionsWithMultipleThreads_WHEN_AssertsInEachSection_THEN_HasExpectedResults with the initial runtime string mode.",
+      "files": [
+        "SectionsWithStrings.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_NestedSectionsWithMultipleThreads_WHEN_AssertsInEachSection_THEN_HasExpectedResults",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "SectionsWithStrings: GIVEN_NestedSectionsWithMultipleThreads_WHEN_AssertsInEachSection_THEN_HasExpectedResults [failure strings]",
+      "description": "Compile the failure retry for GIVEN_NestedSectionsWithMultipleThreads_WHEN_AssertsInEachSection_THEN_HasExpectedResults with strings enabled.",
+      "inherits": "SectionsWithStrings: GIVEN_NestedSectionsWithMultipleThreads_WHEN_AssertsInEachSection_THEN_HasExpectedResults [strings off]",
+      "files": [
+        "SectionsWithStrings.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    }
+  ],
+  "hlsl.fileGroups": [
+    {
+      "name": "Assert info custom byte reader",
+      "files": [
+        "AssertInfoWithData.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TEST_TYPE_WITH_WRITER": 3
+      }
+    },
+    {
+      "name": "Byte reader registrations",
+      "files": [
+        "ByteReader.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TEST_READER_1": 3,
+        "TEST_READER_2": 4
+      }
+    }
+  ]
+}

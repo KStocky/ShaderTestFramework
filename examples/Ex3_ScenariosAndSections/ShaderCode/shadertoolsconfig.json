@@ -1,0 +1,48 @@
+{
+  "hlsl.virtualDirectoryMappings": {
+    "/Shader": "."
+  },
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "Ex3 OptionalTests: OptionalTestsWithoutScenariosAndSections [strings off]",
+      "description": "Compile OptionalTestsWithoutScenariosAndSections with the initial runtime string mode.",
+      "files": [
+        "OptionalTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "OptionalTestsWithoutScenariosAndSections",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "Ex3 OptionalTests: OptionalTestsWithScenariosAndSections [strings off]",
+      "description": "Compile OptionalTestsWithScenariosAndSections with the initial runtime string mode.",
+      "files": [
+        "OptionalTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "OptionalTestsWithScenariosAndSections",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "Ex3 OptionalTests: OptionalTestsWithScenariosAndSectionsAndThreadIds [strings off]",
+      "description": "Compile OptionalTestsWithScenariosAndSectionsAndThreadIds with the initial runtime string mode.",
+      "files": [
+        "OptionalTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "OptionalTestsWithScenariosAndSectionsAndThreadIds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    }
+  ]
+}

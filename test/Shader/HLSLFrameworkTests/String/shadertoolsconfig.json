@@ -1,0 +1,1039 @@
+{
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "StringByteWriterTests: GIVEN_EmptyString_WHEN_BytesRequiredQueried_THEN_ZeroReturned [strings off]",
+      "description": "Compile GIVEN_EmptyString_WHEN_BytesRequiredQueried_THEN_ZeroReturned with the initial runtime string mode.",
+      "files": [
+        "StringByteWriterTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_EmptyString_WHEN_BytesRequiredQueried_THEN_ZeroReturned",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "StringByteWriterTests: GIVEN_StringWithMultipleOf4Characters_WHEN_BytesRequiredQueried_THEN_BytesRequiredI-19cd4616 [strings off]",
+      "description": "Compile GIVEN_StringWithMultipleOf4Characters_WHEN_BytesRequiredQueried_THEN_BytesRequiredIsSameAsNumberOfChars with the initial runtime string mode.",
+      "files": [
+        "StringByteWriterTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_StringWithMultipleOf4Characters_WHEN_BytesRequiredQueried_THEN_BytesRequiredIsSameAsNumberOfChars",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "StringByteWriterTests: GIVEN_StringWithNonMultipleOf4Characters_WHEN_BytesRequiredQueried_THEN_BytesRequir-59f306e2 [strings off]",
+      "description": "Compile GIVEN_StringWithNonMultipleOf4Characters_WHEN_BytesRequiredQueried_THEN_BytesRequiredIsNextMultipleOf4 with the initial runtime string mode.",
+      "files": [
+        "StringByteWriterTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_StringWithNonMultipleOf4Characters_WHEN_BytesRequiredQueried_THEN_BytesRequiredIsNextMultipleOf4",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "StringByteWriterTests: GIVEN_String_WHEN_AlignmentRequiredQueried_THEN_FourReturned [strings off]",
+      "description": "Compile GIVEN_String_WHEN_AlignmentRequiredQueried_THEN_FourReturned with the initial runtime string mode.",
+      "files": [
+        "StringByteWriterTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_String_WHEN_AlignmentRequiredQueried_THEN_FourReturned",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "StringByteWriterTests: GIVEN_EmptyString_WHEN_WriteCalled_THEN_NothingWritten [strings off]",
+      "description": "Compile GIVEN_EmptyString_WHEN_WriteCalled_THEN_NothingWritten with the initial runtime string mode.",
+      "files": [
+        "StringByteWriterTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_EmptyString_WHEN_WriteCalled_THEN_NothingWritten",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "StringByteWriterTests: GIVEN_StringWith4Characters_WHEN_WriteCalled_THEN_4CharactersWritten [strings off]",
+      "description": "Compile GIVEN_StringWith4Characters_WHEN_WriteCalled_THEN_4CharactersWritten with the initial runtime string mode.",
+      "files": [
+        "StringByteWriterTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_StringWith4Characters_WHEN_WriteCalled_THEN_4CharactersWritten",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "StringByteWriterTests: GIVEN_StringWith5Characters_WHEN_WriteCalled_THEN_5CharactersWritten [strings off]",
+      "description": "Compile GIVEN_StringWith5Characters_WHEN_WriteCalled_THEN_5CharactersWritten with the initial runtime string mode.",
+      "files": [
+        "StringByteWriterTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_StringWith5Characters_WHEN_WriteCalled_THEN_5CharactersWritten",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "StringTests: GIVEN_EmptyString_WHEN_CharacterAppended_THEN_DataIsAsExpected [O3]",
+      "description": "Compile GIVEN_EmptyString_WHEN_CharacterAppended_THEN_DataIsAsExpected with strings enabled and -O3.",
+      "files": [
+        "StringTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_EmptyString_WHEN_CharacterAppended_THEN_DataIsAsExpected",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1
+      },
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3",
+        "-O3",
+        "-enable-16bit-types",
+        "-Wno-c++14-extensions",
+        "-Wno-c++1z-extensions"
+      ],
+      "default": true
+    },
+    {
+      "name": "StringTests: GIVEN_EmptyString_WHEN_CharacterAppended_THEN_DataIsAsExpected [Od]",
+      "description": "Compile GIVEN_EmptyString_WHEN_CharacterAppended_THEN_DataIsAsExpected with strings enabled and -Od.",
+      "files": [
+        "StringTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_EmptyString_WHEN_CharacterAppended_THEN_DataIsAsExpected",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1
+      },
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3",
+        "-Od",
+        "-enable-16bit-types",
+        "-Wno-c++14-extensions",
+        "-Wno-c++1z-extensions"
+      ]
+    },
+    {
+      "name": "StringTests: GIVEN_EmptyString_WHEN_AttemptingToAppendTwoCharactersAtOnce_THEN_OnlyTheFirstIsAppended [O3]",
+      "description": "Compile GIVEN_EmptyString_WHEN_AttemptingToAppendTwoCharactersAtOnce_THEN_OnlyTheFirstIsAppended with strings enabled and -O3.",
+      "files": [
+        "StringTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_EmptyString_WHEN_AttemptingToAppendTwoCharactersAtOnce_THEN_OnlyTheFirstIsAppended",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1
+      },
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3",
+        "-O3",
+        "-enable-16bit-types",
+        "-Wno-c++14-extensions",
+        "-Wno-c++1z-extensions"
+      ]
+    },
+    {
+      "name": "StringTests: GIVEN_EmptyString_WHEN_AttemptingToAppendTwoCharactersAtOnce_THEN_OnlyTheFirstIsAppended [Od]",
+      "description": "Compile GIVEN_EmptyString_WHEN_AttemptingToAppendTwoCharactersAtOnce_THEN_OnlyTheFirstIsAppended with strings enabled and -Od.",
+      "files": [
+        "StringTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_EmptyString_WHEN_AttemptingToAppendTwoCharactersAtOnce_THEN_OnlyTheFirstIsAppended",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1
+      },
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3",
+        "-Od",
+        "-enable-16bit-types",
+        "-Wno-c++14-extensions",
+        "-Wno-c++1z-extensions"
+      ]
+    },
+    {
+      "name": "StringTests: GIVEN_EmptyString_WHEN_FourCharactersAppended_THEN_DataIsAsExpected [O3]",
+      "description": "Compile GIVEN_EmptyString_WHEN_FourCharactersAppended_THEN_DataIsAsExpected with strings enabled and -O3.",
+      "files": [
+        "StringTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_EmptyString_WHEN_FourCharactersAppended_THEN_DataIsAsExpected",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1
+      },
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3",
+        "-O3",
+        "-enable-16bit-types",
+        "-Wno-c++14-extensions",
+        "-Wno-c++1z-extensions"
+      ]
+    },
+    {
+      "name": "StringTests: GIVEN_EmptyString_WHEN_FourCharactersAppended_THEN_DataIsAsExpected [Od]",
+      "description": "Compile GIVEN_EmptyString_WHEN_FourCharactersAppended_THEN_DataIsAsExpected with strings enabled and -Od.",
+      "files": [
+        "StringTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_EmptyString_WHEN_FourCharactersAppended_THEN_DataIsAsExpected",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1
+      },
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3",
+        "-Od",
+        "-enable-16bit-types",
+        "-Wno-c++14-extensions",
+        "-Wno-c++1z-extensions"
+      ]
+    },
+    {
+      "name": "StringTests: GIVEN_EmptyString_WHEN_FiveCharactersAppended_THEN_DataIsAsExpected [O3]",
+      "description": "Compile GIVEN_EmptyString_WHEN_FiveCharactersAppended_THEN_DataIsAsExpected with strings enabled and -O3.",
+      "files": [
+        "StringTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_EmptyString_WHEN_FiveCharactersAppended_THEN_DataIsAsExpected",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1
+      },
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3",
+        "-O3",
+        "-enable-16bit-types",
+        "-Wno-c++14-extensions",
+        "-Wno-c++1z-extensions"
+      ]
+    },
+    {
+      "name": "StringTests: GIVEN_EmptyString_WHEN_FiveCharactersAppended_THEN_DataIsAsExpected [Od]",
+      "description": "Compile GIVEN_EmptyString_WHEN_FiveCharactersAppended_THEN_DataIsAsExpected with strings enabled and -Od.",
+      "files": [
+        "StringTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_EmptyString_WHEN_FiveCharactersAppended_THEN_DataIsAsExpected",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1
+      },
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3",
+        "-Od",
+        "-enable-16bit-types",
+        "-Wno-c++14-extensions",
+        "-Wno-c++1z-extensions"
+      ]
+    },
+    {
+      "name": "StringTests: GIVEN_EmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsEmpty [O3]",
+      "description": "Compile GIVEN_EmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsEmpty with strings enabled and -O3.",
+      "files": [
+        "StringTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_EmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsEmpty",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1
+      },
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3",
+        "-O3",
+        "-enable-16bit-types",
+        "-Wno-c++14-extensions",
+        "-Wno-c++1z-extensions"
+      ]
+    },
+    {
+      "name": "StringTests: GIVEN_EmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsEmpty [Od]",
+      "description": "Compile GIVEN_EmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsEmpty with strings enabled and -Od.",
+      "files": [
+        "StringTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_EmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsEmpty",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1
+      },
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3",
+        "-Od",
+        "-enable-16bit-types",
+        "-Wno-c++14-extensions",
+        "-Wno-c++1z-extensions"
+      ]
+    },
+    {
+      "name": "StringTests: GIVEN_NonEmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsAsExpected [O3]",
+      "description": "Compile GIVEN_NonEmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsAsExpected with strings enabled and -O3.",
+      "files": [
+        "StringTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_NonEmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsAsExpected",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1
+      },
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3",
+        "-O3",
+        "-enable-16bit-types",
+        "-Wno-c++14-extensions",
+        "-Wno-c++1z-extensions"
+      ]
+    },
+    {
+      "name": "StringTests: GIVEN_NonEmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsAsExpected [Od]",
+      "description": "Compile GIVEN_NonEmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsAsExpected with strings enabled and -Od.",
+      "files": [
+        "StringTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_NonEmptyStringCreator_WHEN_Executed_THEN_ReturnedStringIsAsExpected",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1
+      },
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3",
+        "-Od",
+        "-enable-16bit-types",
+        "-Wno-c++14-extensions",
+        "-Wno-c++1z-extensions"
+      ]
+    },
+    {
+      "name": "StringTests: GIVEN_TwoNonEmptyStringCreator_WHEN_Executed_THEN_BothStringsAreAsExpected [O3]",
+      "description": "Compile GIVEN_TwoNonEmptyStringCreator_WHEN_Executed_THEN_BothStringsAreAsExpected with strings enabled and -O3.",
+      "files": [
+        "StringTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoNonEmptyStringCreator_WHEN_Executed_THEN_BothStringsAreAsExpected",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1
+      },
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3",
+        "-O3",
+        "-enable-16bit-types",
+        "-Wno-c++14-extensions",
+        "-Wno-c++1z-extensions"
+      ]
+    },
+    {
+      "name": "StringTests: GIVEN_TwoNonEmptyStringCreator_WHEN_Executed_THEN_BothStringsAreAsExpected [Od]",
+      "description": "Compile GIVEN_TwoNonEmptyStringCreator_WHEN_Executed_THEN_BothStringsAreAsExpected with strings enabled and -Od.",
+      "files": [
+        "StringTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoNonEmptyStringCreator_WHEN_Executed_THEN_BothStringsAreAsExpected",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1
+      },
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3",
+        "-Od",
+        "-enable-16bit-types",
+        "-Wno-c++14-extensions",
+        "-Wno-c++1z-extensions"
+      ]
+    },
+    {
+      "name": "StringTests: GIVEN_FullString_WHEN_AppendCalled_THEN_AppendFails [O3]",
+      "description": "Compile GIVEN_FullString_WHEN_AppendCalled_THEN_AppendFails with strings enabled and -O3.",
+      "files": [
+        "StringTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_FullString_WHEN_AppendCalled_THEN_AppendFails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1
+      },
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3",
+        "-O3",
+        "-enable-16bit-types",
+        "-Wno-c++14-extensions",
+        "-Wno-c++1z-extensions"
+      ]
+    },
+    {
+      "name": "StringTests: GIVEN_FullString_WHEN_AppendCalled_THEN_AppendFails [Od]",
+      "description": "Compile GIVEN_FullString_WHEN_AppendCalled_THEN_AppendFails with strings enabled and -Od.",
+      "files": [
+        "StringTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_FullString_WHEN_AppendCalled_THEN_AppendFails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1
+      },
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3",
+        "-Od",
+        "-enable-16bit-types",
+        "-Wno-c++14-extensions",
+        "-Wno-c++1z-extensions"
+      ]
+    },
+    {
+      "name": "StringDefine: Off max 16 actual 15",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 16,
+        "TTL_ENABLE_STRINGS": 0,
+        "TEST_STRING": "\"aaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaa\""
+      },
+      "default": true
+    },
+    {
+      "name": "StringDefine: Off max 16 actual 31",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 16,
+        "TTL_ENABLE_STRINGS": 0,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: Off max 16 actual 63",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 16,
+        "TTL_ENABLE_STRINGS": 0,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: Off max 16 actual 127",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 16,
+        "TTL_ENABLE_STRINGS": 0,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: Off max 16 actual 255",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 16,
+        "TTL_ENABLE_STRINGS": 0,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: Off max 16 actual 511",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 16,
+        "TTL_ENABLE_STRINGS": 0,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: Off max 64 actual 15",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0,
+        "TEST_STRING": "\"aaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: Off max 64 actual 31",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: Off max 64 actual 63",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: Off max 64 actual 127",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: Off max 64 actual 255",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: Off max 64 actual 511",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: Off max 256 actual 15",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 256,
+        "TTL_ENABLE_STRINGS": 0,
+        "TEST_STRING": "\"aaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: Off max 256 actual 31",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 256,
+        "TTL_ENABLE_STRINGS": 0,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: Off max 256 actual 63",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 256,
+        "TTL_ENABLE_STRINGS": 0,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: Off max 256 actual 127",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 256,
+        "TTL_ENABLE_STRINGS": 0,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: Off max 256 actual 255",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 256,
+        "TTL_ENABLE_STRINGS": 0,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: Off max 256 actual 511",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 256,
+        "TTL_ENABLE_STRINGS": 0,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: On max 16 actual 15",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 16,
+        "TTL_ENABLE_STRINGS": 1,
+        "TEST_STRING": "\"aaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: On max 16 actual 31",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 16,
+        "TTL_ENABLE_STRINGS": 1,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: On max 16 actual 63",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 16,
+        "TTL_ENABLE_STRINGS": 1,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: On max 16 actual 127",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 16,
+        "TTL_ENABLE_STRINGS": 1,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: On max 16 actual 255",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 16,
+        "TTL_ENABLE_STRINGS": 1,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: On max 16 actual 511",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 16,
+        "TTL_ENABLE_STRINGS": 1,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: On max 64 actual 15",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1,
+        "TEST_STRING": "\"aaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: On max 64 actual 31",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: On max 64 actual 63",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: On max 64 actual 127",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: On max 64 actual 255",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: On max 64 actual 511",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 1,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: On max 256 actual 15",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 256,
+        "TTL_ENABLE_STRINGS": 1,
+        "TEST_STRING": "\"aaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: On max 256 actual 31",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 256,
+        "TTL_ENABLE_STRINGS": 1,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: On max 256 actual 63",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 256,
+        "TTL_ENABLE_STRINGS": 1,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: On max 256 actual 127",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 256,
+        "TTL_ENABLE_STRINGS": 1,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: On max 256 actual 255",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 256,
+        "TTL_ENABLE_STRINGS": 1,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    },
+    {
+      "name": "StringDefine: On max 256 actual 511",
+      "description": "Compile the generated StringDefine runtime permutation.",
+      "files": [
+        "StringDefineTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 256,
+        "TTL_ENABLE_STRINGS": 1,
+        "TEST_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+        "EXPECTED_STRING": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\""
+      }
+    }
+  ]
+}

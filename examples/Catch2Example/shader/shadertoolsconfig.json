@@ -1,0 +1,59 @@
+{
+  "hlsl.virtualDirectoryMappings": {
+    "/MyTests": "."
+  },
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "Catch2 ShaderTest: ThisTestShouldPass [strings off]",
+      "description": "Compile ThisTestShouldPass with the initial runtime string mode.",
+      "files": [
+        "ShaderTest.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "ThisTestShouldPass",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "Catch2 ShaderTest: ThisTestShouldFail [strings off]",
+      "description": "Compile ThisTestShouldFail with the initial runtime string mode.",
+      "files": [
+        "ShaderTest.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "ThisTestShouldFail",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "Catch2 ShaderTest: ThisTestShouldFail [failure strings]",
+      "description": "Compile the failure retry for ThisTestShouldFail with strings enabled.",
+      "inherits": "Catch2 ShaderTest: ThisTestShouldFail [strings off]",
+      "files": [
+        "ShaderTest.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "Catch2 ShaderTest: ThisTestDoesNotExist [strings off]",
+      "description": "Compile ThisTestDoesNotExist with the initial runtime string mode.",
+      "files": [
+        "ShaderTest.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "ThisTestDoesNotExist",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    }
+  ]
+}

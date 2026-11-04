@@ -1,0 +1,22 @@
+{
+  "hlsl.virtualDirectoryMappings": {
+    "/Shader": "."
+  },
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "Ex8 TestsUsingConstantBuffers: TestWithConstantBuffers [strings off]",
+      "description": "Compile TestWithConstantBuffers with the initial runtime string mode.",
+      "files": [
+        "TestsUsingConstantBuffers.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "TestWithConstantBuffers",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    }
+  ]
+}

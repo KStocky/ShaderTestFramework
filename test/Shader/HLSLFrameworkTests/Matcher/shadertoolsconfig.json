@@ -1,0 +1,75 @@
+{
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "EqualsMatcherTests: EqualsMatcherTests [strings off]",
+      "description": "Compile EqualsMatcherTests with the initial runtime string mode.",
+      "files": [
+        "EqualsMatcherTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "EqualsMatcherTests",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "GreaterThanEqualMatcherTests: GreaterThanEqualMatcherTests [strings off]",
+      "description": "Compile GreaterThanEqualMatcherTests with the initial runtime string mode.",
+      "files": [
+        "GreaterThanEqualMatcherTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GreaterThanEqualMatcherTests",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "GreaterThanMatcherTests: GreaterThanMatcherTests [strings off]",
+      "description": "Compile GreaterThanMatcherTests with the initial runtime string mode.",
+      "files": [
+        "GreaterThanMatcherTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GreaterThanMatcherTests",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "LessThanEqualMatcherTests: LessThanEqualMatcherTests [strings off]",
+      "description": "Compile LessThanEqualMatcherTests with the initial runtime string mode.",
+      "files": [
+        "LessThanEqualMatcherTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "LessThanEqualMatcherTests",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "LessThanMatcherTests: LessThanMatcherTests [strings off]",
+      "description": "Compile LessThanMatcherTests with the initial runtime string mode.",
+      "files": [
+        "LessThanMatcherTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "LessThanMatcherTests",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    }
+  ]
+}

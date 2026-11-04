@@ -1,0 +1,98 @@
+{
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "AlignedOffsetTests: GIVEN_IndexIsAlreadyAligned_WHEN_Aligned_THEN_ReturnsSameIndex [strings off]",
+      "description": "Compile GIVEN_IndexIsAlreadyAligned_WHEN_Aligned_THEN_ReturnsSameIndex with the initial runtime string mode.",
+      "files": [
+        "AlignedOffsetTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_IndexIsAlreadyAligned_WHEN_Aligned_THEN_ReturnsSameIndex",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "AlignedOffsetTests: GIVEN_IndexIsZero_WHEN_Aligned_THEN_ReturnsZero [strings off]",
+      "description": "Compile GIVEN_IndexIsZero_WHEN_Aligned_THEN_ReturnsZero with the initial runtime string mode.",
+      "files": [
+        "AlignedOffsetTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_IndexIsZero_WHEN_Aligned_THEN_ReturnsZero",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AlignedOffsetTests: GIVEN_IndexIsOneMinusAlignment_WHEN_Aligned_THEN_Alignment [strings off]",
+      "description": "Compile GIVEN_IndexIsOneMinusAlignment_WHEN_Aligned_THEN_Alignment with the initial runtime string mode.",
+      "files": [
+        "AlignedOffsetTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_IndexIsOneMinusAlignment_WHEN_Aligned_THEN_Alignment",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AlignedOffsetTests: GIVEN_IndexIsNotAligned_WHEN_Aligned_THEN_ReturnsNextMultipleOfAlignment [strings off]",
+      "description": "Compile GIVEN_IndexIsNotAligned_WHEN_Aligned_THEN_ReturnsNextMultipleOfAlignment with the initial runtime string mode.",
+      "files": [
+        "AlignedOffsetTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_IndexIsNotAligned_WHEN_Aligned_THEN_ReturnsNextMultipleOfAlignment",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "ZeroTests: GIVEN_ObjectIsInitialized_WHEN_Zeroed_THEN_AllMembersAreZeroed [strings off]",
+      "description": "Compile GIVEN_ObjectIsInitialized_WHEN_Zeroed_THEN_AllMembersAreZeroed with the initial runtime string mode.",
+      "files": [
+        "ZeroTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_ObjectIsInitialized_WHEN_Zeroed_THEN_AllMembersAreZeroed",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "ZeroTests: GIVEN_ObjectIsUnitialized_WHEN_Zeroed_THEN_AllMembersAreZeroed [strings off]",
+      "description": "Compile GIVEN_ObjectIsUnitialized_WHEN_Zeroed_THEN_AllMembersAreZeroed with the initial runtime string mode.",
+      "files": [
+        "ZeroTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_ObjectIsUnitialized_WHEN_Zeroed_THEN_AllMembersAreZeroed",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "ZeroTests: GIVEN_NoObjectAlreadyExists_WHEN_Zeroed_THEN_AllMembersOfReturnedObjectAreZeroed [strings off]",
+      "description": "Compile GIVEN_NoObjectAlreadyExists_WHEN_Zeroed_THEN_AllMembersOfReturnedObjectAreZeroed with the initial runtime string mode.",
+      "files": [
+        "ZeroTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_NoObjectAlreadyExists_WHEN_Zeroed_THEN_AllMembersOfReturnedObjectAreZeroed",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    }
+  ]
+}

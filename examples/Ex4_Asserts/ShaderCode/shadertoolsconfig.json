@@ -1,0 +1,22 @@
+{
+  "hlsl.virtualDirectoryMappings": {
+    "/Shader": "."
+  },
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "Ex4 AssertTests: AssertTests [strings off]",
+      "description": "Compile AssertTests with the initial runtime string mode.",
+      "files": [
+        "AssertTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "AssertTests",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    }
+  ]
+}
