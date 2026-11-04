@@ -1,0 +1,354 @@
+{
+  "hlsl.entryPoint": "Main",
+  "hlsl.fileGroups": [
+    {
+      "name": "Native 16-bit shader",
+      "files": [
+        "ComputeShaderWith16BitFloats.hlsl"
+      ],
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3",
+        "-enable-16bit-types"
+      ]
+    },
+    {
+      "name": "Payload-qualified closest-hit shader",
+      "files": [
+        "ClosestHitShaderWithAttributes.hlsl"
+      ],
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3",
+        "-enable-payload-qualifiers"
+      ]
+    }
+  ],
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "Compute Shader Model 6.0",
+      "description": "Compile the compute tests using Shader Model 6.0.",
+      "files": [
+        "ComputeShaderWith64BitIntegers.hlsl",
+        "ComputeShaderWith16BitFloats.hlsl",
+        "ComputeShaderWithSinglePrecisionDotAndAccumulate.hlsl",
+        "ComputeShaderWithDynamicResources.hlsl",
+        "ComputeShaderWithWritableMSAATextures.hlsl",
+        "TemplatedByteAddressBuffer.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_0"
+    },
+    {
+      "name": "Pixel Shader Model 6.0",
+      "description": "Compile the pixel tests using Shader Model 6.0.",
+      "files": [
+        "PixelShaderWithSV_Barycentrics.hlsl",
+        "PixelShaderWithSamplerFeedback.hlsl",
+        "PixelShaderWithQuadAny.hlsl"
+      ],
+      "hlsl.targetProfile": "ps_6_0"
+    },
+    {
+      "name": "Unqualified closest-hit Shader Model 6.0",
+      "description": "Compile the unqualified closest-hit tests using Shader Model 6.0.",
+      "files": [
+        "ClosestHitShaderWithNoAttributes.hlsl"
+      ],
+      "hlsl.targetProfile": "lib_6_0"
+    },
+    {
+      "name": "Qualified closest-hit Shader Model 6.0",
+      "description": "Compile the qualified closest-hit tests using Shader Model 6.0.",
+      "files": [
+        "ClosestHitShaderWithAttributes.hlsl"
+      ],
+      "hlsl.targetProfile": "lib_6_0"
+    },
+    {
+      "name": "Compute Shader Model 6.1",
+      "description": "Compile the compute tests using Shader Model 6.1.",
+      "files": [
+        "ComputeShaderWith64BitIntegers.hlsl",
+        "ComputeShaderWith16BitFloats.hlsl",
+        "ComputeShaderWithSinglePrecisionDotAndAccumulate.hlsl",
+        "ComputeShaderWithDynamicResources.hlsl",
+        "ComputeShaderWithWritableMSAATextures.hlsl",
+        "TemplatedByteAddressBuffer.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_1"
+    },
+    {
+      "name": "Pixel Shader Model 6.1",
+      "description": "Compile the pixel tests using Shader Model 6.1.",
+      "files": [
+        "PixelShaderWithSV_Barycentrics.hlsl",
+        "PixelShaderWithSamplerFeedback.hlsl",
+        "PixelShaderWithQuadAny.hlsl"
+      ],
+      "hlsl.targetProfile": "ps_6_1"
+    },
+    {
+      "name": "Unqualified closest-hit Shader Model 6.1",
+      "description": "Compile the unqualified closest-hit tests using Shader Model 6.1.",
+      "files": [
+        "ClosestHitShaderWithNoAttributes.hlsl"
+      ],
+      "hlsl.targetProfile": "lib_6_1"
+    },
+    {
+      "name": "Qualified closest-hit Shader Model 6.1",
+      "description": "Compile the qualified closest-hit tests using Shader Model 6.1.",
+      "files": [
+        "ClosestHitShaderWithAttributes.hlsl"
+      ],
+      "hlsl.targetProfile": "lib_6_1"
+    },
+    {
+      "name": "Compute Shader Model 6.2",
+      "description": "Compile the compute tests using Shader Model 6.2.",
+      "files": [
+        "ComputeShaderWith64BitIntegers.hlsl",
+        "ComputeShaderWith16BitFloats.hlsl",
+        "ComputeShaderWithSinglePrecisionDotAndAccumulate.hlsl",
+        "ComputeShaderWithDynamicResources.hlsl",
+        "ComputeShaderWithWritableMSAATextures.hlsl",
+        "TemplatedByteAddressBuffer.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_2"
+    },
+    {
+      "name": "Pixel Shader Model 6.2",
+      "description": "Compile the pixel tests using Shader Model 6.2.",
+      "files": [
+        "PixelShaderWithSV_Barycentrics.hlsl",
+        "PixelShaderWithSamplerFeedback.hlsl",
+        "PixelShaderWithQuadAny.hlsl"
+      ],
+      "hlsl.targetProfile": "ps_6_2"
+    },
+    {
+      "name": "Unqualified closest-hit Shader Model 6.2",
+      "description": "Compile the unqualified closest-hit tests using Shader Model 6.2.",
+      "files": [
+        "ClosestHitShaderWithNoAttributes.hlsl"
+      ],
+      "hlsl.targetProfile": "lib_6_2"
+    },
+    {
+      "name": "Qualified closest-hit Shader Model 6.2",
+      "description": "Compile the qualified closest-hit tests using Shader Model 6.2.",
+      "files": [
+        "ClosestHitShaderWithAttributes.hlsl"
+      ],
+      "hlsl.targetProfile": "lib_6_2"
+    },
+    {
+      "name": "Compute Shader Model 6.3",
+      "description": "Compile the compute tests using Shader Model 6.3.",
+      "files": [
+        "ComputeShaderWith64BitIntegers.hlsl",
+        "ComputeShaderWith16BitFloats.hlsl",
+        "ComputeShaderWithSinglePrecisionDotAndAccumulate.hlsl",
+        "ComputeShaderWithDynamicResources.hlsl",
+        "ComputeShaderWithWritableMSAATextures.hlsl",
+        "TemplatedByteAddressBuffer.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_3"
+    },
+    {
+      "name": "Pixel Shader Model 6.3",
+      "description": "Compile the pixel tests using Shader Model 6.3.",
+      "files": [
+        "PixelShaderWithSV_Barycentrics.hlsl",
+        "PixelShaderWithSamplerFeedback.hlsl",
+        "PixelShaderWithQuadAny.hlsl"
+      ],
+      "hlsl.targetProfile": "ps_6_3"
+    },
+    {
+      "name": "Unqualified closest-hit Shader Model 6.3",
+      "description": "Compile the unqualified closest-hit tests using Shader Model 6.3.",
+      "files": [
+        "ClosestHitShaderWithNoAttributes.hlsl"
+      ],
+      "hlsl.targetProfile": "lib_6_3"
+    },
+    {
+      "name": "Qualified closest-hit Shader Model 6.3",
+      "description": "Compile the qualified closest-hit tests using Shader Model 6.3.",
+      "files": [
+        "ClosestHitShaderWithAttributes.hlsl"
+      ],
+      "hlsl.targetProfile": "lib_6_3"
+    },
+    {
+      "name": "Compute Shader Model 6.4",
+      "description": "Compile the compute tests using Shader Model 6.4.",
+      "files": [
+        "ComputeShaderWith64BitIntegers.hlsl",
+        "ComputeShaderWith16BitFloats.hlsl",
+        "ComputeShaderWithSinglePrecisionDotAndAccumulate.hlsl",
+        "ComputeShaderWithDynamicResources.hlsl",
+        "ComputeShaderWithWritableMSAATextures.hlsl",
+        "TemplatedByteAddressBuffer.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_4"
+    },
+    {
+      "name": "Pixel Shader Model 6.4",
+      "description": "Compile the pixel tests using Shader Model 6.4.",
+      "files": [
+        "PixelShaderWithSV_Barycentrics.hlsl",
+        "PixelShaderWithSamplerFeedback.hlsl",
+        "PixelShaderWithQuadAny.hlsl"
+      ],
+      "hlsl.targetProfile": "ps_6_4"
+    },
+    {
+      "name": "Unqualified closest-hit Shader Model 6.4",
+      "description": "Compile the unqualified closest-hit tests using Shader Model 6.4.",
+      "files": [
+        "ClosestHitShaderWithNoAttributes.hlsl"
+      ],
+      "hlsl.targetProfile": "lib_6_4"
+    },
+    {
+      "name": "Qualified closest-hit Shader Model 6.4",
+      "description": "Compile the qualified closest-hit tests using Shader Model 6.4.",
+      "files": [
+        "ClosestHitShaderWithAttributes.hlsl"
+      ],
+      "hlsl.targetProfile": "lib_6_4"
+    },
+    {
+      "name": "Compute Shader Model 6.5",
+      "description": "Compile the compute tests using Shader Model 6.5.",
+      "files": [
+        "ComputeShaderWith64BitIntegers.hlsl",
+        "ComputeShaderWith16BitFloats.hlsl",
+        "ComputeShaderWithSinglePrecisionDotAndAccumulate.hlsl",
+        "ComputeShaderWithDynamicResources.hlsl",
+        "ComputeShaderWithWritableMSAATextures.hlsl",
+        "TemplatedByteAddressBuffer.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_5"
+    },
+    {
+      "name": "Pixel Shader Model 6.5",
+      "description": "Compile the pixel tests using Shader Model 6.5.",
+      "files": [
+        "PixelShaderWithSV_Barycentrics.hlsl",
+        "PixelShaderWithSamplerFeedback.hlsl",
+        "PixelShaderWithQuadAny.hlsl"
+      ],
+      "hlsl.targetProfile": "ps_6_5"
+    },
+    {
+      "name": "Unqualified closest-hit Shader Model 6.5",
+      "description": "Compile the unqualified closest-hit tests using Shader Model 6.5.",
+      "files": [
+        "ClosestHitShaderWithNoAttributes.hlsl"
+      ],
+      "hlsl.targetProfile": "lib_6_5"
+    },
+    {
+      "name": "Qualified closest-hit Shader Model 6.5",
+      "description": "Compile the qualified closest-hit tests using Shader Model 6.5.",
+      "files": [
+        "ClosestHitShaderWithAttributes.hlsl"
+      ],
+      "hlsl.targetProfile": "lib_6_5"
+    },
+    {
+      "name": "Compute Shader Model 6.6",
+      "description": "Compile the compute tests using Shader Model 6.6.",
+      "files": [
+        "ComputeShaderWith64BitIntegers.hlsl",
+        "ComputeShaderWith16BitFloats.hlsl",
+        "ComputeShaderWithSinglePrecisionDotAndAccumulate.hlsl",
+        "ComputeShaderWithDynamicResources.hlsl",
+        "ComputeShaderWithWritableMSAATextures.hlsl",
+        "TemplatedByteAddressBuffer.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6"
+    },
+    {
+      "name": "Pixel Shader Model 6.6",
+      "description": "Compile the pixel tests using Shader Model 6.6.",
+      "files": [
+        "PixelShaderWithSV_Barycentrics.hlsl",
+        "PixelShaderWithSamplerFeedback.hlsl",
+        "PixelShaderWithQuadAny.hlsl"
+      ],
+      "hlsl.targetProfile": "ps_6_6"
+    },
+    {
+      "name": "Unqualified closest-hit Shader Model 6.6",
+      "description": "Compile the unqualified closest-hit tests using Shader Model 6.6.",
+      "files": [
+        "ClosestHitShaderWithNoAttributes.hlsl"
+      ],
+      "hlsl.targetProfile": "lib_6_6",
+      "default": true
+    },
+    {
+      "name": "Qualified closest-hit Shader Model 6.6",
+      "description": "Compile the qualified closest-hit tests using Shader Model 6.6.",
+      "files": [
+        "ClosestHitShaderWithAttributes.hlsl"
+      ],
+      "hlsl.targetProfile": "lib_6_6"
+    },
+    {
+      "name": "Compute Shader Model 6.7",
+      "description": "Compile the compute tests using Shader Model 6.7.",
+      "files": [
+        "ComputeShaderWith64BitIntegers.hlsl",
+        "ComputeShaderWith16BitFloats.hlsl",
+        "ComputeShaderWithSinglePrecisionDotAndAccumulate.hlsl",
+        "ComputeShaderWithDynamicResources.hlsl",
+        "ComputeShaderWithWritableMSAATextures.hlsl",
+        "TemplatedByteAddressBuffer.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_7",
+      "default": true
+    },
+    {
+      "name": "Pixel Shader Model 6.7",
+      "description": "Compile the pixel tests using Shader Model 6.7.",
+      "files": [
+        "PixelShaderWithSV_Barycentrics.hlsl",
+        "PixelShaderWithSamplerFeedback.hlsl",
+        "PixelShaderWithQuadAny.hlsl"
+      ],
+      "hlsl.targetProfile": "ps_6_7",
+      "default": true
+    },
+    {
+      "name": "Unqualified closest-hit Shader Model 6.7",
+      "description": "Compile the unqualified closest-hit tests using Shader Model 6.7.",
+      "files": [
+        "ClosestHitShaderWithNoAttributes.hlsl"
+      ],
+      "hlsl.targetProfile": "lib_6_7"
+    },
+    {
+      "name": "Qualified closest-hit Shader Model 6.7",
+      "description": "Compile the qualified closest-hit tests using Shader Model 6.7.",
+      "files": [
+        "ClosestHitShaderWithAttributes.hlsl"
+      ],
+      "hlsl.targetProfile": "lib_6_7",
+      "default": true
+    }
+  ]
+}

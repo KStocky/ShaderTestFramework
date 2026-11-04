@@ -1,0 +1,98 @@
+{
+  "hlsl.targetProfile": "cs_6_3",
+  "hlsl.entryPoint": "Main",
+
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "IsOrContainsArray: ArrayBufferStruct",
+      "description": "Inspect array detection for a constant-buffer array member.",
+      "default": true,
+      "files": [
+        "IsOrContainsArray/ArrayBufferStruct.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_3",
+      "hlsl.entryPoint": "Main"
+    },
+    {
+      "name": "IsOrContainsArray: NonArrayBufferStructContainsArray",
+      "description": "Inspect array detection for a struct containing an array.",
+      "default": true,
+      "files": [
+        "IsOrContainsArray/NonArrayBufferStructContainsArray.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_3",
+      "hlsl.entryPoint": "Main"
+    },
+    {
+      "name": "IsOrContainsArray: NonArrayBufferStructContainsMemberThatContainsArray",
+      "description": "Inspect recursive array detection through a nested struct member.",
+      "default": true,
+      "files": [
+        "IsOrContainsArray/NonArrayBufferStructContainsMemberThatContainsArray.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_3",
+      "hlsl.entryPoint": "Main"
+    },
+    {
+      "name": "IsOrContainsArray: NonArrayBufferWithNoArrayMembers",
+      "description": "Inspect array detection for a struct with no array members.",
+      "default": true,
+      "files": [
+        "IsOrContainsArray/NonArrayBufferWithNoArrayMembers.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_3",
+      "hlsl.entryPoint": "Main"
+    },
+    {
+      "name": "ConstantBufferCanBeBoundToRootConstants: ArrayBufferStruct",
+      "description": "Inspect root-constant compatibility for a constant-buffer array member.",
+      "default": true,
+      "files": [
+        "ConstantBufferCanBeBoundToRootConstants/ArrayBufferStruct.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_3",
+      "hlsl.entryPoint": "Main"
+    },
+    {
+      "name": "ConstantBufferCanBeBoundToRootConstants: NonArrayBufferStructContainsArray",
+      "description": "Inspect root-constant compatibility for a struct containing an array.",
+      "default": true,
+      "files": [
+        "ConstantBufferCanBeBoundToRootConstants/NonArrayBufferStructContainsArray.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_3",
+      "hlsl.entryPoint": "Main"
+    },
+    {
+      "name": "ConstantBufferCanBeBoundToRootConstants: NonArrayBufferStructContainsMemberThatContainsArray",
+      "description": "Inspect root-constant compatibility for a nested array member.",
+      "default": true,
+      "files": [
+        "ConstantBufferCanBeBoundToRootConstants/NonArrayBufferStructContainsMemberThatContainsArray.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_3",
+      "hlsl.entryPoint": "Main"
+    },
+    {
+      "name": "ConstantBufferCanBeBoundToRootConstants: NonArrayBufferWithNoArrayMembers",
+      "description": "Inspect root-constant compatibility for a struct without arrays.",
+      "default": true,
+      "files": [
+        "ConstantBufferCanBeBoundToRootConstants/NonArrayBufferWithNoArrayMembers.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_3",
+      "hlsl.entryPoint": "Main"
+    },
+    {
+      "name": "ConstantBufferCanBeBoundToRootConstants: StructIsOver64UInts",
+      "description": "Inspect the root-constant size limit for a struct over 64 DWORDs.",
+      "default": true,
+      "files": [
+        "ConstantBufferCanBeBoundToRootConstants/StructIsOver64UInts.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_3",
+      "hlsl.entryPoint": "Main"
+    }
+  ]
+}

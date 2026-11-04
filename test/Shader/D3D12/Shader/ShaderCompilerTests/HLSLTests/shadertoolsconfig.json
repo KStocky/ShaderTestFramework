@@ -1,0 +1,380 @@
+{
+  "hlsl.targetProfile": "cs_6_7",
+  "hlsl.entryPoint": "Main",
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "HLSL 2016 standard",
+      "description": "Compile the standard HLSL language tests as HLSL 2016.",
+      "files": [
+        "Alignof.hlsl",
+        "ArrayTemplateSpecialization.hlsl",
+        "CallOperator.hlsl",
+        "CleanupAttribute.hlsl",
+        "CompileTimeGlobalStringSize.hlsl",
+        "CompileTimeLocalStringSize.hlsl",
+        "CounterMacro.hlsl",
+        "DeducingPackingOrder.hlsl",
+        "DeferSFINAE.hlsl",
+        "DefineStructMemberFunctionInFunction.hlsl",
+        "DefineStructMemberFunctionLater.hlsl",
+        "ExpressionSFINAE.hlsl",
+        "ForwardDeclareFunction.hlsl",
+        "ForwardDeclareFunctionInOtherFunction.hlsl",
+        "ForwardDeclareFunctionInOtherFunctionAndDefineIt.hlsl",
+        "FunctionStyleMacro.hlsl",
+        "GlobalString.hlsl",
+        "GloballyCoherentInStruct.hlsl",
+        "GloballyCoherentTypeModifier.hlsl",
+        "HasMemberCheck.hlsl",
+        "ImmediatelyInvokableFunctionExpression.hlsl",
+        "IsEnum.hlsl",
+        "LineMacro.hlsl",
+        "LocalString.hlsl",
+        "LocalStringAssignedToAUintArray.hlsl",
+        "MacroGeneratedStructWithStaticDataMember.hlsl",
+        "NestedStructTemplates.hlsl",
+        "OperatorBool.hlsl",
+        "OperatorBoolWithAnEmptyStruct.hlsl",
+        "OperatorInt.hlsl",
+        "OperatorIntWithAnEmptyStruct.hlsl",
+        "PrinterWithOptimizations.hlsl",
+        "SizeofEnumType.hlsl",
+        "SizeofOperator.hlsl",
+        "StaticAssert.hlsl",
+        "StaticConstStructMemberInTemplatedStruct.hlsl",
+        "StaticStructMemberInNonTemplatedStruct.hlsl",
+        "StaticStructMemberInTemplatedStruct.hlsl",
+        "StaticVariableInTemplatedFunction.hlsl",
+        "TernaryInTypeTrait.hlsl",
+        "UserDefinedVector.hlsl",
+        "VariadicMacro.hlsl"
+      ],
+      "hlsl.languageVersion": "2016",
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Zpr",
+        "-O3"
+      ]
+    },
+    {
+      "name": "HLSL 2016 debug",
+      "description": "Compile the debug HLSL language tests as HLSL 2016.",
+      "files": [
+        "PrinterWithoutOptimizations.hlsl",
+        "CompileTimeGlobalStringSizeDebug.hlsl",
+        "CompileTimeLocalStringSizeDebug.hlsl"
+      ],
+      "hlsl.languageVersion": "2016",
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Zpr",
+        "-O3",
+        "-Od"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "OPTIMIZATIONS_ENABLED": 0
+      }
+    },
+    {
+      "name": "HLSL 2017 standard",
+      "description": "Compile the standard HLSL language tests as HLSL 2017.",
+      "files": [
+        "Alignof.hlsl",
+        "ArrayTemplateSpecialization.hlsl",
+        "CallOperator.hlsl",
+        "CleanupAttribute.hlsl",
+        "CompileTimeGlobalStringSize.hlsl",
+        "CompileTimeLocalStringSize.hlsl",
+        "CounterMacro.hlsl",
+        "DeducingPackingOrder.hlsl",
+        "DeferSFINAE.hlsl",
+        "DefineStructMemberFunctionInFunction.hlsl",
+        "DefineStructMemberFunctionLater.hlsl",
+        "ExpressionSFINAE.hlsl",
+        "ForwardDeclareFunction.hlsl",
+        "ForwardDeclareFunctionInOtherFunction.hlsl",
+        "ForwardDeclareFunctionInOtherFunctionAndDefineIt.hlsl",
+        "FunctionStyleMacro.hlsl",
+        "GlobalString.hlsl",
+        "GloballyCoherentInStruct.hlsl",
+        "GloballyCoherentTypeModifier.hlsl",
+        "HasMemberCheck.hlsl",
+        "ImmediatelyInvokableFunctionExpression.hlsl",
+        "IsEnum.hlsl",
+        "LineMacro.hlsl",
+        "LocalString.hlsl",
+        "LocalStringAssignedToAUintArray.hlsl",
+        "MacroGeneratedStructWithStaticDataMember.hlsl",
+        "NestedStructTemplates.hlsl",
+        "OperatorBool.hlsl",
+        "OperatorBoolWithAnEmptyStruct.hlsl",
+        "OperatorInt.hlsl",
+        "OperatorIntWithAnEmptyStruct.hlsl",
+        "PrinterWithOptimizations.hlsl",
+        "SizeofEnumType.hlsl",
+        "SizeofOperator.hlsl",
+        "StaticAssert.hlsl",
+        "StaticConstStructMemberInTemplatedStruct.hlsl",
+        "StaticStructMemberInNonTemplatedStruct.hlsl",
+        "StaticStructMemberInTemplatedStruct.hlsl",
+        "StaticVariableInTemplatedFunction.hlsl",
+        "TernaryInTypeTrait.hlsl",
+        "UserDefinedVector.hlsl",
+        "VariadicMacro.hlsl"
+      ],
+      "hlsl.languageVersion": "2017",
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Zpr",
+        "-O3"
+      ]
+    },
+    {
+      "name": "HLSL 2017 debug",
+      "description": "Compile the debug HLSL language tests as HLSL 2017.",
+      "files": [
+        "PrinterWithoutOptimizations.hlsl",
+        "CompileTimeGlobalStringSizeDebug.hlsl",
+        "CompileTimeLocalStringSizeDebug.hlsl"
+      ],
+      "hlsl.languageVersion": "2017",
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Zpr",
+        "-O3",
+        "-Od"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "OPTIMIZATIONS_ENABLED": 0
+      }
+    },
+    {
+      "name": "HLSL 2018 standard",
+      "description": "Compile the standard HLSL language tests as HLSL 2018.",
+      "files": [
+        "Alignof.hlsl",
+        "ArrayTemplateSpecialization.hlsl",
+        "CallOperator.hlsl",
+        "CleanupAttribute.hlsl",
+        "CompileTimeGlobalStringSize.hlsl",
+        "CompileTimeLocalStringSize.hlsl",
+        "CounterMacro.hlsl",
+        "DeducingPackingOrder.hlsl",
+        "DeferSFINAE.hlsl",
+        "DefineStructMemberFunctionInFunction.hlsl",
+        "DefineStructMemberFunctionLater.hlsl",
+        "ExpressionSFINAE.hlsl",
+        "ForwardDeclareFunction.hlsl",
+        "ForwardDeclareFunctionInOtherFunction.hlsl",
+        "ForwardDeclareFunctionInOtherFunctionAndDefineIt.hlsl",
+        "FunctionStyleMacro.hlsl",
+        "GlobalString.hlsl",
+        "GloballyCoherentInStruct.hlsl",
+        "GloballyCoherentTypeModifier.hlsl",
+        "HasMemberCheck.hlsl",
+        "ImmediatelyInvokableFunctionExpression.hlsl",
+        "IsEnum.hlsl",
+        "LineMacro.hlsl",
+        "LocalString.hlsl",
+        "LocalStringAssignedToAUintArray.hlsl",
+        "MacroGeneratedStructWithStaticDataMember.hlsl",
+        "NestedStructTemplates.hlsl",
+        "OperatorBool.hlsl",
+        "OperatorBoolWithAnEmptyStruct.hlsl",
+        "OperatorInt.hlsl",
+        "OperatorIntWithAnEmptyStruct.hlsl",
+        "PrinterWithOptimizations.hlsl",
+        "SizeofEnumType.hlsl",
+        "SizeofOperator.hlsl",
+        "StaticAssert.hlsl",
+        "StaticConstStructMemberInTemplatedStruct.hlsl",
+        "StaticStructMemberInNonTemplatedStruct.hlsl",
+        "StaticStructMemberInTemplatedStruct.hlsl",
+        "StaticVariableInTemplatedFunction.hlsl",
+        "TernaryInTypeTrait.hlsl",
+        "UserDefinedVector.hlsl",
+        "VariadicMacro.hlsl"
+      ],
+      "hlsl.languageVersion": "2018",
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Zpr",
+        "-O3"
+      ]
+    },
+    {
+      "name": "HLSL 2018 debug",
+      "description": "Compile the debug HLSL language tests as HLSL 2018.",
+      "files": [
+        "PrinterWithoutOptimizations.hlsl",
+        "CompileTimeGlobalStringSizeDebug.hlsl",
+        "CompileTimeLocalStringSizeDebug.hlsl"
+      ],
+      "hlsl.languageVersion": "2018",
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Zpr",
+        "-O3",
+        "-Od"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "OPTIMIZATIONS_ENABLED": 0
+      }
+    },
+    {
+      "name": "HLSL 2021 standard",
+      "description": "Compile the standard HLSL language tests as HLSL 2021.",
+      "files": [
+        "Alignof.hlsl",
+        "ArrayTemplateSpecialization.hlsl",
+        "CallOperator.hlsl",
+        "CleanupAttribute.hlsl",
+        "CompileTimeGlobalStringSize.hlsl",
+        "CompileTimeLocalStringSize.hlsl",
+        "CounterMacro.hlsl",
+        "DeducingPackingOrder.hlsl",
+        "DeferSFINAE.hlsl",
+        "DefineStructMemberFunctionInFunction.hlsl",
+        "DefineStructMemberFunctionLater.hlsl",
+        "ExpressionSFINAE.hlsl",
+        "ForwardDeclareFunction.hlsl",
+        "ForwardDeclareFunctionInOtherFunction.hlsl",
+        "ForwardDeclareFunctionInOtherFunctionAndDefineIt.hlsl",
+        "FunctionStyleMacro.hlsl",
+        "GlobalString.hlsl",
+        "GloballyCoherentInStruct.hlsl",
+        "GloballyCoherentTypeModifier.hlsl",
+        "HasMemberCheck.hlsl",
+        "ImmediatelyInvokableFunctionExpression.hlsl",
+        "IsEnum.hlsl",
+        "LineMacro.hlsl",
+        "LocalString.hlsl",
+        "LocalStringAssignedToAUintArray.hlsl",
+        "MacroGeneratedStructWithStaticDataMember.hlsl",
+        "NestedStructTemplates.hlsl",
+        "OperatorBool.hlsl",
+        "OperatorBoolWithAnEmptyStruct.hlsl",
+        "OperatorInt.hlsl",
+        "OperatorIntWithAnEmptyStruct.hlsl",
+        "PrinterWithOptimizations.hlsl",
+        "SizeofEnumType.hlsl",
+        "SizeofOperator.hlsl",
+        "StaticAssert.hlsl",
+        "StaticConstStructMemberInTemplatedStruct.hlsl",
+        "StaticStructMemberInNonTemplatedStruct.hlsl",
+        "StaticStructMemberInTemplatedStruct.hlsl",
+        "StaticVariableInTemplatedFunction.hlsl",
+        "TernaryInTypeTrait.hlsl",
+        "UserDefinedVector.hlsl",
+        "VariadicMacro.hlsl"
+      ],
+      "hlsl.languageVersion": "2021",
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Zpr",
+        "-O3"
+      ]
+    },
+    {
+      "name": "HLSL 2021 debug",
+      "description": "Compile the debug HLSL language tests as HLSL 2021.",
+      "files": [
+        "PrinterWithoutOptimizations.hlsl",
+        "CompileTimeGlobalStringSizeDebug.hlsl",
+        "CompileTimeLocalStringSizeDebug.hlsl"
+      ],
+      "hlsl.languageVersion": "2021",
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Zpr",
+        "-O3",
+        "-Od"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "OPTIMIZATIONS_ENABLED": 0
+      }
+    },
+    {
+      "name": "HLSL 202x standard",
+      "description": "Compile the standard HLSL language tests as HLSL 202x.",
+      "files": [
+        "Alignof.hlsl",
+        "ArrayTemplateSpecialization.hlsl",
+        "CallOperator.hlsl",
+        "CleanupAttribute.hlsl",
+        "CompileTimeGlobalStringSize.hlsl",
+        "CompileTimeLocalStringSize.hlsl",
+        "CounterMacro.hlsl",
+        "DeducingPackingOrder.hlsl",
+        "DeferSFINAE.hlsl",
+        "DefineStructMemberFunctionInFunction.hlsl",
+        "DefineStructMemberFunctionLater.hlsl",
+        "ExpressionSFINAE.hlsl",
+        "ForwardDeclareFunction.hlsl",
+        "ForwardDeclareFunctionInOtherFunction.hlsl",
+        "ForwardDeclareFunctionInOtherFunctionAndDefineIt.hlsl",
+        "FunctionStyleMacro.hlsl",
+        "GlobalString.hlsl",
+        "GloballyCoherentInStruct.hlsl",
+        "GloballyCoherentTypeModifier.hlsl",
+        "HasMemberCheck.hlsl",
+        "ImmediatelyInvokableFunctionExpression.hlsl",
+        "IsEnum.hlsl",
+        "LineMacro.hlsl",
+        "LocalString.hlsl",
+        "LocalStringAssignedToAUintArray.hlsl",
+        "MacroGeneratedStructWithStaticDataMember.hlsl",
+        "NestedStructTemplates.hlsl",
+        "OperatorBool.hlsl",
+        "OperatorBoolWithAnEmptyStruct.hlsl",
+        "OperatorInt.hlsl",
+        "OperatorIntWithAnEmptyStruct.hlsl",
+        "PrinterWithOptimizations.hlsl",
+        "SizeofEnumType.hlsl",
+        "SizeofOperator.hlsl",
+        "StaticAssert.hlsl",
+        "StaticConstStructMemberInTemplatedStruct.hlsl",
+        "StaticStructMemberInNonTemplatedStruct.hlsl",
+        "StaticStructMemberInTemplatedStruct.hlsl",
+        "StaticVariableInTemplatedFunction.hlsl",
+        "TernaryInTypeTrait.hlsl",
+        "UserDefinedVector.hlsl",
+        "VariadicMacro.hlsl"
+      ],
+      "hlsl.languageVersion": "202x",
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3"
+      ],
+      "default": true
+    },
+    {
+      "name": "HLSL 202x debug",
+      "description": "Compile the debug HLSL language tests as HLSL 202x.",
+      "files": [
+        "PrinterWithoutOptimizations.hlsl",
+        "CompileTimeGlobalStringSizeDebug.hlsl",
+        "CompileTimeLocalStringSizeDebug.hlsl"
+      ],
+      "hlsl.languageVersion": "202x",
+      "hlsl.additionalArguments": [
+        "-WX",
+        "-Wconversion",
+        "-Wdouble-promotion",
+        "-Whlsl-legacy-literal",
+        "-Zpr",
+        "-O3",
+        "-Od"
+      ],
+      "default": true,
+      "hlsl.preprocessorDefinitions": {
+        "OPTIMIZATIONS_ENABLED": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "root": true,
+  "hlsl.preprocessorDefinitions": {
+    "TYPE_ID_UNDEFINED": 0,
+    "READER_ID_PER_THREAD_SCRATCH": 1,
+    "READER_ID_FUNDAMENTAL": 2
+  },
+  "hlsl.virtualDirectoryMappings": {
+    "/Test": "src/Shader"
+  },
+  "hlsl.languageVersion": "202x",
+  "hlsl.targetProfile": "lib_6_6"
+}

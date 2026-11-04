@@ -1,0 +1,81 @@
+{
+  "hlsl.virtualDirectoryMappings": {
+    "/Shader": "."
+  },
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "Ex6 FailingFundamentalTypeTests: Tests [strings off]",
+      "description": "Compile Tests with the initial runtime string mode.",
+      "files": [
+        "FailingFundamentalTypeTests.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Tests",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "Ex6 FailingAssertWithoutByteReader: Test [strings off]",
+      "description": "Compile Test with the initial runtime string mode.",
+      "files": [
+        "FailingAssertWithoutByteReader.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "Ex6 FailingAssertWithByteReader: Test [strings off]",
+      "description": "Compile Test with the initial runtime string mode.",
+      "files": [
+        "FailingAssertWithByteReader.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "Ex6 FailingAssertWithMultiTypeByteReader: Test [strings off]",
+      "description": "Compile Test with the initial runtime string mode.",
+      "files": [
+        "FailingAssertWithMultiTypeByteReader.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "Ex6 FailingAssertWithByteWriter: Test [strings off]",
+      "description": "Compile Test with the initial runtime string mode.",
+      "files": [
+        "FailingAssertWithByteWriter.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    }
+  ],
+  "hlsl.preprocessorDefinitions": {
+    "MY_TYPE_READER_ID": 3
+  }
+}

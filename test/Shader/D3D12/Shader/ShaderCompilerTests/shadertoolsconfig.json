@@ -1,0 +1,13 @@
+{
+  "hlsl.virtualDirectoryMappings": {
+    "/Tests": "."
+  },
+  "hlsl.additionalArguments": [
+    "-WX",
+    "-Wconversion",
+    "-Wdouble-promotion",
+    "-Whlsl-legacy-literal",
+    "-Zpr",
+    "-O3"
+  ]
+}

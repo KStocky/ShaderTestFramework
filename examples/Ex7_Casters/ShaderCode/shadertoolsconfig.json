@@ -1,0 +1,22 @@
+{
+  "hlsl.virtualDirectoryMappings": {
+    "/Shader": "."
+  },
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "Ex7 TypeWithCastToBool: Test [strings off]",
+      "description": "Compile Test with the initial runtime string mode.",
+      "files": [
+        "TypeWithCastToBool.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Test",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    }
+  ]
+}

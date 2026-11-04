@@ -1,0 +1,13 @@
+{
+  "hlsl.targetProfile": "cs_6_0",
+  "hlsl.entryPoint": "Main",
+  "hlsl.fileGroups": [
+    {
+      "name": "Shader Model 6.6 reflection",
+      "files": [
+        "ManyTypesOfBindings.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "hlsl.languageVersion": "2016",
+  "hlsl.targetProfile": "cs_6_0",
+  "hlsl.entryPoint": "Main",
+  "hlsl.additionalArguments": [
+    "-WX",
+    "-Zpr",
+    "-O3"
+  ]
+}

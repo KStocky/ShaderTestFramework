@@ -27,6 +27,36 @@ There is also a much more in depth [tutorial](docs/Tutorial.md). This describes 
 
 Shader Test Framework also provides [Ninja Build](https://ninja-build.org/) presets for greater compilation speed. Docs on how to use Ninja with STF can be found in the [Installation Guide](./docs/InstallationGuide.md)
 
+## HLSL editor support
+
+The checked-in [`shadertoolsconfig.json`](./shadertoolsconfig.json) hierarchy
+configures [HLSL-LSP](https://github.com/KStocky/HLSL-LSP) with the framework's
+HLSL version, compiler arguments, virtual include roots, test compilation
+contexts, and example entry points. Folder-local configurations inherit the
+repository defaults and scope variants to the shaders they describe. The
+hierarchy is used automatically by both the Visual Studio and Visual Studio
+Code HLSL-LSP extensions.
+
+Install the extension from the
+[latest HLSL-LSP release](https://github.com/KStocky/HLSL-LSP/releases/latest),
+disable HLSL Tools if it is installed, and open the repository root as the
+workspace. The Visual Studio Code workspace declares the installed extension
+as its recommendation. The configuration enables diagnostics, completion,
+hover and signature help, semantic colouring, navigation, references, rename,
+quick fixes, memory-layout inspection, shader compilation and disassembly,
+resource-binding inspection, and the preprocessor explorer.
+
+Use **HLSL: Select Shader Variant** in Visual Studio Code or **Tools > HLSL
+Select Shader Variant** in Visual Studio to select entry points for the Ex3
+and Catch2 examples, every file-backed framework test entry point, HLSL
+language versions, shader models, generated macro permutations, optimization
+modes, and string-enabled failure retries. Some variants intentionally expose
+the compile failures asserted by the C++ tests. Compile-time-only shaders
+retain their library profiles without synthetic entry points. Each picker
+lists only variants applicable to the active shader. The active selection is
+workspace-wide, so select an applicable variant again when moving between
+shader files with different variant sets.
+
 ## Example Shader Unit Test
 
 ```c++
