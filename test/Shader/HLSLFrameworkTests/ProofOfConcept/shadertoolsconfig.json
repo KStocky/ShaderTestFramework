@@ -1,0 +1,103 @@
+{
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned: GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_Expec-660dd3dd [strings off]",
+      "description": "Compile GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned with the initial runtime string mode.",
+      "files": [
+        "GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_SomeTypesWithAndWithoutASpecializations_WHEN_ApplyFuncCalledOnThem_THEN_ExpectedResultsReturned",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed: GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed [strings off]",
+      "description": "Compile GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed with the initial runtime string mode.",
+      "files": [
+        "GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_StaticGlobalArray_WHEN_Inspected_THEN_AllZeroed",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent: GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent [strings off]",
+      "description": "Compile GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent with the initial runtime string mode.",
+      "files": [
+        "GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoCallsToCounter_WHEN_Compared_THEN_AreDifferent",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported: GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported [strings off]",
+      "description": "Compile GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported with the initial runtime string mode.",
+      "files": [
+        "GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoDifferentSizedStructs_WHEN_sizeofCalledOn_Them_THEN_CorrectSizeReported",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "SectionTest: SectionTest [strings off]",
+      "description": "Compile SectionTest with the initial runtime string mode.",
+      "files": [
+        "SectionTest.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "SectionTest",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "StringsAndTemplates: StringsAndTemplates [strings off]",
+      "description": "Compile StringsAndTemplates with the initial runtime string mode.",
+      "files": [
+        "StringsAndTemplates.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "StringsAndTemplates",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "VariadicMacroOverloading: VariadicMacroOverloading [strings off]",
+      "description": "Compile VariadicMacroOverloading with the initial runtime string mode.",
+      "files": [
+        "VariadicMacroOverloading.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "VariadicMacroOverloading",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    }
+  ]
+}

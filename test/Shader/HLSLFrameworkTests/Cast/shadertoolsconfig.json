@@ -1,0 +1,47 @@
+{
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "GIVEN_StructDoesHasDifferentOverloadOfCast_WHEN_CastCalled_THEN_Fails: GIVEN_StructDoesHasDifferentOverloadOfCast_WHEN_CastCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_StructDoesHasDifferentOverloadOfCast_WHEN_CastCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "GIVEN_StructDoesHasDifferentOverloadOfCast_WHEN_CastCalled_THEN_Fails.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_StructDoesHasDifferentOverloadOfCast_WHEN_CastCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "GIVEN_StructDoesHaveOverloadOfCast_WHEN_CastCalled_THEN_Succeeds: GIVEN_StructDoesHaveOverloadOfCast_WHEN_CastCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_StructDoesHaveOverloadOfCast_WHEN_CastCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "GIVEN_StructDoesHaveOverloadOfCast_WHEN_CastCalled_THEN_Succeeds.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_StructDoesHaveOverloadOfCast_WHEN_CastCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "GIVEN_StructDoesNotHaveOverloadOfCast_WHEN_CastCalled_THEN_Fails: GIVEN_StructDoesNotHaveOverloadOfCast_WHEN_CastCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_StructDoesNotHaveOverloadOfCast_WHEN_CastCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "GIVEN_StructDoesNotHaveOverloadOfCast_WHEN_CastCalled_THEN_Fails.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_StructDoesNotHaveOverloadOfCast_WHEN_CastCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    }
+  ]
+}

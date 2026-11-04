@@ -1,0 +1,111 @@
+{
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "BindingsHave2ByteAlignment: Main [strings off]",
+      "description": "Compile Main with the initial runtime string mode.",
+      "files": [
+        "BindingsHave2ByteAlignment.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Main",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "ConstantBufferArray: Main [strings off]",
+      "description": "Compile Main with the initial runtime string mode.",
+      "files": [
+        "ConstantBufferArray.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Main",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "GlobalBindings: Main [strings off]",
+      "description": "Compile Main with the initial runtime string mode.",
+      "files": [
+        "GlobalBindings.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Main",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "GlobalBindings: Main [failure strings]",
+      "description": "Compile the failure retry for Main with strings enabled.",
+      "inherits": "GlobalBindings: Main [strings off]",
+      "files": [
+        "GlobalBindings.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "GlobalBindingsTooLarge: Main [strings off]",
+      "description": "Compile Main with the initial runtime string mode.",
+      "files": [
+        "GlobalBindingsTooLarge.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Main",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "MultipleConstantBuffers: Main [strings off]",
+      "description": "Compile Main with the initial runtime string mode.",
+      "files": [
+        "MultipleConstantBuffers.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Main",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "MultipleConstantBuffers: Main [failure strings]",
+      "description": "Compile the failure retry for Main with strings enabled.",
+      "inherits": "MultipleConstantBuffers: Main [strings off]",
+      "files": [
+        "MultipleConstantBuffers.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "WithArray: Main [strings off]",
+      "description": "Compile Main with the initial runtime string mode.",
+      "files": [
+        "WithArray.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "Main",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    }
+  ]
+}

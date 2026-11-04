@@ -1,0 +1,5 @@
+{
+  "hlsl.preprocessorDefinitions": {
+    "STF_ASSERTION_LIBRARY": "\"/Tests/AssertionInterface/AssertionLibrary.hlsli\""
+  }
+}

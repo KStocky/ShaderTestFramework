@@ -1,0 +1,713 @@
+{
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "AreEqual: GIVEN_TwoEqualInts_WHEN_AreEqualCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_TwoEqualInts_WHEN_AreEqualCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "AreEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoEqualInts_WHEN_AreEqualCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "AreEqual: GIVEN_TwoNotEqualInts_WHEN_AreEqualCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_TwoNotEqualInts_WHEN_AreEqualCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "AreEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoNotEqualInts_WHEN_AreEqualCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AreEqual: GIVEN_TwoNotEqualInts_WHEN_AreEqualCalled_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoNotEqualInts_WHEN_AreEqualCalled_THEN_Fails with strings enabled.",
+      "inherits": "AreEqual: GIVEN_TwoNotEqualInts_WHEN_AreEqualCalled_THEN_Fails [strings off]",
+      "files": [
+        "AreEqual.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AreEqual: GIVEN_TwoEqualFloat4_WHEN_AreEqualCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_TwoEqualFloat4_WHEN_AreEqualCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "AreEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoEqualFloat4_WHEN_AreEqualCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AreEqual: GIVEN_TwoNotEqualFloat4_WHEN_AreEqualCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_TwoNotEqualFloat4_WHEN_AreEqualCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "AreEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoNotEqualFloat4_WHEN_AreEqualCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AreEqual: GIVEN_TwoNotEqualFloat4_WHEN_AreEqualCalled_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoNotEqualFloat4_WHEN_AreEqualCalled_THEN_Fails with strings enabled.",
+      "inherits": "AreEqual: GIVEN_TwoNotEqualFloat4_WHEN_AreEqualCalled_THEN_Fails [strings off]",
+      "files": [
+        "AreEqual.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AreEqual: GIVEN_TwoEqualNamedInts_WHEN_AreEqualCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_TwoEqualNamedInts_WHEN_AreEqualCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "AreEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoEqualNamedInts_WHEN_AreEqualCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AreEqual: GIVEN_TwoNotEqualNamedInts_WHEN_AreEqualCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_TwoNotEqualNamedInts_WHEN_AreEqualCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "AreEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoNotEqualNamedInts_WHEN_AreEqualCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AreEqual: GIVEN_TwoNotEqualNamedInts_WHEN_AreEqualCalled_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoNotEqualNamedInts_WHEN_AreEqualCalled_THEN_Fails with strings enabled.",
+      "inherits": "AreEqual: GIVEN_TwoNotEqualNamedInts_WHEN_AreEqualCalled_THEN_Fails [strings off]",
+      "files": [
+        "AreEqual.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AreEqual: GIVEN_TwoEqualNamedFloat4_WHEN_AreEqualCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_TwoEqualNamedFloat4_WHEN_AreEqualCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "AreEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoEqualNamedFloat4_WHEN_AreEqualCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AreEqual: GIVEN_TwoNotEqualNamedFloat4_WHEN_AreEqualCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_TwoNotEqualNamedFloat4_WHEN_AreEqualCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "AreEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoNotEqualNamedFloat4_WHEN_AreEqualCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AreEqual: GIVEN_TwoNotEqualNamedFloat4_WHEN_AreEqualCalled_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoNotEqualNamedFloat4_WHEN_AreEqualCalled_THEN_Fails with strings enabled.",
+      "inherits": "AreEqual: GIVEN_TwoNotEqualNamedFloat4_WHEN_AreEqualCalled_THEN_Fails [strings off]",
+      "files": [
+        "AreEqual.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AreEqual: GIVEN_TwoObjectsWithEqualOperatorOverloads_WHEN_ObjectsAreEqual_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_TwoObjectsWithEqualOperatorOverloads_WHEN_ObjectsAreEqual_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "AreEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoObjectsWithEqualOperatorOverloads_WHEN_ObjectsAreEqual_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AreEqual: GIVEN_TwoObjectsWithEqualOperatorOverloads_WHEN_ObjectsAreNotEqual_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_TwoObjectsWithEqualOperatorOverloads_WHEN_ObjectsAreNotEqual_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "AreEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoObjectsWithEqualOperatorOverloads_WHEN_ObjectsAreNotEqual_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AreEqual: GIVEN_TwoObjectsWithEqualOperatorOverloads_WHEN_ObjectsAreNotEqual_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoObjectsWithEqualOperatorOverloads_WHEN_ObjectsAreNotEqual_THEN_Fails with strings enabled.",
+      "inherits": "AreEqual: GIVEN_TwoObjectsWithEqualOperatorOverloads_WHEN_ObjectsAreNotEqual_THEN_Fails [strings off]",
+      "files": [
+        "AreEqual.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "Fail: GIVEN_TestWithFailAssert_WHEN_Ran_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_TestWithFailAssert_WHEN_Ran_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "Fail.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TestWithFailAssert_WHEN_Ran_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "Fail: GIVEN_TestWithFailAssert_WHEN_Ran_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TestWithFailAssert_WHEN_Ran_THEN_Fails with strings enabled.",
+      "inherits": "Fail: GIVEN_TestWithFailAssert_WHEN_Ran_THEN_Fails [strings off]",
+      "files": [
+        "Fail.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "Fail: GIVEN_Empty_WHEN_Ran_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_Empty_WHEN_Ran_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "Fail.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_Empty_WHEN_Ran_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "IsFalse: GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "IsFalse.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "IsFalse: GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails with strings enabled.",
+      "inherits": "IsFalse: GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails [strings off]",
+      "files": [
+        "IsFalse.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "IsFalse: GIVEN_TrueNonLiteral_WHEN_IsFalseCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_TrueNonLiteral_WHEN_IsFalseCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "IsFalse.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TrueNonLiteral_WHEN_IsFalseCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "IsFalse: GIVEN_TrueNonLiteral_WHEN_IsFalseCalled_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TrueNonLiteral_WHEN_IsFalseCalled_THEN_Fails with strings enabled.",
+      "inherits": "IsFalse: GIVEN_TrueNonLiteral_WHEN_IsFalseCalled_THEN_Fails [strings off]",
+      "files": [
+        "IsFalse.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "IsFalse: GIVEN_TrueExpression_WHEN_IsFalseCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_TrueExpression_WHEN_IsFalseCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "IsFalse.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TrueExpression_WHEN_IsFalseCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "IsFalse: GIVEN_TrueExpression_WHEN_IsFalseCalled_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TrueExpression_WHEN_IsFalseCalled_THEN_Fails with strings enabled.",
+      "inherits": "IsFalse: GIVEN_TrueExpression_WHEN_IsFalseCalled_THEN_Fails [strings off]",
+      "files": [
+        "IsFalse.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "IsFalse: GIVEN_FalseLiteral_WHEN_IsFalseCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_FalseLiteral_WHEN_IsFalseCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "IsFalse.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_FalseLiteral_WHEN_IsFalseCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "IsFalse: GIVEN_FalseNonLiteral_WHEN_IsFalseCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_FalseNonLiteral_WHEN_IsFalseCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "IsFalse.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_FalseNonLiteral_WHEN_IsFalseCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "IsFalse: GIVEN_FalseExpression_WHEN_IsFalseCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_FalseExpression_WHEN_IsFalseCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "IsFalse.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_FalseExpression_WHEN_IsFalseCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "IsFalse: GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsTrue_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsTrue_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "IsFalse.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsTrue_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "IsFalse: GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsTrue_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsTrue_THEN_Fails with strings enabled.",
+      "inherits": "IsFalse: GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsTrue_THEN_Fails [strings off]",
+      "files": [
+        "IsFalse.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "IsFalse: GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsFalse_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsFalse_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "IsFalse.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsFalse_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "IsTrue: GIVEN_TrueLiteral_WHEN_IsTrueCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_TrueLiteral_WHEN_IsTrueCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "IsTrue.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TrueLiteral_WHEN_IsTrueCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "IsTrue: GIVEN_TrueNonLiteral_WHEN_IsTrueCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_TrueNonLiteral_WHEN_IsTrueCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "IsTrue.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TrueNonLiteral_WHEN_IsTrueCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "IsTrue: GIVEN_TrueExpression_WHEN_IsTrueCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_TrueExpression_WHEN_IsTrueCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "IsTrue.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TrueExpression_WHEN_IsTrueCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "IsTrue: GIVEN_FalseLiteral_WHEN_IsTrueCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_FalseLiteral_WHEN_IsTrueCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "IsTrue.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_FalseLiteral_WHEN_IsTrueCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "IsTrue: GIVEN_FalseLiteral_WHEN_IsTrueCalled_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_FalseLiteral_WHEN_IsTrueCalled_THEN_Fails with strings enabled.",
+      "inherits": "IsTrue: GIVEN_FalseLiteral_WHEN_IsTrueCalled_THEN_Fails [strings off]",
+      "files": [
+        "IsTrue.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "IsTrue: GIVEN_FalseNonLiteral_WHEN_IsTrueCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_FalseNonLiteral_WHEN_IsTrueCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "IsTrue.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_FalseNonLiteral_WHEN_IsTrueCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "IsTrue: GIVEN_FalseNonLiteral_WHEN_IsTrueCalled_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_FalseNonLiteral_WHEN_IsTrueCalled_THEN_Fails with strings enabled.",
+      "inherits": "IsTrue: GIVEN_FalseNonLiteral_WHEN_IsTrueCalled_THEN_Fails [strings off]",
+      "files": [
+        "IsTrue.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "IsTrue: GIVEN_FalseExpression_WHEN_IsTrueCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_FalseExpression_WHEN_IsTrueCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "IsTrue.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_FalseExpression_WHEN_IsTrueCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "IsTrue: GIVEN_FalseExpression_WHEN_IsTrueCalled_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_FalseExpression_WHEN_IsTrueCalled_THEN_Fails with strings enabled.",
+      "inherits": "IsTrue: GIVEN_FalseExpression_WHEN_IsTrueCalled_THEN_Fails [strings off]",
+      "files": [
+        "IsTrue.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "IsTrue: GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsTrue_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsTrue_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "IsTrue.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsTrue_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "IsTrue: GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsFalse_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsFalse_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "IsTrue.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsFalse_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "IsTrue: GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsFalse_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsFalse_THEN_Fails with strings enabled.",
+      "inherits": "IsTrue: GIVEN_ObjectWithBoolCast_WHEN_ObjectsIsFalse_THEN_Fails [strings off]",
+      "files": [
+        "IsTrue.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "NotEqual: GIVEN_TwoEqualInts_WHEN_NotEqualCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_TwoEqualInts_WHEN_NotEqualCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "NotEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoEqualInts_WHEN_NotEqualCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "NotEqual: GIVEN_TwoEqualInts_WHEN_NotEqualCalled_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoEqualInts_WHEN_NotEqualCalled_THEN_Fails with strings enabled.",
+      "inherits": "NotEqual: GIVEN_TwoEqualInts_WHEN_NotEqualCalled_THEN_Fails [strings off]",
+      "files": [
+        "NotEqual.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "NotEqual: GIVEN_TwoNotEqualInts_WHEN_NotEqualCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_TwoNotEqualInts_WHEN_NotEqualCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "NotEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoNotEqualInts_WHEN_NotEqualCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "NotEqual: GIVEN_TwoEqualFloat4_WHEN_NotEqualCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_TwoEqualFloat4_WHEN_NotEqualCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "NotEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoEqualFloat4_WHEN_NotEqualCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "NotEqual: GIVEN_TwoEqualFloat4_WHEN_NotEqualCalled_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoEqualFloat4_WHEN_NotEqualCalled_THEN_Fails with strings enabled.",
+      "inherits": "NotEqual: GIVEN_TwoEqualFloat4_WHEN_NotEqualCalled_THEN_Fails [strings off]",
+      "files": [
+        "NotEqual.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "NotEqual: GIVEN_TwoNotEqualFloat4_WHEN_NotEqualCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_TwoNotEqualFloat4_WHEN_NotEqualCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "NotEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoNotEqualFloat4_WHEN_NotEqualCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "NotEqual: GIVEN_TwoEqualNamedInts_WHEN_NotEqualCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_TwoEqualNamedInts_WHEN_NotEqualCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "NotEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoEqualNamedInts_WHEN_NotEqualCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "NotEqual: GIVEN_TwoEqualNamedInts_WHEN_NotEqualCalled_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoEqualNamedInts_WHEN_NotEqualCalled_THEN_Fails with strings enabled.",
+      "inherits": "NotEqual: GIVEN_TwoEqualNamedInts_WHEN_NotEqualCalled_THEN_Fails [strings off]",
+      "files": [
+        "NotEqual.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "NotEqual: GIVEN_TwoNotEqualNamedInts_WHEN_NotEqualCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_TwoNotEqualNamedInts_WHEN_NotEqualCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "NotEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoNotEqualNamedInts_WHEN_NotEqualCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "NotEqual: GIVEN_TwoEqualNamedFloat4_WHEN_NotEqualCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_TwoEqualNamedFloat4_WHEN_NotEqualCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "NotEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoEqualNamedFloat4_WHEN_NotEqualCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "NotEqual: GIVEN_TwoEqualNamedFloat4_WHEN_NotEqualCalled_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoEqualNamedFloat4_WHEN_NotEqualCalled_THEN_Fails with strings enabled.",
+      "inherits": "NotEqual: GIVEN_TwoEqualNamedFloat4_WHEN_NotEqualCalled_THEN_Fails [strings off]",
+      "files": [
+        "NotEqual.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "NotEqual: GIVEN_TwoNotEqualNamedFloat4_WHEN_NotEqualCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_TwoNotEqualNamedFloat4_WHEN_NotEqualCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "NotEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoNotEqualNamedFloat4_WHEN_NotEqualCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "NotEqual: GIVEN_TwoObjectsWithNotEqualOperatorOverloads_WHEN_ObjectsAreEqual_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_TwoObjectsWithNotEqualOperatorOverloads_WHEN_ObjectsAreEqual_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "NotEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoObjectsWithNotEqualOperatorOverloads_WHEN_ObjectsAreEqual_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "NotEqual: GIVEN_TwoObjectsWithNotEqualOperatorOverloads_WHEN_ObjectsAreEqual_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoObjectsWithNotEqualOperatorOverloads_WHEN_ObjectsAreEqual_THEN_Fails with strings enabled.",
+      "inherits": "NotEqual: GIVEN_TwoObjectsWithNotEqualOperatorOverloads_WHEN_ObjectsAreEqual_THEN_Fails [strings off]",
+      "files": [
+        "NotEqual.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "NotEqual: GIVEN_TwoObjectsWithNotEqualOperatorOverloads_WHEN_ObjectsAreNotEqual_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_TwoObjectsWithNotEqualOperatorOverloads_WHEN_ObjectsAreNotEqual_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "NotEqual.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoObjectsWithNotEqualOperatorOverloads_WHEN_ObjectsAreNotEqual_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    }
+  ]
+}

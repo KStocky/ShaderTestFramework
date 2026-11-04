@@ -1,0 +1,32 @@
+{
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "ConversionOperator: GIVEN_StaticObject_WHEN_ConversionOperatorCalled_THEN_Fails [actual entry point]",
+      "description": "Compile the shader's real entry point; the C++ test separately selects a deliberately incorrect name.",
+      "files": [
+        "ConversionOperator.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_StaticObject_WHEN_ConversionOperatorCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "ConversionOperator: GIVEN_Object_WHEN_ConversionOperatorCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_Object_WHEN_ConversionOperatorCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "ConversionOperator.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_Object_WHEN_ConversionOperatorCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    }
+  ]
+}

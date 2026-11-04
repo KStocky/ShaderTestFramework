@@ -1,0 +1,518 @@
+{
+  "hlsl.variantsVersion": 1,
+  "hlsl.variants": [
+    {
+      "name": "AssertMacro: GIVEN_TwoEqualInts_WHEN_AreEqualCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_TwoEqualInts_WHEN_AreEqualCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "AssertMacro.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoEqualInts_WHEN_AreEqualCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "AssertMacro: GIVEN_TwoNotEqualInts_WHEN_AreEqualCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_TwoNotEqualInts_WHEN_AreEqualCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "AssertMacro.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoNotEqualInts_WHEN_AreEqualCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertMacro: GIVEN_TwoNotEqualInts_WHEN_AreEqualCalled_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoNotEqualInts_WHEN_AreEqualCalled_THEN_Fails with strings enabled.",
+      "inherits": "AssertMacro: GIVEN_TwoNotEqualInts_WHEN_AreEqualCalled_THEN_Fails [strings off]",
+      "files": [
+        "AssertMacro.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertMacro: GIVEN_TwoEqualInts_WHEN_NotEqualCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_TwoEqualInts_WHEN_NotEqualCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "AssertMacro.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoEqualInts_WHEN_NotEqualCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertMacro: GIVEN_TwoEqualInts_WHEN_NotEqualCalled_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TwoEqualInts_WHEN_NotEqualCalled_THEN_Fails with strings enabled.",
+      "inherits": "AssertMacro: GIVEN_TwoEqualInts_WHEN_NotEqualCalled_THEN_Fails [strings off]",
+      "files": [
+        "AssertMacro.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertMacro: GIVEN_TwoNotEqualInts_WHEN_NotEqualCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_TwoNotEqualInts_WHEN_NotEqualCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "AssertMacro.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoNotEqualInts_WHEN_NotEqualCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertMacro: GIVEN_TrueLiteral_WHEN_IsTrueCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_TrueLiteral_WHEN_IsTrueCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "AssertMacro.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TrueLiteral_WHEN_IsTrueCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertMacro: GIVEN_FalseLiteral_WHEN_IsTrueCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_FalseLiteral_WHEN_IsTrueCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "AssertMacro.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_FalseLiteral_WHEN_IsTrueCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertMacro: GIVEN_FalseLiteral_WHEN_IsTrueCalled_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_FalseLiteral_WHEN_IsTrueCalled_THEN_Fails with strings enabled.",
+      "inherits": "AssertMacro: GIVEN_FalseLiteral_WHEN_IsTrueCalled_THEN_Fails [strings off]",
+      "files": [
+        "AssertMacro.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertMacro: GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "AssertMacro.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertMacro: GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails with strings enabled.",
+      "inherits": "AssertMacro: GIVEN_TrueLiteral_WHEN_IsFalseCalled_THEN_Fails [strings off]",
+      "files": [
+        "AssertMacro.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "AssertMacro: GIVEN_FalseLiteral_WHEN_IsFalseCalled_THEN_Succeeds [strings off]",
+      "description": "Compile GIVEN_FalseLiteral_WHEN_IsFalseCalled_THEN_Succeeds with the initial runtime string mode.",
+      "files": [
+        "AssertMacro.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_FalseLiteral_WHEN_IsFalseCalled_THEN_Succeeds",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertMacro: GIVEN_TestWithFailAssert_WHEN_Ran_THEN_Fails [strings off]",
+      "description": "Compile GIVEN_TestWithFailAssert_WHEN_Ran_THEN_Fails with the initial runtime string mode.",
+      "files": [
+        "AssertMacro.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TestWithFailAssert_WHEN_Ran_THEN_Fails",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "AssertMacro: GIVEN_TestWithFailAssert_WHEN_Ran_THEN_Fails [failure strings]",
+      "description": "Compile the failure retry for GIVEN_TestWithFailAssert_WHEN_Ran_THEN_Fails with strings enabled.",
+      "inherits": "AssertMacro: GIVEN_TestWithFailAssert_WHEN_Ran_THEN_Fails [strings off]",
+      "files": [
+        "AssertMacro.hlsl"
+      ],
+      "hlsl.preprocessorDefinitions": {
+        "TTL_ENABLE_STRINGS": 1
+      }
+    },
+    {
+      "name": "Scenario: GIVEN_EmptyScenario_WHEN_Ran_THEN_NoAssertMade [strings off]",
+      "description": "Compile GIVEN_EmptyScenario_WHEN_Ran_THEN_NoAssertMade with the initial runtime string mode.",
+      "files": [
+        "Scenario.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_EmptyScenario_WHEN_Ran_THEN_NoAssertMade",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "Scenario: GIVEN_ScenarioWithNoSections_WHEN_Ran_THEN_FunctionOnlyEnteredOnce [strings off]",
+      "description": "Compile GIVEN_ScenarioWithNoSections_WHEN_Ran_THEN_FunctionOnlyEnteredOnce with the initial runtime string mode.",
+      "files": [
+        "Scenario.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_ScenarioWithNoSections_WHEN_Ran_THEN_FunctionOnlyEnteredOnce",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "Scenario: GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce [strings off]",
+      "description": "Compile GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce with the initial runtime string mode.",
+      "files": [
+        "Scenario.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_SingleSection_WHEN_Ran_THEN_SectionsEnteredOnce",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "Scenario: GIVEN_TwoSections_WHEN_Ran_THEN_EachSectionIsEnteredOnce [strings off]",
+      "description": "Compile GIVEN_TwoSections_WHEN_Ran_THEN_EachSectionIsEnteredOnce with the initial runtime string mode.",
+      "files": [
+        "Scenario.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoSections_WHEN_Ran_THEN_EachSectionIsEnteredOnce",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "Scenario: GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce [strings off]",
+      "description": "Compile GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce with the initial runtime string mode.",
+      "files": [
+        "Scenario.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_Ran_THEN_EachSectionIsEnteredOnce",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "Scenario: GIVEN_ScenarioWithoutId_WHEN_Ran_THEN_IdIsNone [strings off]",
+      "description": "Compile GIVEN_ScenarioWithoutId_WHEN_Ran_THEN_IdIsNone with the initial runtime string mode.",
+      "files": [
+        "Scenario.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_ScenarioWithoutId_WHEN_Ran_THEN_IdIsNone",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "Scenario: GIVEN_ScenarioWithDispatchThreadId_WHEN_Ran_THEN_IdAsExpected [strings off]",
+      "description": "Compile GIVEN_ScenarioWithDispatchThreadId_WHEN_Ran_THEN_IdAsExpected with the initial runtime string mode.",
+      "files": [
+        "Scenario.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_ScenarioWithDispatchThreadId_WHEN_Ran_THEN_IdAsExpected",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "Sections: GIVEN_EmptySection_WHEN_RanUsingSingle_THEN_NoAssertMade [strings off]",
+      "description": "Compile GIVEN_EmptySection_WHEN_RanUsingSingle_THEN_NoAssertMade with the initial runtime string mode.",
+      "files": [
+        "Sections.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_EmptySection_WHEN_RanUsingSingle_THEN_NoAssertMade",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "Sections: GIVEN_SingleSection_WHEN_RanUsingSingle_THEN_SectionsEnteredOnce [strings off]",
+      "description": "Compile GIVEN_SingleSection_WHEN_RanUsingSingle_THEN_SectionsEnteredOnce with the initial runtime string mode.",
+      "files": [
+        "Sections.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_SingleSection_WHEN_RanUsingSingle_THEN_SectionsEnteredOnce",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "Sections: GIVEN_TwoSections_WHEN_RanUsingSingle_THEN_EachSectionIsEnteredOnce [strings off]",
+      "description": "Compile GIVEN_TwoSections_WHEN_RanUsingSingle_THEN_EachSectionIsEnteredOnce with the initial runtime string mode.",
+      "files": [
+        "Sections.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoSections_WHEN_RanUsingSingle_THEN_EachSectionIsEnteredOnce",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "Sections: GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_RanUsingSingle_THEN_EachSectionIsE-bb736151 [strings off]",
+      "description": "Compile GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_RanUsingSingle_THEN_EachSectionIsEnteredOnce with the initial runtime string mode.",
+      "files": [
+        "Sections.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoSubSectionsWithOneNestedSubsection_WHEN_RanUsingSingle_THEN_EachSectionIsEnteredOnce",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "Sections: GIVEN_TwoSubSectionsWithTwoNestedSubsections_WHEN_RanUsingSingle_THEN_ExpectedSubse-a981bcdd [strings off]",
+      "description": "Compile GIVEN_TwoSubSectionsWithTwoNestedSubsections_WHEN_RanUsingSingle_THEN_ExpectedSubsectionEntryOccurs with the initial runtime string mode.",
+      "files": [
+        "Sections.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoSubSectionsWithTwoNestedSubsections_WHEN_RanUsingSingle_THEN_ExpectedSubsectionEntryOccurs",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "Sections: GIVEN_ThreeLevelsDeepSections_WHEN_RanUsingSingle_THEN_ExpectedSubsectionEntryOccurs [strings off]",
+      "description": "Compile GIVEN_ThreeLevelsDeepSections_WHEN_RanUsingSingle_THEN_ExpectedSubsectionEntryOccurs with the initial runtime string mode.",
+      "files": [
+        "Sections.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_ThreeLevelsDeepSections_WHEN_RanUsingSingle_THEN_ExpectedSubsectionEntryOccurs",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "SectionVarCreation: GIVEN_SingleSectionVarCreated_WHEN_Queried_THEN_ValueIsZero [strings off]",
+      "description": "Compile GIVEN_SingleSectionVarCreated_WHEN_Queried_THEN_ValueIsZero with the initial runtime string mode.",
+      "files": [
+        "SectionVarCreation.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_SingleSectionVarCreated_WHEN_Queried_THEN_ValueIsZero",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      },
+      "default": true
+    },
+    {
+      "name": "SectionVarCreation: GIVEN_TwoSectionVarsCreated_WHEN_Queried_THEN_ValueAreAsExpected [strings off]",
+      "description": "Compile GIVEN_TwoSectionVarsCreated_WHEN_Queried_THEN_ValueAreAsExpected with the initial runtime string mode.",
+      "files": [
+        "SectionVarCreation.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoSectionVarsCreated_WHEN_Queried_THEN_ValueAreAsExpected",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "SectionVarCreation: GIVEN_TwoSectionVarsCreatedInALoop_WHEN_Queried_THEN_ValueAreAsExpected [strings off]",
+      "description": "Compile GIVEN_TwoSectionVarsCreatedInALoop_WHEN_Queried_THEN_ValueAreAsExpected with the initial runtime string mode.",
+      "files": [
+        "SectionVarCreation.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "GIVEN_TwoSectionVarsCreatedInALoop_WHEN_Queried_THEN_ValueAreAsExpected",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0
+      }
+    },
+    {
+      "name": "Stamp: 000 [strings off]",
+      "description": "Compile StampTests with this generated ENABLE_1/2/3 permutation.",
+      "files": [
+        "Stamp.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "StampTests",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0,
+        "ENABLE_1": 0,
+        "ENABLE_2": 0,
+        "ENABLE_3": 0
+      }
+    },
+    {
+      "name": "Stamp: 001 [strings off]",
+      "description": "Compile StampTests with this generated ENABLE_1/2/3 permutation.",
+      "files": [
+        "Stamp.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "StampTests",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0,
+        "ENABLE_1": 0,
+        "ENABLE_2": 0,
+        "ENABLE_3": 1
+      }
+    },
+    {
+      "name": "Stamp: 010 [strings off]",
+      "description": "Compile StampTests with this generated ENABLE_1/2/3 permutation.",
+      "files": [
+        "Stamp.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "StampTests",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0,
+        "ENABLE_1": 0,
+        "ENABLE_2": 1,
+        "ENABLE_3": 0
+      }
+    },
+    {
+      "name": "Stamp: 011 [strings off]",
+      "description": "Compile StampTests with this generated ENABLE_1/2/3 permutation.",
+      "files": [
+        "Stamp.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "StampTests",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0,
+        "ENABLE_1": 0,
+        "ENABLE_2": 1,
+        "ENABLE_3": 1
+      }
+    },
+    {
+      "name": "Stamp: 100 [strings off]",
+      "description": "Compile StampTests with this generated ENABLE_1/2/3 permutation.",
+      "files": [
+        "Stamp.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "StampTests",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0,
+        "ENABLE_1": 1,
+        "ENABLE_2": 0,
+        "ENABLE_3": 0
+      }
+    },
+    {
+      "name": "Stamp: 101 [strings off]",
+      "description": "Compile StampTests with this generated ENABLE_1/2/3 permutation.",
+      "files": [
+        "Stamp.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "StampTests",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0,
+        "ENABLE_1": 1,
+        "ENABLE_2": 0,
+        "ENABLE_3": 1
+      }
+    },
+    {
+      "name": "Stamp: 110 [strings off]",
+      "description": "Compile StampTests with this generated ENABLE_1/2/3 permutation.",
+      "files": [
+        "Stamp.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "StampTests",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0,
+        "ENABLE_1": 1,
+        "ENABLE_2": 1,
+        "ENABLE_3": 0
+      }
+    },
+    {
+      "name": "Stamp: 111 [strings off]",
+      "description": "Compile StampTests with this generated ENABLE_1/2/3 permutation.",
+      "files": [
+        "Stamp.hlsl"
+      ],
+      "hlsl.targetProfile": "cs_6_6",
+      "hlsl.entryPoint": "StampTests",
+      "hlsl.preprocessorDefinitions": {
+        "TTL_STRING_MAX_LENGTH": 64,
+        "TTL_ENABLE_STRINGS": 0,
+        "ENABLE_1": 1,
+        "ENABLE_2": 1,
+        "ENABLE_3": 1
+      },
+      "default": true
+    }
+  ]
+}
