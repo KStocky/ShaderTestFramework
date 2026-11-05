@@ -20,10 +20,10 @@ namespace ttl_detail
         <Concept, 
             Arg0, null_type, null_type, null_type, null_type, null_type,
             ttl::void_t<
-                __decltype(ttl::declval<Concept>().template requires<Arg0>()),
                 typename ttl::enable_if<
                     !ttl::is_same<Arg0, null_type>::value
-                >::type
+                >::type,
+                __decltype(ttl::declval<Concept>().template requires<Arg0>())
             >
         > : ttl::true_type {};
 
@@ -32,11 +32,11 @@ namespace ttl_detail
         <Concept, 
             Arg0, Arg1, null_type, null_type, null_type, null_type,
             ttl::void_t<
-                __decltype(ttl::declval<Concept>().template requires<Arg0, Arg1>()),
                 typename ttl::enable_if<
                     !ttl::is_same<Arg0, null_type>::value &&
                     !ttl::is_same<Arg1, null_type>::value
-                >::type
+                >::type,
+                __decltype(ttl::declval<Concept>().template requires<Arg0, Arg1>())
             >
         > : ttl::true_type {};
 
@@ -45,12 +45,12 @@ namespace ttl_detail
         <Concept, 
             Arg0, Arg1, Arg2, null_type, null_type, null_type,
             ttl::void_t<
-                __decltype(ttl::declval<Concept>().template requires<Arg0, Arg1, Arg2>()),
                 typename ttl::enable_if<
                     !ttl::is_same<Arg0, null_type>::value &&
                     !ttl::is_same<Arg1, null_type>::value &&
                     !ttl::is_same<Arg2, null_type>::value
-                >::type
+                >::type,
+                __decltype(ttl::declval<Concept>().template requires<Arg0, Arg1, Arg2>())
             >
         > : ttl::true_type {};
 
@@ -59,13 +59,13 @@ namespace ttl_detail
         <Concept, 
             Arg0, Arg1, Arg2, Arg3, null_type, null_type,
             ttl::void_t<
-                __decltype(ttl::declval<Concept>().template requires<Arg0, Arg1, Arg2, Arg3>()),
                 typename ttl::enable_if<
                     !ttl::is_same<Arg0, null_type>::value &&
                     !ttl::is_same<Arg1, null_type>::value &&
                     !ttl::is_same<Arg2, null_type>::value &&
                     !ttl::is_same<Arg3, null_type>::value
-                >::type
+                >::type,
+                __decltype(ttl::declval<Concept>().template requires<Arg0, Arg1, Arg2, Arg3>())
             >
         > : ttl::true_type {};
 
@@ -74,14 +74,14 @@ namespace ttl_detail
         <Concept, 
             Arg0, Arg1, Arg2, Arg3, Arg4, null_type,
             ttl::void_t<
-                __decltype(ttl::declval<Concept>().template requires<Arg0, Arg1, Arg2, Arg3, Arg4>()),
                 typename ttl::enable_if<
                     !ttl::is_same<Arg0, null_type>::value &&
                     !ttl::is_same<Arg1, null_type>::value &&
                     !ttl::is_same<Arg2, null_type>::value &&
                     !ttl::is_same<Arg3, null_type>::value &&
                     !ttl::is_same<Arg4, null_type>::value
-                >::type
+                >::type,
+                __decltype(ttl::declval<Concept>().template requires<Arg0, Arg1, Arg2, Arg3, Arg4>())
             >
         > : ttl::true_type {};
 
@@ -89,15 +89,16 @@ namespace ttl_detail
     struct models_resolver
         <Concept, 
             Arg0, Arg1, Arg2, Arg3, Arg4, Arg5,
-            ttl::void_t<__decltype(ttl::declval<Concept>().template requires<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5>()),
+            ttl::void_t<
                 typename ttl::enable_if<
-                    !ttl::is_same<Arg0, null_type>::value &&
-                    !ttl::is_same<Arg1, null_type>::value &&
-                    !ttl::is_same<Arg2, null_type>::value &&
-                    !ttl::is_same<Arg3, null_type>::value &&
-                    !ttl::is_same<Arg4, null_type>::value &&
-                    !ttl::is_same<Arg5, null_type>::value
-                >::type
+                        !ttl::is_same<Arg0, null_type>::value &&
+                        !ttl::is_same<Arg1, null_type>::value &&
+                        !ttl::is_same<Arg2, null_type>::value &&
+                        !ttl::is_same<Arg3, null_type>::value &&
+                        !ttl::is_same<Arg4, null_type>::value &&
+                        !ttl::is_same<Arg5, null_type>::value
+                >::type,
+                __decltype(ttl::declval<Concept>().template requires<Arg0, Arg1, Arg2, Arg3, Arg4, Arg5>())
             >
         > : ttl::true_type {};
 }
